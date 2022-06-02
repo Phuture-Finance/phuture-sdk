@@ -1,0 +1,12 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "Packages",
+  "name": "@phuture/sdk",
+  "readme": "README.md",
+  "hideGenerator": true,
+  "out": "docs",
+  "validation": {
+    "notDocumented": true,
+    "invalidLink": true
+  }
+}

@@ -9,9 +9,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix",
-    "docs": "typedoc --hideGenerator --name @phuture/sdk --readme README.md --out docs --entryPointStrategy packages ."
+    "lint": "turbo run lint --parallel",
+    "lint:fix": "turbo run lint:fix --parallel",
+    "docs": "typedoc ."
   },
   "devDependencies": {
     "@auto-it/all-contributors": "^10.37.1",
