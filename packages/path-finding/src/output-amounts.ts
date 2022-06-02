@@ -1,16 +1,17 @@
-import {BigNumber} from 'ethers';
+import {BigNumber, BigNumberish} from 'ethers';
+import {Address} from '@phuture/types';
 import {PathInfo} from './get-paths';
 
 export interface OutputAmount {
-	amountOut: string;
-	path: string[];
+	amountOut: BigNumberish;
+	path: Address[];
 }
 
 export const getOutputAmount = (
-	amountInInfo: string,
+	amountIn: BigNumberish,
 	{pairInfo, path}: PathInfo,
 ): OutputAmount => {
-	let amountInBN: BigNumber = BigNumber.from(amountInInfo);
+	let amountInBN: BigNumber = BigNumber.from(amountIn);
 	for (const [index, pair] of pairInfo.entries()) {
 		const [reserve0, reserve1] =
 			path[index] === pair.token0
@@ -32,11 +33,14 @@ export const sortOutputAmounts = (
 	outputsMatrix.map((outputsArray) =>
 		outputsArray.sort((a, b) => {
 			if (b.path[0].toLowerCase() !== a.path[1].toLowerCase()) {
-				if (BigNumber.from(b.amountOut).gt(a.amountOut)) {
+				const aBigNumber = BigNumber.from(a.amountOut);
+				const bBigNumber = BigNumber.from(b.amountOut);
+
+				if (aBigNumber.gt(bBigNumber)) {
 					return 1;
 				}
 
-				if (BigNumber.from(b.amountOut).lt(a.amountOut)) {
+				if (aBigNumber.lt(bBigNumber)) {
 					return -1;
 				}
 

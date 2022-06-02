@@ -6,18 +6,18 @@ export const getPairsMatrix = (
 	currency: string,
 	quoteAssets: string[],
 ): TokensPair[][] =>
-	assets.map((externalAsset) => {
+	assets.map((asset) => {
 		const pairsArray: TokensPair[] = [];
 		for (const quoteAsset of quoteAssets) {
-			if (externalAsset.toLowerCase() !== quoteAsset) {
+			if (asset !== quoteAsset) {
 				pairsArray.push(
-					addressComparator(externalAsset, quoteAsset) !== 1
-						? {token0: externalAsset, token1: quoteAsset}
-						: {token0: quoteAsset, token1: externalAsset},
+					addressComparator(asset, quoteAsset) !== 1
+						? {token0: asset, token1: quoteAsset}
+						: {token0: quoteAsset, token1: asset},
 				);
 			}
 
-			if (currency.toLowerCase() !== quoteAsset) {
+			if (currency !== quoteAsset) {
 				pairsArray.push(
 					addressComparator(currency, quoteAsset) !== 1
 						? {token0: currency, token1: quoteAsset}

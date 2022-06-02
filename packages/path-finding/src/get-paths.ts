@@ -6,7 +6,7 @@ export interface PathInfo {
 }
 
 export const getPaths = (
-	allPairsWithReserves: PairInfo[],
+	pairsWithReserves: PairInfo[],
 	tokenIn: string,
 	tokenOut: string,
 	quotes: string[],
@@ -16,39 +16,31 @@ export const getPaths = (
 		pairInfo: [],
 	}));
 
-	for (const info of allPairsWithReserves) {
-		const containsTokenIn =
-			info.token0 === tokenIn.toLowerCase() ||
-			info.token1 === tokenIn.toLowerCase();
-		const containsTokenOut =
-			info.token0 === tokenOut.toLowerCase() ||
-			info.token1 === tokenOut.toLowerCase();
+	for (const info of pairsWithReserves) {
+		const {token0, token1} = info;
+		const containsTokenIn = token0 === tokenIn || token1 === tokenIn;
+		const containsTokenOut = token0 === tokenOut || token1 === tokenOut;
+
 		if (containsTokenIn && containsTokenOut) {
-			pathInfos[quotes.length] = {
-				path: [tokenIn.toLowerCase(), tokenOut.toLowerCase()],
-				pairInfo: [info],
-			};
+			pathInfos[quotes.length] = {path: [tokenIn, tokenOut], pairInfo: [info]};
 		} else {
-			const isToken0Quote =
-				info.token0 !== tokenIn.toLowerCase() &&
-				info.token0 !== tokenOut.toLowerCase();
-			const quote = isToken0Quote ? info.token0 : info.token1;
+			const isToken0Quote = token0 !== tokenIn && token0 !== tokenOut;
+			const quote = isToken0Quote ? token0 : token1;
+
 			const index = quotes.indexOf(quote);
 			if (containsTokenIn) {
 				pathInfos[index].pairInfo[0] = info;
-				pathInfos[index].path[0] = tokenIn.toLowerCase();
-				pathInfos[index].path[1] = quote;
+				pathInfos[index].path[0] = tokenIn;
 			} else {
 				pathInfos[index].pairInfo[1] = info;
-				pathInfos[index].path[2] = tokenOut.toLowerCase();
-				pathInfos[index].path[1] = quote;
+				pathInfos[index].path[2] = tokenOut;
 			}
+
+			pathInfos[index].path[1] = quote;
 		}
 	}
 
 	return pathInfos.filter(
-		({path}) =>
-			path[0] === tokenIn.toLowerCase() &&
-			path[path.length - 1] === tokenOut.toLowerCase(),
+		({path}) => path[0] === tokenIn && path[path.length - 1] === tokenOut,
 	);
 };

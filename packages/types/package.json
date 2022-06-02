@@ -1,7 +1,7 @@
 {
   "name": "@phuture/types",
   "version": "0.1.0",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "prepublishOnly" : "npm lint",
     "lint": "xo",
@@ -14,6 +14,9 @@
     "xo": "0.49.0"
   },
   "xo": {
-    "prettier": true
+    "prettier": true,
+    "rules": {
+      "import/extensions": 0
+    }
   }
 }

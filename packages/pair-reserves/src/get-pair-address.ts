@@ -17,7 +17,9 @@ export const getPairAddress = (
 	const create2Inputs = [
 		'0xff',
 		factoryAddress,
-		keccak256(solidityPack(['address', 'address'], [tokens.token0, tokens.token1])),
+		keccak256(
+			solidityPack(['address', 'address'], [tokens.token0, tokens.token1]),
+		),
 		codeHash,
 	];
 	const sanitizedInputs = `0x${create2Inputs
