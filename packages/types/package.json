@@ -1,13 +1,16 @@
 {
-  "name": "@phuture/logger",
+  "name": "@phuture/types",
   "version": "0.1.0",
   "main": "index.ts",
   "scripts": {
+    "prepublishOnly" : "npm lint",
     "lint": "xo",
     "lint:fix": "xo --fix"
   },
   "dependencies": {
-    "ava": "4.2.0",
+    "ethers": "5.6.8"
+  },
+  "devDependencies": {
     "xo": "0.49.0"
   },
   "xo": {

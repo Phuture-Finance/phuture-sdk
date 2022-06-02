@@ -1,6 +1,8 @@
 {
   "name": "@phuture/sdk",
   "version": "0.1.0",
+  "repository": "Phuture-Finance/phuture-sdk",
+  "author": "Eugene Lepeico <eugenelepeico@gmail.com>",
   "workspaces": [
     "packages/*"
   ],
@@ -9,10 +11,27 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "docs": "typedoc --out docs --entryPointStrategy packages ."
   },
   "devDependencies": {
+    "@auto-it/all-contributors": "^10.37.1",
+    "@auto-it/conventional-commits": "^10.37.1",
+    "@auto-it/first-time-contributor": "^10.37.1",
+    "@auto-it/released": "^10.37.1",
+    "auto": "^10.37.1",
     "turbo": "1.2.15",
     "typedoc": "0.22.17"
+  },
+  "packageManager": "npm@8.5.5",
+  "auto": {
+    "plugins": [
+      "npm",
+      "all-contributors",
+      "conventional-commits",
+      "first-time-contributor",
+      "released"
+    ],
+    "onlyPublishWithReleaseLabel": true
   }
 }
