@@ -12,6 +12,10 @@
     "lint:fix": {
       "cache": false
     },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["snapshots/**"]
+    },
     "dev": {
       "cache": false
     }

@@ -13,8 +13,7 @@
     "typechain": "typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json",
     "clean": "rimraf dist",
     "lint": "xo",
-    "lint:fix": "xo --fix",
-    "test": "ava"
+    "lint:fix": "xo --fix"
   },
   "dependencies": {
     "ethers": "5.6.8"

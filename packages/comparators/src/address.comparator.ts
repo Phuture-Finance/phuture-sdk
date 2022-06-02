@@ -1,4 +1,4 @@
-import {BigNumber} from 'ethers';
+import {BigNumber, utils} from 'ethers';
 import {Address} from '@phuture/types';
 
 /**
@@ -10,6 +10,11 @@ import {Address} from '@phuture/types';
  * @returns **-1** if a is less then b or **1** if it isn't
  */
 export const addressComparator = (a: Address, b: Address): -1 | 1 => {
+	if(!utils.isAddress(a))
+		throw TypeError(`Invalid address: ${a}`);
+	if(!utils.isAddress(b))
+		throw TypeError(`Invalid address: ${b}`);
+
 	const aBigNumber = BigNumber.from(a);
 	const bBigNumber = BigNumber.from(b);
 	if (aBigNumber.eq(bBigNumber)) {
