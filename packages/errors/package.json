@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "prepare": "npm run --silent build",
-    "prepublishOnly": "npm lint && npm test",
+    "prepublishOnly": "npm lint",
     "build": "tsc",
     "clean": "rimraf dist",
     "lint": "xo",
@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "@phuture/types": "0.1.0",
-    "ava": "4.2.0",
     "typescript": "4.7.2",
     "xo": "0.49.0"
   },

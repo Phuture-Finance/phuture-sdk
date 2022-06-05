@@ -1,7 +1,13 @@
 /**
- * ### Error code
+ * ### Error status code
+ *
+ * @example
+ * const statusCode: ErrorStatusCode = 404
+ *
+ * @example
+ * const statusCode: ErrorStatusCode = '500'
  */
-export type ErrorCode = string | number;
+export type ErrorStatus = string | number;
 
 /**
  * ### Interface for error data
@@ -10,15 +16,15 @@ export interface ErrorData {
 	/** Error message */
 	message: string;
 
-	/** Error code */
-	code?: ErrorCode;
+	/** Error status code */
+	status?: ErrorStatus;
 }
 
 /**
  * ### Props for an error
  */
 export type ErrorProps = {
-	code?: ErrorCode;
+	status?: ErrorStatus;
 } & (
 	| {message: string; errors?: never}
 	| {message?: never; errors: ErrorData[]}
@@ -29,7 +35,7 @@ export type ErrorProps = {
  */
 export class PhutureError extends Error {
 	/** Error code */
-	public readonly code?: ErrorCode;
+	public readonly status?: ErrorStatus;
 
 	/** Errors data list */
 	public readonly errors: ErrorData[];
@@ -41,15 +47,15 @@ export class PhutureError extends Error {
 	 * @returns Instance of PhutureError
 	 */
 	constructor(props: ErrorProps) {
-		const {code, message, errors} = props;
+		const {status, message, errors} = props;
 		const error: ErrorData = message
-			? {message, ...(code ? {code} : {})}
+			? {message, ...(status ? {status} : {})}
 			: errors![0];
 
 		super(error.message);
 		this.name = 'PhutureError';
 		this.errors = message ? [error] : errors!;
 
-		if (error.code) this.code = error.code;
+		if (error.status) this.status = error.status;
 	}
 }

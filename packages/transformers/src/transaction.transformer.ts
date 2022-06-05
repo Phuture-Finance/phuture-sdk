@@ -1,4 +1,4 @@
-import {transformHash} from "./hash.transformer";
+import {transformHash} from './hash.transformer';
 
 /**
  * ### Transforms transaction to short string representation.
@@ -7,4 +7,5 @@ import {transformHash} from "./hash.transformer";
  * @param charsOnEnd Number of characters to keep on the end of the transaction
  * @returns function that transforms transaction to short string representation
  */
-export const transformTransaction = (charsOnStart: number = 15, charsOnEnd?: number) => transformHash(charsOnStart, charsOnEnd)
+export const transformTransaction = (charsOnStart = 15, charsOnEnd?: number) =>
+	transformHash(charsOnStart, charsOnEnd);
