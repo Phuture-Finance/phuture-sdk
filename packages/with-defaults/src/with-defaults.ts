@@ -1,5 +1,5 @@
 import {DeepPartial} from './deep-partial';
-import {merge} from "./merge";
+import {merge} from './merge';
 
 /**
  * ### Merges default options into an options object

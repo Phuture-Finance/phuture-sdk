@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "repository": "Phuture-Finance/phuture-sdk",
   "author": "Eugene Lepeico <eugenelepeico@gmail.com>",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
@@ -23,7 +20,6 @@
     "turbo": "1.2.10",
     "typedoc": "0.22.17"
   },
-  "packageManager": "npm@8.5.5",
   "auto": {
     "plugins": [
       "npm",
@@ -33,5 +29,6 @@
       "released"
     ],
     "onlyPublishWithReleaseLabel": true
-  }
+  },
+  "packageManager": "pnpm@7.1.0"
 }

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "src/index.ts",
   "scripts": {
-    "prepublishOnly" : "npm lint",
+    "prepublishOnly": "pnpm lint && pnpm build",
     "lint": "xo",
     "lint:fix": "xo --fix"
   },

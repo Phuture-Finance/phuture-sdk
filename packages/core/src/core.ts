@@ -1,5 +1,5 @@
 import {Url} from '@phuture/types';
-import {withDefaults} from "@phuture/with-defaults";
+import {withDefaults} from '@phuture/with-defaults';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Phuture {
@@ -7,20 +7,20 @@ export namespace Phuture {
 	 * ### Interface for options of Phuture core constructor
 	 */
 	export interface Options<T = any> {
-		/** Base URL of Phuture API */
-		apiUrl: Url;
-
 		/** Any additional options */
 		[option: string]: any;
+
+		/** Base URL of Phuture API */
+		apiUrl: Url;
 	}
 }
 
 /**
  * ### Default options of Phuture core constructor
  */
-const defaultOptions: Phuture.Options = {
+const defaultOptions = <T>(): Phuture.Options<T> => ({
 	apiUrl: 'https://api.phuture.finance',
-};
+});
 
 /**
  * ### Class for Phuture Core
@@ -36,6 +36,6 @@ export class Phuture<T> {
 	 * @returns New Phuture Core instance
 	 */
 	constructor(options: Partial<Phuture.Options<T>> = {}) {
-		this.options = withDefaults(options, defaultOptions);
+		this.options = withDefaults(options, defaultOptions<T>());
 	}
 }

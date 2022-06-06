@@ -11,20 +11,20 @@ export const getOutputAmount = (
 	amountIn: BigNumberish,
 	{pairInfo, path}: PathInfo,
 ): OutputAmount => {
-	let amountInBN: BigNumber = BigNumber.from(amountIn);
+	let amountInBigNumber: BigNumber = BigNumber.from(amountIn);
 	for (const [index, pair] of pairInfo.entries()) {
 		const [reserve0, reserve1] =
 			path[index] === pair.token0
 				? [pair.reserve0, pair.reserve1]
 				: [pair.reserve1, pair.reserve0];
 
-		const amountInWithFee = amountInBN.mul(997);
+		const amountInWithFee = amountInBigNumber.mul(997);
 		const numerator = amountInWithFee.mul(reserve1);
 		const denominator = BigNumber.from(reserve0).mul(1000).add(amountInWithFee);
-		amountInBN = numerator.div(denominator);
+		amountInBigNumber = numerator.div(denominator);
 	}
 
-	return {amountOut: amountInBN.toString(), path};
+	return {amountOut: amountInBigNumber.toString(), path};
 };
 
 export const sortOutputAmounts = (

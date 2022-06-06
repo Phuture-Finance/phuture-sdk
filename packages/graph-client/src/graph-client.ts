@@ -1,11 +1,5 @@
-import {
-	ApolloClient,
-	DefaultOptions,
-	HttpLink,
-	InMemoryCache,
-} from '@apollo/client/core';
+import {ApolloClient, DefaultOptions, HttpLink, InMemoryCache,} from '@apollo/client/core';
 import {ApolloClientOptions} from '@apollo/client/core/ApolloClient';
-import {concatPagination} from '@apollo/client/utilities';
 import {NormalizedCacheObject} from '@apollo/client/cache/inmemory/types';
 
 const apolloClients: Record<string, ApolloClient<any>> = {};

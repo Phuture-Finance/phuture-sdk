@@ -8,8 +8,7 @@
   ],
   "scripts": {
 	"test": "jest ./test/*.test.ts --coverage",
-    "prepare": "npm run --silent build",
-    "prepublishOnly": "npm lint && npm test",
+    "prepublishOnly": "pnpm lint && pnpm test && pnpm build",
     "build": "tsc",
     "clean": "rimraf dist",
     "lint": "xo",

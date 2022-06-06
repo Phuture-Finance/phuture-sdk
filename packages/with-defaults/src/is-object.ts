@@ -12,5 +12,9 @@
  * isObject(undefined) // => false
  * isObject('string') // => false
  */
-export const isObject = (maybeObject: any): maybeObject is object =>
-	(maybeObject && typeof maybeObject === 'object' && !Array.isArray(maybeObject))
+export const isObject = (
+	maybeObject: unknown,
+): maybeObject is Record<string | number | symbol, unknown> =>
+	maybeObject !== null &&
+	typeof maybeObject === 'object' &&
+	!Array.isArray(maybeObject);

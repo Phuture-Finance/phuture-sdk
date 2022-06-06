@@ -32,5 +32,5 @@ export const enum HttpMethod {
 	TRACE = 'TRACE',
 
 	/** PATCH method to patch an existing resource */
-	PATCH = 'PATCH'
+	PATCH = 'PATCH',
 }
