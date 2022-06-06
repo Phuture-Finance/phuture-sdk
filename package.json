@@ -4,6 +4,7 @@
   "repository": "Phuture-Finance/phuture-sdk",
   "author": "Eugene Lepeico <eugenelepeico@gmail.com>",
   "scripts": {
+	"prepare": "husky install",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint --parallel",
@@ -12,11 +13,13 @@
     "docs": "typedoc ."
   },
   "devDependencies": {
-    "@auto-it/all-contributors": "^10.37.1",
-    "@auto-it/conventional-commits": "^10.37.1",
-    "@auto-it/first-time-contributor": "^10.37.1",
-    "@auto-it/released": "^10.37.1",
-    "auto": "^10.37.1",
+    "@auto-it/all-contributors": "10.37.1",
+    "@auto-it/conventional-commits": "10.37.1",
+    "@auto-it/first-time-contributor": "10.37.1",
+    "@auto-it/released": "10.37.1",
+    "auto": "10.37.1",
+    "husky": "^8.0.1",
+    "lint-staged": "13.0.0",
     "turbo": "1.2.10",
     "typedoc": "0.22.17"
   },
@@ -29,6 +32,12 @@
       "released"
     ],
     "onlyPublishWithReleaseLabel": true
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "pnpm lint:fix",
+      "git add"
+    ]
   },
   "packageManager": "pnpm@7.1.0"
 }
