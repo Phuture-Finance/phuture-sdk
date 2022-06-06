@@ -35,8 +35,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "pnpm lint:fix",
-      "git add"
+      "pnpm lint:fix"
     ]
   },
   "packageManager": "pnpm@7.1.0"

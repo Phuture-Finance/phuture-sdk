@@ -20,7 +20,7 @@
   "devDependencies": {
     "@ethersproject/abi": "^5.6.3",
     "@ethersproject/providers": "^5.6.8",
-    "@phuture/types": "0.1.0",
+    "@phuture/types": "workspace:*",
     "@typechain/ethers-v5": "10.0.0",
     "ava": "4.2.0",
     "typechain": "8.0.0",
