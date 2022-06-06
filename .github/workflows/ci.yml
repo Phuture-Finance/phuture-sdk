@@ -52,10 +52,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build code
+        run: pnpm build
+
+      - name: Lint code
+        run: pnpm lint
+
       - name: Test code
         run: pnpm test
         env:
           CI: true
-
-      - name: Lint code
-        run: pnpm lint
