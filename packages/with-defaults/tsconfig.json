@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es2022",
-    "lib": ["es6", "dom"],
+	"moduleResolution": "node",
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
     "declaration": true,
     "outDir": "dist",
     "strict": true,

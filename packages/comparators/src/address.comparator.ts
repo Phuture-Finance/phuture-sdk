@@ -1,4 +1,4 @@
-import {BigNumber, utils} from 'ethers';
+import {BigNumber} from 'ethers';
 import {Address} from '@phuture/types';
 
 /**
