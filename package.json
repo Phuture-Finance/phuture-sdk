@@ -7,8 +7,8 @@
 	"prepare": "husky install",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint --parallel",
-    "lint:fix": "turbo run lint:fix --parallel",
+    "lint": "xo 'packages/**/!(*.test).ts'",
+    "lint:fix": "xo 'packages/**/!(*.test).ts' --fix",
     "test": "turbo run test --parallel",
     "docs": "typedoc ."
   },
@@ -21,7 +21,8 @@
     "husky": "^8.0.1",
     "lint-staged": "13.0.0",
     "turbo": "1.2.10",
-    "typedoc": "0.22.17"
+    "typedoc": "0.22.17",
+	"xo": "0.49.0"
   },
   "auto": {
     "plugins": [
@@ -38,5 +39,11 @@
       "pnpm lint:fix"
     ]
   },
-  "packageManager": "pnpm@7.1.0"
+  "packageManager": "pnpm@7.1.0",
+  "xo": {
+	"prettier": true,
+	"rules": {
+	  "import/extensions": 0
+	}
+  }
 }
