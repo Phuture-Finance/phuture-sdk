@@ -1,11 +1,13 @@
 generates:
-  ./src/types/defaulttypes.ts:
+  ./types/defaulttypes.ts:
     schema: "https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp"    
     plugins:
       - "typescript"
-      - "typescript-resolvers"
-  ./src/types/lmtypes.ts:
+      - typescript-operations
+      - typescript-react-query
+  ./types/lmtypes.ts:
     schema: "https://api.thegraph.com/subgraphs/name/hvrlk/lm"
     plugins:
       - "typescript"
-      - "typescript-resolvers"
+      - "typescript-operations"
+      - "typescript-react-query"
