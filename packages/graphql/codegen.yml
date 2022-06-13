@@ -1,11 +1,11 @@
-overwrite: true
-schema: "./schema"
-documents: null
 generates:
-  ./schema/types.ts:
+  ./src/types/defaulttypes.ts:
+    schema: "https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp"    
     plugins:
       - "typescript"
       - "typescript-resolvers"
-  ./graphql.schema.json:
+  ./src/types/lmtypes.ts:
+    schema: "https://api.thegraph.com/subgraphs/name/hvrlk/lm"
     plugins:
-      - "introspection"
+      - "typescript"
+      - "typescript-resolvers"
