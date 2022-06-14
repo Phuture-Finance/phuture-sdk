@@ -1,11 +1,15 @@
 generates:
-  ./types/phuturetypes.ts:
+  ./src/phuturegraphql.ts:
     schema: "https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp"    
+    documents: "./schemas/phuture/**/*.graphql"
     plugins:
       - "typescript"
       - "typescript-operations"
-  ./types/liquidityminingtypes.ts:
-    schema: "https://api.thegraph.com/subgraphs/name/hvrlk/lm"
-    plugins:
-      - "typescript"
-      - "typescript-operations"
+      - "typed-document-node"
+  # ./src/lmgraphql.ts:
+  #   schema: "https://api.thegraph.com/subgraphs/name/hvrlk/lm"
+  #   # documents: "./queries/liquiditymining/**/*.graphql"
+  #   plugins:
+  #     - "typescript"
+  #     - "typescript-operations"
+  #     - "typed-document-node"

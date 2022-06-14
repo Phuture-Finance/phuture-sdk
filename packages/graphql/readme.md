@@ -1,6 +1,8 @@
 # Graph Client
 Access Phuture's Subgraph
 
+## Introduction
+This is the graphQL package used by Phuture SDK. it leverages  graphql-request and graph-ql-code-generator to create a graphQL SDK interface
 ## todo how to install
 
 ## todo simple usecase

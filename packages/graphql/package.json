@@ -20,7 +20,10 @@
   "devDependencies": {
     "@graphql-codegen/cli": "2.6.2",
     "@graphql-codegen/introspection": "2.1.1",
+    "@graphql-codegen/typed-document-node": "^2.2.13",
     "@graphql-codegen/typescript": "2.5.1",
+    "@graphql-codegen/typescript-graphql-request": "^4.4.10",
+    "@graphql-codegen/typescript-operations": "^2.4.2",
     "@graphql-codegen/typescript-resolvers": "2.6.6",
     "@types/chai": "4.3.1",
     "@types/jest": "28.1.1",
