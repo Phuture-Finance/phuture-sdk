@@ -31,3 +31,14 @@ Once done, run:
 
 This will build a new SDK with the queries strongly typed and ready to go.
 
+## Using the Phuture's graphQl
+
+Import it:
+
+``` import {phutureGraphQL} from '@phuture/graphql' ```
+
+Use it:
+
+```const { userIndexHistories } = await phutureGraphQL().getUserIndexHistories(variables)```
+
+
