@@ -1,4 +1,6 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { GraphQLClient } from 'graphql-request';
+import * as Dom from 'graphql-request/dist/types.dom';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3939,4 +3941,38 @@ export type GetUserIndexHistoriesQueryVariables = Exact<{
 export type GetUserIndexHistoriesQuery = { __typename?: 'Query', userIndexHistories: Array<{ __typename?: 'UserIndexHistory', balance: any, capitalization: any, totalSupply: any, logIndex: any, timestamp: any, index: { __typename?: 'Index', id: string, symbol: string }, user: { __typename?: 'User', id: string } }> };
 
 
-export const GetUserIndexHistoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserIndexHistories"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateLimit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BigInt"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userIndexHistories"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateLimit"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"id"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"index"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"capitalization"}},{"kind":"Field","name":{"kind":"Name","value":"totalSupply"}},{"kind":"Field","name":{"kind":"Name","value":"logIndex"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}}]} as unknown as DocumentNode<GetUserIndexHistoriesQuery, GetUserIndexHistoriesQueryVariables>;
+export const GetUserIndexHistoriesDocument = gql`
+    query getUserIndexHistories($userId: String!, $dateLimit: BigInt!) {
+  userIndexHistories(
+    where: {user: $userId, timestamp_gte: $dateLimit}
+    orderBy: id
+  ) {
+    index {
+      id
+      symbol
+    }
+    user {
+      id
+    }
+    balance
+    capitalization
+    totalSupply
+    logIndex
+    timestamp
+  }
+}
+    `;
+
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
+
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    getUserIndexHistories(variables: GetUserIndexHistoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndexHistoriesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndexHistoriesQuery>(GetUserIndexHistoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndexHistories', 'query');
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;
