@@ -3939,6 +3939,13 @@ export type GetCapitalizationsQueryVariables = Exact<{
 
 export type GetCapitalizationsQuery = { __typename?: 'Query', dailyCapitalizations: Array<{ __typename?: 'DailyCapitalization', id: string, capitalization: any, timestamp: any, logIndex: any, index: { __typename?: 'Index', id: string, symbol: string } }> };
 
+export type GetUserIndexQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetUserIndexQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', indexes: Array<{ __typename?: 'UserIndex', index: { __typename?: 'Index', id: string, symbol: string, name: string } }> }> };
+
 export type GetUserIndexHistoriesQueryVariables = Exact<{
   userId: Scalars['String'];
   dateLimit: Scalars['BigInt'];
@@ -3959,6 +3966,19 @@ export const GetCapitalizationsDocument = gql`
     capitalization
     timestamp
     logIndex
+  }
+}
+    `;
+export const GetUserIndexDocument = gql`
+    query getUserIndex($id: ID!) {
+  users(where: {id: $id}) {
+    indexes {
+      index {
+        id
+        symbol
+        name
+      }
+    }
   }
 }
     `;
@@ -3993,6 +4013,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     getCapitalizations(variables: GetCapitalizationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCapitalizationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCapitalizationsQuery>(GetCapitalizationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCapitalizations', 'query');
+    },
+    getUserIndex(variables: GetUserIndexQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndexQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndexQuery>(GetUserIndexDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndex', 'query');
     },
     getUserIndexHistories(variables: GetUserIndexHistoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndexHistoriesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndexHistoriesQuery>(GetUserIndexHistoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndexHistories', 'query');

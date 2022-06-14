@@ -39,6 +39,6 @@ Import it:
 
 Use it:
 
-```const { userIndexHistories } = await phutureGraphQL().getUserIndexHistories(variables)```
+```const userIndex = await phutureGraphQL().getUserIndex({id: "123123124123"})```
 
 

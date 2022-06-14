@@ -1,0 +1,11 @@
+query getUserIndex($id: ID!) {
+    users(where:{id: $id }){
+        indexes{
+          index{
+            id
+            symbol
+            name
+          }
+        }
+      }
+}
