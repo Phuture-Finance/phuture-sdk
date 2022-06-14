@@ -1,4 +1,4 @@
-import {DeepPartial} from './deep-partial';
+import type {DeepPartial} from '@phuture/types';
 import {merge} from './merge';
 
 /**
@@ -8,7 +8,7 @@ import {merge} from './merge';
  * @param defaults Default options object
  * @returns Merged options object
  */
-export const withDefaults = <T extends Record<string, unknown>>(
+export const withDefaults = <T extends Record<any, unknown>>(
 	options: DeepPartial<T>,
 	defaults: T,
 ): T => merge(defaults, options);

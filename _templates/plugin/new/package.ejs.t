@@ -1,8 +1,8 @@
 ---
-to: packages/<%= h.changeCase.param(name) %>/package.json
+to: plugins/plugin-<%= h.changeCase.param(name) %>/package.json
 ---
 {
-  "name": "@phuture/<%= h.changeCase.param(name) %>",
+  "name": "@phuture/plugin-<%= h.changeCase.param(name) %>",
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

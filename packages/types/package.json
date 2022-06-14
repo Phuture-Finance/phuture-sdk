@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "src/index.ts",
   "dependencies": {
+    "before-after-hook": "^2.2.2",
     "ethers": "5.6.8"
   }
 }
