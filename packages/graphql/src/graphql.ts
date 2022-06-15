@@ -18,15 +18,16 @@ export const getGraphQLClient = (endpoint: string, options?: PatchedRequestInit)
 
 /**
  * ### Expose queries available on the phuture GraphQL network
- * @param options @see PatchedRequestInit
- * @returns 
+ * @param endpoint the graphql uri endpoint
+ * @param options options to pass into the graphql client @see PatchedRequestInit
+ * @returns GraphQLClient @see GraphQLClient
  */
-export const phutureGraphQL = (options?: PatchedRequestInit) => getPhutureSdk(getGraphQLClient(PHUTURE_GRAPH_ENDPOINT, options));
+export const phutureGraphQL = (endpoint = PHUTURE_GRAPH_ENDPOINT,options?: PatchedRequestInit) => getPhutureSdk(getGraphQLClient(endpoint, options));
 
 /**
  * ### Expose queries available on the phuture liquidity mining GraphQL network
- * @param options @see PatchedRequestInit
- * @returns 
+ * @param endpoint the graphql uri endpoint
+ * @param options options to pass into the graphql client @see PatchedRequestInit
+ * @returns GraphQLClient @see GraphQLClient
  */
-export const lmGraphQL = (options?: PatchedRequestInit) => getlmSdk(getGraphQLClient(LIQUIDITY_MINING_ENDPOINT, options));
-
+export const lmGraphQL = (endpoint = LIQUIDITY_MINING_ENDPOINT, options?: PatchedRequestInit) => getlmSdk(getGraphQLClient(endpoint, options));

@@ -1,4 +1,4 @@
-query getUserIndex($id: ID!) {
+query getUserIndices($id: ID!) {
     users(where:{id: $id }){
         indexes{
           index{

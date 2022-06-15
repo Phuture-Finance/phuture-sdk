@@ -1,5 +1,5 @@
- query getUserIndexHistories($userId: String!, $dateLimit:BigInt!)  {
-  userIndexHistories(where: {user:$userId, timestamp_gte:$dateLimit}, orderBy: id) {
+ query getUserIndexHistories($id: String!, $dateLimit:BigInt!)  {
+  userIndexHistories(where: {user:$id, timestamp_gte:$dateLimit}, orderBy: id) {
     index {
       id
       symbol

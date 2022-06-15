@@ -56,8 +56,8 @@ export type Apr_Filter = {
 
 export enum Apr_OrderBy {
   Wn = 'Wn',
-  Id = 'id',
-  N = 'n'
+  id = 'id',
+  n = 'n'
 }
 
 export type BlockChangedFilter = {
@@ -72,8 +72,8 @@ export type Block_Height = {
 
 /** Defines the order direction, either ascending or descending */
 export enum OrderDirection {
-  Asc = 'asc',
-  Desc = 'desc'
+  asc = 'asc',
+  desc = 'desc'
 }
 
 export type Query = {
@@ -293,14 +293,14 @@ export type Reserve_Filter = {
 };
 
 export enum Reserve_OrderBy {
-  Id = 'id',
-  Reserve0 = 'reserve0',
-  Reserve1 = 'reserve1',
-  Token0 = 'token0',
-  Token0Decimals = 'token0Decimals',
-  Token1 = 'token1',
-  Token1Decimals = 'token1Decimals',
-  TotalSupply = 'totalSupply'
+  id = 'id',
+  reserve0 = 'reserve0',
+  reserve1 = 'reserve1',
+  token0 = 'token0',
+  token0Decimals = 'token0Decimals',
+  token1 = 'token1',
+  token1Decimals = 'token1Decimals',
+  totalSupply = 'totalSupply'
 }
 
 export type Reward = {
@@ -331,8 +331,8 @@ export type Reward_Filter = {
 };
 
 export enum Reward_OrderBy {
-  Amount = 'amount',
-  Id = 'id'
+  amount = 'amount',
+  id = 'id'
 }
 
 export type Subscription = {
@@ -483,9 +483,9 @@ export type Total_Filter = {
 };
 
 export enum Total_OrderBy {
-  Apr = 'APR',
-  Id = 'id',
-  Reward = 'reward'
+  APR = 'APR',
+  id = 'id',
+  reward = 'reward'
 }
 
 export type VestingRange = {
@@ -560,12 +560,12 @@ export type VestingRange_Filter = {
 };
 
 export enum VestingRange_OrderBy {
-  Account = 'account',
-  Amount = 'amount',
-  Id = 'id',
-  RangeEndIndex = 'rangeEndIndex',
-  RangeStartIndex = 'rangeStartIndex',
-  Unstaked = 'unstaked'
+  account = 'account',
+  amount = 'amount',
+  id = 'id',
+  rangeEndIndex = 'rangeEndIndex',
+  rangeStartIndex = 'rangeStartIndex',
+  unstaked = 'unstaked'
 }
 
 export type _Block_ = {
@@ -595,9 +595,9 @@ export type _Meta_ = {
 
 export enum _SubgraphErrorPolicy_ {
   /** Data will be returned even if the subgraph has indexing errors */
-  Allow = 'allow',
+  allow = 'allow',
   /** If the subgraph has indexing errors, data will be omitted. The default. */
-  Deny = 'deny'
+  deny = 'deny'
 }
 
 

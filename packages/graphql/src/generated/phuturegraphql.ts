@@ -212,26 +212,26 @@ export type Asset_Filter = {
 };
 
 export enum Asset_OrderBy {
-  Indexes = '_indexes',
-  VTokens = '_vTokens',
-  BasePrice = 'basePrice',
-  BasePriceSushi = 'basePriceSushi',
-  BasePriceUni = 'basePriceUni',
-  DailyStats = 'dailyStats',
-  Decimals = 'decimals',
-  Id = 'id',
-  IndexCount = 'indexCount',
-  Indexes = 'indexes',
-  IsWhitelisted = 'isWhitelisted',
-  MarketCap = 'marketCap',
-  Name = 'name',
-  PairsAsAsset0 = 'pairsAsAsset0',
-  PairsAsAsset1 = 'pairsAsAsset1',
-  Symbol = 'symbol',
-  TotalSupply = 'totalSupply',
-  VTokens = 'vTokens',
-  VaultBaseReserve = 'vaultBaseReserve',
-  VaultReserve = 'vaultReserve'
+  _indexes = '_indexes',
+  _vTokens = '_vTokens',
+  basePrice = 'basePrice',
+  basePriceSushi = 'basePriceSushi',
+  basePriceUni = 'basePriceUni',
+  dailyStats = 'dailyStats',
+  decimals = 'decimals',
+  id = 'id',
+  indexCount = 'indexCount',
+  indexes = 'indexes',
+  isWhitelisted = 'isWhitelisted',
+  marketCap = 'marketCap',
+  name = 'name',
+  pairsAsAsset0 = 'pairsAsAsset0',
+  pairsAsAsset1 = 'pairsAsAsset1',
+  symbol = 'symbol',
+  totalSupply = 'totalSupply',
+  vTokens = 'vTokens',
+  vaultBaseReserve = 'vaultBaseReserve',
+  vaultReserve = 'vaultReserve'
 }
 
 export type Block_Height = {
@@ -329,13 +329,13 @@ export type ChainLinkAgg_Filter = {
 };
 
 export enum ChainLinkAgg_OrderBy {
-  Answer = 'answer',
-  Asset = 'asset',
-  Decimals = 'decimals',
-  Description = 'description',
-  Id = 'id',
-  NextAgg = 'nextAgg',
-  UpdatedAt = 'updatedAt'
+  answer = 'answer',
+  asset = 'asset',
+  decimals = 'decimals',
+  description = 'description',
+  id = 'id',
+  nextAgg = 'nextAgg',
+  updatedAt = 'updatedAt'
 }
 
 export type Dex = {
@@ -385,9 +385,9 @@ export type Dex_Filter = {
 };
 
 export enum Dex_OrderBy {
-  Id = 'id',
-  Router = 'router',
-  Type = 'type'
+  id = 'id',
+  router = 'router',
+  type = 'type'
 }
 
 export type DailyAssetStat = {
@@ -458,12 +458,12 @@ export type DailyAssetStat_Filter = {
 };
 
 export enum DailyAssetStat_OrderBy {
-  Asset = 'asset',
-  BasePrice = 'basePrice',
-  Date = 'date',
-  Id = 'id',
-  VaultBaseReserve = 'vaultBaseReserve',
-  VaultReserve = 'vaultReserve'
+  asset = 'asset',
+  basePrice = 'basePrice',
+  date = 'date',
+  id = 'id',
+  vaultBaseReserve = 'vaultBaseReserve',
+  vaultReserve = 'vaultReserve'
 }
 
 export type DailyCapitalization = {
@@ -525,11 +525,11 @@ export type DailyCapitalization_Filter = {
 };
 
 export enum DailyCapitalization_OrderBy {
-  Capitalization = 'capitalization',
-  Id = 'id',
-  Index = 'index',
-  LogIndex = 'logIndex',
-  Timestamp = 'timestamp'
+  capitalization = 'capitalization',
+  id = 'id',
+  index = 'index',
+  logIndex = 'logIndex',
+  timestamp = 'timestamp'
 }
 
 export type DailyIndexStat = {
@@ -620,14 +620,14 @@ export type DailyIndexStat_Filter = {
 };
 
 export enum DailyIndexStat_OrderBy {
-  BasePrice = 'basePrice',
-  BasePriceEth = 'basePriceETH',
-  BaseVolume = 'baseVolume',
-  Date = 'date',
-  Id = 'id',
-  Index = 'index',
-  MarketCap = 'marketCap',
-  UniqueHolders = 'uniqueHolders'
+  basePrice = 'basePrice',
+  basePriceETH = 'basePriceETH',
+  baseVolume = 'baseVolume',
+  date = 'date',
+  id = 'id',
+  index = 'index',
+  marketCap = 'marketCap',
+  uniqueHolders = 'uniqueHolders'
 }
 
 export type DailyStat = {
@@ -674,10 +674,10 @@ export type DailyStat_Filter = {
 };
 
 export enum DailyStat_OrderBy {
-  Date = 'date',
-  Id = 'id',
-  IndexCount = 'indexCount',
-  TotalValueLocked = 'totalValueLocked'
+  date = 'date',
+  id = 'id',
+  indexCount = 'indexCount',
+  totalValueLocked = 'totalValueLocked'
 }
 
 export type DailyUserIndexHistory = {
@@ -802,17 +802,17 @@ export type DailyUserIndexHistory_Filter = {
 };
 
 export enum DailyUserIndexHistory_OrderBy {
-  AvgBalance = 'avgBalance',
-  AvgCapitalization = 'avgCapitalization',
-  Id = 'id',
-  Index = 'index',
-  LogIndex = 'logIndex',
-  Number = 'number',
-  Timestamp = 'timestamp',
-  Total = 'total',
-  TotalCap = 'totalCap',
-  TotalSupply = 'totalSupply',
-  User = 'user'
+  avgBalance = 'avgBalance',
+  avgCapitalization = 'avgCapitalization',
+  id = 'id',
+  index = 'index',
+  logIndex = 'logIndex',
+  number = 'number',
+  timestamp = 'timestamp',
+  total = 'total',
+  totalCap = 'totalCap',
+  totalSupply = 'totalSupply',
+  user = 'user'
 }
 
 export type HourlyIndexStat = {
@@ -892,13 +892,13 @@ export type HourlyIndexStat_Filter = {
 };
 
 export enum HourlyIndexStat_OrderBy {
-  BasePrice = 'basePrice',
-  BaseVolume = 'baseVolume',
-  Date = 'date',
-  Id = 'id',
-  Index = 'index',
-  MarketCap = 'marketCap',
-  UniqueHolders = 'uniqueHolders'
+  basePrice = 'basePrice',
+  baseVolume = 'baseVolume',
+  date = 'date',
+  id = 'id',
+  index = 'index',
+  marketCap = 'marketCap',
+  uniqueHolders = 'uniqueHolders'
 }
 
 export type Index = {
@@ -1092,12 +1092,12 @@ export type IndexAsset_Filter = {
 };
 
 export enum IndexAsset_OrderBy {
-  Asset = 'asset',
-  Id = 'id',
-  InactiveIndex = 'inactiveIndex',
-  Index = 'index',
-  Shares = 'shares',
-  Weight = 'weight'
+  asset = 'asset',
+  id = 'id',
+  inactiveIndex = 'inactiveIndex',
+  index = 'index',
+  shares = 'shares',
+  weight = 'weight'
 }
 
 export type IndexFactory = {
@@ -1158,10 +1158,10 @@ export type IndexFactory_Filter = {
 };
 
 export enum IndexFactory_OrderBy {
-  Id = 'id',
-  Indices = 'indices',
-  Type = 'type',
-  VTokenFactory = 'vTokenFactory'
+  id = 'id',
+  indices = 'indices',
+  type = 'type',
+  vTokenFactory = 'vTokenFactory'
 }
 
 export type Index_Filter = {
@@ -1350,34 +1350,34 @@ export type Index_Filter = {
 };
 
 export enum Index_OrderBy {
-  Assets = '_assets',
-  InactiveAssets = '_inactiveAssets',
-  Assets = 'assets',
-  BasePrice = 'basePrice',
-  BasePriceEth = 'basePriceETH',
-  BaseVolume = 'baseVolume',
-  Created = 'created',
-  DailyStats = 'dailyStats',
-  Decimals = 'decimals',
-  FeeAumPercent = 'feeAUMPercent',
-  FeeBurn = 'feeBurn',
-  FeeMint = 'feeMint',
-  HourlyStats = 'hourlyStats',
-  Id = 'id',
-  InactiveAssets = 'inactiveAssets',
-  IndexFactory = 'indexFactory',
-  MarketCap = 'marketCap',
-  MonthlyStats = 'monthlyStats',
-  Name = 'name',
-  Sector = 'sector',
-  Symbol = 'symbol',
-  TotalSupply = 'totalSupply',
-  Transaction = 'transaction',
-  Type = 'type',
-  UniqueHolders = 'uniqueHolders',
-  Users = 'users',
-  WeeklyStats = 'weeklyStats',
-  YearlyStats = 'yearlyStats'
+  _assets = '_assets',
+  _inactiveAssets = '_inactiveAssets',
+  assets = 'assets',
+  basePrice = 'basePrice',
+  basePriceETH = 'basePriceETH',
+  baseVolume = 'baseVolume',
+  created = 'created',
+  dailyStats = 'dailyStats',
+  decimals = 'decimals',
+  feeAUMPercent = 'feeAUMPercent',
+  feeBurn = 'feeBurn',
+  feeMint = 'feeMint',
+  hourlyStats = 'hourlyStats',
+  id = 'id',
+  inactiveAssets = 'inactiveAssets',
+  indexFactory = 'indexFactory',
+  marketCap = 'marketCap',
+  monthlyStats = 'monthlyStats',
+  name = 'name',
+  sector = 'sector',
+  symbol = 'symbol',
+  totalSupply = 'totalSupply',
+  transaction = 'transaction',
+  type = 'type',
+  uniqueHolders = 'uniqueHolders',
+  users = 'users',
+  weeklyStats = 'weeklyStats',
+  yearlyStats = 'yearlyStats'
 }
 
 export type LastOrderIndex = {
@@ -1427,9 +1427,9 @@ export type LastOrderIndex_Filter = {
 };
 
 export enum LastOrderIndex_OrderBy {
-  Id = 'id',
-  Index = 'index',
-  Order = 'order'
+  id = 'id',
+  index = 'index',
+  order = 'order'
 }
 
 export type MonthlyIndexStat = {
@@ -1520,14 +1520,14 @@ export type MonthlyIndexStat_Filter = {
 };
 
 export enum MonthlyIndexStat_OrderBy {
-  BasePrice = 'basePrice',
-  BasePriceEth = 'basePriceETH',
-  BaseVolume = 'baseVolume',
-  Date = 'date',
-  Id = 'id',
-  Index = 'index',
-  MarketCap = 'marketCap',
-  UniqueHolders = 'uniqueHolders'
+  basePrice = 'basePrice',
+  basePriceETH = 'basePriceETH',
+  baseVolume = 'baseVolume',
+  date = 'date',
+  id = 'id',
+  index = 'index',
+  marketCap = 'marketCap',
+  uniqueHolders = 'uniqueHolders'
 }
 
 export type Order = {
@@ -1619,16 +1619,16 @@ export type OrderDetailsInfo_Filter = {
 };
 
 export enum OrderDetailsInfo_OrderBy {
-  Asset = 'asset',
-  Id = 'id',
-  Order = 'order',
-  Shares = 'shares',
-  Side = 'side'
+  asset = 'asset',
+  id = 'id',
+  order = 'order',
+  shares = 'shares',
+  side = 'side'
 }
 
 export enum OrderDirection {
-  Asc = 'asc',
-  Desc = 'desc'
+  asc = 'asc',
+  desc = 'desc'
 }
 
 export type Order_Filter = {
@@ -1665,10 +1665,10 @@ export type Order_Filter = {
 };
 
 export enum Order_OrderBy {
-  Id = 'id',
-  Index = 'index',
-  OrderDetails = 'orderDetails',
-  OrderId = 'order_id'
+  id = 'id',
+  index = 'index',
+  orderDetails = 'orderDetails',
+  order_id = 'order_id'
 }
 
 export type Pair = {
@@ -1760,13 +1760,13 @@ export type Pair_Filter = {
 };
 
 export enum Pair_OrderBy {
-  Asset0 = 'asset0',
-  Asset0Reserve = 'asset0Reserve',
-  Asset1 = 'asset1',
-  Asset1Reserve = 'asset1Reserve',
-  Id = 'id',
-  Swap = 'swap',
-  TotalSupply = 'totalSupply'
+  asset0 = 'asset0',
+  asset0Reserve = 'asset0Reserve',
+  asset1 = 'asset1',
+  asset1Reserve = 'asset1Reserve',
+  id = 'id',
+  swap = 'swap',
+  totalSupply = 'totalSupply'
 }
 
 export type Query = {
@@ -2395,9 +2395,9 @@ export type Stat_Filter = {
 };
 
 export enum Stat_OrderBy {
-  Id = 'id',
-  IndexCount = 'indexCount',
-  TotalValueLocked = 'totalValueLocked'
+  id = 'id',
+  indexCount = 'indexCount',
+  totalValueLocked = 'totalValueLocked'
 }
 
 export type Subscription = {
@@ -3080,13 +3080,13 @@ export type SushiPair_Filter = {
 };
 
 export enum SushiPair_OrderBy {
-  Asset0 = 'asset0',
-  Asset0Reserve = 'asset0Reserve',
-  Asset1 = 'asset1',
-  Asset1Reserve = 'asset1Reserve',
-  Id = 'id',
-  Swap = 'swap',
-  TotalSupply = 'totalSupply'
+  asset0 = 'asset0',
+  asset0Reserve = 'asset0Reserve',
+  asset1 = 'asset1',
+  asset1Reserve = 'asset1Reserve',
+  id = 'id',
+  swap = 'swap',
+  totalSupply = 'totalSupply'
 }
 
 export type Swap = {
@@ -3116,8 +3116,8 @@ export type Swap_Filter = {
 };
 
 export enum Swap_OrderBy {
-  Id = 'id',
-  Pairs = 'pairs'
+  id = 'id',
+  pairs = 'pairs'
 }
 
 export type Transaction = {
@@ -3196,13 +3196,13 @@ export type Transaction_Filter = {
 };
 
 export enum Transaction_OrderBy {
-  BlockNumber = 'blockNumber',
-  GasPrice = 'gasPrice',
-  GasUsed = 'gasUsed',
-  Id = 'id',
-  Timestamp = 'timestamp',
-  Transfers = 'transfers',
-  Value = 'value'
+  blockNumber = 'blockNumber',
+  gasPrice = 'gasPrice',
+  gasUsed = 'gasUsed',
+  id = 'id',
+  timestamp = 'timestamp',
+  transfers = 'transfers',
+  value = 'value'
 }
 
 export type Transfer = {
@@ -3286,13 +3286,13 @@ export type Transfer_Filter = {
 };
 
 export enum Transfer_OrderBy {
-  From = 'from',
-  Id = 'id',
-  Index = 'index',
-  To = 'to',
-  Transaction = 'transaction',
-  Type = 'type',
-  Value = 'value'
+  from = 'from',
+  id = 'id',
+  index = 'index',
+  to = 'to',
+  transaction = 'transaction',
+  type = 'type',
+  value = 'value'
 }
 
 export type User = {
@@ -3369,11 +3369,11 @@ export type UserCapitalization_Filter = {
 };
 
 export enum UserCapitalization_OrderBy {
-  Capitalization = 'capitalization',
-  Id = 'id',
-  Index = 'index',
-  LogIndex = 'logIndex',
-  Timestamp = 'timestamp'
+  capitalization = 'capitalization',
+  id = 'id',
+  index = 'index',
+  logIndex = 'logIndex',
+  timestamp = 'timestamp'
 }
 
 export type UserIndex = {
@@ -3483,14 +3483,14 @@ export type UserIndexHistory_Filter = {
 };
 
 export enum UserIndexHistory_OrderBy {
-  Balance = 'balance',
-  Capitalization = 'capitalization',
-  Id = 'id',
-  Index = 'index',
-  LogIndex = 'logIndex',
-  Timestamp = 'timestamp',
-  TotalSupply = 'totalSupply',
-  User = 'user'
+  balance = 'balance',
+  capitalization = 'capitalization',
+  id = 'id',
+  index = 'index',
+  logIndex = 'logIndex',
+  timestamp = 'timestamp',
+  totalSupply = 'totalSupply',
+  user = 'user'
 }
 
 export type UserIndex_Filter = {
@@ -3549,11 +3549,11 @@ export type UserIndex_Filter = {
 };
 
 export enum UserIndex_OrderBy {
-  Balance = 'balance',
-  Capitalization = 'capitalization',
-  Id = 'id',
-  Index = 'index',
-  User = 'user'
+  balance = 'balance',
+  capitalization = 'capitalization',
+  id = 'id',
+  index = 'index',
+  user = 'user'
 }
 
 export type User_Filter = {
@@ -3568,8 +3568,8 @@ export type User_Filter = {
 };
 
 export enum User_OrderBy {
-  Id = 'id',
-  Indexes = 'indexes'
+  id = 'id',
+  indexes = 'indexes'
 }
 
 export type WeeklyIndexStat = {
@@ -3660,14 +3660,14 @@ export type WeeklyIndexStat_Filter = {
 };
 
 export enum WeeklyIndexStat_OrderBy {
-  BasePrice = 'basePrice',
-  BasePriceEth = 'basePriceETH',
-  BaseVolume = 'baseVolume',
-  Date = 'date',
-  Id = 'id',
-  Index = 'index',
-  MarketCap = 'marketCap',
-  UniqueHolders = 'uniqueHolders'
+  basePrice = 'basePrice',
+  basePriceETH = 'basePriceETH',
+  baseVolume = 'baseVolume',
+  date = 'date',
+  id = 'id',
+  index = 'index',
+  marketCap = 'marketCap',
+  uniqueHolders = 'uniqueHolders'
 }
 
 export type YearlyIndexStat = {
@@ -3758,14 +3758,14 @@ export type YearlyIndexStat_Filter = {
 };
 
 export enum YearlyIndexStat_OrderBy {
-  BasePrice = 'basePrice',
-  BasePriceEth = 'basePriceETH',
-  BaseVolume = 'baseVolume',
-  Date = 'date',
-  Id = 'id',
-  Index = 'index',
-  MarketCap = 'marketCap',
-  UniqueHolders = 'uniqueHolders'
+  basePrice = 'basePrice',
+  basePriceETH = 'basePriceETH',
+  baseVolume = 'baseVolume',
+  date = 'date',
+  id = 'id',
+  index = 'index',
+  marketCap = 'marketCap',
+  uniqueHolders = 'uniqueHolders'
 }
 
 export type _Block_ = {
@@ -3795,9 +3795,9 @@ export type _Meta_ = {
 
 export enum _SubgraphErrorPolicy_ {
   /** Data will be returned even if the subgraph has indexing errors */
-  Allow = 'allow',
+  allow = 'allow',
   /** If the subgraph has indexing errors, data will be omitted. The default. */
-  Deny = 'deny'
+  deny = 'deny'
 }
 
 export type VToken = {
@@ -3920,16 +3920,16 @@ export type VToken_Filter = {
 };
 
 export enum VToken_OrderBy {
-  Asset = 'asset',
-  AssetReserve = 'assetReserve',
-  Capitalization = 'capitalization',
-  Deposited = 'deposited',
-  Factory = 'factory',
-  Id = 'id',
-  PlatformTotalSupply = 'platformTotalSupply',
-  PlatformTotalSupplyDec = 'platformTotalSupplyDec',
-  TokenType = 'tokenType',
-  TotalAmount = 'totalAmount'
+  asset = 'asset',
+  assetReserve = 'assetReserve',
+  capitalization = 'capitalization',
+  deposited = 'deposited',
+  factory = 'factory',
+  id = 'id',
+  platformTotalSupply = 'platformTotalSupply',
+  platformTotalSupplyDec = 'platformTotalSupplyDec',
+  tokenType = 'tokenType',
+  totalAmount = 'totalAmount'
 }
 
 export type GetCapitalizationsQueryVariables = Exact<{
@@ -3939,15 +3939,15 @@ export type GetCapitalizationsQueryVariables = Exact<{
 
 export type GetCapitalizationsQuery = { __typename?: 'Query', dailyCapitalizations: Array<{ __typename?: 'DailyCapitalization', id: string, capitalization: any, timestamp: any, logIndex: any, index: { __typename?: 'Index', id: string, symbol: string } }> };
 
-export type GetUserIndexQueryVariables = Exact<{
+export type GetUserIndicesQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetUserIndexQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', indexes: Array<{ __typename?: 'UserIndex', index: { __typename?: 'Index', id: string, symbol: string, name: string } }> }> };
+export type GetUserIndicesQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', indexes: Array<{ __typename?: 'UserIndex', index: { __typename?: 'Index', id: string, symbol: string, name: string } }> }> };
 
 export type GetUserIndexHistoriesQueryVariables = Exact<{
-  userId: Scalars['String'];
+  id: Scalars['String'];
   dateLimit: Scalars['BigInt'];
 }>;
 
@@ -3969,8 +3969,8 @@ export const GetCapitalizationsDocument = gql`
   }
 }
     `;
-export const GetUserIndexDocument = gql`
-    query getUserIndex($id: ID!) {
+export const GetUserIndicesDocument = gql`
+    query getUserIndices($id: ID!) {
   users(where: {id: $id}) {
     indexes {
       index {
@@ -3983,11 +3983,8 @@ export const GetUserIndexDocument = gql`
 }
     `;
 export const GetUserIndexHistoriesDocument = gql`
-    query getUserIndexHistories($userId: String!, $dateLimit: BigInt!) {
-  userIndexHistories(
-    where: {user: $userId, timestamp_gte: $dateLimit}
-    orderBy: id
-  ) {
+    query getUserIndexHistories($id: String!, $dateLimit: BigInt!) {
+  userIndexHistories(where: {user: $id, timestamp_gte: $dateLimit}, orderBy: id) {
     index {
       id
       symbol
@@ -4014,8 +4011,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getCapitalizations(variables: GetCapitalizationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCapitalizationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCapitalizationsQuery>(GetCapitalizationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCapitalizations', 'query');
     },
-    getUserIndex(variables: GetUserIndexQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndexQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndexQuery>(GetUserIndexDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndex', 'query');
+    getUserIndices(variables: GetUserIndicesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndicesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndicesQuery>(GetUserIndicesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndices', 'query');
     },
     getUserIndexHistories(variables: GetUserIndexHistoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndexHistoriesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndexHistoriesQuery>(GetUserIndexHistoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndexHistories', 'query');
