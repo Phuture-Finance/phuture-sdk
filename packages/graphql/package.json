@@ -40,7 +40,11 @@
     "prettier": true,
     "rules": {
       "import/extensions": 0
-    }
+    },
+    "ignores": [
+			"./test",
+			"./src/generated"
+		]
   },
   "dependencies": {
     "graphql": "^16.5.0",

@@ -1,2 +1,1 @@
-
-export { getGraphQLClient, lmGraphQL, phutureGraphQL} from './graphql';
+export {getGraphQlClient, lmGraphQl, phutureGraphQl} from './graphql';
