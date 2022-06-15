@@ -8,7 +8,7 @@ generates:
       - "typescript-graphql-request"
   ./src/generated/lmgraphql.ts:
     schema: "https://api.thegraph.com/subgraphs/name/hvrlk/lm"
-    # documents: "./queries/liquiditymining/**/*.graphql"
+    documents: "./schemas/liquiditymining/**/*.graphql"
     plugins:
       - "typescript"
       - "typescript-operations"
