@@ -91,11 +91,13 @@ test('fetch daily cap', async () => {
 
 test('fetch index info', async () => { 
 	// Setup
+    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092";
 	// execute
-	const {index} = await phutureGraphQl().getIndexInfo({id: "0xf9ccb834adbe4591fd517aa69a24bf97d1386092" });
+	const {index} = await phutureGraphQl().getIndexInfo({id});
     
 	// Verify
 	expect(index).not.to.be.undefined;
+    expect(index?.id).to.equal(id)
 })
 
 test('get reserves', async () => { 
@@ -105,17 +107,28 @@ test('get reserves', async () => {
 	const {reserves} = await lmGraphQl().getReserves();
     
 	// Verify
-	expect(reserves).not.to.be.undefined;
+	expect(reserves).not.to.be.empty
 })
-getRangesByAddress
-
 
 test('get ranges by address', async () => { 
 
     // Setup
+    const address = "0x0815c1e34a819f48d480a173db83b58c076d7299";
 	// execute
-	const {vestingRanges} = await lmGraphQl().getRangesByAddress({address: ""});
+	const {vestingRanges} = await lmGraphQl().getRangesByAddress({address});
     
 	// Verify
-	expect(reserves).not.to.be.undefined;
+	expect(vestingRanges).not.to.be.empty;
+    expect(vestingRanges[0]?.account).to.equal(address)
+})
+
+test('get stats', async () => { 
+	// Setup
+    const id = "0xd0ff91311967d8279fdcd0d3fa8c49e07b5f2380"
+	// execute
+	const {stat} = await phutureGraphQl().getStats({id});
+    
+	// Verify
+	expect(stat).not.to.be.undefined;
+    expect(stat?.id).to.equal(id)
 })

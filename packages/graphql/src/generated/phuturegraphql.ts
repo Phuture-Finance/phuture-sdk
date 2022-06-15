@@ -3969,6 +3969,13 @@ export type GetIndexInfoQueryVariables = Exact<{
 
 export type GetIndexInfoQuery = { __typename?: 'Query', index?: { __typename?: 'Index', id: string, totalSupply: any, symbol: string, decimals: any, name: string, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any } | null };
 
+export type GetStatsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetStatsQuery = { __typename?: 'Query', stat?: { __typename?: 'Stat', id: string, indexCount: any, totalValueLocked: any } | null };
+
 export type GetUserIndicesQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -4093,6 +4100,15 @@ export const GetIndexInfoDocument = gql`
   }
 }
     `;
+export const GetStatsDocument = gql`
+    query getStats($id: ID!) {
+  stat(id: $id) {
+    id
+    indexCount
+    totalValueLocked
+  }
+}
+    `;
 export const GetUserIndicesDocument = gql`
     query getUserIndices($id: ID!) {
   users(where: {id: $id}) {
@@ -4146,6 +4162,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getIndexInfo(variables: GetIndexInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetIndexInfoQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetIndexInfoQuery>(GetIndexInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getIndexInfo', 'query');
+    },
+    getStats(variables: GetStatsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetStatsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetStatsQuery>(GetStatsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getStats', 'query');
     },
     getUserIndices(variables: GetUserIndicesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndicesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndicesQuery>(GetUserIndicesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndices', 'query');
