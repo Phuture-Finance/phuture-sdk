@@ -164,7 +164,7 @@ test('get user indices details', async () => {
 	expect(users).not.to.be.empty;
 })
 
-test('get user indices details', async () => { 
+test('get index detailed', async () => { 
 	// Setup
     const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092";
 	// execute
@@ -174,7 +174,7 @@ test('get user indices details', async () => {
 	expect(indexes).not.to.be.empty;
 })
 
-test('get user indices details', async () => { 
+test('get all indices', async () => { 
 	
 	// execute
 	const {indexes} = await phutureGraphQl().getAllIndices();
