@@ -175,8 +175,8 @@ test('get user indices details', async () => {
 
 test('get indices page', async () => { 
 	// Setup
-    const first = 2;
-	const skip = 3;
+    const first = 1000;
+	const skip = 0;
 
 	// execute
 	const {indexes} = await phutureGraphQl().getIndicesPage({first, skip})
