@@ -15,11 +15,8 @@ export class Erc20 {
 	 *
 	 * @returns New ERC20 token instance
 	 */
-	static fromContract(_contract: ERC20ContractInterface): Erc20 {
-		const erc20 = new this(
-			_contract.provider,
-			_contract.address ?? constants.AddressZero,
-		);
+	static fromContract(_contract: ERC20ContractInterface) {
+		const erc20 = new this(_contract.address, _contract.provider);
 
 		erc20.contract = _contract;
 
@@ -39,8 +36,8 @@ export class Erc20 {
 	 * @returns New ERC20 token instance
 	 */
 	constructor(
-		signerOrProvider: Signer | ethers.providers.Provider,
-		contractAddress: string = DefaultUsdcAddress.Mainnet,
+		contractAddress: string,
+		signerOrProvider?: Signer | ethers.providers.Provider,
 	) {
 		signerOrProvider ??= ethers.providers.getDefaultProvider();
 

@@ -33,6 +33,14 @@
 		"typescript": "4.7.2"
 	},
 	"jest": {
-		"preset": "ts-jest"
+		"preset": "ts-jest",
+		"testPathIgnorePatterns": [
+			"dist",
+			"src/types"
+		],
+		"coveragePathIgnorePatterns": [
+			"dist",
+			"src/types"
+		]
 	}
 }
