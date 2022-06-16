@@ -3932,6 +3932,11 @@ export enum VToken_OrderBy {
   totalAmount = 'totalAmount'
 }
 
+export type GetAllIndicesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllIndicesQuery = { __typename?: 'Query', indexes: Array<{ __typename?: 'Index', id: string, totalSupply: any, created: any, type: string, symbol: string, name: string, decimals: any, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, weight: any, asset: { __typename?: 'Asset', id: string, decimals: any, name: string, symbol: string, vaultReserve: any, basePrice: any } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any, blockNumber: any }, dailyStats: Array<{ __typename?: 'DailyIndexStat', id: string, date: number, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any }> }> };
+
 export type GetCapitalizationsQueryVariables = Exact<{
   timestamp_gte: Scalars['BigInt'];
 }>;
@@ -3955,6 +3960,13 @@ export type GetDailyCapQueryVariables = Exact<{
 
 export type GetDailyCapQuery = { __typename?: 'Query', dailyCapitalizations: Array<{ __typename?: 'DailyCapitalization', id: string, capitalization: any, timestamp: any, logIndex: any, index: { __typename?: 'Index', id: string, symbol: string } }> };
 
+export type GetIndexQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetIndexQuery = { __typename?: 'Query', indexes: Array<{ __typename?: 'Index', id: string, totalSupply: any, symbol: string, name: string, decimals: any, type: string, basePrice: any, basePriceETH: any, marketCap: any, baseVolume: any, uniqueHolders: any, feeBurn: any, feeMint: any, feeAUMPercent: any, created: any, sector: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any, user: { __typename?: 'User', id: string } }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, shares: any, weight: any, asset: { __typename?: 'Asset', decimals: any, id: string, name: string, symbol: string, vaultReserve: any, basePrice: any, vTokens: Array<{ __typename?: 'vToken', id: string, tokenType: string, factory: string, deposited: any, platformTotalSupply: any, platformTotalSupplyDec: any, capitalization: any, assetReserve: any, totalAmount: any }> } }> | null, inactiveAssets?: Array<{ __typename?: 'IndexAsset', id: string, shares: any, weight: any, asset: { __typename?: 'Asset', decimals: any, id: string, name: string, symbol: string, vaultReserve: any, basePrice: any, vTokens: Array<{ __typename?: 'vToken', id: string, tokenType: string, factory: string, deposited: any, platformTotalSupply: any, platformTotalSupplyDec: any, capitalization: any, assetReserve: any, totalAmount: any }> } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any, blockNumber: any }, indexFactory: { __typename?: 'IndexFactory', id: string, type: string, vTokenFactory: string }, dailyStats: Array<{ __typename?: 'DailyIndexStat', basePrice: any, basePriceETH: any, date: number }> }> };
+
 export type GetPortfolioDataQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -3962,12 +3974,27 @@ export type GetPortfolioDataQueryVariables = Exact<{
 
 export type GetPortfolioDataQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', indexes: Array<{ __typename?: 'UserIndex', index: { __typename?: 'Index', id: string, totalSupply: any, type: string, symbol: string, decimals: any, name: string, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, weight: any, index?: { __typename?: 'Index', id: string } | null, asset: { __typename?: 'Asset', decimals: any, id: string, symbol: string, vaultReserve: any, basePrice: any } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any }, dailyStats: Array<{ __typename?: 'DailyIndexStat', id: string, date: number, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, index: { __typename?: 'Index', id: string } }> } }> }> };
 
+export type GetIndexDetailedQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetIndexDetailedQuery = { __typename?: 'Query', indexes: Array<{ __typename?: 'Index', id: string, totalSupply: any, symbol: string, name: string, decimals: any, type: string, basePrice: any, basePriceETH: any, marketCap: any, baseVolume: any, uniqueHolders: any, feeBurn: any, feeMint: any, feeAUMPercent: any, created: any, sector: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any, user: { __typename?: 'User', id: string } }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, shares: any, weight: any, asset: { __typename?: 'Asset', decimals: any, id: string, name: string, symbol: string, vaultReserve: any, basePrice: any, vTokens: Array<{ __typename?: 'vToken', id: string, tokenType: string, factory: string, deposited: any, platformTotalSupply: any, platformTotalSupplyDec: any, capitalization: any, assetReserve: any, totalAmount: any }> } }> | null, inactiveAssets?: Array<{ __typename?: 'IndexAsset', id: string, shares: any, weight: any, asset: { __typename?: 'Asset', decimals: any, id: string, name: string, symbol: string, vaultReserve: any, basePrice: any, vTokens: Array<{ __typename?: 'vToken', id: string, tokenType: string, factory: string, deposited: any, platformTotalSupply: any, platformTotalSupplyDec: any, capitalization: any, assetReserve: any, totalAmount: any }> } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any, blockNumber: any }, indexFactory: { __typename?: 'IndexFactory', id: string, type: string, vTokenFactory: string }, dailyStats: Array<{ __typename?: 'DailyIndexStat', basePrice: any, basePriceETH: any, date: number }> }> };
+
 export type GetIndexInfoQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
 export type GetIndexInfoQuery = { __typename?: 'Query', index?: { __typename?: 'Index', id: string, totalSupply: any, symbol: string, decimals: any, name: string, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any } | null };
+
+export type GetIndicesPageQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetIndicesPageQuery = { __typename?: 'Query', indexes: Array<{ __typename?: 'Index', id: string, totalSupply: any, type: string, symbol: string, name: string, decimals: any, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, weight: any, index?: { __typename?: 'Index', id: string } | null, asset: { __typename?: 'Asset', id: string, decimals: any, symbol: string, vaultReserve: any, basePrice: any } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any }, dailyStats: Array<{ __typename?: 'DailyIndexStat', id: string, date: number, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, index: { __typename?: 'Index', id: string } }> }> };
 
 export type GetStatsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -3991,7 +4018,60 @@ export type GetUserIndexHistoriesQueryVariables = Exact<{
 
 export type GetUserIndexHistoriesQuery = { __typename?: 'Query', userIndexHistories: Array<{ __typename?: 'UserIndexHistory', balance: any, capitalization: any, totalSupply: any, logIndex: any, timestamp: any, index: { __typename?: 'Index', id: string, symbol: string }, user: { __typename?: 'User', id: string } }> };
 
+export type GetUserIndicesDetailedQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
 
+
+export type GetUserIndicesDetailedQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, indexes: Array<{ __typename?: 'UserIndex', index: { __typename?: 'Index', id: string, totalSupply: any, type: string, symbol: string, decimals: any, name: string, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, weight: any, index?: { __typename?: 'Index', id: string } | null, asset: { __typename?: 'Asset', decimals: any, id: string, symbol: string, vaultReserve: any, basePrice: any } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any }, dailyStats: Array<{ __typename?: 'DailyIndexStat', id: string, date: number, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, index: { __typename?: 'Index', id: string } }> } }> }> };
+
+
+export const GetAllIndicesDocument = gql`
+    query getAllIndices {
+  indexes {
+    id
+    totalSupply
+    created
+    type
+    symbol
+    name
+    decimals
+    users {
+      id
+      balance
+    }
+    assets {
+      id
+      weight
+      asset {
+        id
+        decimals
+        name
+        symbol
+        vaultReserve
+        basePrice
+      }
+    }
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+    dailyStats {
+      id
+      date
+      basePrice
+      marketCap
+      baseVolume
+      uniqueHolders
+    }
+    basePrice
+    marketCap
+    baseVolume
+    uniqueHolders
+  }
+}
+    `;
 export const GetCapitalizationsDocument = gql`
     query getCapitalizations($timestamp_gte: BigInt!) {
   dailyCapitalizations(where: {timestamp_gte: $timestamp_gte}, orderBy: id) {
@@ -4029,6 +4109,98 @@ export const GetDailyCapDocument = gql`
     capitalization
     timestamp
     logIndex
+  }
+}
+    `;
+export const GetIndexDocument = gql`
+    query getIndex($id: ID!) {
+  indexes(where: {id: $id}) {
+    id
+    totalSupply
+    symbol
+    name
+    decimals
+    type
+    users {
+      id
+      user {
+        id
+      }
+      balance
+    }
+    assets {
+      id
+      shares
+      weight
+      asset {
+        decimals
+        id
+        name
+        symbol
+        vaultReserve
+        basePrice
+        vTokens {
+          id
+          tokenType
+          factory
+          deposited
+          platformTotalSupply
+          platformTotalSupplyDec
+          capitalization
+          assetReserve
+          totalAmount
+        }
+      }
+    }
+    inactiveAssets {
+      id
+      shares
+      weight
+      asset {
+        decimals
+        id
+        name
+        symbol
+        vaultReserve
+        basePrice
+        vTokens {
+          id
+          tokenType
+          factory
+          deposited
+          platformTotalSupply
+          platformTotalSupplyDec
+          capitalization
+          assetReserve
+          totalAmount
+        }
+      }
+    }
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+    indexFactory {
+      id
+      type
+      vTokenFactory
+    }
+    basePrice
+    basePriceETH
+    dailyStats {
+      basePrice
+      basePriceETH
+      date
+    }
+    marketCap
+    baseVolume
+    uniqueHolders
+    feeBurn
+    feeMint
+    feeAUMPercent
+    created
+    sector
   }
 }
     `;
@@ -4085,6 +4257,98 @@ export const GetPortfolioDataDocument = gql`
   }
 }
     `;
+export const GetIndexDetailedDocument = gql`
+    query getIndexDetailed($id: ID!) {
+  indexes(where: {id: $id}) {
+    id
+    totalSupply
+    symbol
+    name
+    decimals
+    type
+    users {
+      id
+      user {
+        id
+      }
+      balance
+    }
+    assets {
+      id
+      shares
+      weight
+      asset {
+        decimals
+        id
+        name
+        symbol
+        vaultReserve
+        basePrice
+        vTokens {
+          id
+          tokenType
+          factory
+          deposited
+          platformTotalSupply
+          platformTotalSupplyDec
+          capitalization
+          assetReserve
+          totalAmount
+        }
+      }
+    }
+    inactiveAssets {
+      id
+      shares
+      weight
+      asset {
+        decimals
+        id
+        name
+        symbol
+        vaultReserve
+        basePrice
+        vTokens {
+          id
+          tokenType
+          factory
+          deposited
+          platformTotalSupply
+          platformTotalSupplyDec
+          capitalization
+          assetReserve
+          totalAmount
+        }
+      }
+    }
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+    indexFactory {
+      id
+      type
+      vTokenFactory
+    }
+    basePrice
+    basePriceETH
+    dailyStats {
+      basePrice
+      basePriceETH
+      date
+    }
+    marketCap
+    baseVolume
+    uniqueHolders
+    feeBurn
+    feeMint
+    feeAUMPercent
+    created
+    sector
+  }
+}
+    `;
 export const GetIndexInfoDocument = gql`
     query getIndexInfo($id: ID!) {
   index(id: $id) {
@@ -4093,6 +4357,55 @@ export const GetIndexInfoDocument = gql`
     symbol
     decimals
     name
+    basePrice
+    marketCap
+    baseVolume
+    uniqueHolders
+  }
+}
+    `;
+export const GetIndicesPageDocument = gql`
+    query getIndicesPage($first: Int, $skip: Int) {
+  indexes(first: $first, skip: $skip) {
+    id
+    totalSupply
+    type
+    symbol
+    name
+    decimals
+    users {
+      id
+      balance
+    }
+    assets {
+      id
+      index {
+        id
+      }
+      weight
+      asset {
+        id
+        decimals
+        symbol
+        vaultReserve
+        basePrice
+      }
+    }
+    transaction {
+      id
+      timestamp
+    }
+    dailyStats {
+      id
+      date
+      index {
+        id
+      }
+      basePrice
+      marketCap
+      baseVolume
+      uniqueHolders
+    }
     basePrice
     marketCap
     baseVolume
@@ -4140,6 +4453,60 @@ export const GetUserIndexHistoriesDocument = gql`
   }
 }
     `;
+export const GetUserIndicesDetailedDocument = gql`
+    query getUserIndicesDetailed($id: ID!) {
+  users(where: {id: $id}) {
+    id
+    indexes {
+      index {
+        id
+        totalSupply
+        type
+        symbol
+        decimals
+        name
+        users {
+          id
+          balance
+        }
+        assets {
+          id
+          index {
+            id
+          }
+          weight
+          asset {
+            decimals
+            id
+            symbol
+            vaultReserve
+            basePrice
+          }
+        }
+        transaction {
+          id
+          timestamp
+        }
+        dailyStats {
+          id
+          date
+          index {
+            id
+          }
+          basePrice
+          marketCap
+          baseVolume
+          uniqueHolders
+        }
+        basePrice
+        marketCap
+        baseVolume
+        uniqueHolders
+      }
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -4148,6 +4515,9 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    getAllIndices(variables?: GetAllIndicesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllIndicesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllIndicesQuery>(GetAllIndicesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllIndices', 'query');
+    },
     getCapitalizations(variables: GetCapitalizationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCapitalizationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCapitalizationsQuery>(GetCapitalizationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCapitalizations', 'query');
     },
@@ -4157,11 +4527,20 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getDailyCap(variables: GetDailyCapQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetDailyCapQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetDailyCapQuery>(GetDailyCapDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getDailyCap', 'query');
     },
+    getIndex(variables: GetIndexQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetIndexQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetIndexQuery>(GetIndexDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getIndex', 'query');
+    },
     getPortfolioData(variables: GetPortfolioDataQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPortfolioDataQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPortfolioDataQuery>(GetPortfolioDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPortfolioData', 'query');
     },
+    getIndexDetailed(variables: GetIndexDetailedQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetIndexDetailedQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetIndexDetailedQuery>(GetIndexDetailedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getIndexDetailed', 'query');
+    },
     getIndexInfo(variables: GetIndexInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetIndexInfoQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetIndexInfoQuery>(GetIndexInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getIndexInfo', 'query');
+    },
+    getIndicesPage(variables?: GetIndicesPageQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetIndicesPageQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetIndicesPageQuery>(GetIndicesPageDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getIndicesPage', 'query');
     },
     getStats(variables: GetStatsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetStatsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetStatsQuery>(GetStatsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getStats', 'query');
@@ -4171,6 +4550,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getUserIndexHistories(variables: GetUserIndexHistoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndexHistoriesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndexHistoriesQuery>(GetUserIndexHistoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndexHistories', 'query');
+    },
+    getUserIndicesDetailed(variables: GetUserIndicesDetailedQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserIndicesDetailedQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserIndicesDetailedQuery>(GetUserIndicesDetailedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserIndicesDetailed', 'query');
     }
   };
 }

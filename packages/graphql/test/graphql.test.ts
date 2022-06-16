@@ -132,3 +132,55 @@ test('get stats', async () => {
 	expect(stat).not.to.be.undefined;
     expect(stat?.id).to.equal(id)
 })
+
+test('get index', async () => { 
+	// Setup
+    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092"
+	// execute
+	const {indexes} = await phutureGraphQl().getIndex({id});
+    
+	// Verify
+	expect(indexes).not.to.be.empty;
+})
+
+test('get user indices details', async () => { 
+	// Setup
+    const id = "0x000000000000000000000000000000000000dead"
+	// execute
+	const {users} = await phutureGraphQl().getUserIndicesDetailed({id});
+    
+	// Verify
+	expect(users).not.to.be.empty;
+})
+
+test('get user indices details', async () => { 
+	// Setup
+    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092"
+	// execute
+	const {indexes} = await phutureGraphQl().getIndexDetailed({id});
+    
+	// Verify
+	expect(indexes).not.to.be.empty;
+})
+
+test('get user indices details', async () => { 
+	
+	// execute
+	const {indexes} = await phutureGraphQl().getAllIndices();
+    
+	// Verify
+	expect(indexes).not.to.be.empty;
+})
+
+
+test('get indices page', async () => { 
+	// Setup
+    const first = 2;
+	const skip = 3;
+
+	// execute
+	const {indexes} = await phutureGraphQl().getIndicesPage({first, skip})
+    
+	// Verify
+	expect(indexes).not.to.be.empty;
+})
