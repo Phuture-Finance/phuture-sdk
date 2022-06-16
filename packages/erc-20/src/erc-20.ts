@@ -1,4 +1,4 @@
-import {BigNumber, ethers, Signer, utils} from 'ethers';
+import {BigNumber, constants, ethers, Signer, utils} from 'ethers';
 import {formatUnits} from 'ethers/lib/utils';
 import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
 
@@ -8,8 +8,26 @@ export enum DefaultUsdcAddress {
 }
 
 export class Erc20 {
+	/**
+	 * ### Get new ERC20 token instance from the contract instance
+	 *
+	 * @param _contract ERC20 contract instance
+	 *
+	 * @returns New ERC20 token instance
+	 */
+	static fromContract(_contract: ERC20ContractInterface): Erc20 {
+		const erc20 = new this(
+			_contract.provider,
+			_contract.address ?? constants.AddressZero,
+		);
+
+		erc20.contract = _contract;
+
+		return erc20;
+	}
+
 	/** ### ERC20 contract instance */
-	public readonly contract: ERC20ContractInterface;
+	public contract: ERC20ContractInterface;
 	/** ### Decimals of the token */
 	private _decimals?: number;
 

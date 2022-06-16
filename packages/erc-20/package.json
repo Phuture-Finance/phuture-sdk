@@ -11,10 +11,13 @@
 		"prepublishOnly": "pnpm build",
 		"build": "pnpm typechain && tsc",
 		"typechain": "typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json",
-		"clean": "rimraf dist"
+		"clean": "rimraf dist",
+		"test": "jest",
+		"coverage": "jest --coverage"
 	},
 	"dependencies": {
-		"ethers": "5.6.8"
+		"ethers": "5.6.8",
+		"moq.ts": "^9.0.2"
 	},
 	"devDependencies": {
 		"@types/chai": "4.3.1",
