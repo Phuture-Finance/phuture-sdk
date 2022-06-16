@@ -1,6 +1,6 @@
 
-query getCapitalizations($timestamp_gte: BigInt! ) {
-   dailyCapitalizations(where:{timestamp_gte:$timestamp_gte},orderBy: id) {
+query getCapitalizations($timestamp: BigInt! ) {
+   dailyCapitalizations(where:{timestamp_gte:$timestamp},orderBy: id) {
         id
         index {
           id

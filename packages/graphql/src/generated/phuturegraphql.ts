@@ -3938,7 +3938,7 @@ export type GetAllIndicesQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetAllIndicesQuery = { __typename?: 'Query', indexes: Array<{ __typename?: 'Index', id: string, totalSupply: any, created: any, type: string, symbol: string, name: string, decimals: any, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any, users: Array<{ __typename?: 'UserIndex', id: string, balance: any }>, assets?: Array<{ __typename?: 'IndexAsset', id: string, weight: any, asset: { __typename?: 'Asset', id: string, decimals: any, name: string, symbol: string, vaultReserve: any, basePrice: any } }> | null, transaction: { __typename?: 'Transaction', id: string, timestamp: any, blockNumber: any }, dailyStats: Array<{ __typename?: 'DailyIndexStat', id: string, date: number, basePrice: any, marketCap: any, baseVolume: any, uniqueHolders: any }> }> };
 
 export type GetCapitalizationsQueryVariables = Exact<{
-  timestamp_gte: Scalars['BigInt'];
+  timestamp: Scalars['BigInt'];
 }>;
 
 
@@ -4073,8 +4073,8 @@ export const GetAllIndicesDocument = gql`
 }
     `;
 export const GetCapitalizationsDocument = gql`
-    query getCapitalizations($timestamp_gte: BigInt!) {
-  dailyCapitalizations(where: {timestamp_gte: $timestamp_gte}, orderBy: id) {
+    query getCapitalizations($timestamp: BigInt!) {
+  dailyCapitalizations(where: {timestamp_gte: $timestamp}, orderBy: id) {
     id
     index {
       id

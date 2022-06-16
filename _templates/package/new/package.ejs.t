@@ -10,7 +10,7 @@ to: packages/<%= h.changeCase.param(name) %>/package.json
     "dist"
   ],
   "scripts": {
-  	"test": "jest ./test/*.test.ts",
+  	"test": "jest",
     "prepare": "npm run --silent build",
     "prepublishOnly": "npm lint",
     "build": "tsc",
@@ -28,7 +28,8 @@ to: packages/<%= h.changeCase.param(name) %>/package.json
     "xo": "0.49.0"
   },
   "jest": {
-  	"preset": "ts-jest"
+    "preset": "ts-jest",      
+    "testMatch": ["**/test/*.test.ts"]
   },
   "xo": {
     "prettier": true,

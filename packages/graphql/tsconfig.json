@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
+    "types": ["jest", "node"],
     "target": "es5",
+    "skipLibCheck": true,
     "module": "commonjs",
     "lib": ["es6", "dom"],
-    "declaration": true,
+    "declaration": false,
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "**/*.test.ts"],
   "exclude": [
     "node_modules",
     "dist"
