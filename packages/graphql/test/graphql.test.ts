@@ -124,7 +124,7 @@ test('get ranges by address', async () => {
 
 test('get stats', async () => { 
 	// Setup
-    const id = "0xd0ff91311967d8279fdcd0d3fa8c49e07b5f2380"
+    const id = "0xd0ff91311967d8279fdcd0d3fa8c49e07b5f2380";
 	// execute
 	const {stat} = await phutureGraphQl().getStats({id});
     
@@ -135,7 +135,7 @@ test('get stats', async () => {
 
 test('get index', async () => { 
 	// Setup
-    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092"
+    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092";
 	// execute
 	const {indexes} = await phutureGraphQl().getIndex({id});
     
@@ -145,7 +145,7 @@ test('get index', async () => {
 
 test('get user indices details', async () => { 
 	// Setup
-    const id = "0x000000000000000000000000000000000000dead"
+    const id = "0x000000000000000000000000000000000000dead";
 	// execute
 	const {users} = await phutureGraphQl().getUserIndicesDetailed({id});
     
@@ -155,7 +155,7 @@ test('get user indices details', async () => {
 
 test('get user indices details', async () => { 
 	// Setup
-    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092"
+    const id = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092";
 	// execute
 	const {indexes} = await phutureGraphQl().getIndexDetailed({id});
     

@@ -6,9 +6,9 @@
   "scripts": {
 	"prepare": "husky install",
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "lint": "xo 'packages/**/!(*.test).ts'",
-    "lint:fix": "xo 'packages/**/!(*.test).ts' --fix",
+    "dev": "turbo run dev --parallel", 
+    "lint": "xo \"packages/**/!(*.test).ts\"",
+    "lint:fix": "xo \"packages/**/!(*.test).ts\" --fix",
     "test": "turbo run test --parallel",
     "docs": "typedoc ."
   },
@@ -41,9 +41,14 @@
   },
   "packageManager": "pnpm@7.1.0",
   "xo": {
-	"prettier": true,
-	"rules": {
-	  "import/extensions": 0
-	}
+    "prettier": true,
+    "rules": {
+      "import/extensions": 0
+    },
+    "ignores": [
+      "./packages/**/test/**",
+      "./packages/**/tests/**",
+      "./packages/**/src/generated/**"
+    ]
   }
 }
