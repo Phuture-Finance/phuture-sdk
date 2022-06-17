@@ -1,12 +1,12 @@
-query getDailyCap($date: BigInt!)  {
-      dailyCapitalizations(where:{timestamp_gte:$date},orderBy: id) {
+query getDailyCap($date: BigInt!) {
+    dailyCapitalizations(where: {timestamp_gte: $date}, orderBy: id) {
         id
         index {
-          id
-          symbol
+            id
+            symbol
         }
         capitalization
         timestamp
         logIndex
-      }
     }
+}

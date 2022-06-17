@@ -1,5 +1,5 @@
 query getIndex($id: ID!) {
-    indexes(where: { id:$id }) {
+    indexes(where: {id: $id}) {
         id
         totalSupply
         symbol
@@ -7,76 +7,76 @@ query getIndex($id: ID!) {
         decimals
         type
         users {
-          id
-          user {
             id
-          }
-          balance
+            user {
+                id
+            }
+            balance
         }
         assets {
-          id
-          shares
-          weight
-          asset {
-            decimals
             id
-            name
-            symbol
-            vaultReserve
-            basePrice
-            vTokens {
-              id
-              tokenType
-              factory
-              deposited
-              platformTotalSupply
-              platformTotalSupplyDec
-              capitalization
-              assetReserve
-              totalAmount
+            shares
+            weight
+            asset {
+                decimals
+                id
+                name
+                symbol
+                vaultReserve
+                basePrice
+                vTokens {
+                    id
+                    tokenType
+                    factory
+                    deposited
+                    platformTotalSupply
+                    platformTotalSupplyDec
+                    capitalization
+                    assetReserve
+                    totalAmount
+                }
             }
-          }
         }
         inactiveAssets {
-          id
-          shares
-          weight
-          asset {
-            decimals
             id
-            name
-            symbol
-            vaultReserve
-            basePrice
-            vTokens {
-              id
-              tokenType
-              factory
-              deposited
-              platformTotalSupply
-              platformTotalSupplyDec
-              capitalization
-              assetReserve
-              totalAmount
+            shares
+            weight
+            asset {
+                decimals
+                id
+                name
+                symbol
+                vaultReserve
+                basePrice
+                vTokens {
+                    id
+                    tokenType
+                    factory
+                    deposited
+                    platformTotalSupply
+                    platformTotalSupplyDec
+                    capitalization
+                    assetReserve
+                    totalAmount
+                }
             }
-          }
         }
         transaction {
-          id
-          timestamp
-          blockNumber
+            id
+            timestamp
+            blockNumber
         }
         indexFactory {
-          id
-          type
-          vTokenFactory
+            id
+            type
+            vTokenFactory
         }
         basePrice
         basePriceETH
         dailyStats {
-          basePrice
-          basePriceETH
-          date
+            basePrice
+            basePriceETH
+            date
         }
         marketCap
         baseVolume
@@ -86,5 +86,5 @@ query getIndex($id: ID!) {
         feeAUMPercent
         created
         sector
-      }
     }
+}
