@@ -1,0 +1,11 @@
+
+query getChartData($id: ID!, $dateNow: Int!, $dateEnd: Int! ) {
+   index(id: $id) {
+        basePrice
+        baseVolume
+        dailyStats(where: {date_lte: $dateNow, date_gte: $dateEnd}, orderBy: date) {
+          basePrice
+          date
+        }
+    }
+}

@@ -1,0 +1,13 @@
+query getIndexInfo($id: ID!) {
+   index( id:$id ) {
+      id
+      totalSupply
+      symbol
+      decimals
+      name
+      basePrice
+      marketCap
+      baseVolume
+      uniqueHolders  
+    }
+  }
