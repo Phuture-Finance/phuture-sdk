@@ -2,11 +2,15 @@ import {ethers, Signer, utils} from 'ethers';
 import {formatUnits} from 'ethers/lib/utils';
 import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
 
+/** ### Default USDC address for network ### */
 export enum DefaultUsdcAddress {
-	/** ### Default USDC Address  on mainnet. */
+	/** ### Default USDC Address on mainnet. */
 	Mainnet = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
 }
 
+/**
+ * ### ERC20 Token Contract
+ */
 export class Erc20 {
 	/** ### ERC20 contract instance */
 	public contract: ERC20ContractInterface;

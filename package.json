@@ -3,6 +3,9 @@
 	"version": "0.1.0",
 	"repository": "Phuture-Finance/phuture-sdk",
 	"author": "Eugene Lepeico <eugenelepeico@gmail.com>",
+  	"workspaces": [
+		"packages/*"
+  	],
 	"scripts": {
 		"prepare": "husky install",
 		"build": "turbo run build",
