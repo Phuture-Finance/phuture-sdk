@@ -1,0 +1,56 @@
+{
+    "name": "@phuture/graphql",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "test": "jest --coverage",
+        "prepare": "npm run generate && npm run --silent build",
+        "prepublishOnly": "npm lint",
+        "build": "tsc",
+        "clean": "rimraf dist",
+        "lint": "xo",
+        "lint:fix": "xo --fix",
+        "generate": "graphql-codegen --config codegen.yml"
+    },
+    "devDependencies": {
+        "@graphql-codegen/cli": "2.6.2",
+        "@graphql-codegen/introspection": "2.1.1",
+        "@graphql-codegen/typed-document-node": "^2.2.13",
+        "@graphql-codegen/typescript": "2.5.1",
+        "@graphql-codegen/typescript-graphql-request": "^4.4.10",
+        "@graphql-codegen/typescript-operations": "^2.4.2",
+        "@graphql-codegen/typescript-resolvers": "2.6.6",
+        "@types/chai": "4.3.1",
+        "@types/jest": "28.1.1",
+        "chai": "4.3.6",
+        "jest": "28.1.0",
+        "ts-node": "10.8.1",
+        "typescript": "4.7.2",
+        "xo": "0.49.0"
+    },
+    "jest": {
+        "preset": "ts-jest",
+        "testMatch": [
+            "**/test/*.test.ts"
+        ]
+    },
+    "xo": {
+        "prettier": true,
+        "rules": {
+            "import/extensions": 0
+        },
+        "ignores": [
+            "./test/**",
+            "./src/generated/**"
+        ]
+    },
+    "dependencies": {
+        "graphql": "^16.5.0",
+        "graphql-request": "^4.3.0",
+        "graphql-tag": "^2.12.6"
+    }
+}

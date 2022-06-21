@@ -1,0 +1,19 @@
+query getUserIndexHistories($id: String!, $dateLimit: BigInt!) {
+    userIndexHistories(
+        where: {user: $id, timestamp_gte: $dateLimit}
+        orderBy: id
+    ) {
+        index {
+            id
+            symbol
+        }
+        user {
+            id
+        }
+        balance
+        capitalization
+        totalSupply
+        logIndex
+        timestamp
+    }
+}

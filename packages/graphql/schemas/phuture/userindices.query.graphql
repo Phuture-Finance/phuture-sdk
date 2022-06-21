@@ -1,0 +1,52 @@
+query getUserIndicesDetailed($id: ID!) {
+    users(where: {id: $id}) {
+        id
+        indexes {
+            index {
+                id
+                totalSupply
+                type
+                symbol
+                decimals
+                name
+                users {
+                    id
+                    balance
+                }
+                assets {
+                    id
+                    index {
+                        id
+                    }
+                    weight
+                    asset {
+                        decimals
+                        id
+                        symbol
+                        vaultReserve
+                        basePrice
+                    }
+                }
+                transaction {
+                    id
+                    timestamp
+                }
+                dailyStats {
+                    id
+                    date
+                    index {
+                        id
+                    }
+                    basePrice
+                    marketCap
+                    baseVolume
+                    uniqueHolders
+                }
+                basePrice
+                marketCap
+                baseVolume
+                uniqueHolders
+            }
+        }
+    }
+}

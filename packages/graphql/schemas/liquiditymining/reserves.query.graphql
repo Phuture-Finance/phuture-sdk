@@ -1,0 +1,12 @@
+query getReserves {
+    reserves {
+        id
+        token0
+        token1
+        totalSupply
+        reserve0
+        reserve1
+        token0Decimals
+        token1Decimals
+    }
+}

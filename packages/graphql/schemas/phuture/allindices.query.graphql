@@ -1,0 +1,44 @@
+query getAllIndices {
+    indexes {
+        id
+        totalSupply
+        created
+        type
+        symbol
+        name
+        decimals
+        users {
+            id
+            balance
+        }
+        assets {
+            id
+            weight
+            asset {
+                id
+                decimals
+                name
+                symbol
+                vaultReserve
+                basePrice
+            }
+        }
+        transaction {
+            id
+            timestamp
+            blockNumber
+        }
+        dailyStats {
+            id
+            date
+            basePrice
+            marketCap
+            baseVolume
+            uniqueHolders
+        }
+        basePrice
+        marketCap
+        baseVolume
+        uniqueHolders
+    }
+}
