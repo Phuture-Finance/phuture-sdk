@@ -1,53 +1,44 @@
-/* eslint-disable  @typescript-eslint/no-extraneous-class  */
 import {Interface} from '@ethersproject/abi';
+import {BigNumber, BigNumberish} from 'ethers';
+import {Signature} from '@phuture/types';
 import Permit from '../abis/ERC20Permit.json';
-import {BigintIsh, toHex} from './utils';
-import {Token} from './utils/token';
+import {Erc20} from './erc-20';
 
-export interface StandardPermitArguments {
-	v: 0 | 1 | 27 | 28;
-	r: string;
-	s: string;
-	amount: BigintIsh;
-	deadline: BigintIsh;
+const permitInterface = new Interface(Permit);
+
+export interface StandardPermitArguments extends Signature {
+	amount: BigNumberish;
+	deadline: BigNumberish;
 }
 
-export interface AllowedPermitArguments {
-	v: 0 | 1 | 27 | 28;
-	r: string;
-	s: string;
-	nonce: BigintIsh;
-	expiry: BigintIsh;
+export interface AllowedPermitArguments extends Signature {
+	nonce: BigNumberish;
+	expiry: BigNumberish;
 }
 
 export type PermitOptions = StandardPermitArguments | AllowedPermitArguments;
 
-function isAllowedPermit(
-	permitOptions: PermitOptions,
-): permitOptions is AllowedPermitArguments {
-	return 'nonce' in permitOptions;
-}
+const isAllowedPermit = (
+	options: PermitOptions,
+): options is AllowedPermitArguments => 'nonce' in options;
 
-export abstract class Erc20Permit {
-	public static interface: Interface = new Interface(Permit);
+export const encodePermit =
+	(erc20: Erc20) =>
+	(options: PermitOptions): string => {
+		const [functionName, amount, deadline] = isAllowedPermit(options)
+			? ['selfPermitAllowed', options.nonce, options.expiry]
+			: ['selfPermit', options.amount, options.deadline];
 
-	public static encodePermit(token: Token, options: PermitOptions) {
-		return isAllowedPermit(options)
-			? Erc20Permit.interface.encodeFunctionData('selfPermitAllowed', [
-					token.address,
-					toHex(options.nonce),
-					toHex(options.expiry),
-					options.v,
-					options.r,
-					options.s,
-			  ])
-			: Erc20Permit.interface.encodeFunctionData('selfPermit', [
-					token.address,
-					toHex(options.amount),
-					toHex(options.deadline),
-					options.v,
-					options.r,
-					options.s,
-			  ]);
-	}
+		return permitInterface.encodeFunctionData(functionName, [
+			erc20.contract.address,
+			BigNumber.from(amount).toHexString(),
+			BigNumber.from(deadline).toHexString(),
+			options.v,
+			options.r,
+			options.s,
+		]);
+	};
+
+export class Erc20Permit extends Erc20 {
+	public encodePermit = encodePermit(this);
 }

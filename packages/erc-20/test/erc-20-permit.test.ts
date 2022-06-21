@@ -1,45 +1,45 @@
-import JSBI from 'jsbi';
-import {
-	AllowedPermitArguments,
-	Erc20Permit,
-	StandardPermitArguments,
-} from '../src';
-import {Token} from '../src/utils/token';
+import {expect} from 'chai'
+import {AllowedPermitArguments, StandardPermitArguments,} from '../src';
+import {ERC20 as ERC20ContractInterface} from "../src/types";
+import {Mock} from "moq.ts";
+import {Erc20Permit} from "../src";
 
-const token = new Token(
-	1,
-	'0x0000000000000000000000000000000000000001',
-	18,
-	't0',
-	'token0',
-);
+const erc20contract = new Mock<ERC20ContractInterface>()
+	.setup((c) => c.address)
+	.returns('0x0000000000000000000000000000000000000001')
+	.object();
+
 const standardPermitOptions: StandardPermitArguments = {
 	v: 0,
 	r: '0x0000000000000000000000000000000000000000000000000000000000000001',
 	s: '0x0000000000000000000000000000000000000000000000000000000000000002',
-	amount: JSBI.BigInt(123),
-	deadline: JSBI.BigInt(123),
+	amount: 123,
+	deadline: 123,
 };
 const allowedPermitOptions: AllowedPermitArguments = {
 	v: 0,
 	r: '0x0000000000000000000000000000000000000000000000000000000000000001',
 	s: '0x0000000000000000000000000000000000000000000000000000000000000002',
-	nonce: JSBI.BigInt(123),
-	expiry: JSBI.BigInt(123),
+	nonce: 123,
+	expiry: 123,
 };
 
 describe('Erc20Permit', () => {
+	const erc20Permit = new Erc20Permit(
+		erc20contract as unknown as ERC20ContractInterface,
+	);
+
 	describe('#encodePermit', () => {
 		it('works with StandardPermitArguments', () => {
-			const calldata = Erc20Permit.encodePermit(token, standardPermitOptions);
-			expect(calldata).toBe(
+			const calldata = erc20Permit.encodePermit(standardPermitOptions);
+			expect(calldata).to.eq(
 				'0xf3995c670000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000007b000000000000000000000000000000000000000000000000000000000000007b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002',
 			);
 		});
 
 		it('works with AllowedPermitArguments', () => {
-			const calldata = Erc20Permit.encodePermit(token, allowedPermitOptions);
-			expect(calldata).toBe(
+			const calldata = erc20Permit.encodePermit(allowedPermitOptions);
+			expect(calldata).to.eq(
 				'0x4659a4940000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000007b000000000000000000000000000000000000000000000000000000000000007b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002',
 			);
 		});

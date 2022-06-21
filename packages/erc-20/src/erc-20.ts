@@ -1,4 +1,4 @@
-import {BigNumber, constants, ethers, Signer, utils} from 'ethers';
+import {ethers, Signer, utils} from 'ethers';
 import {formatUnits} from 'ethers/lib/utils';
 import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
 
@@ -8,43 +8,38 @@ export enum DefaultUsdcAddress {
 }
 
 export class Erc20 {
-	/**
-	 * ### Get new ERC20 token instance from the contract instance
-	 *
-	 * @param _contract ERC20 contract instance
-	 *
-	 * @returns New ERC20 token instance
-	 */
-	static fromContract(_contract: ERC20ContractInterface) {
-		const erc20 = new this(_contract.address, _contract.provider);
-
-		erc20.contract = _contract;
-
-		return erc20;
-	}
-
 	/** ### ERC20 contract instance */
 	public contract: ERC20ContractInterface;
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
+	constructor(contract: ERC20ContractInterface);
+	constructor(
+		contractAddress: string,
+		signerOrProvider?: Signer | ethers.providers.Provider,
+	);
+
 	/**
 	 * ### Creates a new ERC20 instance
 	 *
-	 * @param contractAddress Address of the ERC20 token contract
+	 * @param contract Contract instance or address of the ERC20 token contract
 	 * @param signerOrProvider Signer or provider to use for interacting with the contract
 	 * @returns New ERC20 token instance
 	 */
 	constructor(
-		contractAddress: string,
+		contract: string | ERC20ContractInterface,
 		signerOrProvider?: Signer | ethers.providers.Provider,
 	) {
-		signerOrProvider ??= ethers.providers.getDefaultProvider();
+		if (typeof contract === 'string') {
+			signerOrProvider ??= ethers.providers.getDefaultProvider();
 
-		if (!utils.isAddress(contractAddress))
-			throw new TypeError(`Invalid contract address: ${contractAddress}`);
+			if (!utils.isAddress(contract))
+				throw new TypeError(`Invalid contract address: ${contract}`);
 
-		this.contract = ERC20__factory.connect(contractAddress, signerOrProvider);
+			this.contract = ERC20__factory.connect(contract, signerOrProvider);
+		} else {
+			this.contract = contract;
+		}
 	}
 
 	/**

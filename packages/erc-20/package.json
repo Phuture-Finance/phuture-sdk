@@ -17,9 +17,7 @@
 	},
 	"dependencies": {
 		"ethers": "5.6.8",
-		"jsbi": "^4.3.0",
-		"moq.ts": "^9.0.2",
-		"tiny-invariant": "^1.2.0"
+		"moq.ts": "9.0.2"
 	},
 	"devDependencies": {
 		"@ethersproject/abi": "^5.6.3",
