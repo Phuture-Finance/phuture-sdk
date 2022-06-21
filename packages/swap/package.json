@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "prepare": "npm run --silent build",
     "prepublishOnly": "npm lint",
     "build": "tsc",
@@ -16,8 +16,6 @@
     "lint:fix": "xo --fix"
   },
   "dependencies": {
-    "@0x/contract-addresses": "^6.16.0",
-    "@0x/protocol-utils": "^11.15.0",
     "@ethersproject/abstract-provider": "^5.6.1",
     "ethereum-types": "^3.7.0",
     "ethers": "5.6.8"
@@ -30,6 +28,7 @@
     "ethereum-types": "^3.7.0",
     "ethers": "5.6.8",
     "jest": "28.1.0",
+    "ts-jest": "28.0.4",
     "ts-node": "10.8.1",
     "typescript": "4.7.2",
     "xo": "0.49.0"
@@ -44,6 +43,9 @@
     "prettier": true,
     "rules": {
       "import/extensions": 0
-    }
+    },
+    "ignores": [
+      "./test/**"
+    ]
   }
 }

@@ -61,21 +61,21 @@ export class Swap {
 		slippage?: BigNumberish,
 		gasFee?: BigNumberish,
 	): Promise<TransactionResponse> {
-		const errors = this.errorBoundary(payload, slippage, gasFee);
-		if (errors) {
-			throw new Error(errors);
+		try {
+			await this.errorBoundary(payload, slippage, gasFee);
+
+			// Setup
+			const url = new URL(zeroXendPoint);
+			url.search = new URLSearchParams(
+				this.modifyPayloadForQuery(payload, slippage, gasFee),
+			).toString();
+
+			// Execute
+			const response = await fetch(url.toString());
+			return await this.provider.sendTransaction(response.json());
+		} catch (error: unknown) {
+			throw new Error(error as string);
 		}
-
-		// Setup
-		const url = new URL(zeroXendPoint);
-		url.search = new URLSearchParams(
-			this.modifyPayloadForQuery(payload, slippage, gasFee),
-		).toString();
-		console.log(url.toString());
-
-		// Execute
-		const response = await fetch(url.toString());
-		return this.provider.sendTransaction(response.json());
 	}
 
 	/**
@@ -85,46 +85,53 @@ export class Swap {
 	 * @param gasFee Optional gas fee
 	 * @returns String of all found errors
 	 */
-	private errorBoundary(
+	private async errorBoundary(
 		{buyToken, sellAmount, sellToken, takerAddress}: Payload,
 		slippage: BigNumberish | undefined,
 		gasFee: BigNumberish | undefined,
-	): string {
-		const errors: string[] = [];
-		try {
-			BigNumber.from(sellAmount);
-		} catch {
-			errors.push(`Amount provided could not be parsed into a big number`);
-		}
-
-		if (slippage) {
+	): Promise<void> {
+		const errorBoundary = new Promise<void>((resolve, reject) => {
+			const errors: string[] = [];
 			try {
-				BigNumber.from(slippage);
+				BigNumber.from(sellAmount);
 			} catch {
-				errors.push(`Found a slippage value but was unable to parse it`);
+				errors.push(`Amount provided could not be parsed into a big number`);
 			}
-		}
 
-		if (gasFee) {
-			try {
-				BigNumber.from(gasFee);
-			} catch {
-				errors.push(`Found a gasFee value but was unable to parse it`);
+			if (slippage) {
+				try {
+					BigNumber.from(slippage);
+				} catch {
+					errors.push(`Found a slippage value but was unable to parse it`);
+				}
 			}
-		}
 
-		if (!buyToken) {
-			errors.push('A buy token is required,');
-		}
+			if (gasFee) {
+				try {
+					BigNumber.from(gasFee);
+				} catch {
+					errors.push(`Found a gas fee value but was unable to parse it`);
+				}
+			}
 
-		if (!sellToken) {
-			errors.push('A sell token is required');
-		}
+			if (!buyToken) {
+				errors.push('A buy token is required');
+			}
 
-		if (!ethersUtils.isAddress(takerAddress)) {
-			errors.push(`Address is invalid: ${takerAddress}`);
-		}
+			if (!sellToken) {
+				errors.push('A sell token is required');
+			}
 
-		return errors.reduce((errorText, segment) => errorText + '\n' + segment);
+			if (!ethersUtils.isAddress(takerAddress)) {
+				errors.push(`Address is invalid: ${takerAddress}`);
+			}
+
+			if (errors.length > 0) {
+				reject(errors);
+			} else {
+				resolve();
+			}
+		});
+		return errorBoundary;
 	}
 }
