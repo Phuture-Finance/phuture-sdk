@@ -28,12 +28,12 @@ function isAllowedPermit(
 	return 'nonce' in permitOptions;
 }
 
-export abstract class Erc20Permits {
+export abstract class Erc20Permit {
 	public static interface: Interface = new Interface(Permit);
 
 	public static encodePermit(token: Token, options: PermitOptions) {
 		return isAllowedPermit(options)
-			? Erc20Permits.interface.encodeFunctionData('selfPermitAllowed', [
+			? Erc20Permit.interface.encodeFunctionData('selfPermitAllowed', [
 					token.address,
 					toHex(options.nonce),
 					toHex(options.expiry),
@@ -41,7 +41,7 @@ export abstract class Erc20Permits {
 					options.r,
 					options.s,
 			  ])
-			: Erc20Permits.interface.encodeFunctionData('selfPermit', [
+			: Erc20Permit.interface.encodeFunctionData('selfPermit', [
 					token.address,
 					toHex(options.amount),
 					toHex(options.deadline),

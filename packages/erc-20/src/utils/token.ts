@@ -36,7 +36,7 @@ export class Token extends BaseCurrency {
 	 * Returns true if the two tokens are equivalent, i.e. have the same chainId and address.
 	 * @param other other token to compare
 	 */
-	public equals(other: NativeCurrency | this): boolean {
+	public equals(other: this): boolean {
 		return (
 			other.isToken &&
 			this.chainId === other.chainId &&
