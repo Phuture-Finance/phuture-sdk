@@ -6,7 +6,7 @@
  * @example
  * const method: HttpMethod = HttpMethod.GET
  */
-export const enum HttpMethod {
+export enum HttpMethod {
 	/** GET method to get the resource */
 	GET = 'GET',
 
@@ -34,3 +34,12 @@ export const enum HttpMethod {
 	/** PATCH method to patch an existing resource */
 	PATCH = 'PATCH',
 }
+
+/**
+ * ### Check if the given method is a valid HTTP method
+ *
+ * @param {string} method The method to check
+ * @return {method is HttpMethod} True if the method is a valid HTTP method
+ */
+export const isHttpMethod = (method: string): method is HttpMethod =>
+	method in HttpMethod;

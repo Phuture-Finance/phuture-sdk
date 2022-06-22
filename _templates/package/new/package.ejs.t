@@ -4,19 +4,16 @@ to: packages/<%= h.changeCase.param(name) %>/package.json
 {
   "name": "@phuture/<%= h.changeCase.param(name) %>",
   "version": "0.1.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
   	"test": "jest",
-    "prepare": "npm run --silent build",
-    "prepublishOnly": "npm lint",
+    "prepublishOnly": "npm build",
     "build": "tsc",
-    "clean": "rimraf dist",
-    "lint": "xo",
-    "lint:fix": "xo --fix"
+    "clean": "rimraf dist"
   },
   "devDependencies": {
   	"@types/chai": "4.3.1",
@@ -24,17 +21,10 @@ to: packages/<%= h.changeCase.param(name) %>/package.json
 	"chai": "4.3.6",
 	"jest": "28.1.0",
     "ts-node": "10.8.1",
-    "typescript": "4.7.2",
-    "xo": "0.49.0"
+    "typescript": "4.7.2"
   },
   "jest": {
-    "preset": "ts-jest",      
+    "preset": "ts-jest",
     "testMatch": ["**/test/*.test.ts"]
-  },
-  "xo": {
-    "prettier": true,
-    "rules": {
-      "import/extensions": 0
-    }
   }
 }

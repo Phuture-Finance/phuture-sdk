@@ -11,13 +11,13 @@ export enum DefaultUsdcAddress {
 /**
  * ### ERC20 Token Contract
  */
-export class Erc20 {
+export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 	/** ### ERC20 contract instance */
-	public contract: ERC20ContractInterface;
+	public contract: C;
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
-	constructor(contract: ERC20ContractInterface);
+	constructor(contract: C);
 	constructor(
 		contractAddress: string,
 		signerOrProvider?: Signer | ethers.providers.Provider,
@@ -31,7 +31,7 @@ export class Erc20 {
 	 * @returns New ERC20 token instance
 	 */
 	constructor(
-		contract: string | ERC20ContractInterface,
+		contract: string | C,
 		signerOrProvider?: Signer | ethers.providers.Provider,
 	) {
 		if (typeof contract === 'string') {
@@ -40,7 +40,7 @@ export class Erc20 {
 			if (!utils.isAddress(contract))
 				throw new TypeError(`Invalid contract address: ${contract}`);
 
-			this.contract = ERC20__factory.connect(contract, signerOrProvider);
+			this.contract = ERC20__factory.connect(contract, signerOrProvider) as C;
 		} else {
 			this.contract = contract;
 		}

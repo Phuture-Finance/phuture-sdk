@@ -1,5 +1,5 @@
 {
-  "name": "@phuture/erc-20",
+  "name": "@phuture/index-router",
   "version": "0.1.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -7,13 +7,11 @@
 	"dist"
   ],
   "scripts": {
-	"prepare": "npm run --silent build",
-	"prepublishOnly": "pnpm build",
+	"test": "jest",
+	"prepublishOnly": "npm build",
 	"build": "pnpm typechain && tsc",
 	"typechain": "typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json",
-	"clean": "rimraf dist",
-	"test": "jest",
-	"coverage": "jest --coverage"
+	"clean": "rimraf dist"
   },
   "dependencies": {
 	"ethers": "5.6.8",
@@ -23,6 +21,7 @@
 	"@ethersproject/abi": "^5.6.3",
 	"@ethersproject/address": "^5.6.1",
 	"@ethersproject/providers": "^5.6.8",
+	"@phuture/erc-20": "workspace:*",
 	"@phuture/types": "workspace:*",
 	"@typechain/ethers-v5": "10.0.0",
 	"@types/chai": "4.3.1",
@@ -35,13 +34,8 @@
   },
   "jest": {
 	"preset": "ts-jest",
-	"testPathIgnorePatterns": [
-	  "dist",
-	  "src/types"
-	],
-	"coveragePathIgnorePatterns": [
-	  "dist",
-	  "src/types"
+	"testMatch": [
+	  "**/test/*.test.ts"
 	]
   }
 }

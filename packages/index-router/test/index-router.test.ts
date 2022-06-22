@@ -1,0 +1,2 @@
+/** @test {indexRouter} */
+test("indexRouter", () => {});

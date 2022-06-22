@@ -1,3 +1,5 @@
+import {utils} from 'ethers';
+
 /**
  * ### The unique identifier of the contract or an EAO.
  * Keccak hash of an ECDSA public key (160 bits).
@@ -11,3 +13,6 @@
  * const phtrAddress: Address = "0xe1fc4455f62a6e89476f1072530c20cf1a0622da"
  */
 export type Address = string; // `0x${string}`
+
+export const isAddress = (address: string): address is Address =>
+	utils.isAddress(address);
