@@ -1,0 +1,49 @@
+{
+	"name": "@phuture/erc-165",
+	"version": "0.1.0",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"test": "jest",
+		"prepare": "npm run --silent build",
+		"prepublishOnly": "npm lint",
+		"build": "pnpm typechain && tsc",
+		"clean": "rimraf dist",
+		"lint": "xo",
+		"lint:fix": "xo --fix",
+		"typechain": "typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json"
+	},
+	"dependencies": {
+		"ethers": "5.6.8",
+		"moq.ts": "9.0.2"
+	},
+	"devDependencies": {
+		"@ethersproject/keccak256": "^5.6.1",
+		"@ethersproject/strings": "^5.6.1",
+		"@ethersproject/abi": "^5.6.3",
+		"@ethersproject/providers": "^5.6.8",
+		"@types/chai": "4.3.1",
+		"@types/jest": "28.1.1",
+		"@types/node": "^18.0.0",
+		"chai": "4.3.6",
+		"jest": "28.1.0",
+		"ts-node": "10.8.1",
+		"typescript": "4.7.2",
+		"xo": "0.49.0"
+	},
+	"jest": {
+		"preset": "ts-jest",
+		"testMatch": [
+			"**/test/*.test.ts"
+		]
+	},
+	"xo": {
+		"prettier": true,
+		"rules": {
+			"import/extensions": 0
+		}
+	}
+}
