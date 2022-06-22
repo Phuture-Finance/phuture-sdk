@@ -1,6 +1,9 @@
 import { ethers } from 'ethers';
 import {Swap} from '../src';
 import {Payload} from '../src/interface';
+import axios from 'axios';
+
+jest.mock('axios');
 
 const allPayloadExcept = (key?: keyof Payload): Payload =>  {
 
@@ -154,19 +157,15 @@ describe('Swap execution', () => {
 			"sellTokenAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",
 			"allowanceTarget": "0xdef1c0ded9bec7f1a1670819833240f027b25eff"
 		}
-		const mockFetchPromise = Promise.resolve({ json: () => Promise.resolve(accept) });
-		global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
-
-		const mockFetch = jest.spyOn(global, "fetch")
-			//.mockImplementation(mockFn as jest.Mock);
 		const payload = allPayloadExcept();
 		const expectedUrl = "https://api.0x.org/swap/v1/quote?buyToken=PDI&sellToken=ETH&sellAmount=123124&takerAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+		
 		try {
 			// Execute
 			await new Swap().swap(payload);
 		} catch { 
 			// Verify
-			expect(mockFetch).toHaveBeenCalledWith(expectedUrl);
+			expect(axios.get).toHaveBeenCalledWith(expectedUrl);
 		}
 	});
 

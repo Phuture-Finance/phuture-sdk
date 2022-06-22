@@ -1,4 +1,5 @@
 import {TransactionResponse} from '@ethersproject/abstract-provider';
+import axios from 'axios';
 import {
 	BigNumber,
 	BigNumberish,
@@ -71,8 +72,8 @@ export class Swap {
 			).toString();
 
 			// Execute
-			const response = await fetch(url.toString());
-			return await this.provider.sendTransaction(response.json());
+			const response = await axios.get(url.toString());
+			return await this.provider.sendTransaction(response.data);
 		} catch (error: unknown) {
 			throw new Error(error as string);
 		}
