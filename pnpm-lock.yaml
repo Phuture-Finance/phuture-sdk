@@ -115,7 +115,38 @@ importers:
   packages/pair-reserves:
     specifiers:
       '@ethersproject/abi': ^5.6.3
+      '@ethersproject/address': ^5.6.1
       '@ethersproject/providers': ^5.6.8
+      '@phuture/types': workspace:*
+      '@typechain/ethers-v5': 10.0.0
+      '@types/chai': 4.3.1
+      '@types/jest': 28.1.1
+      chai: 4.3.6
+      ethers: 5.6.8
+      jest: 28.1.0
+      moq.ts: 9.0.2
+      ts-node: 10.8.1
+      typechain: 8.0.0
+      typescript: 4.7.2
+    dependencies:
+      ethers: 5.6.8
+      moq.ts: 9.0.2
+    devDependencies:
+      '@ethersproject/abi': 5.6.3
+      '@ethersproject/address': 5.6.1
+      '@ethersproject/providers': 5.6.8
+      '@phuture/types': link:../types
+      '@typechain/ethers-v5': 10.0.0_htvspwlypfdmae7xjxmcfeoray
+      '@types/chai': 4.3.1
+      '@types/jest': 28.1.1
+      chai: 4.3.6
+      jest: 28.1.0_ts-node@10.8.1
+      ts-node: 10.8.1_typescript@4.7.2
+      typechain: 8.0.0_typescript@4.7.2
+      typescript: 4.7.2
+
+  packages/errors:
+    specifiers:
       '@phuture/types': workspace:*
       '@typechain/ethers-v5': 10.0.0
       ethers: 5.6.8
@@ -10449,6 +10480,12 @@ packages:
     resolution: {integrity: sha512-A/78XjoX2EmNvppVWEhM2oGk3x4lLxnkEA4jTbaK97QKSDjkIoOsKQlfylt/d3kKKi596Qy3NP5XrXJ6fZIC9Q==}
     dev: true
 
+  /moq.ts/9.0.2:
+    resolution: {integrity: sha512-Xd8SURuhG0V2uPtNelc5L6Zt6zHrAgOKd9RmDOOO7iRvNYcYAD9Ph69vNMdMjyH5dTBtzjGG3lHzsbg0u4YO9A==}
+    dependencies:
+      tslib: 2.3.1
+    dev: false
+
   /ms/2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
     dev: true
@@ -13860,6 +13897,11 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  /undici/5.5.1:
+    resolution: {integrity: sha512-MEvryPLf18HvlCbLSzCW0U00IMftKGI5udnjrQbC5D4P0Hodwffhv+iGfWuJwg16Y/TK11ZFK8i+BPVW2z/eAw==}
+    engines: {node: '>=12.18'}
+
     dev: true
     optional: true
 
