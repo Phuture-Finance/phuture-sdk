@@ -1,93 +1,67 @@
-import {TransactionResponse} from '@ethersproject/abstract-provider';
+import {TransactionRequest} from '@ethersproject/abstract-provider';
 import axios from 'axios';
-import {
-	BigNumber,
-	BigNumberish,
-	ethers,
-	Signer,
-	utils as ethersUtils,
-} from 'ethers';
-import {Payload, QueryPayload} from './interface';
+import {BigNumber, BigNumberish, utils as ethersUtils} from 'ethers';
+import {QuotePayload} from './interface';
+import modifyQuotePayloadForQuery from './utility';
 
-const zeroXendPoint = 'https://api.0x.org/swap/v1/quote';
+/**
+ * ### Addresses of the ZeroX API endpoint
+ */
+export enum QuotingEndpoint {
+	zeroX = 'https://api.0x.org/swap/v1/quote',
+}
 
 /**
  * ### Facilitates swaps for end user
  */
-export class Swap {
-	public readonly provider: Signer | ethers.providers.Provider;
+export class QuoteAggregator {
+	public readonly quoteEndpoint: QuotingEndpoint;
 
 	/**
 	 * ### Constructs an instance of the swap class
-	 * @param signerOrProvider the provider to user
+	 * @param quoteEndpoint The endpoint to query for quotes
 	 */
-	constructor(signerOrProvider?: Signer | ethers.providers.Provider) {
-		this.provider = signerOrProvider ?? ethers.providers.getDefaultProvider();
+	constructor(quoteEndpoint = QuotingEndpoint.zeroX) {
+		this.quoteEndpoint = quoteEndpoint;
 	}
 
 	/**
-	 * Takes the provided payload parameters and combines them/normalizes them
-	 * @param payload the payload provided by the user executing the swap
-	 * @param slippage optional slippage percentage limit
-	 * @param fee optional gas fee limit
-	 * @returns Partial<QueryPayload>
-	 */
-	modifyPayloadForQuery(
-		payload: Payload,
-		slippage?: BigNumberish,
-		fee?: BigNumberish,
-	): Partial<QueryPayload> {
-		const query: Record<string, string> = {};
-		payload.sellAmount = BigNumber.from(payload.sellAmount).toString();
-		if (slippage) {
-			query.slippagePercentage = BigNumber.from(slippage).toString();
-		}
-
-		if (fee) {
-			query.gasFee = BigNumber.from(fee).toString();
-		}
-
-		return Object.assign(payload, query);
-	}
-
-	/**
-	 * ### Swap call
+	 * ### Makes a call to the quote endpoint and returns a transaction request for the best price
 	 * @param payload user provided payload, un checked
 	 * @param slippage optional slippage limit
 	 * @param gasFee optional gas fee limit
 	 * @returns Promise transaction response
 	 */
-	async swap(
-		payload: Payload,
+	async quote(
+		payload: QuotePayload,
 		slippage?: BigNumberish,
 		gasFee?: BigNumberish,
-	): Promise<TransactionResponse> {
+	): Promise<TransactionRequest> {
 		try {
 			await this.errorBoundary(payload, slippage, gasFee);
 
 			// Setup
-			const url = new URL(zeroXendPoint);
+			const url = new URL(this.quoteEndpoint);
 			url.search = new URLSearchParams(
-				this.modifyPayloadForQuery(payload, slippage, gasFee),
+				modifyQuotePayloadForQuery(payload, slippage, gasFee),
 			).toString();
 
 			// Execute
-			const response = await axios.get(url.toString());
-			return await this.provider.sendTransaction(response.data);
+			return await axios.get(url.toString());
 		} catch (error: unknown) {
 			throw new Error(error as string);
 		}
 	}
 
 	/**
-	 * ### Error boundary for public facing swap method
+	 * ### Error boundary for public facing quote method
 	 * @param param0 User provided params
 	 * @param slippage Optional slippage
 	 * @param gasFee Optional gas fee
 	 * @returns String of all found errors
 	 */
 	private async errorBoundary(
-		{buyToken, sellAmount, sellToken, takerAddress}: Payload,
+		{buyToken, sellAmount, sellToken, takerAddress}: QuotePayload,
 		slippage: BigNumberish | undefined,
 		gasFee: BigNumberish | undefined,
 	): Promise<void> {
@@ -128,7 +102,7 @@ export class Swap {
 			}
 
 			if (errors.length > 0) {
-				reject(errors);
+				reject(errors.join('\n'));
 			} else {
 				resolve();
 			}

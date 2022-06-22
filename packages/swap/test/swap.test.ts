@@ -1,14 +1,14 @@
-import { ethers } from 'ethers';
-import {Swap} from '../src';
-import {Payload} from '../src/interface';
+import {QuoteAggregator} from '../src';
+import {QuotePayload} from '../src/interface';
 import axios from 'axios';
+import modifyQuotePayloadForQuery from '../src/utility';
 
 jest.mock('axios');
 
-const allPayloadExcept = (key?: keyof Payload): Payload =>  {
+const allPayloadExcept = (key?: keyof QuotePayload): QuotePayload =>  {
 
     type ObjectKey = keyof typeof payload;
-    const payload: Payload = {
+    const payload: QuotePayload = {
         buyToken: 'PDI',
         sellToken: 'ETH',
         sellAmount: '123124',
@@ -29,7 +29,7 @@ describe('Error boundaries', () => {
         // Execute
 		// Verify
         try {
-           await new Swap().swap(payload);
+           await new QuoteAggregator().quote(payload);
         } catch(e:any) {
             expect(e.message).toBe(errorMessage);
         }        
@@ -42,7 +42,7 @@ describe('Error boundaries', () => {
 		// Execute
 		// Verify
 		try {
-			await new Swap().swap(payload, 'bbcnews');
+			await new QuoteAggregator().quote(payload, 'bbcnews');
 		} catch(e:any) {
 			expect(e.message).toBe(errorMessage);
 		}        
@@ -55,7 +55,7 @@ describe('Error boundaries', () => {
 		// Execute
 		// Verify
 		try {
-			await new Swap().swap(payload, '', 'gasfees');
+			await new QuoteAggregator().quote(payload, '', 'gasfees');
 		} catch(e:any) {
 			expect(e.message).toBe(errorMessage);
 		}        
@@ -69,7 +69,7 @@ describe('Error boundaries', () => {
 		// Execute
 		// Verify
 		try {
-			await new Swap().swap(payload);
+			await new QuoteAggregator().quote(payload);
 		} catch(e:any) {
 			expect(e.message).toBe(errorMessage);
 		}        
@@ -83,7 +83,7 @@ describe('Error boundaries', () => {
 		// Execute
 		// Verify
 		try {
-			await new Swap().swap(payload);
+			await new QuoteAggregator().quote(payload);
 		} catch(e:any) {
 			expect(e.message).toBe(errorMessage);
 		}
@@ -96,7 +96,7 @@ describe('Error boundaries', () => {
 		// Execute
 		// Verify
 		try {
-			await new Swap().swap(payload);
+			await new QuoteAggregator().quote(payload);
 		} catch(e:any) {
 			expect(e.message).toBe(errorMessage);
 		}
@@ -107,7 +107,7 @@ describe('Error boundaries', () => {
 		const payload = allPayloadExcept();
 
 		let error = false;
-		new Swap().swap(payload)
+		new QuoteAggregator().quote(payload)
 		.catch(() => error = true)
 		.finally(() => expect(error).toBe(false));
 	});
@@ -122,20 +122,20 @@ describe('Swap execution', () => {
 		const expectedQuery = `{"buyToken":"PDI","sellToken":"ETH","sellAmount":"123124","takerAddress":"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2","slippagePercentage":"1"}`;
 
 		// Execute
-		const query = new Swap().modifyPayloadForQuery(payload, slippage);
+		const query = modifyQuotePayloadForQuery(payload, slippage);
 
 		// Verify
 		expect(JSON.stringify(query)).toBe(expectedQuery);
 	});
 
-	it('should successfully execute the swap', () => {
+	it('should normalise the payload to ready for gas', () => {
 		// Setup
 		const payload = allPayloadExcept();
 		const gasFee = "123";
 		const expectedQuery = `{"buyToken":"PDI","sellToken":"ETH","sellAmount":"123124","takerAddress":"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2","gasFee":"123"}`;
 
 		// Execute
-		const query = new Swap().modifyPayloadForQuery(payload, '', gasFee);
+		const query = modifyQuotePayloadForQuery(payload, '', gasFee);
 
 		// Verify
 		expect(JSON.stringify(query)).toBe(expectedQuery);
@@ -162,21 +162,10 @@ describe('Swap execution', () => {
 		
 		try {
 			// Execute
-			await new Swap().swap(payload);
+			await new QuoteAggregator().quote(payload);
 		} catch { 
 			// Verify
 			expect(axios.get).toHaveBeenCalledWith(expectedUrl);
 		}
 	});
-
-	it('Should use a provider that I pass in', () => { 
-		// setup
-		const myProvider = ethers.providers.getDefaultProvider();
-
-		// execute
-		const swap = new Swap(myProvider);
-
-		// verify
-		expect(swap.provider).toBe(myProvider);
-	})
 });

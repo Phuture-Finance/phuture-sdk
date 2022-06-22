@@ -1,7 +1,7 @@
 /**
  * ### Object to be provided as an argument to the swap method
  */
-export interface Payload {
+export interface QuotePayload {
 	sellAmount: string;
 	buyToken: string;
 	sellToken: string;
@@ -11,7 +11,7 @@ export interface Payload {
 /**
  * ### Optional parts of the param
  */
-export type QueryPayload = Payload & {
+export type QueryPayload = QuotePayload & {
 	slippagePercentage?: string;
 	gasFee?: string;
 };
