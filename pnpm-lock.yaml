@@ -156,6 +156,7 @@ importers:
       '@types/chai': 4.3.1
       '@types/jest': 28.1.1
       chai: 4.3.6
+      dotenv: 16.0.1
       ethers: 5.6.8
       jest: 28.1.0
       moq.ts: 9.0.2
@@ -175,6 +176,7 @@ importers:
       '@types/chai': 4.3.1
       '@types/jest': 28.1.1
       chai: 4.3.6
+      dotenv: 16.0.1
       jest: 28.1.0_ts-node@10.8.1
       ts-node: 10.8.1_typescript@4.7.2
       typechain: 8.0.0_typescript@4.7.2
