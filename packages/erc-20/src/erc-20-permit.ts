@@ -1,8 +1,12 @@
 import {Interface} from '@ethersproject/abi';
-import {BigNumber, BigNumberish} from 'ethers';
 import {Address, Signature} from '@phuture/types';
+import {BigNumber, BigNumberish, Signer} from 'ethers';
 import Permit from '../abis/ERC20Permit.json';
 import {Erc20} from './erc-20';
+import {
+	ERC20Permit as ERC20PermitContractInterface,
+	ERC20Permit__factory,
+} from './types';
 
 /** ### Erc20Permit Contract Interface */
 const permitInterface = new Interface(Permit);
@@ -36,7 +40,7 @@ const isAllowedPermit = (
  * @param erc20 Erc20 contract instance of contract address
  */
 export const encodePermit =
-	(erc20: Erc20 | Address) =>
+	(erc20: Erc20<any> | Address) =>
 	(options: PermitOptions): string => {
 		const [functionName, amount, deadline] = isAllowedPermit(options)
 			? ['selfPermitAllowed', options.nonce, options.expiry]
@@ -55,7 +59,19 @@ export const encodePermit =
 /**
  * ### Erc20Permit Token Contract
  */
-export class Erc20Permit extends Erc20 {
+export class Erc20Permit extends Erc20<ERC20PermitContractInterface> {
 	/** Encodes permit data for the given options */
 	public encodePermit = encodePermit(this);
+
+	constructor(
+		signer: Signer,
+		contract: Address | ERC20PermitContractInterface,
+	) {
+		super(
+			signer,
+			typeof contract === 'string'
+				? ERC20Permit__factory.connect(contract, signer)
+				: contract,
+		);
+	}
 }
