@@ -2,14 +2,13 @@ import {
 	Erc20,
 	Erc20Permit,
 	StandardPermitArguments,
-	SetOfAssets,
+	setOfAssets,
 } from '@phuture/erc-20';
-import {Address, MaybeArray} from '@phuture/types';
+import {Address} from '@phuture/types';
 import {
 	BigNumber,
 	BigNumberish,
 	ContractTransaction,
-	ethers,
 	Signer,
 	utils,
 } from 'ethers';
@@ -34,40 +33,45 @@ export enum DefaultIndexRouterAddress {
 export class IndexRouter {
 	/** ### IndexRouter contract instance */
 	public contract: IndexRouterContractInterface;
-	sellToken?: MaybeArray<Erc20 | Erc20Permit>;
-	withPermit = false;
 
-	constructor(contract: IndexRouterContractInterface);
-
-	constructor(
-		contractAddress: string,
-		signerOrProvider?: Signer | ethers.providers.Provider,
-	);
+	public _signer: Signer;
 
 	/**
 	 * ### Creates a new IndexRouter instance
 	 *
 	 * @param contract Contract instance or address of the IndexRouter contract
-	 * @param signerOrProvider Signer or provider to use for interacting with the contract
+	 * @param signer Signer instance
 	 *
 	 * @returns New IndexRouter token instance
 	 */
 	constructor(
+		signer: Signer,
 		contract:
 			| IndexRouterContractInterface
 			| Address = DefaultIndexRouterAddress.Mainnet,
-		signerOrProvider?: Signer | ethers.providers.Provider,
 	) {
+		this._signer = signer;
+
 		if (typeof contract === 'string') {
 			if (!utils.isAddress(contract))
 				throw new TypeError(`Invalid contract address: ${contract}`);
 
-			signerOrProvider ??= ethers.providers.getDefaultProvider();
-
-			this.contract = IndexRouter__factory.connect(contract, signerOrProvider);
+			this.contract = IndexRouter__factory.connect(contract, this._signer);
 		} else {
 			this.contract = contract;
 		}
+	}
+
+	get signer(): Signer {
+		return this._signer;
+	}
+
+	set signer(signer: Signer) {
+		this._signer = signer;
+		this.contract = IndexRouter__factory.connect(
+			this.contract.address,
+			this._signer,
+		);
 	}
 
 	// Mint swap for native token
@@ -102,7 +106,7 @@ export class IndexRouter {
 			);
 		}
 
-		if (sellToken instanceof Erc20Permit && permitOptions !== undefined) {
+		if (permitOptions !== undefined) {
 			return this.contract.mintSwapWithPermit(
 				options as IIndexRouter.MintSwapParamsStruct,
 				permitOptions.deadline,
@@ -113,7 +117,7 @@ export class IndexRouter {
 		}
 
 		const allowance = await sellToken.contract.allowance(
-			await this.contract.signer.getAddress(),
+			await this._signer.getAddress(),
 			this.contract.address,
 		);
 		if (allowance.lt(sellAmount)) throw new Error('Insufficient allowance');
@@ -122,30 +126,32 @@ export class IndexRouter {
 	}
 
 	// Mint swap for native token
-	mintIndexAmount(
-		options: IIndexRouter.MintSwapValueParamsStruct,
-		sellAmount: BigNumberish,
-	): Promise<BigNumber>;
+	// mintIndexAmount(
+	// 	options: IIndexRouter.MintSwapValueParamsStruct,
+	// 	sellAmount: BigNumberish,
+	// ): Promise<BigNumber>;
+
 	// Mint swap for single sell token
-	mintIndexAmount(
-		options: IIndexRouter.MintSwapParamsStruct,
-		sellAmount: BigNumberish,
-		sellToken: Erc20 | Erc20Permit,
-	): Promise<BigNumber>;
+	// mintIndexAmount(
+	// 	options: IIndexRouter.MintSwapParamsStruct,
+	// 	sellAmount: BigNumberish,
+	// 	sellToken: Erc20 | Erc20Permit,
+	// ): Promise<BigNumber>;
 
-	async mintIndexAmount(
-		options: MintOptions,
-		sellAmount: BigNumberish,
-		sellToken?: Erc20 | Erc20Permit,
-	): Promise<BigNumber> {
-		if (sellToken === undefined) {
-			// TODO: mintIndexAmount for native token
-		}
+	// TODO: implement mintIndexAmount function
+	// async mintIndexAmount(
+	// 	options: MintOptions,
+	// 	sellAmount: BigNumberish,
+	// 	sellToken?: Erc20 | Erc20Permit,
+	// ): Promise<BigNumber> {
+	// 	if (sellToken === undefined) {
+	// 		// TODO: mintIndexAmount for native token
+	// 	}
 
-		// TODO: mintIndexAmount for single sell token token
+	// 	// TODO: mintIndexAmount for single sell token token
 
-		throw new Error('Not implemented');
-	}
+	// 	throw new Error('Not implemented');
+	// }
 
 	// Burn swap for multi tokens
 	burn(
@@ -185,7 +191,7 @@ export class IndexRouter {
 				);
 			}
 
-			if (buyToken.contract.address === SetOfAssets.Mainnet.WETH) {
+			if (buyToken.contract.address === setOfAssets.mainnet.weth) {
 				return this.contract.burnSwapValueWithPermit(
 					options as IIndexRouter.BurnSwapParamsStruct,
 					permitOptions.deadline,
@@ -204,7 +210,10 @@ export class IndexRouter {
 			);
 		}
 
-		const allowance = await new Erc20(options.index).contract.allowance(
+		const allowance = await new Erc20(
+			this.signer,
+			options.index,
+		).contract.allowance(
 			await this.contract.signer.getAddress(),
 			this.contract.address,
 		);
@@ -213,7 +222,7 @@ export class IndexRouter {
 				return this.contract.burn(options as IIndexRouter.BurnParamsStruct);
 			}
 
-			if (buyToken.contract.address === SetOfAssets.Mainnet.WETH) {
+			if (buyToken.contract.address === setOfAssets.mainnet.weth) {
 				return this.contract.burnSwapValue(
 					options as IIndexRouter.BurnSwapParamsStruct,
 				);

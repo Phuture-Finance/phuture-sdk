@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { ethers, Signer } from "ethers";
 import { Mock } from "moq.ts";
 import {
 	AllowedPermitArguments,
@@ -28,9 +29,8 @@ const allowedPermitOptions: AllowedPermitArguments = {
 };
 
 describe("Erc20Permit", () => {
-	const erc20Permit = new Erc20Permit(
-		erc20contract as unknown as ERC20PermitContractInterface
-	);
+	const signer: Signer = ethers.Wallet.createRandom();
+	const erc20Permit = new Erc20Permit(signer, erc20contract);
 
 	describe("#encodePermit", () => {
 		it("works with StandardPermitArguments", () => {
