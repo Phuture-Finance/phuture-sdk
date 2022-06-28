@@ -1,58 +1,59 @@
 {
-	"name": "@phuture/sdk",
-	"version": "0.1.0",
-	"repository": "Phuture-Finance/phuture-sdk",
-	"author": "Eugene Lepeico <eugenelepeico@gmail.com>",
-  	"workspaces": [
-		"packages/*"
-  	],
-	"scripts": {
-		"prepare": "husky install",
-		"build": "turbo run build",
-		"dev": "turbo run dev --parallel",
-		"lint": "xo 'packages/**/!(*.test).ts'",
-		"lint:fix": "xo 'packages/**/!(*.test).ts' --fix",
-		"test": "turbo run test --parallel",
-		"docs": "typedoc ."
+  "name": "@phuture/sdk",
+  "version": "0.1.0",
+  "repository": "Phuture-Finance/phuture-sdk",
+  "author": "Eugene Lepeico <eugenelepeico@gmail.com>",
+  "workspaces": [
+	"packages/*",
+	"examples/*"
+  ],
+  "scripts": {
+	"prepare": "husky install",
+	"build": "turbo run build",
+	"dev": "turbo run dev --parallel",
+	"lint": "xo 'packages/**/!(*.test).ts'",
+	"lint:fix": "xo 'packages/**/!(*.test).ts' --fix",
+	"test": "turbo run test --parallel",
+	"docs": "typedoc ."
+  },
+  "devDependencies": {
+	"@auto-it/all-contributors": "10.37.1",
+	"@auto-it/conventional-commits": "10.37.1",
+	"@auto-it/first-time-contributor": "10.37.1",
+	"@auto-it/released": "10.37.1",
+	"@types/jest": "28.1.1",
+	"auto": "10.37.1",
+	"husky": "^8.0.1",
+	"lint-staged": "13.0.0",
+	"turbo": "1.2.10",
+	"typedoc": "0.22.17",
+	"xo": "0.49.0"
+  },
+  "auto": {
+	"plugins": [
+	  "npm",
+	  "all-contributors",
+	  "conventional-commits",
+	  "first-time-contributor",
+	  "released"
+	],
+	"onlyPublishWithReleaseLabel": true
+  },
+  "lint-staged": {
+	"*.{ts,tsx}": [
+	  "pnpm lint:fix"
+	]
+  },
+  "packageManager": "pnpm@7.1.0",
+  "xo": {
+	"prettier": true,
+	"rules": {
+	  "import/extensions": 0
 	},
-	"devDependencies": {
-		"@auto-it/all-contributors": "10.37.1",
-		"@auto-it/conventional-commits": "10.37.1",
-		"@auto-it/first-time-contributor": "10.37.1",
-		"@auto-it/released": "10.37.1",
-		"@types/jest": "28.1.1",
-		"auto": "10.37.1",
-		"husky": "^8.0.1",
-		"lint-staged": "13.0.0",
-		"turbo": "1.2.10",
-		"typedoc": "0.22.17",
-		"xo": "0.49.0"
-	},
-	"auto": {
-		"plugins": [
-			"npm",
-			"all-contributors",
-			"conventional-commits",
-			"first-time-contributor",
-			"released"
-		],
-		"onlyPublishWithReleaseLabel": true
-	},
-	"lint-staged": {
-		"*.{ts,tsx}": [
-			"pnpm lint:fix"
-		]
-	},
-	"packageManager": "pnpm@7.1.0",
-	"xo": {
-		"prettier": true,
-		"rules": {
-			"import/extensions": 0
-		},
-		"ignores": [
-			"./packages/**/test/**",
-			"./packages/**/tests/**",
-			"./packages/**/src/generated/**"
-		]
-	}
+	"ignores": [
+	  "./packages/**/test/**",
+	  "./packages/**/tests/**",
+	  "./packages/**/src/generated/**"
+	]
+  }
 }
