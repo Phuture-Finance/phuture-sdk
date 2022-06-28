@@ -32,8 +32,6 @@ export class ZeroExAggregator {
 			baseURL: baseUrl,
 			headers: {
 				'Content-Type': 'application/json',
-				// eslint-disable-next-line @typescript-eslint/naming-convention
-				Accept: 'application/json',
 			},
 		});
 	}
@@ -50,8 +48,7 @@ export class ZeroExAggregator {
 		sellToken: Address,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		// eslint-disable-next-line unicorn/no-object-as-default-parameter
-		options: Partial<Zero0xQuoteOptions> = {slippagePercentage: 0.05},
+		options: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
 		const parameters = {
 			sellToken,
@@ -71,8 +68,7 @@ export class ZeroExAggregator {
 		sellToken: Address | string,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		// eslint-disable-next-line unicorn/no-object-as-default-parameter
-		options: Partial<Zero0xPriceOptions> = {slippagePercentage: 0.05},
+		options: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
 		const parameters = {
 			sellToken,

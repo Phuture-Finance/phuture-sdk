@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { constants, ethers, Signer } from "ethers";
+import { BigNumber, constants, ethers, Signer } from "ethers";
 import { Mock } from "moq.ts";
 import { Index } from "../src";
 import {
@@ -10,19 +10,20 @@ import {
 describe("Index", () => {
 	const signer: Signer = ethers.Wallet.createRandom();
 	const contractAddress = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092";
-	const routerContract = BaseIndex__factory.connect(contractAddress, signer);
+	const indexContract = BaseIndex__factory.connect(contractAddress, signer);
 
 	it("create Index instance from address", () => {
-		expect(() => new Index(signer, contractAddress)).not.to.be.null;
+		const index = new Index(signer, contractAddress);
+		expect(index.address).to.be.eq(contractAddress);
 	});
 
 	it("create Index instance from contract", () => {
-		expect(() => new Index(signer, routerContract)).not.to.be.null;
+		const index = new Index(signer, indexContract);
+		expect(index.address).to.be.eq(contractAddress);
 	});
 
 	describe("Index constructed", () => {
 		let indexContract: Index;
-		let baseIndexContract: BaseIndexContractInterface;
 
 		beforeAll(async () => {
 			const mockedContract = new Mock<BaseIndexContractInterface>()
@@ -34,18 +35,19 @@ describe("Index", () => {
 				)
 				.returnsAsync({ _assets: ["0x01", "0x02"], _weights: [155, 100] })
 				.object();
-			baseIndexContract = mockedContract;
 			indexContract = new Index(signer, mockedContract);
 		});
 
-		it("scaleAmount function return some amountToSellQuoted", async () => {
-			const indexScale = await indexContract.scaleAmount("10000000000");
-			expect(async () => indexScale.amountToSellQuoted).not.to.be.null;
-		});
+		it("#scaleAmount returns proper values", async () => {
+			const { amounts, amountToSell } = await indexContract.scaleAmount(
+				10000000000
+			);
 
-		it("scaleAmount function return some amounts", async () => {
-			const indexScale = await indexContract.scaleAmount("10000000000");
-			expect(async () => indexScale.amounts).not.to.be.null;
+			expect(amounts).to.deep.eq({
+				"0x01": BigNumber.from(6078431372),
+				"0x02": BigNumber.from(3921568627),
+			});
+			expect(amountToSell.toNumber()).to.eq(9999999999);
 		});
 	});
 });

@@ -1,21 +1,5 @@
-import { QuotePayload } from "../dist/src/interface";
-
 jest.mock("axios");
 
-const allPayloadExcept = (key?: keyof QuotePayload): QuotePayload => {
-	type ObjectKey = keyof typeof payload;
-	const payload: QuotePayload = {
-		buyToken: "PDI",
-		sellToken: "ETH",
-		sellAmount: "123124",
-		takerAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-	};
-
-	if (key) {
-		payload[key as ObjectKey] = "abc";
-	}
-	return payload;
-};
 //
 // describe("Error boundaries", () => {
 // 	it("error if the sell amount is invalid", async () => {
@@ -130,5 +114,5 @@ const allPayloadExcept = (key?: keyof QuotePayload): QuotePayload => {
 // 		const payload = allPayloadExcept();
 // 		const expectedUrl =
 // 			"https://api.0x.org/swap/v1/quote?buyToken=PDI&sellToken=ETH&sellAmount=123124&takerAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-//  try { await new QuoteAggregator().quote(payload); } catch { expect(axios.get).toHaveBeenCalledWith(expectedUrl); }
+// try { await new QuoteAggregator().quote(payload); } catch { expect(axios.get).toHaveBeenCalledWith(expectedUrl); }
 // }); });
