@@ -40,6 +40,16 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 	}
 
 	/**
+	 * ### Get the address of the token
+	 *
+	 * @returns Address of the token
+	 */
+
+	get address(): Address {
+		return this.contract.address;
+	}
+
+	/**
 	 * ### Get the decimals of the token
 	 *
 	 * @returns Decimals of the token

@@ -1,7 +1,7 @@
-import { Erc20 } from "@phuture/erc-20";
-import { Address, isAddress } from "@phuture/types";
-import { BigNumber, BigNumberish, Signer } from "ethers";
-import { BaseIndex, BaseIndex__factory } from "./types";
+import {Erc20} from '@phuture/erc-20';
+import {Address, isAddress} from '@phuture/types';
+import {BigNumber, BigNumberish, Signer} from 'ethers';
+import {BaseIndex, BaseIndex__factory} from './types';
 
 /**
  * ### Index Contract
@@ -12,33 +12,40 @@ export class Index extends Erc20<BaseIndex> {
 			signer,
 			isAddress(contract)
 				? BaseIndex__factory.connect(contract, signer)
-				: contract
+				: contract,
 		);
-	}
-
-	get address(): Address {
-		return this.contract.address;
 	}
 
 	async scaleAmount(amountDesired: BigNumberish): Promise<{
 		amountToSellQuoted: BigNumber;
 		amounts: Record<Address, BigNumber>;
 	}> {
-		const { _assets, _weights } = await this.contract.anatomy();
+		const {_assets, _weights} = await this.contract.anatomy();
 
 		const amounts: Record<Address, BigNumber> = {};
-		for (const index in _assets) {
+		// For (const index in _assets) {
+		// 	const weight = _weights[index];
+		// 	amounts[_assets[index]] = BigNumber.from(amountDesired)
+		// 		.mul(weight)
+		// 		.div(255);
+		// }
+		for (const [index, _] of _assets.entries()) {
 			const weight = _weights[index];
 			amounts[_assets[index]] = BigNumber.from(amountDesired)
 				.mul(weight)
 				.div(255);
 		}
 
+		const amountToSell = BigNumber.from(0);
+
+		for (const amount of Object.values(amounts)) amountToSell.add(amount);
+
 		return {
-			amountToSellQuoted: Object.values(amounts).reduce(
-				(acc, amount) => acc.add(amount),
-				BigNumber.from(0)
-			),
+			// AmountToSellQuoted: Object.values(amounts).reduce(
+			// 	(acc, amount) => acc.add(amount),
+			// 	BigNumber.from(0)
+			// ),
+			amountToSellQuoted: amountToSell,
 			amounts,
 		};
 	}
