@@ -1,6 +1,6 @@
 # Swap
 
-Swap Package for executing swaps on Phuture
+Quote Aggregation Package for executing swaps on Phuture
 
 ## Introduction
 
@@ -29,7 +29,7 @@ Import it:
 Use it:
 
 ``` typescript
-    const swapper = new Swap(provider?);
+    const swapper = new QuoteAggregator(provider?);
     const transactionResponse = await swapper.swap(payload);    
  ```
 
