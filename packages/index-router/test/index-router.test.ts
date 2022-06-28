@@ -1,14 +1,8 @@
-import {
-	setOfAssets,
-	Erc20Permit,
-	StandardPermitArguments,
-	Erc20,
-} from "@phuture/erc-20";
+import { Erc20Permit, StandardPermitArguments } from "@phuture/erc-20";
 import { expect } from "chai";
 import { BigNumber, constants, ethers, Signer } from "ethers";
 import { ContractTransaction } from "ethers/lib/ethers";
 import { Mock, PlayTimes } from "moq.ts";
-import { IndexRouter__factory } from "../dist/types";
 import { DefaultIndexRouterAddress, IndexRouter } from "../src";
 import { IndexRouter as IndexRouterContractInterface } from "../src/types";
 import { IIndexRouter } from "../src/types/IndexRouter";

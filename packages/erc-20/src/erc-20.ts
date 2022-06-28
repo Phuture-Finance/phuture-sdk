@@ -1,10 +1,10 @@
-import {Address} from '@phuture/types';
-import {Signer, utils} from 'ethers';
-import {formatUnits} from 'ethers/lib/utils';
-import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
+import { Address } from "@phuture/types";
+import { Signer, utils } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
+import { ERC20 as ERC20ContractInterface, ERC20__factory } from "./types";
 
 export enum NetworkType {
-	Mainnet = 'mainnet',
+	Mainnet = "mainnet",
 }
 
 interface AssetsInterface {
@@ -18,8 +18,8 @@ export const setOfAssets: {
 } = {
 	/** ### Default addresses on mainnet. */
 	mainnet: {
-		usdc: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-		weth: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+		usdc: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+		weth: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
 	},
 };
 
@@ -43,7 +43,7 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 	constructor(signer: Signer, contract: Address | C) {
 		this._signer = signer;
 
-		if (typeof contract === 'string') {
+		if (typeof contract === "string") {
 			if (!utils.isAddress(contract))
 				throw new TypeError(`Invalid contract address: ${contract}`);
 
@@ -51,6 +51,10 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 		} else {
 			this.contract = contract;
 		}
+	}
+
+	get address(): Address {
+		return this.contract.address;
 	}
 
 	/**
