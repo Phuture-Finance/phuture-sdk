@@ -1,8 +1,10 @@
-# Index Router
+# ERC20
+
+
 
 ## Introduction
 
-This is the Index-Router package. It acts as a contract interface for our smart contracts. Use it for minting and burning.
+The ERC20 package, used to interface with the ERC20 contract.
 
 # Getting started with development
 
@@ -10,7 +12,7 @@ In this section we will take a look at how to get up and running with this packa
 
 Assuming you have correctly run all the Phuture SDK install commands. If not, take a look at the root Phuture SDK readme for more details.
 
-## setup
+## Development setup
 
 Install dependencies:
 
@@ -30,11 +32,11 @@ Now you're ready to go!
 
 
 ``` typescript
-import { DefaultIndexRouterAddress, IndexRouter } from "@phuture/index-router";
+import { Erc20 } from "@phuture/erc-20";
 
 // create an instance 
-const router = new IndexRouter(signer, routerContract);
+const erc = new Erc20(signer, provider);
 
-// perform a mint
-const response = await router.mint(swapOptions, amount);
+// use it
+const response = await erc.decimals();
 ```

@@ -1,7 +1,5 @@
 # Comparators
 
-
-
 ## Introduction
 
 Provide comparator methods for use by other packages
@@ -26,5 +24,4 @@ import { addressComparator } from "@phuture/comparators";
 
 // create an instance 
 addresses.sort(addressComparator);
-
 ```
