@@ -24,7 +24,7 @@ Now you're ready to go!
 
 Import it:
 
-`import {Swap} from '@phuture/swap'`
+`import {QuoteAggregator} from '@phuture/zero-ex-aggregator'`
 
 Use it:
 

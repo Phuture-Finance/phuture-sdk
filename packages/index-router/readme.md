@@ -32,7 +32,7 @@ Now you're ready to go!
 
 
 ``` typescript
-import { DefaultIndexRouterAddress, IndexRouter } from "../src";
+import { DefaultIndexRouterAddress, IndexRouter } from "@phuture/index-router";
 
 // create an instance 
 const router = new IndexRouter(signer, routerContract);
