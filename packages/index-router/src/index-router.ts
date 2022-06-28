@@ -3,28 +3,28 @@ import {
 	Erc20Permit,
 	StandardPermitArguments,
 	setOfAssets,
-} from '@phuture/erc-20';
-import {Address} from '@phuture/types';
+} from "@phuture/erc-20";
+import { Address } from "@phuture/types";
 import {
 	BigNumber,
 	BigNumberish,
 	ContractTransaction,
 	Signer,
 	utils,
-} from 'ethers';
-import {MintOptions} from './mint-options';
-import {BurnOptions} from './redeem-options';
+} from "ethers";
+import { MintOptions } from "./mint-options";
+import { BurnOptions } from "./redeem-options";
 import {
 	IndexRouter as IndexRouterContractInterface,
 	IndexRouter__factory,
-} from './types';
-import {IIndexRouter} from './types/IndexRouter';
+} from "./types";
+import { IIndexRouter } from "./types/IndexRouter";
 // Import { SetOfAssets } from "../../erc-20/src/erc-20";
 
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x7b6c3e5486d9e6959441ab554a889099eed76290',
+	Mainnet = "0x7b6c3e5486d9e6959441ab554a889099eed76290",
 }
 
 /**
@@ -48,11 +48,11 @@ export class IndexRouter {
 		signer: Signer,
 		contract:
 			| IndexRouterContractInterface
-			| Address = DefaultIndexRouterAddress.Mainnet,
+			| Address = DefaultIndexRouterAddress.Mainnet
 	) {
 		this._signer = signer;
 
-		if (typeof contract === 'string') {
+		if (typeof contract === "string") {
 			if (!utils.isAddress(contract))
 				throw new TypeError(`Invalid contract address: ${contract}`);
 
@@ -70,39 +70,39 @@ export class IndexRouter {
 		this._signer = signer;
 		this.contract = IndexRouter__factory.connect(
 			this.contract.address,
-			this._signer,
+			this._signer
 		);
 	}
 
 	// Mint swap for native token
 	mint(
 		options: IIndexRouter.MintSwapValueParamsStruct,
-		sellAmount: BigNumberish,
+		sellAmount: BigNumberish
 	): Promise<ContractTransaction>;
 	// Mint swap for single sell token
 	mint(
 		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
-		sellToken: Erc20,
+		sellToken: Erc20
 	): Promise<ContractTransaction>;
 	// Mint swap for sell token with permit
 	mint(
 		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
 		sellToken: Erc20Permit,
-		permitOptions: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction>;
 
 	async mint(
 		options: MintOptions,
 		sellAmount: BigNumberish,
 		sellToken?: Erc20 | Erc20Permit,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction> {
-		if (sellToken === undefined) {
+		if (!sellToken) {
 			return this.contract.mintSwapValue(
 				options as IIndexRouter.MintSwapValueParamsStruct,
-				{value: sellAmount},
+				{ value: sellAmount }
 			);
 		}
 
@@ -112,15 +112,15 @@ export class IndexRouter {
 				permitOptions.deadline,
 				permitOptions.v,
 				permitOptions.r,
-				permitOptions.s,
+				permitOptions.s
 			);
 		}
 
 		const allowance = await sellToken.contract.allowance(
 			await this._signer.getAddress(),
-			this.contract.address,
+			this.contract.address
 		);
-		if (allowance.lt(sellAmount)) throw new Error('Insufficient allowance');
+		if (allowance.lt(sellAmount)) throw new Error("Insufficient allowance");
 
 		return this.contract.mintSwap(options as IIndexRouter.MintSwapParamsStruct);
 	}
@@ -156,38 +156,38 @@ export class IndexRouter {
 	// Burn swap for multi tokens
 	burn(
 		options: IIndexRouter.BurnParamsStruct,
-		sellAmount: BigNumberish,
+		sellAmount: BigNumberish
 	): Promise<ContractTransaction>;
 
 	// Burn swap for single(or native) sell token
 	burn(
 		options: IIndexRouter.BurnSwapParamsStruct,
 		sellAmount: BigNumberish,
-		buyToken: Erc20,
+		buyToken: Erc20
 	): Promise<ContractTransaction>;
 
 	// Burn swap for sell token(or multi tokens) with permit
 	burn(
 		options: IIndexRouter.BurnSwapParamsStruct | IIndexRouter.BurnParamsStruct,
 		sellAmount: BigNumberish,
-		buyToken: Erc20Permit,
-		permitOptions: Omit<StandardPermitArguments, 'amount'>,
+		buyToken?: Erc20Permit | Erc20,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction>;
 
 	async burn(
 		options: BurnOptions,
 		sellAmount: BigNumberish,
 		buyToken?: Erc20 | Erc20Permit,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction> {
-		if (buyToken instanceof Erc20Permit && permitOptions !== undefined) {
-			if (buyToken === undefined) {
+		if ((!buyToken || buyToken instanceof Erc20Permit) && permitOptions) {
+			if (!buyToken) {
 				return this.contract.burnWithPermit(
 					options as IIndexRouter.BurnParamsStruct,
 					permitOptions.deadline,
 					permitOptions.v,
 					permitOptions.r,
-					permitOptions.s,
+					permitOptions.s
 				);
 			}
 
@@ -197,7 +197,7 @@ export class IndexRouter {
 					permitOptions.deadline,
 					permitOptions.v,
 					permitOptions.r,
-					permitOptions.s,
+					permitOptions.s
 				);
 			}
 
@@ -206,44 +206,45 @@ export class IndexRouter {
 				permitOptions.deadline,
 				permitOptions.v,
 				permitOptions.r,
-				permitOptions.s,
+				permitOptions.s
 			);
 		}
+		if (buyToken) {
+			const allowance = await buyToken.contract.allowance(
+				await this._signer.getAddress(),
+				this.contract.address
+			);
+			console.log("2 allowance: ", allowance);
+			if (allowance.gte(sellAmount)) {
+				if (buyToken.contract.address === DefaultIndexRouterAddress.Mainnet) {
+					return this.contract.burn(options as IIndexRouter.BurnParamsStruct);
+				}
 
-		const allowance = await new Erc20(
-			this.signer,
-			options.index,
-		).contract.allowance(
-			await this.contract.signer.getAddress(),
-			this.contract.address,
-		);
-		if (allowance.gte(sellAmount)) {
-			if (buyToken === undefined) {
-				return this.contract.burn(options as IIndexRouter.BurnParamsStruct);
-			}
+				if (buyToken.contract.address === setOfAssets.mainnet.weth) {
+					console.log("here");
+					return this.contract.burnSwapValue(
+						options as IIndexRouter.BurnSwapParamsStruct
+					);
+				}
 
-			if (buyToken.contract.address === setOfAssets.mainnet.weth) {
-				return this.contract.burnSwapValue(
-					options as IIndexRouter.BurnSwapParamsStruct,
+				return this.contract.burnSwap(
+					options as IIndexRouter.BurnSwapParamsStruct
 				);
 			}
 
-			return this.contract.burnSwap(
-				options as IIndexRouter.BurnSwapParamsStruct,
-			);
+			throw new Error("Insufficient allowance");
 		}
-
-		throw new Error('Insufficient allowance');
+		throw new Error("Unexpected error");
 	}
 
 	async burnTokensAmount(): Promise<Record<Address, BigNumber>> {
 		// TODO: call contract.burnTokensAmount and index.anatomy method
 		// merge the results of the two into a single object with the address as the key and the amount as the value
-		throw new Error('Not implemented');
+		throw new Error("Not implemented");
 	}
 
 	async burnSwapTokenAmount() {
 		// TODO: reduce through the result of burnTokensAmount applying base price to each asset
-		throw new Error('Not implemented');
+		throw new Error("Not implemented");
 	}
 }
