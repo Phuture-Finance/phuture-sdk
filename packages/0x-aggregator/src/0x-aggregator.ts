@@ -1,19 +1,19 @@
-import { Address, Url } from "@phuture/types";
-import axios, { AxiosInstance } from "axios";
-import { BigNumber, BigNumberish } from "ethers";
+import {Address, Url} from '@phuture/types';
+import axios, {AxiosInstance} from 'axios';
+import {BigNumber, BigNumberish} from 'ethers';
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
 	Zero0xQuoteOptions,
 	Zero0xQuoteResponse,
 	Zero0xSourcesResponse,
-} from "./types";
+} from './types';
 
 /**
  * ### Addresses of the ZeroX API endpoint
  */
 export enum ZeroExBaseUrl {
-	Mainnet = "https://api.0x.org/",
+	Mainnet = 'https://api.0x.org/',
 }
 
 /**
@@ -28,10 +28,10 @@ export class ZeroExAggregator {
 	 */
 	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet) {
 		this.client = axios.create({
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
 			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
+				'Content-Type': 'application/json',
 			},
 		});
 	}
@@ -48,7 +48,7 @@ export class ZeroExAggregator {
 		sellToken: Address,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options: Partial<Zero0xQuoteOptions> = { slippagePercentage: 0.05 }
+		options: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
 		const parameters = {
 			sellToken,
@@ -57,12 +57,9 @@ export class ZeroExAggregator {
 			...options,
 		};
 
-		const { data } = await this.client.get<Zero0xQuoteResponse>(
-			"swap/v1/quote",
-			{
-				params: parameters,
-			}
-		);
+		const {data} = await this.client.get<Zero0xQuoteResponse>('swap/v1/quote', {
+			params: parameters,
+		});
 
 		return data;
 	}
@@ -71,7 +68,7 @@ export class ZeroExAggregator {
 		sellToken: Address | string,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options: Partial<Zero0xPriceOptions> = { slippagePercentage: 0.05 }
+		options: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
 		const parameters = {
 			sellToken,
@@ -80,19 +77,16 @@ export class ZeroExAggregator {
 			...options,
 		};
 
-		const { data } = await this.client.get<Zero0xPriceResponse>(
-			"swap/v1/price",
-			{
-				params: parameters,
-			}
-		);
+		const {data} = await this.client.get<Zero0xPriceResponse>('swap/v1/price', {
+			params: parameters,
+		});
 
 		return data;
 	}
 
 	async sources(): Promise<Zero0xSourcesResponse> {
-		const { data } = await this.client.get<Zero0xSourcesResponse>(
-			"swap/v1/sources"
+		const {data} = await this.client.get<Zero0xSourcesResponse>(
+			'swap/v1/sources',
 		);
 
 		return data;
