@@ -49,7 +49,7 @@ export class ZeroExAggregator {
 		sellToken: Address,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options: Partial<Zero0xQuoteOptions>,
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
 		const parameters = {
 			sellToken,
@@ -77,7 +77,7 @@ export class ZeroExAggregator {
 		sellToken: Address | string,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options: Partial<Zero0xPriceOptions>,
+		options?: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
 		const parameters = {
 			sellToken,
