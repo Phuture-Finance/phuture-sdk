@@ -26,8 +26,8 @@ export interface ErrorData {
 export type ErrorProps = {
 	status?: ErrorStatus;
 } & (
-	| { message: string; errors?: never }
-	| { message?: never; errors: ErrorData[] }
+	| {message: string; errors?: never}
+	| {message?: never; errors: ErrorData[]}
 );
 
 /**
@@ -47,13 +47,13 @@ export class PhutureError extends Error {
 	 * @returns Instance of PhutureError
 	 */
 	constructor(props: ErrorProps) {
-		const { status, message, errors } = props;
+		const {status, message, errors} = props;
 		const error: ErrorData = message
-			? { message, ...(status ? { status } : {}) }
+			? {message, ...(status ? {status} : {})}
 			: errors![0];
 
 		super(error.message);
-		this.name = "PhutureError";
+		this.name = 'PhutureError';
 		this.errors = message ? [error] : errors!;
 
 		if (error.status) this.status = error.status;

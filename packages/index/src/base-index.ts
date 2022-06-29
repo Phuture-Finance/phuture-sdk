@@ -1,7 +1,7 @@
-import { Erc20 } from "@phuture/erc-20";
-import { Address, isAddress } from "@phuture/types";
-import { BigNumber, BigNumberish, Signer } from "ethers";
-import { BaseIndex, BaseIndex__factory } from "./types";
+import {Erc20} from '@phuture/erc-20';
+import {Address, isAddress} from '@phuture/types';
+import {BigNumber, BigNumberish, Signer} from 'ethers';
+import {BaseIndex, BaseIndex__factory} from './types';
 
 /**
  * ### Index Contract
@@ -12,7 +12,7 @@ export class Index extends Erc20<BaseIndex> {
 			signer,
 			isAddress(contract)
 				? BaseIndex__factory.connect(contract, signer)
-				: contract
+				: contract,
 		);
 	}
 
@@ -20,7 +20,7 @@ export class Index extends Erc20<BaseIndex> {
 		amountToSellQuoted: BigNumber;
 		amounts: Record<Address, BigNumber>;
 	}> {
-		const { _assets, _weights } = await this.contract.anatomy();
+		const {_assets, _weights} = await this.contract.anatomy();
 
 		const amounts: Record<Address, BigNumber> = {};
 		for (const index in _assets) {
@@ -33,7 +33,7 @@ export class Index extends Erc20<BaseIndex> {
 		return {
 			amountToSellQuoted: Object.values(amounts).reduce(
 				(acc, amount) => acc.add(amount),
-				BigNumber.from(0)
+				BigNumber.from(0),
 			),
 			amounts,
 		};

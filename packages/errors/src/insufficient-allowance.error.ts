@@ -1,12 +1,4 @@
-import { BigNumberish } from "ethers";
-
-/**
- * ### Props for an error
- */
-export type InsufficientAllowanceErrorProps = {
-	expectedAllowance: BigNumberish;
-	actualAllowance?: BigNumberish;
-};
+import {BigNumberish} from 'ethers';
 
 /**
  * ### Error thrown on insufficient allowance
@@ -14,20 +6,25 @@ export type InsufficientAllowanceErrorProps = {
 export class InsufficientAllowanceError extends Error {
 	public readonly expectedAllowance: BigNumberish;
 	public readonly actualAllowance?: BigNumberish;
+
 	/**
 	 * ### Creates an instance of InsufficientAllowanceError
 	 *
-	 * @param props Error props
 	 * @returns Instance of InsufficientAllowanceError
+	 * @param expectedAllowance Expected allowance
+	 * @param actualAllowance Actual allowance
 	 */
-	constructor(props: InsufficientAllowanceErrorProps) {
-		const { expectedAllowance, actualAllowance = 0 } = props;
-
-		const message = `Insufficient allowance expectedAllowance: ${expectedAllowance} actualAllowance: ${actualAllowance} `;
+	constructor(
+		expectedAllowance: BigNumberish,
+		actualAllowance: BigNumberish = 0,
+	) {
+		const message = `Insufficient allowance: expected ${expectedAllowance}, but got ${actualAllowance}`;
 		super(message);
 		this.expectedAllowance = expectedAllowance;
 		this.actualAllowance = actualAllowance;
 
-		this.name = "InsufficientAllowanceError";
+		this.name = 'InsufficientAllowanceError';
+
+		Object.setPrototypeOf(this, InsufficientAllowanceError.prototype);
 	}
 }

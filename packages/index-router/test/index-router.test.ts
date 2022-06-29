@@ -1,9 +1,4 @@
-import {
-	Erc20,
-	Erc20Permit,
-	setOfAssets,
-	StandardPermitArguments,
-} from "@phuture/erc-20";
+import { Erc20, Erc20Permit, StandardPermitArguments } from "@phuture/erc-20";
 import { InsufficientAllowanceError } from "@phuture/errors";
 import { expect } from "chai";
 import { BigNumber, constants, ethers, Signer } from "ethers";
@@ -21,14 +16,6 @@ describe("IndexRouter", () => {
 		.setup((c) => c.address)
 		.returns(constants.AddressZero)
 		.object();
-
-	it("should throw error on invalid address", async () => {
-		const contractAddress = "0x123";
-		await expect(() => new IndexRouter(signer, contractAddress)).to.throw(
-			TypeError,
-			`Invalid contract address: ${contractAddress}`
-		);
-	});
 
 	it("create IndexRouter instance from address", () => {
 		const router = new IndexRouter(signer, routerContract.address);
@@ -87,7 +74,7 @@ describe("IndexRouter", () => {
 			beforeAll(async () => {
 				mintSwapOptions = {
 					index: "0xc11f8e173ee67ffa7bbdd185d2399994aad23ec6",
-					inputToken: setOfAssets.mainnet.usdc,
+					inputToken: "0x01",
 					amountInInputToken: "1",
 					recipient: await signer.getAddress(),
 					quotes: randomQuotes,
@@ -221,7 +208,7 @@ describe("IndexRouter", () => {
 					amount: "0",
 					recipient: await signer.getAddress(),
 					quotes: randomQuotes,
-					outputAsset: setOfAssets.mainnet.usdc,
+					outputAsset: "0x01",
 				};
 			});
 
@@ -256,7 +243,7 @@ describe("IndexRouter", () => {
 					)
 					.returnsAsync(constants.MaxUint256)
 					.setup((c) => c.contract.address)
-					.returns(setOfAssets.mainnet.usdc)
+					.returns("0x01")
 					.object();
 				const routerContract = contract
 					.setup(async (c) => c.burn(burnParameters))
@@ -273,33 +260,34 @@ describe("IndexRouter", () => {
 				expect(response).to.not.be.null;
 			});
 
-			// it("burn return info that allowance are insufficient ", async () => {
-			// 	const indexContract = new Mock<Erc20>()
-			// 		.setup((c) =>
-			// 			c.contract.allowance(burnParameters.recipient, burnParameters.index)
-			// 		)
-			// 		.returnsAsync(BigNumber.from(0))
-			// 		.setup((c) => c.contract.address)
-			// 		.returns(setOfAssets.mainnet.usdc)
-			// 		.object();
-			// 	const routerContract = contract
-			// 		.setup(async (c) => c.burn(burnParameters))
-			// 		.play(PlayTimes.Once())
-			// 		.returnsAsync(new Mock<ContractTransaction>().object())
-			// 		.object();
+			it("burn return info that allowance are insufficient ", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) =>
+						c.contract.allowance(burnParameters.recipient, burnParameters.index)
+					)
+					.returnsAsync(BigNumber.from(0))
+					.setup((c) => c.contract.address)
+					.returns("0x01")
+					.object();
+				const routerContract = contract
+					.setup(async (c) => c.burn(burnParameters))
+					.play(PlayTimes.Once())
+					.returnsAsync(new Mock<ContractTransaction>().object())
+					.object();
 
-			// 	const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(signer, routerContract);
 
-			// 	try {
-			// 		await router.burn(indexContract, "1000", burnParameters.recipient);
-			// 	} catch (error) {
-			// 		expect(error).to.be.instanceOf(InsufficientAllowanceError);
-			// 	}
-			// });
+				router
+					.burn(indexContract, "1000", burnParameters.recipient)
+					.catch((error) => {
+						expect(error).to.be.instanceOf(InsufficientAllowanceError);
+					});
+			});
+
 			it("burnSwapValueWithPermit return something", async () => {
 				const indexContract = new Mock<Erc20>()
 					.setup((c) => c.contract.address)
-					.returns(setOfAssets.mainnet.usdc)
+					.returns("0x01")
 					.object();
 				const routerContract = contract
 					.setup(async (c) =>
@@ -334,7 +322,7 @@ describe("IndexRouter", () => {
 					)
 					.returnsAsync(constants.MaxUint256)
 					.setup((c) => c.contract.address)
-					.returns(setOfAssets.mainnet.usdc)
+					.returns("0x01")
 					.object();
 				const routerContract = contract
 					.setup(async (c) => c.burnSwapValue(burnSwapParameters))
@@ -356,7 +344,7 @@ describe("IndexRouter", () => {
 			it("burnSwapWithPermit return something", async () => {
 				const indexContract = new Mock<Erc20>()
 					.setup((c) => c.contract.address)
-					.returns(setOfAssets.mainnet.usdc)
+					.returns("0x01")
 					.object();
 				const routerContract = contract
 					.setup(async (c) =>
@@ -392,7 +380,7 @@ describe("IndexRouter", () => {
 					)
 					.returnsAsync(constants.MaxUint256)
 					.setup((c) => c.contract.address)
-					.returns(setOfAssets.mainnet.usdc)
+					.returns("0x01")
 					.object();
 				const routerContract = contract
 					.setup(async (c) => c.burnSwap(burnSwapParameters))
