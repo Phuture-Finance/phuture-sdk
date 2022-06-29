@@ -7,6 +7,9 @@ import {BigNumber, ethers, utils} from 'ethers';
 
 dotenv.config();
 
+/**
+ * This example looks at minting 1ETH
+ */
 const amountToSellDesired = BigNumber.from(utils.parseEther('1'));
 
 async function main() {
@@ -34,6 +37,10 @@ async function main() {
 
 	const zeroEx = new ZeroExAggregator(zeroExAggregatorUrl);
 
+	/**
+	 * After we have the correctly scaled amounts, we can then get quotes for each amount.
+	 * This will return a {@see Zero0xQuoteResponse} that can be passed straight into the mint method
+	 */
 	const quotes = await Promise.all(
 		Object.entries(amounts).map(async ([asset, amount]) => {
 			const {
@@ -60,6 +67,10 @@ async function main() {
 
 	const indexRouter = new IndexRouter(wallet, indexRouterAddress);
 
+	/**
+	 * Once we have our quotes in the form of an array of {@see Zero0xQuoteResponse}
+	 * We can then perform the mint.
+	 */
 	await indexRouter.mint(
 		{
 			index: index.address,

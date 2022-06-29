@@ -27,6 +27,7 @@ export class ZeroExAggregator {
 	 * @param baseUrl The base endpoint to query
 	 */
 	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet) {
+
 		this.client = axios.create({
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
@@ -64,6 +65,14 @@ export class ZeroExAggregator {
 		return data;
 	}
 
+	/**
+	 * ### Makes a call to the price endpoint and returns the pricing that would be a available for an analogous call to /quote
+	 * @param sellToken
+	 * @param buyToken
+	 * @param sellAmount
+	 * @param options
+	 * @returns Promise transaction response
+	 */
 	async price(
 		sellToken: Address | string,
 		buyToken: Address,
@@ -83,7 +92,10 @@ export class ZeroExAggregator {
 
 		return data;
 	}
-
+	/**
+	 * Returns the liquidity sources enabled for the chain
+	 * @returns Promise transaction response
+	 */
 	async sources(): Promise<Zero0xSourcesResponse> {
 		const {data} = await this.client.get<Zero0xSourcesResponse>(
 			'swap/v1/sources',

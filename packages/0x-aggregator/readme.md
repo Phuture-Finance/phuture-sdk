@@ -1,10 +1,10 @@
-# Swap
+# 0x Aggregator
 
-Swap Package for executing swaps on Phuture
+Aggregator for interfacing with the 0x API
 
 ## Introduction
 
-This component leverages [zero x](https://docs.0x.org/) to find the best possible price and then execute a swap.
+This component leverages [zero x](https://docs.0x.org/) to find the best prices/liquidity, and can be used to perform a transaction.
 
 # Getting started with development
 
@@ -22,15 +22,9 @@ Now you're ready to go!
 
 ## Using this package
 
-Import it:
-
-`import {Swap} from '@phuture/swap'`
-
 Use it:
 
 ``` typescript
-    const swapper = new Swap(provider?);
-    const transactionResponse = await swapper.swap(payload);    
+    import {0x-aggregator as aggregator} from '@phuture/0x-aggregator'
+    const transactionResponse = await aggregator.quote(args...);    
  ```
-
-Check out the documentation to find out what the ```swap``` options are
