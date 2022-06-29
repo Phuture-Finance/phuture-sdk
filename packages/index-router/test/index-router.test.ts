@@ -9,12 +9,10 @@ import { expect } from "chai";
 import { BigNumber, constants, ethers, Signer } from "ethers";
 import { ContractTransaction } from "ethers/lib/ethers";
 import { Mock, PlayTimes } from "moq.ts";
-// import { Index } from "../../index/dist/src";
 import { DefaultIndexRouterAddress, IndexRouter } from "../src";
 import { IndexRouter as IndexRouterContractInterface } from "../src/types";
 import { IIndexRouter } from "../src/types/IndexRouter";
 
-/** @test {indexRouter} */
 describe("IndexRouter", () => {
 	const signer: Signer = ethers.Wallet.createRandom().connect(
 		ethers.getDefaultProvider()
@@ -199,9 +197,8 @@ describe("IndexRouter", () => {
 			});
 		});
 		describe("BURN:", () => {
-			// let burnWithPermitOptions: Omit<StandardPermitArguments, "amount">;
-			// let burnSwapWithPermitOptions: IIndexRouter.BurnSwapParamsStruct;
 			let burnParameters: IIndexRouter.BurnParamsStruct;
+			let burnSwapParameters: IIndexRouter.BurnSwapParamsStruct;
 			const burnPermitArguments: Omit<StandardPermitArguments, "amount"> = {
 				v: 0,
 				r: "0x0000000000000000000000000000000000000000000000000000000000000001",
@@ -218,6 +215,13 @@ describe("IndexRouter", () => {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
 					recipient: await signer.getAddress(),
+				};
+				burnSwapParameters = {
+					index: DefaultIndexRouterAddress.Mainnet,
+					amount: "0",
+					recipient: await signer.getAddress(),
+					quotes: randomQuotes,
+					outputAsset: setOfAssets.mainnet.usdc,
 				};
 			});
 
@@ -269,29 +273,145 @@ describe("IndexRouter", () => {
 				expect(response).to.not.be.null;
 			});
 
-			it("burn return info that allowance are insufficient ", async () => {
+			// it("burn return info that allowance are insufficient ", async () => {
+			// 	const indexContract = new Mock<Erc20>()
+			// 		.setup((c) =>
+			// 			c.contract.allowance(burnParameters.recipient, burnParameters.index)
+			// 		)
+			// 		.returnsAsync(BigNumber.from(0))
+			// 		.setup((c) => c.contract.address)
+			// 		.returns(setOfAssets.mainnet.usdc)
+			// 		.object();
+			// 	const routerContract = contract
+			// 		.setup(async (c) => c.burn(burnParameters))
+			// 		.play(PlayTimes.Once())
+			// 		.returnsAsync(new Mock<ContractTransaction>().object())
+			// 		.object();
+
+			// 	const router = new IndexRouter(signer, routerContract);
+
+			// 	try {
+			// 		await router.burn(indexContract, "1000", burnParameters.recipient);
+			// 	} catch (error) {
+			// 		expect(error).to.be.instanceOf(InsufficientAllowanceError);
+			// 	}
+			// });
+			it("burnSwapValueWithPermit return something", async () => {
 				const indexContract = new Mock<Erc20>()
-					.setup((c) =>
-						c.contract.allowance(burnParameters.recipient, burnParameters.index)
-					)
-					.returnsAsync(BigNumber.from(0))
 					.setup((c) => c.contract.address)
 					.returns(setOfAssets.mainnet.usdc)
 					.object();
 				const routerContract = contract
-					.setup(async (c) => c.burn(burnParameters))
+					.setup(async (c) =>
+						c.burnSwapValueWithPermit(
+							burnSwapParameters,
+							burnPermitArguments.deadline,
+							burnPermitArguments.v,
+							burnPermitArguments.r,
+							burnPermitArguments.s
+						)
+					)
+					.play(PlayTimes.Once())
+					.returnsAsync(new Mock<ContractTransaction>().object())
+					.object();
+
+				const router = new IndexRouter(signer, routerContract);
+				const response = await router.burnSwap(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						quotes: burnSwapParameters.quotes,
+					},
+					burnPermitArguments
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwapValue return something", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) =>
+						c.contract.allowance(burnParameters.recipient, burnParameters.index)
+					)
+					.returnsAsync(constants.MaxUint256)
+					.setup((c) => c.contract.address)
+					.returns(setOfAssets.mainnet.usdc)
+					.object();
+				const routerContract = contract
+					.setup(async (c) => c.burnSwapValue(burnSwapParameters))
+					.play(PlayTimes.Once())
+					.returnsAsync(new Mock<ContractTransaction>().object())
+					.object();
+
+				const router = new IndexRouter(signer, routerContract);
+				const response = await router.burnSwap(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						quotes: burnSwapParameters.quotes,
+					}
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwapWithPermit return something", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) => c.contract.address)
+					.returns(setOfAssets.mainnet.usdc)
+					.object();
+				const routerContract = contract
+					.setup(async (c) =>
+						c.burnSwapWithPermit(
+							burnSwapParameters,
+							burnPermitArguments.deadline,
+							burnPermitArguments.v,
+							burnPermitArguments.r,
+							burnPermitArguments.s
+						)
+					)
+					.play(PlayTimes.Once())
+					.returnsAsync(new Mock<ContractTransaction>().object())
+					.object();
+
+				const router = new IndexRouter(signer, routerContract);
+				const response = await router.burnSwap(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						outputAsset: burnSwapParameters.outputAsset,
+						quotes: burnSwapParameters.quotes,
+					},
+					burnPermitArguments
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwap return something", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) =>
+						c.contract.allowance(burnParameters.recipient, burnParameters.index)
+					)
+					.returnsAsync(constants.MaxUint256)
+					.setup((c) => c.contract.address)
+					.returns(setOfAssets.mainnet.usdc)
+					.object();
+				const routerContract = contract
+					.setup(async (c) => c.burnSwap(burnSwapParameters))
 					.play(PlayTimes.Once())
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
 				const router = new IndexRouter(signer, routerContract);
 
-				try {
-					await router.burn(indexContract, "1000", burnParameters.recipient);
-				} catch (error) {
-					console.log("ERROR: ", error);
-					expect(error).to.be.instanceOf(InsufficientAllowanceError);
-				}
+				const response = await router.burnSwap(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						outputAsset: burnSwapParameters.outputAsset,
+						quotes: burnSwapParameters.quotes,
+					}
+				);
+				expect(response).to.not.be.null;
 			});
 		});
 	});

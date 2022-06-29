@@ -1,15 +1,13 @@
 import { Erc20, Erc20Permit, StandardPermitArguments } from "@phuture/erc-20";
-import { Address } from "@phuture/types";
-import { BigNumberish, ContractTransaction, Signer, utils } from "ethers";
-import { Index } from "../../index/dist/src";
+import { InsufficientAllowanceError } from "@phuture/errors";
+import { Address, isAddress } from "@phuture/types";
+import { BigNumberish, ContractTransaction, Signer } from "ethers";
 import { MintOptions } from "./mint-options";
 import {
 	IndexRouter as IndexRouterContractInterface,
 	IndexRouter__factory,
 } from "./types";
 import { IIndexRouter } from "./types/IndexRouter";
-import { ERC20 as ERC20ContractInterface } from "@phuture/erc-20/dist/types";
-import { InsufficientAllowanceError } from "@phuture/errors";
 
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
@@ -42,12 +40,9 @@ export class IndexRouter {
 	) {
 		this._signer = signer;
 
-		if (typeof contract === "string") {
-			if (!utils.isAddress(contract))
-				throw new TypeError(`Invalid contract address: ${contract}`);
-
-			this.contract = IndexRouter__factory.connect(contract, this._signer);
-		} else this.contract = contract;
+		this.contract = isAddress(contract)
+			? IndexRouter__factory.connect(contract, this._signer)
+			: contract;
 	}
 
 	get signer(): Signer {
@@ -142,16 +137,9 @@ export class IndexRouter {
 		recipient: Address,
 		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction> {
-		console.log(
-			"Index: ",
-			index,
-			"true/false: ",
-			typeof index === typeof Erc20
-		);
-		const indexInstance =
-			typeof index === typeof Erc20
-				? (index as Erc20)
-				: new Erc20(this._signer, index as string);
+		const indexInstance = isAddress(index)
+			? new Erc20(this._signer, index as string)
+			: index;
 		const burnParameters: IIndexRouter.BurnParamsStruct = {
 			index: indexInstance.address,
 			amount,
@@ -166,7 +154,6 @@ export class IndexRouter {
 				permitOptions.r,
 				permitOptions.s
 			);
-		console.log("Erc20: ", indexInstance.address);
 		if (!(await this._checkAllowance(indexInstance, amount)))
 			throw new InsufficientAllowanceError({ expectedAllowance: amount });
 
@@ -177,11 +164,15 @@ export class IndexRouter {
 		index: Address | Erc20,
 		amount: BigNumberish,
 		recipient: Address,
-		options: Pick<IIndexRouter.BurnSwapParamsStruct, "outputAsset" | "quotes">,
+		options: {
+			outputAsset?: Address;
+			quotes: IIndexRouter.BurnQuoteParamsStruct[];
+		},
 		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction> {
-		const indexInstance =
-			index instanceof Erc20 ? index : new Erc20(this._signer, index);
+		const indexInstance = isAddress(index)
+			? new Erc20(this._signer, index)
+			: index;
 		const burnParameters: IIndexRouter.BurnSwapParamsStruct = {
 			index: indexInstance.address,
 			amount,
@@ -200,14 +191,13 @@ export class IndexRouter {
 					permitOptions.s
 				);
 
-			if (await this._checkAllowance(indexInstance, amount))
+			if (!(await this._checkAllowance(indexInstance, amount)))
 				throw new InsufficientAllowanceError({ expectedAllowance: amount });
-
 			return this.contract.burnSwapValue(burnParameters);
 		}
 
 		burnParameters.outputAsset = options.outputAsset;
-		if (permitOptions !== undefined)
+		if (permitOptions !== undefined) {
 			return this.contract.burnSwapWithPermit(
 				burnParameters,
 				permitOptions.deadline,
@@ -215,10 +205,10 @@ export class IndexRouter {
 				permitOptions.r,
 				permitOptions.s
 			);
+		}
 
-		if (await this._checkAllowance(indexInstance, amount))
+		if (!(await this._checkAllowance(indexInstance, amount)))
 			throw new InsufficientAllowanceError({ expectedAllowance: amount });
-
 		return this.contract.burnSwap(burnParameters);
 	}
 
@@ -226,7 +216,6 @@ export class IndexRouter {
 		token: Erc20,
 		amount: BigNumberish
 	): Promise<boolean> {
-		console.log("_checkAllowance: ", token.address);
 		const allowance = await token.contract.allowance(
 			await this._signer.getAddress(),
 			this.contract.address
