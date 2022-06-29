@@ -11,8 +11,8 @@
 	"prepare": "husky install",
 	"build": "turbo run build",
 	"dev": "turbo run dev --parallel",
-	"lint": "xo 'packages/**/!(*.test).ts'",
-	"lint:fix": "xo 'packages/**/!(*.test).ts' --fix",
+	"lint": "xo '**/!(*.test).ts'",
+	"lint:fix": "xo '**/!(*.test).ts' --fix",
 	"test": "turbo run test --parallel",
 	"docs": "typedoc ."
   },

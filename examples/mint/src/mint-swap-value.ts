@@ -1,31 +1,38 @@
-import { ZeroExAggregator } from "@phuture/0x-aggregator";
-import { Index } from "@phuture/index";
-import { IndexRouter } from "@phuture/index-router";
-import "dotenv/config";
-import { BigNumber, ethers, utils } from "ethers";
-import * as process from "process";
+import process from 'node:process';
+import {ZeroExAggregator} from '@phuture/0x-aggregator';
+import {Index} from '@phuture/index';
+import {IndexRouter} from '@phuture/index-router';
+import dotenv from 'dotenv';
+import {BigNumber, ethers, utils} from 'ethers';
 
-const amountToSellDesired = BigNumber.from(utils.parseEther("1"));
+dotenv.config();
+
+const amountToSellDesired = BigNumber.from(utils.parseEther('1'));
 
 async function main() {
 	const privateKey = process.env.PRIVATE_KEY;
-	if (!privateKey) throw new Error("PRIVATE_KEY is not set");
+	if (!privateKey) throw new Error('PRIVATE_KEY is not set');
 
 	const nodeUrl = process.env.NODE_URL;
-	if (!nodeUrl) throw new Error("NODE_URL is not set");
+	if (!nodeUrl) throw new Error('NODE_URL is not set');
 
 	const wallet = new ethers.Wallet(
 		privateKey,
-		new ethers.providers.JsonRpcProvider(nodeUrl)
+		new ethers.providers.JsonRpcProvider(nodeUrl),
 	);
 
-	const index = new Index(wallet, "0x778b8cc9d9d8e97ab7f6e100e45c1e576bb1d6d4");
+	const indexAddress = process.env.INDEX_ADDRESS;
+	if (!indexAddress) throw new Error('INDEX_ADDRESS is not set');
 
-	const { amounts, amountToSellQuoted } = await index.scaleAmount(
-		amountToSellDesired
-	);
+	const index = new Index(wallet, indexAddress);
 
-	const zeroEx = new ZeroExAggregator();
+	const {amounts, amountToSell} = await index.scaleAmount(amountToSellDesired);
+
+	const zeroExAggregatorUrl = process.env.ZERO_EX_AGGREGATOR_URL;
+	if (!zeroExAggregatorUrl)
+		throw new Error('ZERO_EX_AGGREGATOR_URL is not set');
+
+	const zeroEx = new ZeroExAggregator(zeroExAggregatorUrl);
 
 	const quotes = await Promise.all(
 		Object.entries(amounts).map(async ([asset, amount]) => {
@@ -33,7 +40,11 @@ async function main() {
 				buyAmount: buyAssetMinAmount,
 				to: swapTarget,
 				data: assetQuote,
-			} = await zeroEx.quote("ETH", asset, amount);
+			} = await zeroEx.quote(
+				'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+				asset,
+				amount,
+			);
 
 			return {
 				asset,
@@ -41,13 +52,13 @@ async function main() {
 				buyAssetMinAmount,
 				assetQuote,
 			};
-		})
+		}),
 	);
 
-	const indexRouter = new IndexRouter(
-		wallet,
-		"0xb3a9b7b5728416227cb09d047fae2df36df04819"
-	);
+	const indexRouterAddress = process.env.INDEX_ROUTER_ADDRESS;
+	if (!indexRouterAddress) throw new Error('INDEX_ROUTER_ADDRESS is not set');
+
+	const indexRouter = new IndexRouter(wallet, indexRouterAddress);
 
 	await indexRouter.mint(
 		{
@@ -55,11 +66,10 @@ async function main() {
 			recipient: wallet.address,
 			quotes,
 		},
-		amountToSellQuoted
+		amountToSell,
 	);
 }
 
 main().catch((error) => {
 	console.error(error);
-	process.exit(1);
 });
