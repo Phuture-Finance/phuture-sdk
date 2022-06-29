@@ -65,7 +65,7 @@ describe("IndexRouter", () => {
 				assetQuote: "2",
 			},
 		];
-		describe("MINT:", () => {
+		describe("# mint:", () => {
 			let mintSwapOptions: IIndexRouter.MintSwapParamsStruct;
 			const contract = new Mock<IndexRouterContractInterface>()
 				.setup((c) => c.address)
@@ -183,7 +183,7 @@ describe("IndexRouter", () => {
 				}
 			});
 		});
-		describe("BURN:", () => {
+		describe("# burn:", () => {
 			let burnParameters: IIndexRouter.BurnParamsStruct;
 			let burnSwapParameters: IIndexRouter.BurnSwapParamsStruct;
 			const burnPermitArguments: Omit<StandardPermitArguments, "amount"> = {
@@ -341,6 +341,31 @@ describe("IndexRouter", () => {
 				);
 				expect(response).to.not.be.null;
 			});
+			it("burnSwapValue return info that allowance are insufficient ", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) =>
+						c.contract.allowance(burnParameters.recipient, burnParameters.index)
+					)
+					.returnsAsync(BigNumber.from(0))
+					.setup((c) => c.contract.address)
+					.returns("0x01")
+					.object();
+				const routerContract = contract
+					.setup(async (c) => c.burnSwapValue(burnSwapParameters))
+					.play(PlayTimes.Once())
+					.returnsAsync(new Mock<ContractTransaction>().object())
+					.object();
+
+				const router = new IndexRouter(signer, routerContract);
+
+				router
+					.burnSwap(indexContract, "100", burnSwapParameters.recipient, {
+						quotes: burnSwapParameters.quotes,
+					})
+					.catch((error) => {
+						expect(error).to.be.instanceOf(InsufficientAllowanceError);
+					});
+			});
 			it("burnSwapWithPermit return something", async () => {
 				const indexContract = new Mock<Erc20>()
 					.setup((c) => c.contract.address)
@@ -400,6 +425,74 @@ describe("IndexRouter", () => {
 					}
 				);
 				expect(response).to.not.be.null;
+			});
+			it("burnSwap return info that allowance are insufficient ", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) =>
+						c.contract.allowance(burnParameters.recipient, burnParameters.index)
+					)
+					.returnsAsync(BigNumber.from(0))
+					.setup((c) => c.contract.address)
+					.returns("0x01")
+					.object();
+				const routerContract = contract
+					.setup(async (c) => c.burnSwap(burnSwapParameters))
+					.play(PlayTimes.Once())
+					.returnsAsync(new Mock<ContractTransaction>().object())
+					.object();
+
+				const router = new IndexRouter(signer, routerContract);
+
+				router
+					.burnSwap(indexContract, "1000", burnSwapParameters.recipient, {
+						outputAsset: burnSwapParameters.outputAsset,
+						quotes: burnSwapParameters.quotes,
+					})
+					.catch((error) => {
+						expect(error).to.be.instanceOf(InsufficientAllowanceError);
+					});
+			});
+		});
+		describe("# burnAmounts:", () => {
+			const indexRouterContract = new Mock<IndexRouterContractInterface>()
+				.setup((c) => c.address)
+				.returns(DefaultIndexRouterAddress.Mainnet)
+				.object();
+			const amount = 1000000000000000;
+			const contract = new Mock<IndexRouterContractInterface>()
+				.setup((c) => c.address)
+				.returns(DefaultIndexRouterAddress.Mainnet);
+
+			it("burnAmounts with multi tokens", async () => {
+				const routerContract = contract
+					.setup(async (c) =>
+						c.burnTokensAmount(indexRouterContract.address, amount)
+					)
+					.play(PlayTimes.Once())
+					.returnsAsync([BigNumber.from(1000), BigNumber.from(2000)])
+					.object();
+				const router = new IndexRouter(signer, routerContract);
+
+				const result = await router.burnAmount(
+					indexRouterContract.address,
+					amount
+				);
+				expect(result).to.not.be.null;
+			});
+			it("burnAmounts with single tokens", async () => {
+				const routerContract = contract
+					.setup(async (c) =>
+						c.burnTokensAmount(indexRouterContract.address, amount)
+					)
+					.play(PlayTimes.Once())
+					.returnsAsync([BigNumber.from(1000), BigNumber.from(2000)])
+					.object();
+				const router = new IndexRouter(signer, routerContract);
+				const result = await (
+					await router.burnAmount(indexRouterContract.address, amount, [1, 1])
+				).toString();
+
+				expect(result).to.be.eq("3000");
 			});
 		});
 	});
