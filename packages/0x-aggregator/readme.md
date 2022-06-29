@@ -26,8 +26,5 @@ Use it:
 
 ``` typescript
     import {0x-aggregator as aggregator} from '@phuture/0x-aggregator'
-    const aggregator = new 0(provider?);
-    const transactionResponse = await swapper.swap(payload);    
+    const transactionResponse = await aggregator.quote(args...);    
  ```
-
-Check out the documentation to find out what the ```swap``` options are
