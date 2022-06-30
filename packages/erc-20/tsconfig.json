@@ -1,18 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["es6", "dom"],
-    "declaration": true,
-    "outDir": "dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "resolveJsonModule": true
+	"target": "es5",
+	"module": "commonjs",
+	"lib": [
+	  "es6",
+	  "dom"
+	],
+	"declaration": true,
+	"outDir": "dist",
+	"strict": true,
+	"esModuleInterop": true,
+	"sourceMap": true,
+	"resolveJsonModule": true,
+	"skipLibCheck": true
   },
-  "include": ["src/**/*", "test"],
+  "include": [
+	"src/**/*",
+	"test"
+  ],
   "exclude": [
-    "node_modules",
-    "dist"
+	"node_modules",
+	"dist"
   ]
 }
