@@ -1,9 +1,11 @@
+import {BigNumber, BigNumberish} from 'ethers';
+
 /**
  * ### Error thrown on insufficient allowance
  */
 export class InsufficientAllowanceError extends Error {
-	public readonly expectedAllowance: string;
-	public readonly actualAllowance?: string;
+	public readonly expectedAllowance: BigNumber;
+	public readonly actualAllowance: BigNumber;
 
 	/**
 	 * ### Creates an instance of InsufficientAllowanceError
@@ -12,8 +14,13 @@ export class InsufficientAllowanceError extends Error {
 	 * @param expectedAllowance Expected allowance
 	 * @param actualAllowance Actual allowance
 	 */
-	constructor(expectedAllowance: string, actualAllowance = '0') {
-		const message = `Insufficient allowance: expected ${expectedAllowance}, but got ${actualAllowance}`;
+	constructor(
+		expectedAllowance: BigNumberish,
+		actualAllowance: BigNumberish = 0,
+	) {
+		expectedAllowance = BigNumber.from(expectedAllowance);
+		actualAllowance = BigNumber.from(actualAllowance);
+		const message = `Insufficient allowance: expected ${expectedAllowance.toString()}, but got ${actualAllowance.toString()}`;
 		super(message);
 		this.expectedAllowance = expectedAllowance;
 		this.actualAllowance = actualAllowance;
