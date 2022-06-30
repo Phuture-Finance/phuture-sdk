@@ -7,7 +7,6 @@
 		"dist"
 	],
 	"scripts": {
-		"prepare": "npm run --silent build",
 		"prepublishOnly": "pnpm build",
 		"build": "pnpm typechain && tsc",
 		"typechain": "typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json",

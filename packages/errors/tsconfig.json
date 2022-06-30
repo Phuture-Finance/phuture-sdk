@@ -1,15 +1,23 @@
 {
-    "compilerOptions": {
-        "moduleResolution": "node",
-        "target": "es2018",
-        "module": "esnext",
-        "lib": ["esnext", "dom"],
-        "declaration": true,
-        "outDir": "dist",
-        "strict": true,
-        "esModuleInterop": true,
-        "sourceMap": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+	"target": "es5",
+	"module": "commonjs",
+	"lib": [
+	  "es6",
+	  "dom"
+	],
+	"declaration": true,
+	"outDir": "dist",
+	"strict": true,
+	"esModuleInterop": true,
+	"sourceMap": true,
+	"skipLibCheck": true
+  },
+  "include": [
+	"src/**/*"
+  ],
+  "exclude": [
+	"node_modules",
+	"dist"
+  ]
 }

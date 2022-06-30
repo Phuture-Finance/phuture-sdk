@@ -1,6 +1,7 @@
 import {Erc20, Erc20Permit, StandardPermitArguments} from '@phuture/erc-20';
-import {Address} from '@phuture/types';
-import {BigNumberish, ContractTransaction, Signer, utils} from 'ethers';
+import {InsufficientAllowanceError} from '@phuture/errors';
+import {Address, isAddress} from '@phuture/types';
+import {BigNumber, BigNumberish, ContractTransaction, Signer} from 'ethers';
 import {MintOptions} from './mint-options';
 import {
 	IndexRouter as IndexRouterContractInterface,
@@ -11,7 +12,7 @@ import {IIndexRouter} from './types/IndexRouter';
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0xcbB6a59393D68cDa7431792e291b00c6801e7279',
+	Mainnet = '0x7b6c3e5486d9e6959441ab554a889099eed76290',
 }
 
 /**
@@ -39,14 +40,9 @@ export class IndexRouter {
 	) {
 		this._signer = signer;
 
-		if (typeof contract === 'string') {
-			if (!utils.isAddress(contract))
-				throw new TypeError(`Invalid contract address: ${contract}`);
-
-			this.contract = IndexRouter__factory.connect(contract, this._signer);
-		} else {
-			this.contract = contract;
-		}
+		this.contract = isAddress(contract)
+			? IndexRouter__factory.connect(contract, this._signer)
+			: contract;
 	}
 
 	get signer(): Signer {
@@ -86,14 +82,13 @@ export class IndexRouter {
 		sellToken?: Erc20 | Erc20Permit,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
 	): Promise<ContractTransaction> {
-		if (sellToken === undefined) {
+		if (!sellToken)
 			return this.contract.mintSwapValue(
 				options as IIndexRouter.MintSwapValueParamsStruct,
 				{value: sellAmount},
 			);
-		}
 
-		if (permitOptions !== undefined) {
+		if (permitOptions !== undefined)
 			return this.contract.mintSwapWithPermit(
 				options as IIndexRouter.MintSwapParamsStruct,
 				permitOptions.deadline,
@@ -101,13 +96,9 @@ export class IndexRouter {
 				permitOptions.r,
 				permitOptions.s,
 			);
-		}
 
-		const allowance = await sellToken.contract.allowance(
-			await this._signer.getAddress(),
-			this.contract.address,
-		);
-		if (allowance.lt(sellAmount)) throw new Error('Insufficient allowance');
+		if (!(await this._checkAllowance(sellToken, sellAmount)))
+			throw new InsufficientAllowanceError(sellAmount);
 
 		return this.contract.mintSwap(options as IIndexRouter.MintSwapParamsStruct);
 	}
@@ -140,20 +131,125 @@ export class IndexRouter {
 	// 	throw new Error('Not implemented');
 	// }
 
-	// TODO: implement burn function
-	// async burn(): Promise<ContractTransaction> {
-	// 	// TODO: using mint method as an example, call contract.burn*** methods and return a transaction
-	// 	throw new Error("Not implemented");
-	// }
-	// TODO: implement burnTokensAmount function
-	// async burnTokensAmount(): Promise<Record<Address, BigNumber>> {
-	// 	// TODO: call contract.burnTokensAmount and index.anatomy method
-	// 	// merge the results of the two into a single object with the address as the key and the amount as the value
-	// 	throw new Error("Not implemented");
-	// }
-	// TODO: implement burnSwapTokenAmount function
-	// async burnSwapTokenAmount() {
-	// 	// TODO: reduce through the result of burnTokensAmount applying base price to each asset
-	// 	throw new Error("Not implemented");
-	// }
+	async burn(
+		index: Address | Erc20,
+		amount: BigNumberish,
+		recipient: Address,
+		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+	): Promise<ContractTransaction> {
+		const indexInstance = isAddress(index)
+			? new Erc20(this._signer, index)
+			: index;
+		const burnParameters: IIndexRouter.BurnParamsStruct = {
+			index: indexInstance.address,
+			amount,
+			recipient,
+		};
+
+		if (permitOptions !== undefined)
+			return this.contract.burnWithPermit(
+				burnParameters,
+				permitOptions.deadline,
+				permitOptions.v,
+				permitOptions.r,
+				permitOptions.s,
+			);
+		if (!(await this._checkAllowance(indexInstance, amount)))
+			throw new InsufficientAllowanceError(amount);
+
+		return this.contract.burn(burnParameters);
+	}
+
+	async burnSwap(
+		index: Address | Erc20,
+		amount: BigNumberish,
+		recipient: Address,
+		options: {
+			outputAsset?: Address;
+			quotes: IIndexRouter.BurnQuoteParamsStruct[];
+		},
+		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+	): Promise<ContractTransaction> {
+		const indexInstance = isAddress(index)
+			? new Erc20(this._signer, index)
+			: index;
+		const burnParameters: IIndexRouter.BurnSwapParamsStruct = {
+			index: indexInstance.address,
+			amount,
+			recipient,
+			quotes: options.quotes,
+			outputAsset: '',
+		};
+
+		if (options.outputAsset === undefined) {
+			if (permitOptions !== undefined)
+				return this.contract.burnSwapValueWithPermit(
+					burnParameters,
+					permitOptions.deadline,
+					permitOptions.v,
+					permitOptions.r,
+					permitOptions.s,
+				);
+
+			if (!(await this._checkAllowance(indexInstance, amount)))
+				throw new InsufficientAllowanceError(amount);
+			return this.contract.burnSwapValue(burnParameters);
+		}
+
+		burnParameters.outputAsset = options.outputAsset;
+		if (permitOptions !== undefined) {
+			return this.contract.burnSwapWithPermit(
+				burnParameters,
+				permitOptions.deadline,
+				permitOptions.v,
+				permitOptions.r,
+				permitOptions.s,
+			);
+		}
+
+		if (!(await this._checkAllowance(indexInstance, amount)))
+			throw new InsufficientAllowanceError(amount);
+		return this.contract.burnSwap(burnParameters);
+	}
+
+	private async _checkAllowance(
+		token: Erc20,
+		amount: BigNumberish,
+	): Promise<boolean> {
+		const allowance = await token.contract.allowance(
+			await this._signer.getAddress(),
+			this.contract.address,
+		);
+
+		return allowance.gte(amount);
+	}
+
+	// Get burn amounts of multiple tokens
+	burnAmount(index: Address, amount: BigNumberish): Promise<BigNumber[]>;
+
+	// Get burn amount of single tokens
+	burnAmount(
+		index: Address,
+		amount: BigNumberish,
+		prices?: BigNumberish[],
+	): Promise<BigNumber>;
+
+	async burnAmount(
+		index: Address,
+		amount: BigNumberish,
+		prices?: BigNumberish[],
+	): Promise<BigNumber | BigNumber[]> {
+		const amounts = await this.contract.burnTokensAmount(index, amount);
+		if (!prices) {
+			return amounts;
+		}
+
+		let totalAmount = BigNumber.from(0);
+
+		for (const [index, amount] of amounts.entries()) {
+			totalAmount = totalAmount.add(amount).mul(prices[index]);
+		}
+
+		return totalAmount;
+	}
 }
