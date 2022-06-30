@@ -17,25 +17,19 @@ export class Index extends Erc20<BaseIndex> {
 	}
 
 	async scaleAmount(amountDesired: BigNumberish): Promise<{
-		amountToSellQuoted: BigNumber;
+		amountToSell: BigNumber;
 		amounts: Record<Address, BigNumber>;
 	}> {
 		const {_assets, _weights} = await this.contract.anatomy();
 
+		let amountToSell = BigNumber.from(0);
 		const amounts: Record<Address, BigNumber> = {};
-		for (const index in _assets) {
+		for (const [index, asset] of _assets.entries()) {
 			const weight = _weights[index];
-			amounts[_assets[index]] = BigNumber.from(amountDesired)
-				.mul(weight)
-				.div(255);
+			amounts[asset] = BigNumber.from(amountDesired).mul(weight).div(255);
+			amountToSell = amountToSell.add(amounts[asset]);
 		}
 
-		return {
-			amountToSellQuoted: Object.values(amounts).reduce(
-				(acc, amount) => acc.add(amount),
-				BigNumber.from(0),
-			),
-			amounts,
-		};
+		return {amountToSell, amounts};
 	}
 }

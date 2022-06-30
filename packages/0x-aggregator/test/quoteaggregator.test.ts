@@ -1,134 +1,79 @@
-import { QuotePayload } from "../dist/src/interface";
+
+import {ZeroExAggregator} from '../src';
+import axios from 'axios';
+
+interface MockPayload {
+    buyToken: string,
+    sellToken: string,
+    sellAmount: string,
+    options: object
+}
+const buildPayload = (): MockPayload => { 
+    return {
+        buyToken: 'PDI',
+        sellToken: 'ETH',
+        sellAmount: '123124',
+        options: {
+            takerAddress: '0x0000000000000000000000000000000000000000'
+        }
+    };
+}
+
 
 jest.mock("axios");
+beforeAll(() => {
+    // @ts-ignore
+    axios.create.mockReturnThis();
+});
 
-const allPayloadExcept = (key?: keyof QuotePayload): QuotePayload => {
-	type ObjectKey = keyof typeof payload;
-	const payload: QuotePayload = {
-		buyToken: "PDI",
-		sellToken: "ETH",
-		sellAmount: "123124",
-		takerAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-	};
+describe("Error boundaries", () => {
+    it('should compile at runtime', () => {
+        expect(() => new ZeroExAggregator()).not.toThrow();
+    });
+});
 
-	if (key) {
-		payload[key as ObjectKey] = "abc";
-	}
-	return payload;
-};
-//
-// describe("Error boundaries", () => {
-// 	it("error if the sell amount is invalid", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept("sellAmount");
-// 		const errorMessage =
-// 			"Amount provided could not be parsed into a big number";
-// 		// Execute
-// 		// Verify
-// 		try {
-// 			await new QuoteAggregator().quote(payload);
-// 		} catch (e: any) {
-// 			expect(e.message).toBe(errorMessage);
-// 		}
-// 	});
-//
-// 	it("should error if slippage is invalid", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept();
-// 		const errorMessage = "Found a slippage value but was unable to parse it";
-// 		// Execute
-// 		// Verify
-// 		try {
-// 			await new QuoteAggregator().quote(payload, "bbcnews");
-// 		} catch (e: any) {
-// 			expect(e.message).toBe(errorMessage);
-// 		}
-// 	});
-//
-// 	it("should error if the gas fee is invalid", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept();
-// 		const errorMessage = "Found a gas fee value but was unable to parse it";
-// 		// Execute
-// 		// Verify
-// 		try {
-// 			await new QuoteAggregator().quote(payload, "", "gasfees");
-// 		} catch (e: any) {
-// 			expect(e.message).toBe(errorMessage);
-// 		}
-// 	});
-//
-// 	it("should error if there is no buy token", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept("buyToken");
-// 		payload.buyToken = "";
-// 		const errorMessage = "A buy token is required";
-// 		// Execute
-// 		// Verify
-// 		try {
-// 			await new QuoteAggregator().quote(payload);
-// 		} catch (e: any) {
-// 			expect(e.message).toBe(errorMessage);
-// 		}
-// 	});
-//
-// 	it("should error if there is no sell token", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept("sellToken");
-// 		payload.sellToken = "";
-// 		const errorMessage = "A sell token is required";
-// 		// Execute
-// 		// Verify
-// 		try {
-// 			await new QuoteAggregator().quote(payload);
-// 		} catch (e: any) {
-// 			expect(e.message).toBe(errorMessage);
-// 		}
-// 	});
-//
-// 	it("should error if the taker address is not valid", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept("takerAddress");
-// 		const errorMessage = "Address is invalid: abc";
-// 		// Execute
-// 		// Verify
-// 		try {
-// 			await new QuoteAggregator().quote(payload);
-// 		} catch (e: any) {
-// 			expect(e.message).toBe(errorMessage);
-// 		}
-// 	});
-//
-// 	it("should pass the boundary if all inputs are valid", async () => {
-// 		// Setup
-// 		const payload = allPayloadExcept();
-//
-// 		let error = false;
-// 		new QuoteAggregator()
-// 			.quote(payload)
-// 			.catch(() => (error = true))
-// 			.finally(() => expect(error).toBe(false));
-// 	});
-// });
-//
-// describe("Swap execution", () => {
-// 	it("should call fetch with correct query params", async () => {
-// 		const accept = {
-// 			sellAmount: "100000000000000000000",
-// 			buyAmount: "2663907000981641103",
-// 			price: "0.002663907000981641",
-// 			guaranteedPrice: "0.002637267930971825",
-// 			to: "0xdef1c0ded9bec7f1a1670819833240f027b25eff",
-// 			data: "0xdef1c0ded9bec7f1a1670819833240f027b25eff",
-// 			value: "0xdef1c0ded9bec7f1a1670819833240f027b25eff",
-// 			gas: "111000",
-// 			gasPrice: "56000000000",
-// 			buyTokenAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-// 			sellTokenAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
-// 			allowanceTarget: "0xdef1c0ded9bec7f1a1670819833240f027b25eff",
-// 		};
-// 		const payload = allPayloadExcept();
-// 		const expectedUrl =
-// 			"https://api.0x.org/swap/v1/quote?buyToken=PDI&sellToken=ETH&sellAmount=123124&takerAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-//  try { await new QuoteAggregator().quote(payload); } catch { expect(axios.get).toHaveBeenCalledWith(expectedUrl); }
-// }); });
+describe('Price, quote and source execution', () => { 
+    it('Should return a price', async () => {
+
+        // Setup
+        const {buyToken, sellToken, sellAmount, options} = buildPayload();
+        const params = ["swap/v1/price", {"params": {"buyToken": "PDI", "sellAmount": "123124", "sellToken": "ETH", "takerAddress": "0x0000000000000000000000000000000000000000"}}];
+        
+        // @ts-ignore
+        axios.get.mockResolvedValue('{"data": {"price": "123124"}}');
+        
+
+       	// Execute
+        await new ZeroExAggregator()
+        .price(sellToken,
+            buyToken,
+            sellAmount,
+            options
+            );
+
+        // Verify
+        expect(axios.get).toHaveBeenCalledWith(params[0], params[1]);
+    });
+
+    it('Should return a quote', async () => {
+        const {buyToken, sellToken, sellAmount, options} = buildPayload();
+        try {
+			// Execute
+			await new ZeroExAggregator().quote(sellToken, buyToken, sellAmount, options);
+		} catch { 
+			// Verify
+			expect(axios.get).toHaveBeenCalled();
+		}
+    });
+
+    it('Should return a source', async () => {
+        // setup - expected url to be called
+        try {
+			// Execute
+			await new ZeroExAggregator().sources();
+		} catch { 
+			// Verify
+			expect(axios.get).toHaveBeenCalled();
+		}
+    });
+});

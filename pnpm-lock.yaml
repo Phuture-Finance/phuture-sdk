@@ -65,6 +65,7 @@ importers:
       ethers: 5.6.8
       jest: 28.1.0
       ts-jest: 28.0.4
+      ts-node: 10.8.1
       typescript: 4.7.2
       xo: 0.49.0
     dependencies:
@@ -75,8 +76,9 @@ importers:
       '@types/chai': 4.3.1
       '@types/jest': 28.1.1
       chai: 4.3.6
-      jest: 28.1.0
+      jest: 28.1.0_ts-node@10.8.1
       ts-jest: 28.0.4_3idyv6jqzrc23kpntvtlm4rwnq
+      ts-node: 10.8.1_typescript@4.7.2
       typescript: 4.7.2
       xo: 0.49.0
 
@@ -8950,7 +8952,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0
+      jest: 28.1.0_ts-node@10.8.1
       jest-util: 28.1.1
       json5: 2.2.1
       lodash.memoize: 4.1.2
