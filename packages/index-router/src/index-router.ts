@@ -167,8 +167,8 @@ export class IndexRouter {
 		options: {
 			outputAsset?: Address;
 			quotes: IIndexRouter.BurnQuoteParamsStruct[];
+			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
 		},
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
 	): Promise<ContractTransaction> {
 		const indexInstance = isAddress(index)
 			? new Erc20(this._signer, index)
@@ -182,13 +182,13 @@ export class IndexRouter {
 		};
 
 		if (options.outputAsset === undefined) {
-			if (permitOptions !== undefined)
+			if (options.permitOptions !== undefined)
 				return this.contract.burnSwapValueWithPermit(
 					burnParameters,
-					permitOptions.deadline,
-					permitOptions.v,
-					permitOptions.r,
-					permitOptions.s,
+					options.permitOptions.deadline,
+					options.permitOptions.v,
+					options.permitOptions.r,
+					options.permitOptions.s,
 				);
 
 			if (!(await this._checkAllowance(indexInstance, amount)))
@@ -197,31 +197,19 @@ export class IndexRouter {
 		}
 
 		burnParameters.outputAsset = options.outputAsset;
-		if (permitOptions !== undefined) {
+		if (options.permitOptions !== undefined) {
 			return this.contract.burnSwapWithPermit(
 				burnParameters,
-				permitOptions.deadline,
-				permitOptions.v,
-				permitOptions.r,
-				permitOptions.s,
+				options.permitOptions.deadline,
+				options.permitOptions.v,
+				options.permitOptions.r,
+				options.permitOptions.s,
 			);
 		}
 
 		if (!(await this._checkAllowance(indexInstance, amount)))
 			throw new InsufficientAllowanceError(amount);
 		return this.contract.burnSwap(burnParameters);
-	}
-
-	private async _checkAllowance(
-		token: Erc20,
-		amount: BigNumberish,
-	): Promise<boolean> {
-		const allowance = await token.contract.allowance(
-			await this._signer.getAddress(),
-			this.contract.address,
-		);
-
-		return allowance.gte(amount);
 	}
 
 	// Get burn amounts of multiple tokens
@@ -251,5 +239,17 @@ export class IndexRouter {
 		}
 
 		return totalAmount;
+	}
+
+	private async _checkAllowance(
+		token: Erc20,
+		amount: BigNumberish,
+	): Promise<boolean> {
+		const allowance = await token.contract.allowance(
+			await this._signer.getAddress(),
+			this.contract.address,
+		);
+
+		return allowance.gte(amount);
 	}
 }

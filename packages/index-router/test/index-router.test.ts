@@ -310,8 +310,8 @@ describe("IndexRouter", () => {
 					burnSwapParameters.recipient,
 					{
 						quotes: burnSwapParameters.quotes,
-					},
-					burnPermitArguments
+						permitOptions: burnPermitArguments,
+					}
 				);
 				expect(response).to.not.be.null;
 			});
@@ -393,8 +393,8 @@ describe("IndexRouter", () => {
 					{
 						outputAsset: burnSwapParameters.outputAsset,
 						quotes: burnSwapParameters.quotes,
-					},
-					burnPermitArguments
+						permitOptions: burnPermitArguments,
+					}
 				);
 				expect(response).to.not.be.null;
 			});
@@ -488,11 +488,13 @@ describe("IndexRouter", () => {
 					.returnsAsync([BigNumber.from(1000), BigNumber.from(2000)])
 					.object();
 				const router = new IndexRouter(signer, routerContract);
-				const result = await (
-					await router.burnAmount(indexRouterContract.address, amount, [1, 1])
-				).toString();
+				const result = await router.burnAmount(
+					indexRouterContract.address,
+					amount,
+					[1, 1]
+				);
 
-				expect(result).to.be.eq("3000");
+				expect(result.toNumber()).to.be.eq(3000);
 			});
 		});
 	});
