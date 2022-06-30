@@ -27,7 +27,6 @@ export class ZeroExAggregator {
 	 * @param baseUrl The base endpoint to query
 	 */
 	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet) {
-
 		this.client = axios.create({
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
@@ -92,6 +91,7 @@ export class ZeroExAggregator {
 
 		return data;
 	}
+
 	/**
 	 * Returns the liquidity sources enabled for the chain
 	 * @returns Promise transaction response
