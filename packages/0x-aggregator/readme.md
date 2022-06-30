@@ -1,6 +1,6 @@
 # 0x Aggregator
 
-Aggregator for interfacing with the 0x API
+Quote Aggregation Package for executing swaps on Phuture
 
 ## Introduction
 
