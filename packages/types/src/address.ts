@@ -14,5 +14,5 @@ import {utils} from 'ethers';
  */
 export type Address = string; // `0x${string}`
 
-export const isAddress = (address: string): address is Address =>
-	utils.isAddress(address);
+export const isAddress = (address: unknown): address is Address =>
+	typeof address === 'string' && utils.isAddress(address);

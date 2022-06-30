@@ -1,10 +1,10 @@
-# Swap
+# 0x Aggregator
 
 Quote Aggregation Package for executing swaps on Phuture
 
 ## Introduction
 
-This component leverages [zero x](https://docs.0x.org/) to find the best possible price and then execute a swap.
+This component leverages [zero x](https://docs.0x.org/) to find the best prices/liquidity, and can be used to perform a transaction.
 
 # Getting started with development
 
@@ -22,15 +22,9 @@ Now you're ready to go!
 
 ## Using this package
 
-Import it:
-
-`import {QuoteAggregator} from '@phuture/zero-ex-aggregator'`
-
 Use it:
 
 ``` typescript
-    const swapper = new QuoteAggregator(provider?);
-    const transactionResponse = await swapper.swap(payload);    
+    import {0x-aggregator as aggregator} from '@phuture/0x-aggregator'
+    const transactionResponse = await aggregator.quote(args...);    
  ```
-
-Check out the documentation to find out what the ```swap``` options are
