@@ -1,4 +1,9 @@
-import {Erc20, Erc20Permit, StandardPermitArguments} from '@phuture/erc-20';
+import {
+	Erc20,
+	Erc20Permit,
+	setOfAssets,
+	StandardPermitArguments,
+} from '@phuture/erc-20';
 import {InsufficientAllowanceError} from '@phuture/errors';
 import {Address, isAddress} from '@phuture/types';
 import {BigNumber, BigNumberish, ContractTransaction, Signer} from 'ethers';
@@ -21,7 +26,7 @@ export enum DefaultIndexRouterAddress {
 export class IndexRouter {
 	/** ### IndexRouter contract instance */
 	public contract: IndexRouterContractInterface;
-
+	/** ### Signer used for interacting with the contract */
 	public _signer: Signer;
 
 	/**
@@ -45,10 +50,20 @@ export class IndexRouter {
 			: contract;
 	}
 
+	/**
+	 * ### Get signer
+	 *
+	 * @returns signer
+	 */
 	get signer(): Signer {
 		return this._signer;
 	}
 
+	/**
+	 * ### Set signer
+	 *
+	 * change the signer in IndexRouter Contract
+	 */
 	set signer(signer: Signer) {
 		this._signer = signer;
 		this.contract = IndexRouter__factory.connect(
@@ -76,6 +91,16 @@ export class IndexRouter {
 		permitOptions: Omit<StandardPermitArguments, 'amount'>,
 	): Promise<ContractTransaction>;
 
+	/**
+	 * ### Mint
+	 *
+	 * @param options mint options
+	 * @param sellAmount token's  amount
+	 * @param sellToken (optional) erc20 token
+	 * @param permitOptions (optional) permit options for transaction
+	 *
+	 * @returns mint transaction
+	 */
 	async mint(
 		options: MintOptions,
 		sellAmount: BigNumberish,
@@ -103,34 +128,44 @@ export class IndexRouter {
 		return this.contract.mintSwap(options as IIndexRouter.MintSwapParamsStruct);
 	}
 
-	// Mint swap for native token
-	// mintIndexAmount(
-	// 	options: IIndexRouter.MintSwapValueParamsStruct,
-	// 	sellAmount: BigNumberish,
-	// ): Promise<BigNumber>;
+	/**
+	 * ### Mint Index Amount
+	 *
+	 * @param index index address
+	 * @param amountInInputToken token's  amount
+	 * @param quotes quotes for swaps
+	 * @param inputToken (optional) token's address
+	 *
+	 * @returns mint amount in single token
+	 */
+	async mintIndexAmount(
+		index: Address,
+		amountInInputToken: BigNumberish,
+		quotes: IIndexRouter.MintQuoteParamsStruct[],
+		inputToken: Address = setOfAssets.mainnet.weth,
+	): Promise<BigNumber> {
+		const option: IIndexRouter.MintSwapParamsStruct = {
+			inputToken,
+			amountInInputToken,
+			quotes,
+			index,
+			recipient: await this._signer.getAddress(),
+		};
 
-	// Mint swap for single sell token
-	// mintIndexAmount(
-	// 	options: IIndexRouter.MintSwapParamsStruct,
-	// 	sellAmount: BigNumberish,
-	// 	sellToken: Erc20 | Erc20Permit,
-	// ): Promise<BigNumber>;
+		return this.contract.mintSwapIndexAmount(option);
+	}
 
-	// TODO: implement mintIndexAmount function
-	// async mintIndexAmount(
-	// 	options: MintOptions,
-	// 	sellAmount: BigNumberish,
-	// 	sellToken?: Erc20 | Erc20Permit,
-	// ): Promise<BigNumber> {
-	// 	if (sellToken === undefined) {
-	// 		// TODO: mintIndexAmount for native token
-	// 	}
-
-	// 	// TODO: mintIndexAmount for single sell token token
-
-	// 	throw new Error('Not implemented');
-	// }
-
+	/**
+	 * ### Burn
+	 *
+	 * @param index index address or it's erc20 interface
+	 * @param amount index  amount
+	 * @param sellToken token's address
+	 * @param permitOptions (optional) permit options for transaction
+	 *
+	 *
+	 * @returns burn transaction
+	 */
 	async burn(
 		index: Address | Erc20,
 		amount: BigNumberish,
@@ -160,13 +195,23 @@ export class IndexRouter {
 		return this.contract.burn(burnParameters);
 	}
 
+	/**
+	 * ### Burn Swap
+	 *
+	 * @param index index address or it's erc20 interface
+	 * @param amount index amount
+	 * @param recipient signer's address
+	 * @param options burn swap options
+	 *
+	 * @returns burn swap transaction
+	 */
 	async burnSwap(
 		index: Address | Erc20,
 		amount: BigNumberish,
 		recipient: Address,
 		options: {
-			outputAsset?: Address;
 			quotes: IIndexRouter.BurnQuoteParamsStruct[];
+			outputAsset?: Address;
 			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
 		},
 	): Promise<ContractTransaction> {
@@ -222,6 +267,15 @@ export class IndexRouter {
 		prices?: BigNumberish[],
 	): Promise<BigNumber>;
 
+	/**
+	 * ### Burn amount
+	 *
+	 * @param index index address
+	 * @param amount index amount
+	 * @param prices (optional) prices
+	 *
+	 * @returns burn amount in single token or total from array of tokens
+	 */
 	async burnAmount(
 		index: Address,
 		amount: BigNumberish,
@@ -241,6 +295,14 @@ export class IndexRouter {
 		return totalAmount;
 	}
 
+	/**
+	 * ### Check Allowance
+	 *
+	 * @param token erc20 token interface
+	 * @param amount token amount
+	 *
+	 * @returns true or false
+	 */
 	private async _checkAllowance(
 		token: Erc20,
 		amount: BigNumberish,

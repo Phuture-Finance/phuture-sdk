@@ -183,6 +183,57 @@ describe("IndexRouter", () => {
 				}
 			});
 		});
+		describe("# mintAmounts:", () => {
+			const contract = new Mock<IndexRouterContractInterface>()
+				.setup((c) => c.address)
+				.returns(DefaultIndexRouterAddress.Mainnet);
+
+			it("mintAmounts with native token", async () => {
+				const signerAddress = await signer.getAddress();
+				const nativeOption = {
+					inputToken: "0x0",
+					amountInInputToken: "100",
+					quotes: randomQuotes,
+					index: DefaultIndexRouterAddress.Mainnet,
+					recipient: signerAddress,
+				};
+				const routerContract = contract
+					.setup(async (c) => c.mintSwapIndexAmount(nativeOption))
+					.play(PlayTimes.Once())
+					.returnsAsync(BigNumber.from(10))
+					.object();
+				const router = new IndexRouter(signer, routerContract);
+
+				const result = await router.mintIndexAmount(
+					nativeOption.index,
+					nativeOption.amountInInputToken,
+					nativeOption.quotes
+				);
+				expect(result).to.not.be.null;
+			});
+			it("mintAmounts with single(not native) token", async () => {
+				const singleOption: IIndexRouter.MintSwapParamsStruct = {
+					inputToken: "0x0",
+					amountInInputToken: "100",
+					quotes: randomQuotes,
+					index: DefaultIndexRouterAddress.Mainnet,
+					recipient: await signer.getAddress(),
+				};
+				const routerContract = contract
+					.setup(async (c) => c.mintSwapIndexAmount(singleOption))
+					.play(PlayTimes.Once())
+					.returnsAsync(BigNumber.from(10))
+					.object();
+				const router = new IndexRouter(signer, routerContract);
+				const result = await router.mintIndexAmount(
+					singleOption.index,
+					singleOption.amountInInputToken,
+					singleOption.quotes,
+					singleOption.inputToken
+				);
+				expect(result).to.not.be.null;
+			});
+		});
 		describe("# burn:", () => {
 			let burnParameters: IIndexRouter.BurnParamsStruct;
 			let burnSwapParameters: IIndexRouter.BurnSwapParamsStruct;
