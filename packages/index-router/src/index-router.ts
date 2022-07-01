@@ -26,7 +26,7 @@ export enum DefaultIndexRouterAddress {
 export class IndexRouter {
 	/** ### IndexRouter contract instance */
 	public contract: IndexRouterContractInterface;
-
+	/** ### Signer used for interacting with the contract */
 	public _signer: Signer;
 
 	/**

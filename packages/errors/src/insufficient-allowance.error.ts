@@ -4,15 +4,19 @@ import {BigNumber, BigNumberish} from 'ethers';
  * ### Error thrown on insufficient allowance
  */
 export class InsufficientAllowanceError extends Error {
+	/** ### Excepted allowance */
 	public readonly expectedAllowance: BigNumber;
+
+	/** ### Actual allowance */
 	public readonly actualAllowance: BigNumber;
 
 	/**
 	 * ### Creates an instance of InsufficientAllowanceError
 	 *
-	 * @returns Instance of InsufficientAllowanceError
 	 * @param expectedAllowance Expected allowance
 	 * @param actualAllowance Actual allowance
+	 *
+	 * @returns Instance of InsufficientAllowanceError
 	 */
 	constructor(
 		expectedAllowance: BigNumberish,
