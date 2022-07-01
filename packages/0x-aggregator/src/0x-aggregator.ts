@@ -20,6 +20,9 @@ export enum ZeroExBaseUrl {
  * ### Facilitates swaps for end user
  */
 export class ZeroExAggregator {
+	/**
+	 * ### Client instance for doing calls to the ZeroX API
+	 */
 	private readonly client: AxiosInstance;
 
 	/**
@@ -38,10 +41,10 @@ export class ZeroExAggregator {
 
 	/**
 	 * ### Makes a call to the quote endpoint and returns a transaction request for the best price
-	 * @param sellToken
-	 * @param buyToken
-	 * @param sellAmount
-	 * @param options
+	 * @param sellToken Token to sell
+	 * @param buyToken Token to buy
+	 * @param sellAmount Amount of sellToken to sell
+	 * @param options Options to pass to the quote endpoint
 	 * @returns Promise transaction response
 	 */
 	async quote(
@@ -66,10 +69,10 @@ export class ZeroExAggregator {
 
 	/**
 	 * ### Makes a call to the price endpoint and returns the pricing that would be a available for an analogous call to /quote
-	 * @param sellToken
-	 * @param buyToken
-	 * @param sellAmount
-	 * @param options
+	 * @param sellToken Token to sell
+	 * @param buyToken Token to buy
+	 * @param sellAmount Amount of sellToken to sell
+	 * @param options Options to pass to the price endpoint
 	 * @returns Promise transaction response
 	 */
 	async price(

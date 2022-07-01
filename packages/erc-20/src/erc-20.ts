@@ -1,27 +1,11 @@
-import {Address} from '@phuture/types';
+import {Address, isAddress} from '@phuture/types';
 import {Signer, utils} from 'ethers';
 import {formatUnits} from 'ethers/lib/utils';
-import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
-
-export enum NetworkType {
-	Mainnet = 'mainnet',
-}
-
-interface AssetsInterface {
-	usdc: Address;
-	weth: Address;
-}
-
-/** ### Default addresses for network ### */
-export const setOfAssets: {
-	[key in NetworkType]: AssetsInterface;
-} = {
-	/** ### Default addresses on mainnet. */
-	mainnet: {
-		usdc: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-		weth: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-	},
-};
+import {
+	ERC20 as ERC20ContractInterface,
+	ERC20__factory,
+	ERC20Permit__factory,
+} from './types';
 
 /**
  * ### ERC20 Token Contract
@@ -29,6 +13,7 @@ export const setOfAssets: {
 export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 	/** ### ERC20 contract instance */
 	public contract: C;
+	/** ### Signer used for interacting with the contract */
 	public _signer: Signer;
 	/** ### Decimals of the token */
 	private _decimals?: number;
@@ -38,19 +23,15 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 	 *
 	 * @param signer Signer or provider to use for interacting with the contract
 	 * @param contract Contract instance or address of the ERC20 token contract
+	 *
 	 * @returns New ERC20 token instance
 	 */
 	constructor(signer: Signer, contract: Address | C) {
 		this._signer = signer;
 
-		if (typeof contract === 'string') {
-			if (!utils.isAddress(contract))
-				throw new TypeError(`Invalid contract address: ${contract}`);
-
-			this.contract = ERC20__factory.connect(contract, signer) as C;
-		} else {
-			this.contract = contract;
-		}
+		this.contract = isAddress(contract)
+			? (ERC20__factory.connect(contract, signer) as C)
+			: contract;
 	}
 
 	/**

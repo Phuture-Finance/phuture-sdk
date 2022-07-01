@@ -41,5 +41,5 @@ export enum HttpMethod {
  * @param {string} method The method to check
  * @return {method is HttpMethod} True if the method is a valid HTTP method
  */
-export const isHttpMethod = (method: string): method is HttpMethod =>
-	method in HttpMethod;
+export const isHttpMethod = (method: unknown): method is HttpMethod =>
+	typeof method === 'string' && method in HttpMethod;
