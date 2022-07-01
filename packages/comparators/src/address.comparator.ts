@@ -17,9 +17,8 @@ export const addressComparator = (a: Address, b: Address): -1 | 1 => {
 
 	const aBigNumber = BigNumber.from(a);
 	const bBigNumber = BigNumber.from(b);
-	if (aBigNumber.eq(bBigNumber)) {
+	if (aBigNumber.eq(bBigNumber))
 		throw new Error(`Comparator duplicate: ${a} == ${b}`);
-	}
 
 	return aBigNumber.lt(bBigNumber) ? -1 : 1;
 };

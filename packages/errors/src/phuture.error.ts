@@ -44,6 +44,7 @@ export class PhutureError extends Error {
 	 * ### Creates an instance of PhutureError
 	 *
 	 * @param props Error props
+	 *
 	 * @returns Instance of PhutureError
 	 */
 	constructor(props: ErrorProps) {
@@ -57,5 +58,7 @@ export class PhutureError extends Error {
 		this.errors = message ? [error] : errors!;
 
 		if (error.status) this.status = error.status;
+
+		Object.setPrototypeOf(this, PhutureError.prototype);
 	}
 }

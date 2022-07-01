@@ -3,6 +3,7 @@
  *
  * @param charsOnStart Number of characters to keep on start of the hash
  * @param charsOnEnd Number of characters to keep on end of the hash
+ *
  * @returns function that transforms hash to short string representation
  */
 export const transformHash = (charsOnStart = 3, charsOnEnd?: number) => {

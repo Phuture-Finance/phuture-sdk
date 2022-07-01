@@ -11,14 +11,6 @@ describe("Erc20", () => {
 		.returns(constants.AddressZero)
 		.object();
 
-	it("should throw error on invalid address", async () => {
-		const contractAddress = "0x123";
-		await expect(() => new Erc20(signer, contractAddress)).to.throw(
-			TypeError,
-			`Invalid contract address: ${contractAddress}`
-		);
-	});
-
 	it("create erc20 instance from address", () => {
 		const erc20 = new Erc20(signer, constants.AddressZero);
 		expect(erc20.contract.address).to.eq(constants.AddressZero);

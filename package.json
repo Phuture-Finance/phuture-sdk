@@ -4,8 +4,7 @@
   "repository": "Phuture-Finance/phuture-sdk",
   "author": "Eugene Lepeico <eugenelepeico@gmail.com>",
   "workspaces": [
-	"packages/*",
-	"examples/*"
+	"packages/*"
   ],
   "scripts": {
 	"prepare": "husky install",
