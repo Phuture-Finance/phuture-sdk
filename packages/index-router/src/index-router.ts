@@ -7,6 +7,7 @@ import {
 import {InsufficientAllowanceError} from '@phuture/errors';
 import {Address, isAddress} from '@phuture/types';
 import {BigNumber, BigNumberish, ContractTransaction, Signer} from 'ethers';
+import {Contract} from '@phuture/contract';
 import {MintOptions} from './mint-options';
 import {
 	IndexRouter as IndexRouterContractInterface,
@@ -23,12 +24,7 @@ export enum DefaultIndexRouterAddress {
 /**
  * ### IndexRouter Contract
  */
-export class IndexRouter {
-	/** ### IndexRouter contract instance */
-	public contract: IndexRouterContractInterface;
-	/** ### Signer used for interacting with the contract */
-	public _signer: Signer;
-
+export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	/**
 	 * ### Creates a new IndexRouter instance
 	 *
@@ -43,33 +39,7 @@ export class IndexRouter {
 			| IndexRouterContractInterface
 			| Address = DefaultIndexRouterAddress.Mainnet,
 	) {
-		this._signer = signer;
-
-		this.contract = isAddress(contract)
-			? IndexRouter__factory.connect(contract, this._signer)
-			: contract;
-	}
-
-	/**
-	 * ### Get signer
-	 *
-	 * @returns signer
-	 */
-	get signer(): Signer {
-		return this._signer;
-	}
-
-	/**
-	 * ### Set signer
-	 *
-	 * change the signer in IndexRouter Contract
-	 */
-	set signer(signer: Signer) {
-		this._signer = signer;
-		this.contract = IndexRouter__factory.connect(
-			this.contract.address,
-			this._signer,
-		);
+		super(signer, IndexRouter__factory, contract);
 	}
 
 	// Mint swap for native token
@@ -149,7 +119,7 @@ export class IndexRouter {
 			amountInInputToken,
 			quotes,
 			index,
-			recipient: await this._signer.getAddress(),
+			recipient: await this.signer.getAddress(),
 		};
 
 		return this.contract.mintSwapIndexAmount(option);
@@ -163,7 +133,6 @@ export class IndexRouter {
 	 * @param sellToken token's address
 	 * @param permitOptions (optional) permit options for transaction
 	 *
-	 *
 	 * @returns burn transaction
 	 */
 	async burn(
@@ -173,7 +142,7 @@ export class IndexRouter {
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
 	): Promise<ContractTransaction> {
 		const indexInstance = isAddress(index)
-			? new Erc20(this._signer, index)
+			? new Erc20(this.signer, index)
 			: index;
 		const burnParameters: IIndexRouter.BurnParamsStruct = {
 			index: indexInstance.address,
@@ -216,7 +185,7 @@ export class IndexRouter {
 		},
 	): Promise<ContractTransaction> {
 		const indexInstance = isAddress(index)
-			? new Erc20(this._signer, index)
+			? new Erc20(this.signer, index)
 			: index;
 		const burnParameters: IIndexRouter.BurnSwapParamsStruct = {
 			index: indexInstance.address,
@@ -308,7 +277,7 @@ export class IndexRouter {
 		amount: BigNumberish,
 	): Promise<boolean> {
 		const allowance = await token.contract.allowance(
-			await this._signer.getAddress(),
+			await this.signer.getAddress(),
 			this.contract.address,
 		);
 

@@ -3799,10 +3799,42 @@ export enum UniV3Pool_OrderBy {
 
 export type UniV3PriceOracle = {
   __typename?: 'UniV3PriceOracle';
+  asset0: Asset;
+  asset1: Asset;
   id: Scalars['ID'];
+  price?: Maybe<Scalars['BigInt']>;
+  priceOracle: Scalars['String'];
 };
 
 export type UniV3PriceOracle_Filter = {
+  asset0?: InputMaybe<Scalars['String']>;
+  asset0_contains?: InputMaybe<Scalars['String']>;
+  asset0_ends_with?: InputMaybe<Scalars['String']>;
+  asset0_gt?: InputMaybe<Scalars['String']>;
+  asset0_gte?: InputMaybe<Scalars['String']>;
+  asset0_in?: InputMaybe<Array<Scalars['String']>>;
+  asset0_lt?: InputMaybe<Scalars['String']>;
+  asset0_lte?: InputMaybe<Scalars['String']>;
+  asset0_not?: InputMaybe<Scalars['String']>;
+  asset0_not_contains?: InputMaybe<Scalars['String']>;
+  asset0_not_ends_with?: InputMaybe<Scalars['String']>;
+  asset0_not_in?: InputMaybe<Array<Scalars['String']>>;
+  asset0_not_starts_with?: InputMaybe<Scalars['String']>;
+  asset0_starts_with?: InputMaybe<Scalars['String']>;
+  asset1?: InputMaybe<Scalars['String']>;
+  asset1_contains?: InputMaybe<Scalars['String']>;
+  asset1_ends_with?: InputMaybe<Scalars['String']>;
+  asset1_gt?: InputMaybe<Scalars['String']>;
+  asset1_gte?: InputMaybe<Scalars['String']>;
+  asset1_in?: InputMaybe<Array<Scalars['String']>>;
+  asset1_lt?: InputMaybe<Scalars['String']>;
+  asset1_lte?: InputMaybe<Scalars['String']>;
+  asset1_not?: InputMaybe<Scalars['String']>;
+  asset1_not_contains?: InputMaybe<Scalars['String']>;
+  asset1_not_ends_with?: InputMaybe<Scalars['String']>;
+  asset1_not_in?: InputMaybe<Array<Scalars['String']>>;
+  asset1_not_starts_with?: InputMaybe<Scalars['String']>;
+  asset1_starts_with?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   id_gt?: InputMaybe<Scalars['ID']>;
   id_gte?: InputMaybe<Scalars['ID']>;
@@ -3811,10 +3843,36 @@ export type UniV3PriceOracle_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  price?: InputMaybe<Scalars['BigInt']>;
+  priceOracle?: InputMaybe<Scalars['String']>;
+  priceOracle_contains?: InputMaybe<Scalars['String']>;
+  priceOracle_ends_with?: InputMaybe<Scalars['String']>;
+  priceOracle_gt?: InputMaybe<Scalars['String']>;
+  priceOracle_gte?: InputMaybe<Scalars['String']>;
+  priceOracle_in?: InputMaybe<Array<Scalars['String']>>;
+  priceOracle_lt?: InputMaybe<Scalars['String']>;
+  priceOracle_lte?: InputMaybe<Scalars['String']>;
+  priceOracle_not?: InputMaybe<Scalars['String']>;
+  priceOracle_not_contains?: InputMaybe<Scalars['String']>;
+  priceOracle_not_ends_with?: InputMaybe<Scalars['String']>;
+  priceOracle_not_in?: InputMaybe<Array<Scalars['String']>>;
+  priceOracle_not_starts_with?: InputMaybe<Scalars['String']>;
+  priceOracle_starts_with?: InputMaybe<Scalars['String']>;
+  price_gt?: InputMaybe<Scalars['BigInt']>;
+  price_gte?: InputMaybe<Scalars['BigInt']>;
+  price_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  price_lt?: InputMaybe<Scalars['BigInt']>;
+  price_lte?: InputMaybe<Scalars['BigInt']>;
+  price_not?: InputMaybe<Scalars['BigInt']>;
+  price_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export enum UniV3PriceOracle_OrderBy {
-  id = 'id'
+  asset0 = 'asset0',
+  asset1 = 'asset1',
+  id = 'id',
+  price = 'price',
+  priceOracle = 'priceOracle'
 }
 
 export type UniV3Token = {

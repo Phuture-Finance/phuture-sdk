@@ -1,9 +1,0 @@
-query getRangesByAddress($address: String!) {
-    vestingRanges(where: {unstaked: false, account: $address}) {
-        id
-        account
-        amount
-        rangeStartIndex
-        rangeEndIndex
-    }
-}

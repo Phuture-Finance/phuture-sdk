@@ -1,20 +1,15 @@
-import {Address, isAddress} from '@phuture/types';
-import {Signer, utils} from 'ethers';
+import {Address} from '@phuture/types';
+import {Signer} from 'ethers';
 import {formatUnits} from 'ethers/lib/utils';
-import {
-	ERC20 as ERC20ContractInterface,
-	ERC20__factory,
-	ERC20Permit__factory,
-} from './types';
+import {Contract} from '@phuture/contract/dist';
+import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
 
 /**
  * ### ERC20 Token Contract
  */
-export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
-	/** ### ERC20 contract instance */
-	public contract: C;
-	/** ### Signer used for interacting with the contract */
-	public _signer: Signer;
+export class Erc20<
+	C extends ERC20ContractInterface = ERC20ContractInterface,
+> extends Contract<C> {
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
@@ -27,20 +22,7 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> {
 	 * @returns New ERC20 token instance
 	 */
 	constructor(signer: Signer, contract: Address | C) {
-		this._signer = signer;
-
-		this.contract = isAddress(contract)
-			? (ERC20__factory.connect(contract, signer) as C)
-			: contract;
-	}
-
-	/**
-	 * ### Get the address of the token
-	 *
-	 * @returns Address of the token
-	 */
-	get address(): Address {
-		return this.contract.address;
+		super(signer, ERC20__factory, contract);
 	}
 
 	/**
