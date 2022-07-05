@@ -1,7 +1,0 @@
-query getStats($id: ID!) {
-    stat(id: $id) {
-        id
-        indexCount
-        totalValueLocked
-    }
-}
