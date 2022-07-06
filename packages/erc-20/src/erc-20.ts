@@ -1,14 +1,14 @@
-import {Address} from '@phuture/types';
-import {Signer} from 'ethers';
-import {formatUnits} from 'ethers/lib/utils';
-import {Contract} from '@phuture/contract/dist';
-import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
+import { Address } from "@phuture/types";
+import { Signer } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
+import { Contract } from "@phuture/contract/dist";
+import { ERC20 as ERC20ContractInterface, ERC20__factory } from "./types";
 
 /**
  * ### ERC20 Token Contract
  */
 export class Erc20<
-	C extends ERC20ContractInterface = ERC20ContractInterface,
+	C extends ERC20ContractInterface = ERC20ContractInterface
 > extends Contract<C> {
 	/** ### Decimals of the token */
 	private _decimals?: number;
