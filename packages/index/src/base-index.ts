@@ -1,27 +1,27 @@
-import {Erc20} from '@phuture/erc-20';
-import {Address, isAddress} from '@phuture/types';
+import {Erc20Permit} from '@phuture/erc-20';
+import {Address, ContractFactory} from '@phuture/types';
 import {BigNumber, BigNumberish, Signer} from 'ethers';
 import {BaseIndex, BaseIndex__factory} from './types';
 
 /**
  * ### Index Contract
  */
-export class Index extends Erc20<BaseIndex> {
+export class Index extends Erc20Permit<BaseIndex> {
 	/**
 	 * ### Creates a new Index instance
 	 *
 	 * @param signer Signer or provider to use for interacting with the contract
 	 * @param contract Contract instance or address of the Index token contract
+	 * @param factory Contract factory to use for creating the contract
 	 *
 	 * @returns New Index token instance
 	 */
-	constructor(signer: Signer, contract: Address | BaseIndex) {
-		super(
-			signer,
-			isAddress(contract)
-				? BaseIndex__factory.connect(contract, signer)
-				: contract,
-		);
+	constructor(
+		signer: Signer,
+		contract: Address | BaseIndex,
+		factory: ContractFactory = BaseIndex__factory,
+	) {
+		super(signer, contract, factory);
 	}
 
 	/**

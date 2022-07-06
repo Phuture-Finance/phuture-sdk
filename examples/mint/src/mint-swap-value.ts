@@ -71,7 +71,7 @@ async function main() {
 	 * Once we have our quotes in the form of an array of {@see Zero0xQuoteResponse}
 	 * We can then perform the mint.
 	 */
-	await indexRouter.mint(
+	await indexRouter.mintSwap(
 		{
 			index: index.address,
 			recipient: wallet.address,

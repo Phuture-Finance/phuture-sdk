@@ -1,14 +1,14 @@
-import { Address } from "@phuture/types";
-import { Signer } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
-import { Contract } from "@phuture/contract/dist";
-import { ERC20 as ERC20ContractInterface, ERC20__factory } from "./types";
+import {Address, ContractFactory} from '@phuture/types';
+import {Signer} from 'ethers';
+import {formatUnits} from 'ethers/lib/utils';
+import {Contract} from '@phuture/contract/dist';
+import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
 
 /**
  * ### ERC20 Token Contract
  */
 export class Erc20<
-	C extends ERC20ContractInterface = ERC20ContractInterface
+	C extends ERC20ContractInterface = ERC20ContractInterface,
 > extends Contract<C> {
 	/** ### Decimals of the token */
 	private _decimals?: number;
@@ -18,11 +18,16 @@ export class Erc20<
 	 *
 	 * @param signer Signer or provider to use for interacting with the contract
 	 * @param contract Contract instance or address of the ERC20 token contract
+	 * @param factory Contract factory to use for creating the contract
 	 *
 	 * @returns New ERC20 token instance
 	 */
-	constructor(signer: Signer, contract: Address | C) {
-		super(signer, ERC20__factory, contract);
+	constructor(
+		signer: Signer,
+		contract: Address | C,
+		factory: ContractFactory = ERC20__factory,
+	) {
+		super(signer, contract, factory);
 	}
 
 	/**
@@ -31,9 +36,7 @@ export class Erc20<
 	 * @returns Decimals of the token
 	 */
 	async decimals(): Promise<number> {
-		if (this._decimals) return this._decimals;
-
-		this._decimals = await this.contract.decimals();
+		this._decimals ??= await this.contract.decimals();
 
 		return this._decimals;
 	}

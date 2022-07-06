@@ -56,14 +56,14 @@ describe("IndexRouter", () => {
 				asset: "0x00",
 				swapTarget: "1",
 				buyAssetMinAmount: "0",
-				assetQuote: "1",
+				assetQuote: "1"
 			},
 			{
 				asset: "0x01",
 				swapTarget: "2",
 				buyAssetMinAmount: "0",
-				assetQuote: "2",
-			},
+				assetQuote: "2"
+			}
 		];
 		describe("# mint:", () => {
 			let mintSwapOptions: IIndexRouter.MintSwapParamsStruct;
@@ -77,7 +77,7 @@ describe("IndexRouter", () => {
 					inputToken: "0x01",
 					amountInInputToken: "1",
 					recipient: await signer.getAddress(),
-					quotes: randomQuotes,
+					quotes: randomQuotes
 				};
 			});
 
@@ -89,7 +89,7 @@ describe("IndexRouter", () => {
 					.object();
 				const router = new IndexRouter(signer, routerContract);
 
-				const response = await router.mint(
+				const response = await router.mintSwap(
 					mintSwapOptions,
 					mintSwapOptions.amountInInputToken
 				);
@@ -113,7 +113,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(constants.MaxUint256)
 					.object();
 
-				const response = await router.mint(
+				const response = await router.mintSwap(
 					mintSwapOptions,
 					mintSwapOptions.amountInInputToken,
 					erc20
@@ -127,7 +127,7 @@ describe("IndexRouter", () => {
 					r: "0x0000000000000000000000000000000000000000000000000000000000000001",
 					s: "0x0000000000000000000000000000000000000000000000000000000000000002",
 					amount: mintSwapOptions.amountInInputToken,
-					deadline: constants.MaxUint256,
+					deadline: constants.MaxUint256
 				};
 				const routerContract = contract
 					.setup(async (c) =>
@@ -146,7 +146,7 @@ describe("IndexRouter", () => {
 
 				const erc20permit = new Mock<Erc20Permit>().object();
 
-				const response = await router.mint(
+				const response = await router.mintSwap(
 					mintSwapOptions,
 					mintSwapOptions.amountInInputToken,
 					erc20permit,
@@ -173,7 +173,7 @@ describe("IndexRouter", () => {
 					.object();
 
 				try {
-					await router.mint(
+					await router.mintSwap(
 						mintSwapOptions,
 						mintSwapOptions.amountInInputToken,
 						erc20
@@ -195,7 +195,7 @@ describe("IndexRouter", () => {
 					amountInInputToken: "100",
 					quotes: randomQuotes,
 					index: DefaultIndexRouterAddress.Mainnet,
-					recipient: signerAddress,
+					recipient: signerAddress
 				};
 				const routerContract = contract
 					.setup(async (c) => c.mintSwapIndexAmount(nativeOption))
@@ -217,7 +217,7 @@ describe("IndexRouter", () => {
 					amountInInputToken: "100",
 					quotes: randomQuotes,
 					index: DefaultIndexRouterAddress.Mainnet,
-					recipient: await signer.getAddress(),
+					recipient: await signer.getAddress()
 				};
 				const routerContract = contract
 					.setup(async (c) => c.mintSwapIndexAmount(singleOption))
@@ -241,7 +241,7 @@ describe("IndexRouter", () => {
 				v: 0,
 				r: "0x0000000000000000000000000000000000000000000000000000000000000001",
 				s: "0x0000000000000000000000000000000000000000000000000000000000000002",
-				deadline: constants.MaxUint256,
+				deadline: constants.MaxUint256
 			};
 
 			const contract = new Mock<IndexRouterContractInterface>()
@@ -252,14 +252,14 @@ describe("IndexRouter", () => {
 				burnParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
-					recipient: await signer.getAddress(),
+					recipient: await signer.getAddress()
 				};
 				burnSwapParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
 					recipient: await signer.getAddress(),
 					quotes: randomQuotes,
-					outputAsset: "0x01",
+					outputAsset: "0x01"
 				};
 			});
 
@@ -361,7 +361,7 @@ describe("IndexRouter", () => {
 					burnSwapParameters.recipient,
 					{
 						quotes: burnSwapParameters.quotes,
-						permitOptions: burnPermitArguments,
+						permitOptions: burnPermitArguments
 					}
 				);
 				expect(response).to.not.be.null;
@@ -387,7 +387,7 @@ describe("IndexRouter", () => {
 					"0",
 					burnSwapParameters.recipient,
 					{
-						quotes: burnSwapParameters.quotes,
+						quotes: burnSwapParameters.quotes
 					}
 				);
 				expect(response).to.not.be.null;
@@ -411,7 +411,7 @@ describe("IndexRouter", () => {
 
 				router
 					.burnSwap(indexContract, "100", burnSwapParameters.recipient, {
-						quotes: burnSwapParameters.quotes,
+						quotes: burnSwapParameters.quotes
 					})
 					.catch((error) => {
 						expect(error).to.be.instanceOf(InsufficientAllowanceError);
@@ -444,7 +444,7 @@ describe("IndexRouter", () => {
 					{
 						outputAsset: burnSwapParameters.outputAsset,
 						quotes: burnSwapParameters.quotes,
-						permitOptions: burnPermitArguments,
+						permitOptions: burnPermitArguments
 					}
 				);
 				expect(response).to.not.be.null;
@@ -472,7 +472,7 @@ describe("IndexRouter", () => {
 					burnSwapParameters.recipient,
 					{
 						outputAsset: burnSwapParameters.outputAsset,
-						quotes: burnSwapParameters.quotes,
+						quotes: burnSwapParameters.quotes
 					}
 				);
 				expect(response).to.not.be.null;
@@ -497,7 +497,7 @@ describe("IndexRouter", () => {
 				router
 					.burnSwap(indexContract, "1000", burnSwapParameters.recipient, {
 						outputAsset: burnSwapParameters.outputAsset,
-						quotes: burnSwapParameters.quotes,
+						quotes: burnSwapParameters.quotes
 					})
 					.catch((error) => {
 						expect(error).to.be.instanceOf(InsufficientAllowanceError);

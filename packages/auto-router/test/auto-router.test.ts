@@ -1,7 +1,7 @@
-import {expect} from 'chai';
-import {autoRouter} from '../src';
-
-/** @test {autoRouter} */
-test('autoRouter', () => {
-
-});
+// import {expect} from 'chai';
+// import {AutoRouter} from '../src';
+//
+// /** @test {autoRouter} */
+// test('autoRouter', () => {
+// 	const router = new AutoRouter();
+// });

@@ -13,8 +13,8 @@ export class Contract<C extends EthersContract> {
 
 	constructor(
 		signer: Signer,
-		protected readonly contractFactory: ContractFactory,
 		contract: C | Address,
+		protected readonly contractFactory: ContractFactory,
 	) {
 		this._signer = signer;
 		this.contract = isAddress(contract)
