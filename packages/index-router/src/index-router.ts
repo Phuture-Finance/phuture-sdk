@@ -3,28 +3,30 @@ import {
 	Erc20Permit,
 	setOfAssets,
 	StandardPermitArguments,
-} from '@phuture/erc-20';
-import {InsufficientAllowanceError} from '@phuture/errors';
-import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish, ContractTransaction, Signer} from 'ethers';
-import {Contract} from '@phuture/contract';
-import {MintOptions} from './mint-options';
+} from "@phuture/erc-20";
+import { InsufficientAllowanceError } from "@phuture/errors";
+import { Address, isAddress } from "@phuture/types";
+import { BigNumber, BigNumberish, ContractTransaction, Signer } from "ethers";
+import { Contract } from "@phuture/contract";
+import { MintOptions } from "./mint-options";
 import {
 	IndexRouter as IndexRouterContractInterface,
 	IndexRouter__factory,
-} from './types';
-import {IIndexRouter} from './types/IndexRouter';
+} from "./types";
+import { IIndexRouter } from "./types/IndexRouter";
 
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x7b6c3e5486d9e6959441ab554a889099eed76290',
+	Mainnet = "0x7b6c3e5486d9e6959441ab554a889099eed76290",
 }
 
 /**
  * ### IndexRouter Contract
  */
 export class IndexRouter extends Contract<IndexRouterContractInterface> {
+	private _weth?: Address;
+
 	/**
 	 * ### Creates a new IndexRouter instance
 	 *
@@ -37,28 +39,34 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		signer: Signer,
 		contract:
 			| IndexRouterContractInterface
-			| Address = DefaultIndexRouterAddress.Mainnet,
+			| Address = DefaultIndexRouterAddress.Mainnet
 	) {
 		super(signer, IndexRouter__factory, contract);
+	}
+
+	async weth(): Promise<Address> {
+		if (!this._weth) this._weth = await this.contract.WETH();
+
+		return this._weth;
 	}
 
 	// Mint swap for native token
 	mint(
 		options: IIndexRouter.MintSwapValueParamsStruct,
-		sellAmount: BigNumberish,
+		sellAmount: BigNumberish
 	): Promise<ContractTransaction>;
 	// Mint swap for single sell token
 	mint(
 		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
-		sellToken: Erc20,
+		sellToken: Erc20
 	): Promise<ContractTransaction>;
 	// Mint swap for sell token with permit
 	mint(
 		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
 		sellToken: Erc20Permit,
-		permitOptions: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction>;
 
 	/**
@@ -75,12 +83,12 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		options: MintOptions,
 		sellAmount: BigNumberish,
 		sellToken?: Erc20 | Erc20Permit,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction> {
 		if (!sellToken)
 			return this.contract.mintSwapValue(
 				options as IIndexRouter.MintSwapValueParamsStruct,
-				{value: sellAmount},
+				{ value: sellAmount }
 			);
 
 		if (permitOptions !== undefined)
@@ -89,13 +97,71 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.deadline,
 				permitOptions.v,
 				permitOptions.r,
-				permitOptions.s,
+				permitOptions.s
 			);
 
 		if (!(await this._checkAllowance(sellToken, sellAmount)))
 			throw new InsufficientAllowanceError(sellAmount);
 
 		return this.contract.mintSwap(options as IIndexRouter.MintSwapParamsStruct);
+	}
+
+	// mint static for native token
+	mintStatic(
+		options: IIndexRouter.MintSwapValueParamsStruct,
+		sellAmount: BigNumberish
+	): Promise<BigNumber>;
+	// mint static for single sell token
+	mintStatic(
+		options: IIndexRouter.MintSwapParamsStruct,
+		sellAmount: BigNumberish,
+		sellToken: Erc20
+	): Promise<BigNumber>;
+	// mint static for sell token with permit
+	mintStatic(
+		options: IIndexRouter.MintSwapParamsStruct,
+		sellAmount: BigNumberish,
+		sellToken: Erc20Permit,
+		permitOptions: Omit<StandardPermitArguments, "amount">
+	): Promise<BigNumber>;
+
+	/**
+	 * ### Mint Static
+	 *
+	 * @param options mint options
+	 * @param sellAmount token's  amount
+	 * @param sellToken (optional) erc20 token
+	 * @param permitOptions (optional) permit options for transaction
+	 *
+	 * @returns mint transaction
+	 */
+	async mintStatic(
+		options: MintOptions,
+		sellAmount: BigNumberish,
+		sellToken?: Erc20 | Erc20Permit,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
+	): Promise<BigNumber> {
+		if (!sellToken)
+			return this.contract.callStatic.mintSwapValue(
+				options as IIndexRouter.MintSwapValueParamsStruct,
+				{ value: sellAmount }
+			);
+
+		if (permitOptions !== undefined)
+			return this.contract.callStatic.mintSwapWithPermit(
+				options as IIndexRouter.MintSwapParamsStruct,
+				permitOptions.deadline,
+				permitOptions.v,
+				permitOptions.r,
+				permitOptions.s
+			);
+
+		if (!(await this._checkAllowance(sellToken, sellAmount)))
+			throw new InsufficientAllowanceError(sellAmount);
+
+		return this.contract.callStatic.mintSwap(
+			options as IIndexRouter.MintSwapParamsStruct
+		);
 	}
 
 	/**
@@ -112,7 +178,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		index: Address,
 		amountInInputToken: BigNumberish,
 		quotes: IIndexRouter.MintQuoteParamsStruct[],
-		inputToken: Address = setOfAssets.mainnet.weth,
+		inputToken: Address = setOfAssets[1].weth
 	): Promise<BigNumber> {
 		const option: IIndexRouter.MintSwapParamsStruct = {
 			inputToken,
@@ -139,7 +205,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		index: Address | Erc20,
 		amount: BigNumberish,
 		recipient: Address,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
 	): Promise<ContractTransaction> {
 		const indexInstance = isAddress(index)
 			? new Erc20(this.signer, index)
@@ -156,7 +222,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.deadline,
 				permitOptions.v,
 				permitOptions.r,
-				permitOptions.s,
+				permitOptions.s
 			);
 		if (!(await this._checkAllowance(indexInstance, amount)))
 			throw new InsufficientAllowanceError(amount);
@@ -181,8 +247,8 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		options: {
 			quotes: IIndexRouter.BurnQuoteParamsStruct[];
 			outputAsset?: Address;
-			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
-		},
+			permitOptions?: Omit<StandardPermitArguments, "amount">;
+		}
 	): Promise<ContractTransaction> {
 		const indexInstance = isAddress(index)
 			? new Erc20(this.signer, index)
@@ -192,7 +258,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			amount,
 			recipient,
 			quotes: options.quotes,
-			outputAsset: '',
+			outputAsset: "",
 		};
 
 		if (options.outputAsset === undefined) {
@@ -202,7 +268,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 					options.permitOptions.deadline,
 					options.permitOptions.v,
 					options.permitOptions.r,
-					options.permitOptions.s,
+					options.permitOptions.s
 				);
 
 			if (!(await this._checkAllowance(indexInstance, amount)))
@@ -217,13 +283,75 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				options.permitOptions.deadline,
 				options.permitOptions.v,
 				options.permitOptions.r,
-				options.permitOptions.s,
+				options.permitOptions.s
 			);
 		}
 
 		if (!(await this._checkAllowance(indexInstance, amount)))
 			throw new InsufficientAllowanceError(amount);
 		return this.contract.burnSwap(burnParameters);
+	}
+
+	/**
+	 * ### Burn Swap Static
+	 *
+	 * @param index index address or it's erc20 interface
+	 * @param amount index amount
+	 * @param recipient signer's address
+	 * @param options burn swap options
+	 *
+	 * @returns burn swap transaction
+	 */
+	async burnSwapStatic(
+		index: Address | Erc20,
+		amount: BigNumberish,
+		recipient: Address,
+		options: {
+			quotes: IIndexRouter.BurnQuoteParamsStruct[];
+			outputAsset?: Address;
+			permitOptions?: Omit<StandardPermitArguments, "amount">;
+		}
+	): Promise<BigNumber> {
+		const indexInstance = isAddress(index)
+			? new Erc20(this.signer, index)
+			: index;
+		const burnParameters: IIndexRouter.BurnSwapParamsStruct = {
+			index: indexInstance.address,
+			amount,
+			recipient,
+			quotes: options.quotes,
+			outputAsset: "",
+		};
+
+		if (options.outputAsset === undefined) {
+			if (options.permitOptions !== undefined)
+				return this.contract.callStatic.burnSwapValueWithPermit(
+					burnParameters,
+					options.permitOptions.deadline,
+					options.permitOptions.v,
+					options.permitOptions.r,
+					options.permitOptions.s
+				);
+
+			if (!(await this._checkAllowance(indexInstance, amount)))
+				throw new InsufficientAllowanceError(amount);
+			return this.contract.callStatic.burnSwapValue(burnParameters);
+		}
+
+		burnParameters.outputAsset = options.outputAsset;
+		if (options.permitOptions !== undefined) {
+			return this.contract.callStatic.burnSwapWithPermit(
+				burnParameters,
+				options.permitOptions.deadline,
+				options.permitOptions.v,
+				options.permitOptions.r,
+				options.permitOptions.s
+			);
+		}
+
+		if (!(await this._checkAllowance(indexInstance, amount)))
+			throw new InsufficientAllowanceError(amount);
+		return this.contract.callStatic.burnSwap(burnParameters);
 	}
 
 	// Get burn amounts of multiple tokens
@@ -233,7 +361,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	burnAmount(
 		index: Address,
 		amount: BigNumberish,
-		prices?: BigNumberish[],
+		prices?: BigNumberish[]
 	): Promise<BigNumber>;
 
 	/**
@@ -248,7 +376,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	async burnAmount(
 		index: Address,
 		amount: BigNumberish,
-		prices?: BigNumberish[],
+		prices?: BigNumberish[]
 	): Promise<BigNumber | BigNumber[]> {
 		const amounts = await this.contract.burnTokensAmount(index, amount);
 		if (!prices) {
@@ -274,11 +402,11 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 */
 	private async _checkAllowance(
 		token: Erc20,
-		amount: BigNumberish,
+		amount: BigNumberish
 	): Promise<boolean> {
 		const allowance = await token.contract.allowance(
 			await this.signer.getAddress(),
-			this.contract.address,
+			this.contract.address
 		);
 
 		return allowance.gte(amount);
