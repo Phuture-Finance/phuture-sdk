@@ -1,9 +1,9 @@
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
-import {Erc20, Erc20Permit, StandardPermitArguments} from '@phuture/erc-20';
-import {Index} from '@phuture/index';
-import {IndexRouter} from '@phuture/index-router';
-import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish, Signer} from 'ethers';
+import { ZeroExAggregator } from "@phuture/0x-aggregator";
+import { Erc20, Erc20Permit, StandardPermitArguments } from "@phuture/erc-20";
+import { Index } from "@phuture/index";
+import { IndexRouter } from "@phuture/index-router";
+import { Address, isAddress } from "@phuture/types";
+import { BigNumber, BigNumberish, Signer } from "ethers";
 
 interface MintThreshold {
 	amount: BigNumberish;
@@ -28,37 +28,38 @@ export class AutoRouter {
 		public signer: Signer,
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator,
-		public mintThreshold: MintThreshold,
+		public mintThreshold: MintThreshold
 	) {}
 
 	async autoBuy(
 		index: Index | Address,
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20 | Erc20Permit,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
 	) {
 		index = isAddress(index) ? new Index(this.signer, index) : index;
-		inputToken ??= new Erc20Permit(this.signer, await this.indexRouter.weth());
+		const inputTokenInstance =
+			inputToken ?? new Erc20(this.signer, await this.indexRouter.weth());
 
 		const {
 			buyAmount: zeroExAmount,
 			to: swapTarget,
 			data: assetQuote,
 		} = await this.zeroExAggregator.quote(
-			inputToken.address,
+			inputTokenInstance.address,
 			index.address,
-			amountInInputToken,
+			amountInInputToken
 		);
 
-		const {buyAmount} = await this.zeroExAggregator.price(
-			inputToken.address,
-			this.mintThreshold.tokenAddress,
-			amountInInputToken,
+		const { buyAmount } = await this.zeroExAggregator.price(
+			index.address,
+			inputTokenInstance.address,
+			amountInInputToken
 		);
 
 		if (BigNumber.from(this.mintThreshold.amount).lt(buyAmount)) {
-			const {amounts, amountToSell} = await index.scaleAmount(
-				amountInInputToken,
+			const { amounts, amountToSell } = await index.scaleAmount(
+				amountInInputToken
 			);
 
 			const quotes = await Promise.all(
@@ -68,9 +69,9 @@ export class AutoRouter {
 						to: swapTarget,
 						data: assetQuote,
 					} = await this.zeroExAggregator.quote(
-						inputToken?.address ?? (await this.indexRouter.weth()),
+						inputTokenInstance.address,
 						asset,
-						amount,
+						amount
 					);
 
 					return {
@@ -79,7 +80,7 @@ export class AutoRouter {
 						buyAssetMinAmount,
 						assetQuote,
 					};
-				}),
+				})
 			);
 
 			if (permitOptions) {
@@ -89,11 +90,11 @@ export class AutoRouter {
 						recipient: await this.signer.getAddress(),
 						quotes,
 						amountInInputToken,
-						inputToken: inputToken.address,
+						inputToken: inputTokenInstance.address,
 					},
 					amountToSell,
-					inputToken,
-					permitOptions,
+					inputTokenInstance,
+					permitOptions
 				);
 
 				if (indexRouterAmount.gte(zeroExAmount)) {
@@ -103,11 +104,11 @@ export class AutoRouter {
 							recipient: await this.signer.getAddress(),
 							quotes,
 							amountInInputToken,
-							inputToken: inputToken.address,
+							inputToken: inputTokenInstance.address,
 						},
 						amountToSell,
-						inputToken,
-						permitOptions,
+						inputTokenInstance,
+						permitOptions
 					);
 				}
 			} else {
@@ -117,10 +118,10 @@ export class AutoRouter {
 						recipient: await this.signer.getAddress(),
 						quotes,
 						amountInInputToken,
-						inputToken: inputToken.address,
+						inputToken: inputTokenInstance.address,
 					},
 					amountToSell,
-					inputToken,
+					inputTokenInstance
 				);
 
 				if (indexRouterAmount.gte(zeroExAmount)) {
@@ -130,10 +131,10 @@ export class AutoRouter {
 							recipient: await this.signer.getAddress(),
 							quotes,
 							amountInInputToken,
-							inputToken: inputToken.address,
+							inputToken: inputTokenInstance.address,
 						},
 						amountToSell,
-						inputToken,
+						inputTokenInstance
 					);
 				}
 			}
@@ -143,5 +144,94 @@ export class AutoRouter {
 			to: swapTarget,
 			data: assetQuote,
 		});
+	}
+
+	async autoSell(
+		index: Index | Address,
+		indexAmount: BigNumberish,
+		outputToken?: Address,
+		permitOptions?: Omit<StandardPermitArguments, "amount">
+	) {
+		const indexInterface = isAddress(index)
+			? new Index(this.signer, index)
+			: index;
+
+		outputToken ??= await this.indexRouter.weth();
+
+		// TODO: Promise all
+		const {
+			buyAmount: zeroExAmount,
+			to: swapTarget,
+			data: assetQuote,
+		} = await this.zeroExAggregator.quote(
+			indexInterface.address,
+			outputToken,
+			indexAmount
+		);
+
+		const { buyAmount } = await this.zeroExAggregator.price(
+			indexInterface.address,
+			outputToken,
+			indexAmount
+		);
+
+		if (BigNumber.from(this.mintThreshold.amount).lt(buyAmount)) {
+			const { amounts, amountToSell } = await indexInterface.scaleAmount(
+				indexAmount
+			);
+
+			const quotes = await Promise.all(
+				Object.entries(amounts).map(async ([asset, amount]) => {
+					const {
+						buyAmount: buyAssetMinAmount,
+						to: swapTarget,
+						data: assetQuote,
+					} = await this.zeroExAggregator.quote(
+						indexInterface.address,
+						asset,
+						amount
+					);
+
+					return {
+						asset,
+						swapTarget,
+						buyAssetMinAmount,
+						assetQuote,
+					};
+				})
+			);
+
+			const options = {
+				outputAsset:
+					outputToken === (await this.indexRouter.weth())
+						? undefined
+						: outputToken,
+				quotes,
+				permitOptions,
+			};
+
+			if (permitOptions) {
+				const indexRouterAmount = await this.indexRouter.burnSwapStatic(
+					indexInterface.address,
+					amountToSell,
+					await this.signer.getAddress(),
+					options
+				);
+
+				if (indexRouterAmount.gte(zeroExAmount)) {
+					return this.indexRouter.burnSwap(
+						indexInterface.address,
+						amountToSell,
+						await this.signer.getAddress(),
+						options
+					);
+				}
+			}
+
+			return this.signer.call({
+				to: swapTarget,
+				data: assetQuote,
+			});
+		}
 	}
 }
