@@ -2,16 +2,18 @@ import { Erc20, Erc20Permit, StandardPermitArguments } from "@phuture/erc-20";
 import { InsufficientAllowanceError } from "@phuture/errors";
 import { expect } from "chai";
 import { BigNumber, constants, ethers, Signer } from "ethers";
-import { ContractTransaction } from "ethers/lib/ethers";
+import { Contract, ContractTransaction } from "ethers/lib/ethers";
 import { Mock, PlayTimes } from "moq.ts";
 import { DefaultIndexRouterAddress, IndexRouter } from "../src";
 import { IndexRouter as IndexRouterContractInterface } from "../src/types";
 import { IIndexRouter } from "../src/types/IndexRouter";
+import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 
 describe("IndexRouter", () => {
 	const signer: Signer = ethers.Wallet.createRandom().connect(
 		ethers.getDefaultProvider()
 	);
+
 	const routerContract = new Mock<IndexRouterContractInterface>()
 		.setup((c) => c.address)
 		.returns(constants.AddressZero)
@@ -56,14 +58,14 @@ describe("IndexRouter", () => {
 				asset: "0x00",
 				swapTarget: "1",
 				buyAssetMinAmount: "0",
-				assetQuote: "1"
+				assetQuote: "1",
 			},
 			{
 				asset: "0x01",
 				swapTarget: "2",
 				buyAssetMinAmount: "0",
-				assetQuote: "2"
-			}
+				assetQuote: "2",
+			},
 		];
 		describe("# mint:", () => {
 			let mintSwapOptions: IIndexRouter.MintSwapParamsStruct;
@@ -77,7 +79,7 @@ describe("IndexRouter", () => {
 					inputToken: "0x01",
 					amountInInputToken: "1",
 					recipient: await signer.getAddress(),
-					quotes: randomQuotes
+					quotes: randomQuotes,
 				};
 			});
 
@@ -127,7 +129,7 @@ describe("IndexRouter", () => {
 					r: "0x0000000000000000000000000000000000000000000000000000000000000001",
 					s: "0x0000000000000000000000000000000000000000000000000000000000000002",
 					amount: mintSwapOptions.amountInInputToken,
-					deadline: constants.MaxUint256
+					deadline: constants.MaxUint256,
 				};
 				const routerContract = contract
 					.setup(async (c) =>
@@ -183,6 +185,106 @@ describe("IndexRouter", () => {
 				}
 			});
 		});
+		describe("# mintSwap static:", () => {
+			let mintSwapOptions: IIndexRouter.MintSwapParamsStruct;
+			let mockContract: DeepMockProxy<IndexRouterContractInterface>;
+			let permitArguments: StandardPermitArguments;
+
+			beforeAll(async () => {
+				mintSwapOptions = {
+					index: "0xc11f8e173ee67ffa7bbdd185d2399994aad23ec6",
+					inputToken: "0x01",
+					amountInInputToken: "1",
+					recipient: await signer.getAddress(),
+					quotes: randomQuotes,
+				};
+				permitArguments = {
+					v: 0,
+					r: "0x0000000000000000000000000000000000000000000000000000000000000001",
+					s: "0x0000000000000000000000000000000000000000000000000000000000000002",
+					amount: mintSwapOptions.amountInInputToken,
+					deadline: constants.MaxUint256,
+				};
+
+				mockContract = mockDeep<IndexRouterContractInterface>();
+				mockContract.callStatic.mintSwapValue(mintSwapOptions);
+				mockContract.callStatic.mintSwap(mintSwapOptions);
+				mockContract.callStatic.mintSwapWithPermit(
+					mintSwapOptions,
+					permitArguments.deadline,
+					permitArguments.v,
+					permitArguments.r,
+					permitArguments.s
+				);
+			});
+
+			it("mintSwapValue static return something", async () => {
+				const router = new IndexRouter(signer, mockContract);
+
+				const response = await router.mintSwapStatic(
+					mintSwapOptions,
+					mintSwapOptions.amountInInputToken
+				);
+				expect(response).to.not.be.null;
+			});
+
+			it("mintSwap static return something", async () => {
+				const signerAddress = await signer.getAddress();
+
+				const router = new IndexRouter(signer, mockContract);
+
+				const erc20 = new Mock<Erc20Permit>()
+					.setup((c) =>
+						c.contract.allowance(signerAddress, router.contract.address)
+					)
+					.returnsAsync(constants.MaxUint256)
+					.object();
+
+				const response = await router.mintSwapStatic(
+					mintSwapOptions,
+					mintSwapOptions.amountInInputToken,
+					erc20
+				);
+				expect(response).to.not.be.null;
+			});
+
+			it("mintSwapWithPermit static return something", async () => {
+				const router = new IndexRouter(signer, mockContract);
+
+				const erc20permit = new Mock<Erc20Permit>().object();
+
+				const response = await router.mintSwapStatic(
+					mintSwapOptions,
+					mintSwapOptions.amountInInputToken,
+					erc20permit,
+					permitArguments
+				);
+				expect(response).to.not.be.null;
+			});
+
+			it("mintSwap static functions throws on 0 allowance", async () => {
+				const signerAddress = await signer.getAddress();
+
+				const router = new IndexRouter(signer, mockContract);
+
+				const erc20 = new Mock<Erc20Permit>()
+					.setup((c) =>
+						c.contract.allowance(signerAddress, router.contract.address)
+					)
+					.returnsAsync(BigNumber.from(0))
+					.object();
+
+				try {
+					await router.mintSwapStatic(
+						mintSwapOptions,
+						mintSwapOptions.amountInInputToken,
+						erc20
+					);
+				} catch (error) {
+					expect(error).to.be.instanceOf(Error);
+				}
+			});
+		});
 		describe("# mintAmounts:", () => {
 			const contract = new Mock<IndexRouterContractInterface>()
 				.setup((c) => c.address)
@@ -195,12 +297,14 @@ describe("IndexRouter", () => {
 					amountInInputToken: "100",
 					quotes: randomQuotes,
 					index: DefaultIndexRouterAddress.Mainnet,
-					recipient: signerAddress
+					recipient: signerAddress,
 				};
 				const routerContract = contract
 					.setup(async (c) => c.mintSwapIndexAmount(nativeOption))
 					.play(PlayTimes.Once())
 					.returnsAsync(BigNumber.from(10))
+					.setup(async (c) => c.WETH())
+					.returnsAsync(constants.AddressZero)
 					.object();
 				const router = new IndexRouter(signer, routerContract);
 
@@ -217,7 +321,7 @@ describe("IndexRouter", () => {
 					amountInInputToken: "100",
 					quotes: randomQuotes,
 					index: DefaultIndexRouterAddress.Mainnet,
-					recipient: await signer.getAddress()
+					recipient: await signer.getAddress(),
 				};
 				const routerContract = contract
 					.setup(async (c) => c.mintSwapIndexAmount(singleOption))
@@ -241,7 +345,7 @@ describe("IndexRouter", () => {
 				v: 0,
 				r: "0x0000000000000000000000000000000000000000000000000000000000000001",
 				s: "0x0000000000000000000000000000000000000000000000000000000000000002",
-				deadline: constants.MaxUint256
+				deadline: constants.MaxUint256,
 			};
 
 			const contract = new Mock<IndexRouterContractInterface>()
@@ -252,14 +356,14 @@ describe("IndexRouter", () => {
 				burnParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
-					recipient: await signer.getAddress()
+					recipient: await signer.getAddress(),
 				};
 				burnSwapParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
 					recipient: await signer.getAddress(),
 					quotes: randomQuotes,
-					outputAsset: "0x01"
+					outputAsset: "0x01",
 				};
 			});
 
@@ -361,7 +465,7 @@ describe("IndexRouter", () => {
 					burnSwapParameters.recipient,
 					{
 						quotes: burnSwapParameters.quotes,
-						permitOptions: burnPermitArguments
+						permitOptions: burnPermitArguments,
 					}
 				);
 				expect(response).to.not.be.null;
@@ -387,7 +491,7 @@ describe("IndexRouter", () => {
 					"0",
 					burnSwapParameters.recipient,
 					{
-						quotes: burnSwapParameters.quotes
+						quotes: burnSwapParameters.quotes,
 					}
 				);
 				expect(response).to.not.be.null;
@@ -411,7 +515,7 @@ describe("IndexRouter", () => {
 
 				router
 					.burnSwap(indexContract, "100", burnSwapParameters.recipient, {
-						quotes: burnSwapParameters.quotes
+						quotes: burnSwapParameters.quotes,
 					})
 					.catch((error) => {
 						expect(error).to.be.instanceOf(InsufficientAllowanceError);
@@ -444,7 +548,7 @@ describe("IndexRouter", () => {
 					{
 						outputAsset: burnSwapParameters.outputAsset,
 						quotes: burnSwapParameters.quotes,
-						permitOptions: burnPermitArguments
+						permitOptions: burnPermitArguments,
 					}
 				);
 				expect(response).to.not.be.null;
@@ -472,7 +576,7 @@ describe("IndexRouter", () => {
 					burnSwapParameters.recipient,
 					{
 						outputAsset: burnSwapParameters.outputAsset,
-						quotes: burnSwapParameters.quotes
+						quotes: burnSwapParameters.quotes,
 					}
 				);
 				expect(response).to.not.be.null;
@@ -497,7 +601,171 @@ describe("IndexRouter", () => {
 				router
 					.burnSwap(indexContract, "1000", burnSwapParameters.recipient, {
 						outputAsset: burnSwapParameters.outputAsset,
-						quotes: burnSwapParameters.quotes
+						quotes: burnSwapParameters.quotes,
+					})
+					.catch((error) => {
+						expect(error).to.be.instanceOf(InsufficientAllowanceError);
+					});
+			});
+		});
+
+		describe("# burn swap static:", () => {
+			let burnParameters: IIndexRouter.BurnParamsStruct;
+			let burnSwapParameters: IIndexRouter.BurnSwapParamsStruct;
+			let mockContract: DeepMockProxy<IndexRouterContractInterface>;
+
+			const burnPermitArguments: Omit<StandardPermitArguments, "amount"> = {
+				v: 0,
+				r: "0x0000000000000000000000000000000000000000000000000000000000000001",
+				s: "0x0000000000000000000000000000000000000000000000000000000000000002",
+				deadline: constants.MaxUint256,
+			};
+
+			beforeAll(async () => {
+				burnParameters = {
+					index: DefaultIndexRouterAddress.Mainnet,
+					amount: "0",
+					recipient: await signer.getAddress(),
+				};
+				burnSwapParameters = {
+					index: DefaultIndexRouterAddress.Mainnet,
+					amount: "0",
+					recipient: await signer.getAddress(),
+					quotes: randomQuotes,
+					outputAsset: "0x01",
+				};
+				mockContract = mockDeep<IndexRouterContractInterface>();
+				mockContract.callStatic.burnSwap(burnSwapParameters);
+				mockContract.callStatic.burnSwapValueWithPermit(
+					burnSwapParameters,
+					burnPermitArguments.deadline,
+					burnPermitArguments.v,
+					burnPermitArguments.r,
+					burnPermitArguments.s
+				);
+				mockContract.callStatic.burnSwapValue(burnSwapParameters);
+				mockContract.callStatic.burnSwapValueWithPermit(
+					burnSwapParameters,
+					burnPermitArguments.deadline,
+					burnPermitArguments.v,
+					burnPermitArguments.r,
+					burnPermitArguments.s
+				);
+			});
+
+			it("burnSwapValueWithPermit static return something", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) => c.contract.address)
+					.returns("0x01")
+					.object();
+
+				const router = new IndexRouter(signer, mockContract);
+				const response = await router.burnSwapStatic(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						quotes: burnSwapParameters.quotes,
+						permitOptions: burnPermitArguments,
+					}
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwapValue static return something", async () => {
+				const indexContract = mockDeep<Erc20>();
+				indexContract.contract.allowance.mockImplementation(async () =>
+					BigNumber.from(100000)
+				);
+				Object.defineProperty(indexContract, "address", {
+					get: () => "0x1291ba229d69b630f12320a72f43ee17df07425d",
+				});
+
+				const router = new IndexRouter(signer, mockContract);
+				const response = await router.burnSwapStatic(
+					indexContract,
+					"10",
+					burnSwapParameters.recipient,
+					{
+						quotes: burnSwapParameters.quotes,
+					}
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwapValue static return info that allowance are insufficient ", async () => {
+				const indexContract = mockDeep<Erc20>();
+				indexContract.contract.allowance.mockImplementation(async () =>
+					BigNumber.from(0)
+				);
+				Object.defineProperty(indexContract, "address", {
+					get: () => "0x1291ba229d69b630f12320a72f43ee17df07425d",
+				});
+
+				const router = new IndexRouter(signer, mockContract);
+
+				router
+					.burnSwapStatic(indexContract, "100", burnSwapParameters.recipient, {
+						quotes: burnSwapParameters.quotes,
+					})
+					.catch((error) => {
+						expect(error).to.be.instanceOf(InsufficientAllowanceError);
+					});
+			});
+			it("burnSwapWithPermit static return something", async () => {
+				const indexContract = new Mock<Erc20>()
+					.setup((c) => c.contract.address)
+					.returns("0x01")
+					.object();
+
+				const router = new IndexRouter(signer, mockContract);
+				const response = await router.burnSwapStatic(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						outputAsset: burnSwapParameters.outputAsset,
+						quotes: burnSwapParameters.quotes,
+						permitOptions: burnPermitArguments,
+					}
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwap static return something", async () => {
+				const indexContract = mockDeep<Erc20>();
+				indexContract.contract.allowance.mockImplementation(async () =>
+					BigNumber.from(100000)
+				);
+				Object.defineProperty(indexContract, "address", {
+					get: () => "0x1291ba229d69b630f12320a72f43ee17df07425d",
+				});
+
+				const router = new IndexRouter(signer, mockContract);
+
+				const response = await router.burnSwapStatic(
+					indexContract,
+					"0",
+					burnSwapParameters.recipient,
+					{
+						outputAsset: burnSwapParameters.outputAsset,
+						quotes: burnSwapParameters.quotes,
+					}
+				);
+				expect(response).to.not.be.null;
+			});
+			it("burnSwap static return info that allowance are insufficient ", async () => {
+				const indexContract = mockDeep<Erc20>();
+				indexContract.contract.allowance.mockImplementation(async () =>
+					BigNumber.from(0)
+				);
+				Object.defineProperty(indexContract, "address", {
+					get: () => "0x1291ba229d69b630f12320a72f43ee17df07425d",
+				});
+
+				const router = new IndexRouter(signer, mockContract);
+
+				router
+					.burnSwapStatic(indexContract, "1000", burnSwapParameters.recipient, {
+						outputAsset: burnSwapParameters.outputAsset,
+						quotes: burnSwapParameters.quotes,
 					})
 					.catch((error) => {
 						expect(error).to.be.instanceOf(InsufficientAllowanceError);
