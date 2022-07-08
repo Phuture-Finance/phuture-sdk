@@ -11,6 +11,15 @@ export class Contract<C extends EthersContract> {
 	/** ### Signer used for interacting with the contract */
 	public _signer: Signer;
 
+	/**
+	 * ### Constructs an instance of the contract class
+	 *
+	 * @param {Signer} signer Signer used for interacting with the contract
+	 * @param contract Contract or contract address to interact with
+	 * @param {ContractFactory} contractFactory Factory for creating the contract
+	 *
+	 * @returns {Contract} The contract instance
+	 */
 	constructor(
 		signer: Signer,
 		contract: C | Address,

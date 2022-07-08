@@ -13,6 +13,12 @@ export class Erc20<
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
+	/** ### Symbol of the token */
+	private _symbol?: string;
+
+	/** ### Name of the token */
+	private _name?: string;
+
 	/**
 	 * ### Creates a new ERC20 instance
 	 *
@@ -39,6 +45,28 @@ export class Erc20<
 		this._decimals ??= await this.contract.decimals();
 
 		return this._decimals;
+	}
+
+	/**
+	 * ### Get the symbol of the token
+	 *
+	 * @returns Symbol of the token
+	 */
+	async symbol(): Promise<string> {
+		this._symbol ??= await this.contract.symbol();
+
+		return this._symbol;
+	}
+
+	/**
+	 * ### Get the name of the token
+	 *
+	 * @returns Name of the token
+	 */
+	async name(): Promise<string> {
+		this._name ??= await this.contract.name();
+
+		return this._name;
 	}
 
 	/**

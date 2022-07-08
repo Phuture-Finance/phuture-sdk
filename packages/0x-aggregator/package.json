@@ -8,41 +8,30 @@
 	],
 	"scripts": {
 		"test": "jest --coverage",
-		"prepare": "npm run --silent build",
-		"prepublishOnly": "npm lint",
-		"build": "tsc",
-		"clean": "rimraf dist",
-		"lint": "xo",
-		"lint:fix": "xo --fix"
+		"prepublishOnly": "pnpm build",
+		"build": "pnpm clean && tsc",
+		"clean": "rimraf dist"
 	},
 	"dependencies": {
 		"axios": "^0.27.2",
+		"debug": "^4.3.4",
 		"ethers": "5.6.8"
 	},
 	"devDependencies": {
 		"@phuture/types": "workspace:*",
 		"@types/chai": "4.3.1",
+		"@types/debug": "^4.1.7",
 		"@types/jest": "28.1.1",
 		"chai": "4.3.6",
 		"jest": "28.1.0",
 		"ts-jest": "28.0.4",
-		"ts-node": "10.8.1",
 		"typescript": "4.7.2",
-		"xo": "0.49.0"
+		"rimraf": "^3.0.2"
 	},
 	"jest": {
 		"preset": "ts-jest",
 		"testMatch": [
 			"**/test/*.test.ts"
-		]
-	},
-	"xo": {
-		"prettier": true,
-		"rules": {
-			"import/extensions": 0
-		},
-		"ignores": [
-			"./test/**"
 		]
 	}
 }
