@@ -5,7 +5,7 @@ import { IndexRouter } from "@phuture/index-router";
 import { Address, isAddress } from "@phuture/types";
 import { BigNumber, BigNumberish, Signer } from "ethers";
 
-interface MintThreshold {
+export interface MintThreshold {
 	amount: BigNumberish;
 	tokenAddress: Address;
 }
@@ -139,7 +139,6 @@ export class AutoRouter {
 				}
 			}
 		}
-
 		return this.signer.call({
 			to: swapTarget,
 			data: assetQuote,
@@ -209,7 +208,6 @@ export class AutoRouter {
 				quotes,
 				permitOptions,
 			};
-
 			if (permitOptions) {
 				const indexRouterAmount = await this.indexRouter.burnSwapStatic(
 					indexInterface.address,
@@ -233,5 +231,9 @@ export class AutoRouter {
 				data: assetQuote,
 			});
 		}
+		return this.signer.call({
+			to: swapTarget,
+			data: assetQuote,
+		});
 	}
 }
