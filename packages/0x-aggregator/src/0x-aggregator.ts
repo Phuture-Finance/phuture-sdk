@@ -1,6 +1,7 @@
 import {Address, Url} from '@phuture/types';
 import axios, {AxiosInstance} from 'axios';
 import {BigNumber, BigNumberish} from 'ethers';
+import newDebug from 'debug';
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
@@ -8,6 +9,8 @@ import {
 	Zero0xQuoteResponse,
 	Zero0xSourcesResponse,
 } from './types';
+
+const debug = newDebug('@phuture:0x-aggregator');
 
 /**
  * ### Addresses of the ZeroX API endpoint
@@ -37,6 +40,8 @@ export class ZeroExAggregator {
 				'Content-Type': 'application/json',
 			},
 		});
+
+		debug('Created client with base URL: %s', baseUrl);
 	}
 
 	/**
@@ -53,22 +58,33 @@ export class ZeroExAggregator {
 		sellAmount: BigNumberish,
 		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
-		const parameters = {
+		debug(
+			'Making quote call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount: BigNumber.from(sellAmount).toString(),
-			...options,
-		};
-
+			sellAmount,
+		);
 		const {data} = await this.client.get<Zero0xQuoteResponse>('swap/v1/quote', {
-			params: parameters,
+			params: {
+				sellToken,
+				buyToken,
+				sellAmount: BigNumber.from(sellAmount).toString(),
+				...options,
+			},
 		});
+
+		debug(
+			'Received quote buyAmount: %s for buyToken: %s',
+			data.buyAmount,
+			buyToken,
+		);
 
 		return data;
 	}
 
 	/**
-	 * ### Makes a call to the price endpoint and returns the pricing that would be a available for an analogous call to /quote
+	 * ### Makes a call to the price endpoint and returns the pricing that would be a available for an analogous call to
+	 * /quote
 	 * @param sellToken Token to sell
 	 * @param buyToken Token to buy
 	 * @param sellAmount Amount of sellToken to sell
@@ -81,16 +97,26 @@ export class ZeroExAggregator {
 		sellAmount: BigNumberish,
 		options?: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
-		const parameters = {
+		debug(
+			'Making price call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount: BigNumber.from(sellAmount).toString(),
-			...options,
-		};
-
+			sellAmount,
+		);
 		const {data} = await this.client.get<Zero0xPriceResponse>('swap/v1/price', {
-			params: parameters,
+			params: {
+				sellToken,
+				buyToken,
+				sellAmount: BigNumber.from(sellAmount).toString(),
+				...options,
+			},
 		});
+
+		debug(
+			'Received price buyAmount: %s for buyToken: %s',
+			data.buyAmount,
+			buyToken,
+		);
 
 		return data;
 	}
@@ -100,9 +126,12 @@ export class ZeroExAggregator {
 	 * @returns Promise transaction response
 	 */
 	async sources(): Promise<Zero0xSourcesResponse> {
+		debug('Making sources call');
 		const {data} = await this.client.get<Zero0xSourcesResponse>(
 			'swap/v1/sources',
 		);
+
+		debug('Received %d sources', data.records.length);
 
 		return data;
 	}

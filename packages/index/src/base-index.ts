@@ -2,11 +2,15 @@ import {Erc20Permit} from '@phuture/erc-20';
 import {Address, ContractFactory} from '@phuture/types';
 import {BigNumber, BigNumberish, Signer} from 'ethers';
 import {BaseIndex, BaseIndex__factory} from './types';
+import {IndexRepo} from './interfaces';
+import {subgraphIndexRepo} from './subraph.repository';
 
 /**
  * ### Index Contract
  */
 export class Index extends Erc20Permit<BaseIndex> {
+	private _indexRepo: IndexRepo;
+
 	/**
 	 * ### Creates a new Index instance
 	 *
@@ -22,6 +26,13 @@ export class Index extends Erc20Permit<BaseIndex> {
 		factory: ContractFactory = BaseIndex__factory,
 	) {
 		super(signer, contract, factory);
+
+		this._indexRepo = subgraphIndexRepo;
+	}
+
+	public withRepo(indexRepo: IndexRepo): this {
+		this._indexRepo = indexRepo;
+		return this;
 	}
 
 	/**
@@ -29,7 +40,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 *
 	 * @param amountDesired Amount of input tokens to scale
 	 */
-	async scaleAmount(amountDesired: BigNumberish): Promise<{
+	public async scaleAmount(amountDesired: BigNumberish): Promise<{
 		amountToSell: BigNumber;
 		amounts: Record<Address, BigNumber>;
 	}> {
@@ -38,11 +49,16 @@ export class Index extends Erc20Permit<BaseIndex> {
 		let amountToSell = BigNumber.from(0);
 		const amounts: Record<Address, BigNumber> = {};
 		for (const [index, asset] of _assets.entries()) {
-			const weight = _weights[index];
-			amounts[asset] = BigNumber.from(amountDesired).mul(weight).div(255);
+			amounts[asset] = BigNumber.from(amountDesired)
+				.mul(_weights[index])
+				.div(255);
 			amountToSell = amountToSell.add(amounts[asset]);
 		}
 
 		return {amountToSell, amounts};
+	}
+
+	public async holders(): Promise<Address[]> {
+		return this._indexRepo.holders(this.address);
 	}
 }
