@@ -1,20 +1,21 @@
-import {Address, ContractFactory} from '@phuture/types';
-import {Signer} from 'ethers';
-import {formatUnits} from 'ethers/lib/utils';
-import {Contract} from '@phuture/contract/dist';
-import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
+import { Address, ContractFactory } from "@phuture/types";
+import { Signer } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
+import { Contract } from "@phuture/contract/dist";
+import { ERC20 as ERC20ContractInterface, ERC20__factory } from "./types";
 
 /**
  * ### ERC20 Token Contract
  */
-export class Erc20<
-	C extends ERC20ContractInterface = ERC20ContractInterface,
-> extends Contract<C> {
+export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface,
+	> extends Contract<C> {
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
+	/** ### Symbol of the token */
 	private _symbol?: string;
 
+	/** ### Name of the token */
 	private _name?: string;
 
 	/**
@@ -29,7 +30,7 @@ export class Erc20<
 	constructor(
 		signer: Signer,
 		contract: Address | C,
-		factory: ContractFactory = ERC20__factory,
+		factory: ContractFactory = ERC20__factory
 	) {
 		super(signer, contract, factory);
 	}
