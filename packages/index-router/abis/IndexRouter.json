@@ -65,7 +65,13 @@
 	{
 		"inputs": [],
 		"name": "WETH",
-		"outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -73,9 +79,21 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
-					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
-					{ "internalType": "address", "name": "recipient", "type": "address" }
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					}
 				],
 				"internalType": "struct IIndexRouter.BurnParams",
 				"name": "_params",
@@ -91,14 +109,26 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
-					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
 					{
 						"internalType": "address",
 						"name": "outputAsset",
 						"type": "address"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
 							{
@@ -111,7 +141,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
 						"name": "quotes",
@@ -124,7 +158,13 @@
 			}
 		],
 		"name": "burnSwap",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -132,14 +172,26 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
-					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
 					{
 						"internalType": "address",
 						"name": "outputAsset",
 						"type": "address"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
 							{
@@ -152,7 +204,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
 						"name": "quotes",
@@ -165,7 +221,13 @@
 			}
 		],
 		"name": "burnSwapValue",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "wethBalance",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -173,14 +235,26 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
-					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
 					{
 						"internalType": "address",
 						"name": "outputAsset",
 						"type": "address"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
 							{
@@ -193,7 +267,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
 						"name": "quotes",
@@ -204,13 +282,35 @@
 				"name": "_params",
 				"type": "tuple"
 			},
-			{ "internalType": "uint256", "name": "_deadline", "type": "uint256" },
-			{ "internalType": "uint8", "name": "_v", "type": "uint8" },
-			{ "internalType": "bytes32", "name": "_r", "type": "bytes32" },
-			{ "internalType": "bytes32", "name": "_s", "type": "bytes32" }
+			{
+				"internalType": "uint256",
+				"name": "_deadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_s",
+				"type": "bytes32"
+			}
 		],
 		"name": "burnSwapValueWithPermit",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -218,14 +318,26 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
-					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
 					{
 						"internalType": "address",
 						"name": "outputAsset",
 						"type": "address"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
 							{
@@ -238,7 +350,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
 						"name": "quotes",
@@ -249,24 +365,58 @@
 				"name": "_params",
 				"type": "tuple"
 			},
-			{ "internalType": "uint256", "name": "_deadline", "type": "uint256" },
-			{ "internalType": "uint8", "name": "_v", "type": "uint8" },
-			{ "internalType": "bytes32", "name": "_r", "type": "bytes32" },
-			{ "internalType": "bytes32", "name": "_s", "type": "bytes32" }
+			{
+				"internalType": "uint256",
+				"name": "_deadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_s",
+				"type": "bytes32"
+			}
 		],
 		"name": "burnSwapWithPermit",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{ "internalType": "address", "name": "_index", "type": "address" },
-			{ "internalType": "uint256", "name": "_amount", "type": "uint256" }
+			{
+				"internalType": "address",
+				"name": "_index",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
 		],
 		"name": "burnTokensAmount",
 		"outputs": [
-			{ "internalType": "uint256[]", "name": "_amounts", "type": "uint256[]" }
+			{
+				"internalType": "uint256[]",
+				"name": "_amounts",
+				"type": "uint256[]"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
@@ -275,18 +425,46 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
-					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
-					{ "internalType": "address", "name": "recipient", "type": "address" }
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					}
 				],
 				"internalType": "struct IIndexRouter.BurnParams",
 				"name": "_params",
 				"type": "tuple"
 			},
-			{ "internalType": "uint256", "name": "_deadline", "type": "uint256" },
-			{ "internalType": "uint8", "name": "_v", "type": "uint8" },
-			{ "internalType": "bytes32", "name": "_r", "type": "bytes32" },
-			{ "internalType": "bytes32", "name": "_s", "type": "bytes32" }
+			{
+				"internalType": "uint256",
+				"name": "_deadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_s",
+				"type": "bytes32"
+			}
 		],
 		"name": "burnWithPermit",
 		"outputs": [],
@@ -295,8 +473,16 @@
 	},
 	{
 		"inputs": [
-			{ "internalType": "address", "name": "_WETH", "type": "address" },
-			{ "internalType": "address", "name": "_registry", "type": "address" }
+			{
+				"internalType": "address",
+				"name": "_WETH",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_registry",
+				"type": "address"
+			}
 		],
 		"name": "initialize",
 		"outputs": [],
@@ -307,13 +493,21 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
 					{
 						"internalType": "uint256",
 						"name": "amountInBase",
 						"type": "uint256"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" }
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					}
 				],
 				"internalType": "struct IIndexRouter.MintParams",
 				"name": "_params",
@@ -321,7 +515,13 @@
 			}
 		],
 		"name": "mint",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -329,7 +529,11 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
 					{
 						"internalType": "address",
 						"name": "inputToken",
@@ -340,10 +544,18 @@
 						"name": "amountInInputToken",
 						"type": "uint256"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
-							{ "internalType": "address", "name": "asset", "type": "address" },
+							{
+								"internalType": "address",
+								"name": "asset",
+								"type": "address"
+							},
 							{
 								"internalType": "address",
 								"name": "swapTarget",
@@ -354,7 +566,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.MintQuoteParams[]",
 						"name": "quotes",
@@ -367,7 +583,13 @@
 			}
 		],
 		"name": "mintSwap",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -375,7 +597,11 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
 					{
 						"internalType": "address",
 						"name": "inputToken",
@@ -386,10 +612,18 @@
 						"name": "amountInInputToken",
 						"type": "uint256"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
-							{ "internalType": "address", "name": "asset", "type": "address" },
+							{
+								"internalType": "address",
+								"name": "asset",
+								"type": "address"
+							},
 							{
 								"internalType": "address",
 								"name": "swapTarget",
@@ -400,7 +634,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.MintQuoteParams[]",
 						"name": "quotes",
@@ -414,7 +652,11 @@
 		],
 		"name": "mintSwapIndexAmount",
 		"outputs": [
-			{ "internalType": "uint256", "name": "_amount", "type": "uint256" }
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
@@ -467,7 +709,13 @@
 			}
 		],
 		"name": "mintSwapValue",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "payable",
 		"type": "function"
 	},
@@ -475,7 +723,11 @@
 		"inputs": [
 			{
 				"components": [
-					{ "internalType": "address", "name": "index", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
 					{
 						"internalType": "address",
 						"name": "inputToken",
@@ -486,10 +738,18 @@
 						"name": "amountInInputToken",
 						"type": "uint256"
 					},
-					{ "internalType": "address", "name": "recipient", "type": "address" },
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
 					{
 						"components": [
-							{ "internalType": "address", "name": "asset", "type": "address" },
+							{
+								"internalType": "address",
+								"name": "asset",
+								"type": "address"
+							},
 							{
 								"internalType": "address",
 								"name": "swapTarget",
@@ -500,7 +760,11 @@
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
 							},
-							{ "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+							{
+								"internalType": "bytes",
+								"name": "assetQuote",
+								"type": "bytes"
+							}
 						],
 						"internalType": "struct IIndexRouter.MintQuoteParams[]",
 						"name": "quotes",
@@ -511,27 +775,61 @@
 				"name": "_params",
 				"type": "tuple"
 			},
-			{ "internalType": "uint256", "name": "_deadline", "type": "uint256" },
-			{ "internalType": "uint8", "name": "_v", "type": "uint8" },
-			{ "internalType": "bytes32", "name": "_r", "type": "bytes32" },
-			{ "internalType": "bytes32", "name": "_s", "type": "bytes32" }
+			{
+				"internalType": "uint256",
+				"name": "_deadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_s",
+				"type": "bytes32"
+			}
 		],
 		"name": "mintSwapWithPermit",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "proxiableUUID",
-		"outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "registry",
-		"outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -555,12 +853,19 @@
 				"name": "newImplementation",
 				"type": "address"
 			},
-			{ "internalType": "bytes", "name": "data", "type": "bytes" }
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
 		],
 		"name": "upgradeToAndCall",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
 	},
-	{ "stateMutability": "payable", "type": "receive" }
+	{
+		"stateMutability": "payable",
+		"type": "receive"
+	}
 ]

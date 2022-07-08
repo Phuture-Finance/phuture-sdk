@@ -1,5 +1,5 @@
 import {Interface} from '@ethersproject/abi';
-import {Address, isAddress, Signature} from '@phuture/types';
+import {Address, ContractFactory, Signature} from '@phuture/types';
 import {BigNumber, BigNumberish, Signer} from 'ethers';
 import Permit from '../abis/ERC20Permit.json';
 import {Erc20} from './erc-20';
@@ -59,7 +59,9 @@ export const encodePermit =
 /**
  * ### Erc20Permit Token Contract
  */
-export class Erc20Permit extends Erc20<ERC20PermitContractInterface> {
+export class Erc20Permit<
+	C extends ERC20PermitContractInterface = ERC20PermitContractInterface,
+> extends Erc20<C> {
 	/** Encodes permit data for the given options */
 	public encodePermit = encodePermit(this);
 
@@ -68,18 +70,15 @@ export class Erc20Permit extends Erc20<ERC20PermitContractInterface> {
 	 *
 	 * @param signer Signer or provider to use for interacting with the contract
 	 * @param contract Contract instance or address of the Erc20Permit token contract
+	 * @param factory Contract factory to use for creating the contract
 	 *
 	 * @returns New Erc20Permit token instance
 	 */
 	constructor(
 		signer: Signer,
-		contract: Address | ERC20PermitContractInterface,
+		contract: Address | C,
+		factory: ContractFactory = ERC20Permit__factory,
 	) {
-		super(
-			signer,
-			isAddress(contract)
-				? ERC20Permit__factory.connect(contract, signer)
-				: contract,
-		);
+		super(signer, contract, factory);
 	}
 }
