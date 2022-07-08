@@ -1,4 +1,4 @@
-import {Address, Url} from '@phuture/types';
+import {Address, TokenSymbol, Url} from '@phuture/types';
 import axios, {AxiosInstance} from 'axios';
 import {BigNumber, BigNumberish} from 'ethers';
 import newDebug from 'debug';
@@ -92,7 +92,7 @@ export class ZeroExAggregator {
 	 * @returns Promise transaction response
 	 */
 	async price(
-		sellToken: Address | string,
+		sellToken: Address | TokenSymbol,
 		buyToken: Address,
 		sellAmount: BigNumberish,
 		options?: Partial<Zero0xPriceOptions>,
