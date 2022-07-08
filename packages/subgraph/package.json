@@ -1,42 +1,43 @@
 {
-  "name": "@phuture/subgraph",
-  "version": "0.1.0",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
-  "files": [
-	"dist"
-  ],
-  "scripts": {
-	"test": "jest",
-	"coverage": "jest --coverage",
-	"prepare": "pnpm generate",
-	"prepublishOnly": "pnpm build",
-	"build": "pnpm clean && tsc",
-	"clean": "rimraf dist",
-	"generate": "graphql-codegen --config codegen.yml"
-  },
-  "dependencies": {
-	"@apollo/client": "3.6.9",
-	"cross-fetch": "3.1.5",
-	"graphql": "16.5.0"
-  },
-  "devDependencies": {
-	"@graphql-codegen/cli": "2.6.2",
-	"@graphql-codegen/typescript": "2.5.1",
-	"@graphql-codegen/typescript-operations": "^2.4.2",
-	"@graphql-codegen/typescript-apollo-client-helpers": "2.1.21",
-	"@types/chai": "4.3.1",
-	"@types/jest": "28.1.1",
-	"@types/node": "14.18.21",
-	"@phuture/types": "workspace:*",
-	"chai": "4.3.6",
-	"jest": "28.1.0",
-	"typescript": "4.7.2"
-  },
-  "jest": {
-	"preset": "ts-jest",
-	"testMatch": [
-	  "**/test/*.test.ts"
-	]
-  }
+	"name": "@phuture/subgraph",
+	"version": "0.1.0",
+	"main": "dist/src/index.js",
+	"types": "dist/src/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"test": "jest",
+		"coverage": "jest --coverage",
+		"prepare": "pnpm generate",
+		"prepublishOnly": "pnpm build",
+		"build": "pnpm clean && tsc",
+		"clean": "rimraf dist",
+		"generate": "graphql-codegen --config codegen.yml --verbose"
+	},
+	"dependencies": {
+		"@apollo/client": "3.6.9",
+		"cross-fetch": "3.1.5",
+		"graphql": "16.5.0"
+	},
+	"devDependencies": {
+		"@graphql-codegen/cli": "2.7.0",
+		"@graphql-codegen/typescript": "2.5.1",
+		"@graphql-codegen/typescript-apollo-client-helpers": "2.1.21",
+		"@graphql-codegen/typescript-operations": "^2.4.2",
+		"@phuture/types": "workspace:*",
+		"@types/chai": "4.3.1",
+		"@types/jest": "28.1.1",
+		"@types/node": "14.18.21",
+		"chai": "4.3.6",
+		"jest": "28.1.0",
+		"rimraf": "^3.0.2",
+		"typescript": "4.7.2"
+	},
+	"jest": {
+		"preset": "ts-jest",
+		"testMatch": [
+			"**/test/*.test.ts"
+		]
+	}
 }
