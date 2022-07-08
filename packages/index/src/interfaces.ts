@@ -1,4 +1,4 @@
-import type { Address } from "@phuture/types";
+import type {Address} from '@phuture/types';
 
 /** ### Index Repository Interface */
 export interface IndexRepo {

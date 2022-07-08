@@ -1,9 +1,9 @@
-import { Erc20Permit } from "@phuture/erc-20";
-import type { Address, ContractFactory, PriceSource } from "@phuture/types";
-import { BigNumber, BigNumberish, Signer } from "ethers";
-import { BaseIndex, BaseIndex__factory } from "./types";
-import { Fees, IndexRepo } from "./interfaces";
-import { subgraphIndexRepo } from "./subraph.repository";
+import {Erc20Permit} from '@phuture/erc-20';
+import type {Address, ContractFactory, PriceSource} from '@phuture/types';
+import {BigNumber, BigNumberish, Signer} from 'ethers';
+import {BaseIndex, BaseIndex__factory} from './types';
+import {Fees, IndexRepo} from './interfaces';
+import {subgraphIndexRepo} from './subraph.repository';
 
 /**
  * ### Index Contract
@@ -27,7 +27,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	constructor(
 		signer: Signer,
 		contract: Address | BaseIndex,
-		factory: ContractFactory = BaseIndex__factory
+		factory: ContractFactory = BaseIndex__factory,
 	) {
 		super(signer, contract, factory);
 
@@ -67,7 +67,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 		amountToSell: BigNumber;
 		amounts: Record<Address, BigNumber>;
 	}> {
-		const { _assets, _weights } = await this.contract.anatomy();
+		const {_assets, _weights} = await this.contract.anatomy();
 
 		let amountToSell = BigNumber.from(0);
 		const amounts: Record<Address, BigNumber> = {};
@@ -78,7 +78,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 			amountToSell = amountToSell.add(amounts[asset]);
 		}
 
-		return { amountToSell, amounts };
+		return {amountToSell, amounts};
 	}
 
 	/**
@@ -108,9 +108,9 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 */
 	public async price(
 		sellToken: Address,
-		sellAmount: BigNumberish
+		sellAmount: BigNumberish,
 	): Promise<BigNumber> {
-		if (!this._priceSource) throw new Error("No price source");
+		if (!this._priceSource) throw new Error('No price source');
 
 		return this._priceSource.price(this.address, sellToken, sellAmount);
 	}
@@ -122,12 +122,12 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<BigNumber>} Market cap of the index in sellToken
 	 */
 	public async marketCap(sellToken: Address): Promise<BigNumber> {
-		if (!this._priceSource) throw new Error("No price source");
+		if (!this._priceSource) throw new Error('No price source');
 
 		const price = await this._priceSource.price(
 			this.address,
 			sellToken,
-			BigNumber.from(10).mul(await this.decimals())
+			BigNumber.from(10).mul(await this.decimals()),
 		);
 
 		return price.mul(await this.contract.totalSupply());

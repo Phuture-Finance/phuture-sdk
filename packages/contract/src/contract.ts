@@ -1,5 +1,5 @@
-import { Contract as EthersContract, Signer } from "ethers";
-import { Address, ContractFactory, isAddress } from "@phuture/types";
+import {Contract as EthersContract, Signer} from 'ethers';
+import {Address, ContractFactory, isAddress} from '@phuture/types';
 
 /**
  * ### Contract Instance
@@ -23,7 +23,7 @@ export class Contract<C extends EthersContract> {
 	constructor(
 		signer: Signer,
 		contract: C | Address,
-		protected readonly contractFactory: ContractFactory
+		protected readonly contractFactory: ContractFactory,
 	) {
 		this._signer = signer;
 		this.contract = isAddress(contract)

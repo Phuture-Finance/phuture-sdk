@@ -1,20 +1,20 @@
-import { Address, TokenSymbol, Url } from "@phuture/types";
-import axios, { AxiosInstance } from "axios";
-import { BigNumber, BigNumberish } from "ethers";
-import newDebug from "debug";
+import {Address, TokenSymbol, Url} from '@phuture/types';
+import axios, {AxiosInstance} from 'axios';
+import {BigNumber, BigNumberish} from 'ethers';
+import newDebug from 'debug';
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
 	Zero0xQuoteOptions,
 	Zero0xQuoteResponse,
-	Zero0xSourcesResponse
-} from "./types";
+	Zero0xSourcesResponse,
+} from './types';
 
-const debug = newDebug("@phuture:0x-aggregator");
+const debug = newDebug('@phuture:0x-aggregator');
 
 /** ### Addresses of the ZeroX API endpoint */
 export enum ZeroExBaseUrl {
-	Mainnet = "https://api.0x.org/",
+	Mainnet = 'https://api.0x.org/',
 }
 
 /** ### Facilitates swaps for end user */
@@ -34,11 +34,11 @@ export class ZeroExAggregator {
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
 			headers: {
-				"Content-Type": "application/json"
-			}
+				'Content-Type': 'application/json',
+			},
 		});
 
-		debug("Created client with base URL: %s", baseUrl);
+		debug('Created client with base URL: %s', baseUrl);
 	}
 
 	/**
@@ -56,27 +56,27 @@ export class ZeroExAggregator {
 		sellToken: Address,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
 		debug(
-			"Making quote call for sellToken: %s, buyToken: %s, sellAmount: %s",
+			'Making quote call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount
+			sellAmount,
 		);
-		const { data } = await this.client.get<Zero0xQuoteResponse>("swap/v1/quote", {
+		const {data} = await this.client.get<Zero0xQuoteResponse>('swap/v1/quote', {
 			params: {
 				sellToken,
 				buyToken,
 				sellAmount: BigNumber.from(sellAmount).toString(),
-				...options
-			}
+				...options,
+			},
 		});
 
 		debug(
-			"Received quote buyAmount: %s for buyToken: %s",
+			'Received quote buyAmount: %s for buyToken: %s',
 			data.buyAmount,
-			buyToken
+			buyToken,
 		);
 
 		return data;
@@ -97,27 +97,27 @@ export class ZeroExAggregator {
 		sellToken: Address | TokenSymbol,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options?: Partial<Zero0xPriceOptions>
+		options?: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
 		debug(
-			"Making price call for sellToken: %s, buyToken: %s, sellAmount: %s",
+			'Making price call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount
+			sellAmount,
 		);
-		const { data } = await this.client.get<Zero0xPriceResponse>("swap/v1/price", {
+		const {data} = await this.client.get<Zero0xPriceResponse>('swap/v1/price', {
 			params: {
 				sellToken,
 				buyToken,
 				sellAmount: BigNumber.from(sellAmount).toString(),
-				...options
-			}
+				...options,
+			},
 		});
 
 		debug(
-			"Received price buyAmount: %s for buyToken: %s",
+			'Received price buyAmount: %s for buyToken: %s',
 			data.buyAmount,
-			buyToken
+			buyToken,
 		);
 
 		return data;
@@ -129,12 +129,12 @@ export class ZeroExAggregator {
 	 * @returns Promise transaction response
 	 */
 	async sources(): Promise<Zero0xSourcesResponse> {
-		debug("Making sources call");
-		const { data } = await this.client.get<Zero0xSourcesResponse>(
-			"swap/v1/sources"
+		debug('Making sources call');
+		const {data} = await this.client.get<Zero0xSourcesResponse>(
+			'swap/v1/sources',
 		);
 
-		debug("Received %d sources", data.records.length);
+		debug('Received %d sources', data.records.length);
 
 		return data;
 	}

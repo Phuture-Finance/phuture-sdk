@@ -1,7 +1,7 @@
-import { gql, Subgraph } from "@phuture/subgraph";
-import { constants } from "ethers";
-import { Address } from "@phuture/types";
-import { Fees, IndexRepo } from "./interfaces";
+import {gql, Subgraph} from '@phuture/subgraph';
+import {constants} from 'ethers';
+import {Address} from '@phuture/types';
+import {Fees, IndexRepo} from './interfaces';
 
 /** ### Subgraph Index Repository */
 export class SubgraphIndexRepo implements IndexRepo {
@@ -29,35 +29,35 @@ export class SubgraphIndexRepo implements IndexRepo {
 	async holders(indexAddress: Address): Promise<Address[]> {
 		interface IndexHoldersData {
 			index: {
-				users: Array<Record<"user", { id: Address }>>;
+				users: Array<Record<'user', {id: Address}>>;
 			};
 		}
 
 		// TODO: fix pagination for large array of holders
-		const { data } = await this._subgraph.query<IndexHoldersData>({
+		const {data} = await this._subgraph.query<IndexHoldersData>({
 			query: gql`
-		  query IndexHolders($indexAddress: ID!) {
-			  index(id: $indexAddress) {
-				  users {
-					  user {
-						  id
-					  }
-				  }
-			  }
-		  }
+				query IndexHolders($indexAddress: ID!) {
+					index(id: $indexAddress) {
+						users {
+							user {
+								id
+							}
+						}
+					}
+				}
 			`,
 			variables: {
-				indexAddress
-			}
+				indexAddress,
+			},
 		});
 
 		// TODO: move dead address to global constants
 		return data.index.users
-			.map(({ user }) => user.id)
+			.map(({user}) => user.id)
 			.filter(
 				(address) =>
-					address !== "0x000000000000000000000000000000000000dead" &&
-					address !== constants.AddressZero
+					address !== '0x000000000000000000000000000000000000dead' &&
+					address !== constants.AddressZero,
 			);
 	}
 
@@ -75,17 +75,17 @@ export class SubgraphIndexRepo implements IndexRepo {
 			};
 		}
 
-		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
+		const {data} = await this._subgraph.query<IndexUniqueHoldersData>({
 			query: gql`
-		  query IndexHolders($indexAddress: ID!) {
-			  index(id: $indexAddress) {
-				  uniqueHolders
-			  }
-		  }
+				query IndexHolders($indexAddress: ID!) {
+					index(id: $indexAddress) {
+						uniqueHolders
+					}
+				}
 			`,
 			variables: {
-				indexAddress
-			}
+				indexAddress,
+			},
 		});
 
 		return data.index.uniqueHolders;
@@ -107,25 +107,25 @@ export class SubgraphIndexRepo implements IndexRepo {
 			};
 		}
 
-		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
+		const {data} = await this._subgraph.query<IndexUniqueHoldersData>({
 			query: gql`
-		  query IndexHolders($indexAddress: ID!) {
-			  index(id: $indexAddress) {
-				  feeBurn
-				  feeMint
-				  feeAUMPercent
-			  }
-		  }
+				query IndexHolders($indexAddress: ID!) {
+					index(id: $indexAddress) {
+						feeBurn
+						feeMint
+						feeAUMPercent
+					}
+				}
 			`,
 			variables: {
-				indexAddress
-			}
+				indexAddress,
+			},
 		});
 
 		return {
 			minting: data.index.feeMint,
 			management: data.index.feeBurn,
-			redemption: data.index.feeAUMPercent
+			redemption: data.index.feeAUMPercent,
 		};
 	}
 }
