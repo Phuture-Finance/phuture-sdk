@@ -89,7 +89,7 @@ describe("AutoRouter", () => {
 	};
 
 	describe("Auto Buy: ", () => {
-		it("autoBuy run from address ", async () => {
+		it("running autoBuy function when AutoRouter interface was created from address & value is less than mintThreshold(run 0x)", async () => {
 			const indexRouterInterface = new IndexRouter(
 				signerInterface,
 				indexRouterContract
@@ -104,36 +104,7 @@ describe("AutoRouter", () => {
 			const result = await autoRouter.autoBuy(indexTokenAddress, "1000");
 			expect(result).to.not.null;
 		});
-		it("1(mintSwap)", async () => {
-			zeroAggregator.price.mockImplementation(async () => {
-				return {
-					to: usdcTokenAddress,
-					data: "1",
-					buyAmount: "10000000000",
-					sellAmount: "100",
-				};
-			});
-			indexTokenInterface.scaleAmount.mockImplementation(async () => {
-				return {
-					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
-				};
-			});
-			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
-			const autoRouter = new AutoRouter(
-				signerInterface,
-				indexRouter,
-				zeroAggregatorInterface,
-				mintThreshold
-			);
-			const result = await autoRouter.autoBuy(
-				indexTokenInterface,
-				"1000000000",
-				erc20
-			);
-			expect(result).to.not.null;
-		});
-		it("2(ZeroEx call)", async () => {
+		it("running autoBuy function when 0x amount is more beneficial than IndexRouter's mintSwap", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
@@ -165,7 +136,7 @@ describe("AutoRouter", () => {
 			);
 			expect(result).to.not.null;
 		});
-		it("3(ZeroEx call) with permit options", async () => {
+		it("running autoBuy function when 0x amount is more beneficial than IndexRouter's mintSwap(with permit options)", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
@@ -195,8 +166,36 @@ describe("AutoRouter", () => {
 			);
 			expect(result).to.not.null;
 		});
-
-		it("4(mintSwap) with permit options", async () => {
+		it("running autoBuy function when IndexRouter's mintSwap amount is more beneficial than 0x", async () => {
+			zeroAggregator.price.mockImplementation(async () => {
+				return {
+					to: usdcTokenAddress,
+					data: "1",
+					buyAmount: "10000000000",
+					sellAmount: "100",
+				};
+			});
+			indexTokenInterface.scaleAmount.mockImplementation(async () => {
+				return {
+					amountToSell: BigNumber.from(1000000000),
+					amounts: { ["0x0001"]: BigNumber.from(10) },
+				};
+			});
+			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
+			const autoRouter = new AutoRouter(
+				signerInterface,
+				indexRouter,
+				zeroAggregatorInterface,
+				mintThreshold
+			);
+			const result = await autoRouter.autoBuy(
+				indexTokenInterface,
+				"1000000000",
+				erc20
+			);
+			expect(result).to.not.null;
+		});
+		it("running autoBuy function when IndexRouter's mintSwap amount is more beneficial than 0x(with permit options)", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
@@ -231,7 +230,7 @@ describe("AutoRouter", () => {
 		});
 	});
 	describe("Auto Sell: ", () => {
-		it("autoSell run from address (0x call when value is less than mintThreshold) ", async () => {
+		it("running autoSell function when AutoRouter interface was created from address & value is less than mintThreshold(run 0x)", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
@@ -255,7 +254,7 @@ describe("AutoRouter", () => {
 			const result = await autoRouter.autoSell(indexTokenAddress, "1000");
 			expect(result).to.not.null;
 		});
-		it("autoSell (run 0x call when value is less than mintThreshold) ", async () => {
+		it("running autoSell function when AutoRouter interface was created from Index interface & 0x amount is more beneficial than IndexRouter's mintSwap", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
@@ -285,7 +284,7 @@ describe("AutoRouter", () => {
 			const result = await autoRouter.autoSell(indexTokenInterface, "1000");
 			expect(result).to.not.null;
 		});
-		it("autoSell (run 0x tx when 0x returned amount is better than index-router's) ", async () => {
+		it("running autoSell function when 0x amount is more beneficial than IndexRouter's mintSwap", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
@@ -315,7 +314,7 @@ describe("AutoRouter", () => {
 			const result = await autoRouter.autoSell(indexTokenInterface, "1000");
 			expect(result).to.not.null;
 		});
-		it("autoSell (run burnSwap tx when index-router returned amount is better than 0x) ", async () => {
+		it("running autoSell function when IndexRouter's mintSwap amount is more beneficial than 0x(with permit options)", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
 					to: usdcTokenAddress,
