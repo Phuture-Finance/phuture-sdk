@@ -18,10 +18,9 @@ Install dependencies:
 
 ## Usage
 
-
-``` typescript
+```typescript
 import { addressComparator } from "@phuture/comparators";
 
-// create an instance 
+// create an instance
 addresses.sort(addressComparator);
 ```

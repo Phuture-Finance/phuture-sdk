@@ -1,7 +1,5 @@
 # ERC20
 
-
-
 ## Introduction
 
 The ERC20 package, used to interface with the ERC20 contract.
@@ -30,11 +28,10 @@ Now you're ready to go!
 
 ## Usage
 
-
-``` typescript
+```typescript
 import { Erc20 } from "@phuture/erc-20";
 
-// create an instance 
+// create an instance
 const erc = new Erc20(signer, provider);
 
 // use it

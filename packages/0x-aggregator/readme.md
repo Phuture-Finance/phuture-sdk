@@ -24,7 +24,7 @@ Now you're ready to go!
 
 Use it:
 
-``` typescript
+```typescript
     import {0x-aggregator as aggregator} from '@phuture/0x-aggregator'
-    const transactionResponse = await aggregator.quote(args...);    
- ```
+    const transactionResponse = await aggregator.quote(args...);
+```

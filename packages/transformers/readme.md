@@ -1,7 +1,5 @@
 # Transformer Package
 
-
-
 ## Introduction
 
 Contains a list of transformer methods and functions for other packages.

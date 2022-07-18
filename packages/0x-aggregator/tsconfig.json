@@ -1,24 +1,15 @@
 {
-  "compilerOptions": {
-	"target": "es5",
-	"module": "commonjs",
-	"lib": [
-	  "es6",
-	  "dom"
-	],
-	"declaration": true,
-	"outDir": "dist",
-	"strict": true,
-	"esModuleInterop": true,
-	"sourceMap": true,
-	"skipLibCheck": true
-  },
-  "include": [
-	"src/**/*",
-	"**/*.test.ts"
-  ],
-  "exclude": [
-	"node_modules",
-	"dist"
-  ]
+	"compilerOptions": {
+		"target": "es5",
+		"module": "commonjs",
+		"lib": ["es6", "dom"],
+		"declaration": true,
+		"outDir": "dist",
+		"strict": true,
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*", "**/*.test.ts"],
+	"exclude": ["node_modules", "dist"]
 }
