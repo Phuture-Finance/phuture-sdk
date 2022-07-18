@@ -1,5 +1,5 @@
 import {Address, ContractFactory} from '@phuture/types';
-import {Signer} from 'ethers';
+import {BigNumberish, Signer} from 'ethers';
 import {formatUnits} from 'ethers/lib/utils';
 import {Contract} from '@phuture/contract/dist';
 import {ERC20 as ERC20ContractInterface, ERC20__factory} from './types';
@@ -41,7 +41,7 @@ export class Erc20<
 	 *
 	 * @returns Decimals of the token
 	 */
-	async decimals(): Promise<number> {
+	public async decimals(): Promise<number> {
 		this._decimals ??= await this.contract.decimals();
 
 		return this._decimals;
@@ -52,7 +52,7 @@ export class Erc20<
 	 *
 	 * @returns Symbol of the token
 	 */
-	async symbol(): Promise<string> {
+	public async symbol(): Promise<string> {
 		this._symbol ??= await this.contract.symbol();
 
 		return this._symbol;
@@ -63,7 +63,7 @@ export class Erc20<
 	 *
 	 * @returns Name of the token
 	 */
-	async name(): Promise<string> {
+	public async name(): Promise<string> {
 		this._name ??= await this.contract.name();
 
 		return this._name;
@@ -74,7 +74,7 @@ export class Erc20<
 	 *
 	 * @returns Formatted total supply of the token
 	 */
-	async formattedTotalSupply(): Promise<string> {
+	public async formattedTotalSupply(): Promise<string> {
 		const totalSupply = await this.contract.totalSupply();
 		const decimals = await this.decimals();
 
@@ -88,10 +88,30 @@ export class Erc20<
 	 *
 	 * @returns Formatted balance of the account
 	 */
-	async formattedBalanceOf(account: string): Promise<string> {
+	public async formattedBalanceOf(account: Address): Promise<string> {
 		const balance = await this.contract.balanceOf(account);
 		const decimals = await this.decimals();
 
 		return formatUnits(balance, decimals);
+	}
+
+	/**
+	 * ### Check Allowance
+	 *
+	 * @param account Address of the account
+	 * @param amount Token amount
+	 *
+	 * @returns true if the account has enough tokens to transfer the amount
+	 */
+	public async checkAllowance(
+		account: Address,
+		amount: BigNumberish,
+	): Promise<boolean> {
+		const allowance = await this.contract.allowance(
+			await this.signer.getAddress(),
+			account,
+		);
+
+		return allowance.gte(amount);
 	}
 }

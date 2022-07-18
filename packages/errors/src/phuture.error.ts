@@ -1,3 +1,5 @@
+import {canSetPrototype} from './can-set-prototype';
+
 /**
  * ### Error status code
  *
@@ -54,11 +56,12 @@ export class PhutureError extends Error {
 			: errors![0];
 
 		super(error.message);
-		this.name = 'PhutureError';
+		this.name = this.constructor.name;
+
 		this.errors = message ? [error] : errors!;
 
 		if (error.status) this.status = error.status;
 
-		Object.setPrototypeOf(this, PhutureError.prototype);
+		if (canSetPrototype) Object.setPrototypeOf(this, new.target.prototype);
 	}
 }
