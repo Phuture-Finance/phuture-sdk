@@ -73,6 +73,8 @@ export class ZeroExAggregator {
 			},
 		});
 
+		// TODO: cover error codes and add retry logic
+
 		debug(
 			'Received quote buyAmount: %s for buyToken: %s',
 			data.buyAmount,
@@ -114,6 +116,8 @@ export class ZeroExAggregator {
 			},
 		});
 
+		// TODO: cover error codes and add retry logic
+
 		debug(
 			'Received price buyAmount: %s for buyToken: %s',
 			data.buyAmount,
@@ -133,6 +137,8 @@ export class ZeroExAggregator {
 		const {data} = await this.client.get<Zero0xSourcesResponse>(
 			'swap/v1/sources',
 		);
+
+		// TODO: cover error codes and add retry logic
 
 		debug('Received %d sources', data.records.length);
 

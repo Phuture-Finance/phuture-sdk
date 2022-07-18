@@ -6,11 +6,11 @@ export class Account extends EventEmitter {
 	/**
 	 * ### Constructs an instance of the Account class
 	 *
-	 * @param {Signer} currentSigner The signer to use for the account
+	 * @param {Signer} signer The signer to use for the account
 	 *
 	 * @returns {Account} The account instance
 	 */
-	constructor(public currentSigner: Signer) {
+	constructor(public signer: Signer) {
 		super();
 	}
 
@@ -20,6 +20,6 @@ export class Account extends EventEmitter {
 	 * @returns {Promise<BigNumber>} The balance of the current signer
 	 */
 	public async balance(): Promise<BigNumber> {
-		return this.currentSigner.getBalance();
+		return this.signer.getBalance();
 	}
 }

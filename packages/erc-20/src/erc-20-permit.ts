@@ -1,15 +1,11 @@
-import {Interface} from '@ethersproject/abi';
-import {Address, ContractFactory, Signature} from '@phuture/types';
+import {Address, ContractFactory, isAddress, Signature} from '@phuture/types';
 import {BigNumber, BigNumberish, Signer} from 'ethers';
-import Permit from '../abis/ERC20Permit.json';
+import {Interface} from '@ethersproject/abi';
 import {Erc20} from './erc-20';
 import {
 	ERC20Permit as ERC20PermitContractInterface,
 	ERC20Permit__factory,
 } from './types';
-
-/** ### Erc20Permit Contract Interface */
-const permitInterface = new Interface(Permit);
 
 /** ### Standard permit arguments */
 export interface StandardPermitArguments extends Signature {
@@ -35,19 +31,175 @@ const isAllowedPermit = (
 	options: PermitOptions,
 ): options is AllowedPermitArguments => 'nonce' in options;
 
+/** ### Erc20Permit Contract Interface */
+const permitInterface = new Interface([
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'value',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'deadline',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint8',
+				name: 'v',
+				type: 'uint8',
+			},
+			{
+				internalType: 'bytes32',
+				name: 'r',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'bytes32',
+				name: 's',
+				type: 'bytes32',
+			},
+		],
+		name: 'selfPermit',
+		outputs: [],
+		stateMutability: 'payable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'nonce',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'expiry',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint8',
+				name: 'v',
+				type: 'uint8',
+			},
+			{
+				internalType: 'bytes32',
+				name: 'r',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'bytes32',
+				name: 's',
+				type: 'bytes32',
+			},
+		],
+		name: 'selfPermitAllowed',
+		outputs: [],
+		stateMutability: 'payable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'nonce',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'expiry',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint8',
+				name: 'v',
+				type: 'uint8',
+			},
+			{
+				internalType: 'bytes32',
+				name: 'r',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'bytes32',
+				name: 's',
+				type: 'bytes32',
+			},
+		],
+		name: 'selfPermitAllowedIfNecessary',
+		outputs: [],
+		stateMutability: 'payable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'token',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'value',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'deadline',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint8',
+				name: 'v',
+				type: 'uint8',
+			},
+			{
+				internalType: 'bytes32',
+				name: 'r',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'bytes32',
+				name: 's',
+				type: 'bytes32',
+			},
+		],
+		name: 'selfPermitIfNecessary',
+		outputs: [],
+		stateMutability: 'payable',
+		type: 'function',
+	},
+]);
+
 /**
  * ### Encodes permit data for given erc20 contract and options
  * @param erc20 Erc20 contract instance of contract address
  */
 export const encodePermit =
-	(erc20: Erc20<any> | Address) =>
+	(erc20: Erc20 | Address) =>
 	(options: PermitOptions): string => {
 		const [functionName, amount, deadline] = isAllowedPermit(options)
 			? ['selfPermitAllowed', options.nonce, options.expiry]
 			: ['selfPermit', options.amount, options.deadline];
 
 		return permitInterface.encodeFunctionData(functionName, [
-			erc20 instanceof Erc20 ? erc20.contract.address : erc20,
+			isAddress(erc20) ? erc20 : erc20.address,
 			BigNumber.from(amount).toHexString(),
 			BigNumber.from(deadline).toHexString(),
 			options.v,
@@ -56,9 +208,7 @@ export const encodePermit =
 		]);
 	};
 
-/**
- * ### Erc20Permit Token Contract
- */
+/** ### Erc20Permit Token Contract */
 export class Erc20Permit<
 	C extends ERC20PermitContractInterface = ERC20PermitContractInterface,
 > extends Erc20<C> {

@@ -1,4 +1,5 @@
 import {BigNumber, BigNumberish} from 'ethers';
+import {canSetPrototype} from './can-set-prototype';
 
 /**
  * ### Error thrown on insufficient allowance
@@ -26,11 +27,11 @@ export class InsufficientAllowanceError extends Error {
 		actualAllowance = BigNumber.from(actualAllowance);
 		const message = `Insufficient allowance: expected ${expectedAllowance.toString()}, but got ${actualAllowance.toString()}`;
 		super(message);
+		this.name = this.constructor.name;
+
 		this.expectedAllowance = expectedAllowance;
 		this.actualAllowance = actualAllowance;
 
-		this.name = 'InsufficientAllowanceError';
-
-		Object.setPrototypeOf(this, InsufficientAllowanceError.prototype);
+		if (canSetPrototype) Object.setPrototypeOf(this, new.target.prototype);
 	}
 }

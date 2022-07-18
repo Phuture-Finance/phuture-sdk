@@ -8,10 +8,10 @@ _[Use GitHub interface](https://blog.sapegin.me/all/open-source-for-everyone/) f
 
 ## Prerequisites
 
--   If it’s your first pull request, watch [this amazing course](http://makeapullrequest.com/) by [Kent C. Dodds](https://twitter.com/kentcdodds).
--   Install [EditorConfig](https://editorconfig.org/) plugin for your code editor to make sure it uses correct settings.
--   Fork the repository and clone your fork.
--   Install dependencies: `npm install`.
+- If it’s your first pull request, watch [this amazing course](http://makeapullrequest.com/) by [Kent C. Dodds](https://twitter.com/kentcdodds).
+- Install [EditorConfig](https://editorconfig.org/) plugin for your code editor to make sure it uses correct settings.
+- Fork the repository and clone your fork.
+- Install dependencies: `npm install`.
 
 ## Development workflow
 
@@ -33,10 +33,10 @@ npm run test:watch
 
 ## Other notes
 
--   If you have commit access to repository and want to make big change or not sure about something, make a new branch and open pull request.
--   We’re using [Prettier](https://github.com/prettier/prettier) to format code, so don’t worry much about code formatting.
--   Don’t commit generated files, like minified JavaScript.
--   Don’t change version number and changelog.
+- If you have commit access to repository and want to make big change or not sure about something, make a new branch and open pull request.
+- We’re using [Prettier](https://github.com/prettier/prettier) to format code, so don’t worry much about code formatting.
+- Don’t commit generated files, like minified JavaScript.
+- Don’t change version number and changelog.
 
 ## Need help?
 

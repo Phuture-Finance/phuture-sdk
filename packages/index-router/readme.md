@@ -28,11 +28,10 @@ Now you're ready to go!
 
 ## Usage
 
-
-``` typescript
+```typescript
 import { DefaultIndexRouterAddress, IndexRouter } from "@phuture/index-router";
 
-// create an instance 
+// create an instance
 const router = new IndexRouter(signer, routerContract);
 
 // perform a mint
