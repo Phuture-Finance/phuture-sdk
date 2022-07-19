@@ -51,23 +51,17 @@ export class AutoRouter {
 		const inputTokenInstance =
 			inputToken ?? new Erc20(this.signer, await this.indexRouter.weth());
 
-		const [
-			{buyAmount: zeroExAmount, to: swapTarget, data: assetQuote},
-			{buyAmount},
-		] = await Promise.all([
-			this.zeroExAggregator.quote(
-				inputTokenInstance.address,
-				index.address,
-				amountInInputToken,
-			),
-			this.zeroExAggregator.quote(
-				inputTokenInstance.address,
-				index.address,
-				amountInInputToken,
-			),
-		]);
+		const {
+			buyAmount: zeroExAmount,
+			to: swapTarget,
+			data: indexQuote,
+		} = await this.zeroExAggregator.quote(
+			inputTokenInstance.address,
+			index.address,
+			amountInInputToken,
+		);
 
-		if (BigNumber.from(this.mintThreshold.amount).lt(buyAmount)) {
+		if (BigNumber.from(this.mintThreshold.amount).lt(zeroExAmount)) {
 			const {amounts, amountToSell} = await index.scaleAmount(
 				amountInInputToken,
 			);
@@ -150,7 +144,8 @@ export class AutoRouter {
 
 		return this.signer.call({
 			to: swapTarget,
-			data: assetQuote,
+			data: indexQuote,
+			value: inputToken ? 0 : zeroExAmount,
 		});
 	}
 
@@ -176,23 +171,17 @@ export class AutoRouter {
 
 		outputToken ??= await this.indexRouter.weth();
 
-		const [
-			{buyAmount: zeroExAmount, to: swapTarget, data: assetQuote},
-			{buyAmount},
-		] = await Promise.all([
-			this.zeroExAggregator.quote(
-				indexInterface.address,
-				outputToken,
-				indexAmount,
-			),
-			this.zeroExAggregator.price(
-				indexInterface.address,
-				outputToken,
-				indexAmount,
-			),
-		]);
+		const {
+			buyAmount: zeroExAmount,
+			to: swapTarget,
+			data: assetQuote,
+		} = await this.zeroExAggregator.quote(
+			indexInterface.address,
+			outputToken,
+			indexAmount,
+		);
 
-		if (BigNumber.from(this.mintThreshold.amount).lt(buyAmount)) {
+		if (BigNumber.from(this.mintThreshold.amount).lt(zeroExAmount)) {
 			const {amounts, amountToSell} = await indexInterface.scaleAmount(
 				indexAmount,
 			);
@@ -244,9 +233,6 @@ export class AutoRouter {
 			}
 		}
 
-		return this.signer.call({
-			to: swapTarget,
-			data: assetQuote,
-		});
+		return this.signer.call({to: swapTarget, data: assetQuote});
 	}
 }
