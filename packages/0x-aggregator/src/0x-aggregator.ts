@@ -25,7 +25,7 @@ export class ZeroExAggregator {
 	/** ### Default options for the 0x endpoints */
 	private _defaultQueryParams = {
 		/** ### Slippage protection for the aggregator */
-		slippageProtection: true,
+		enableSlippageProtection: true,
 	};
 
 	/**
@@ -55,7 +55,7 @@ export class ZeroExAggregator {
 	 * @returns True if slippage protection is enabled
 	 */
 	get slippageProtection(): boolean {
-		return this._defaultQueryParams.slippageProtection;
+		return this._defaultQueryParams.enableSlippageProtection;
 	}
 
 	/**
@@ -64,7 +64,7 @@ export class ZeroExAggregator {
 	 * @param slippageProtection Whether to enable slippage protection
 	 */
 	set slippageProtection(slippageProtection: boolean) {
-		this._defaultQueryParams.slippageProtection = slippageProtection;
+		this._defaultQueryParams.enableSlippageProtection = slippageProtection;
 	}
 
 	/**
