@@ -15,6 +15,7 @@ const debug = newDebug('@phuture:0x-aggregator');
 /** ### Addresses of the ZeroX API endpoint */
 export enum ZeroExBaseUrl {
 	Mainnet = 'https://api.0x.org/',
+	GatedMainnet = 'https:///gated.api.0x.org',
 }
 
 /** ### Facilitates swaps for end user */
