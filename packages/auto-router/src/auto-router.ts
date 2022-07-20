@@ -51,17 +51,23 @@ export class AutoRouter {
 		const inputTokenInstance =
 			inputToken ?? new Erc20(this.signer, await this.indexRouter.weth());
 
-		const {
-			buyAmount: zeroExAmount,
-			to: swapTarget,
-			data: indexQuote,
-		} = await this.zeroExAggregator.quote(
-			inputTokenInstance.address,
-			index.address,
-			amountInInputToken,
-		);
+		const [
+			{buyAmount: zeroExAmount, to: swapTarget, data: indexQuote},
+			{buyAmount},
+		] = await Promise.all([
+			this.zeroExAggregator.quote(
+				inputTokenInstance.address,
+				index.address,
+				amountInInputToken,
+			),
+			this.zeroExAggregator.price(
+				inputTokenInstance.address,
+				this.mintThreshold.tokenAddress,
+				amountInInputToken,
+			),
+		]);
 
-		if (BigNumber.from(this.mintThreshold.amount).lt(zeroExAmount)) {
+		if (BigNumber.from(this.mintThreshold.amount).lt(buyAmount)) {
 			const {amounts, amountToSell} = await index.scaleAmount(
 				amountInInputToken,
 			);
@@ -171,17 +177,23 @@ export class AutoRouter {
 
 		outputToken ??= await this.indexRouter.weth();
 
-		const {
-			buyAmount: zeroExAmount,
-			to: swapTarget,
-			data: assetQuote,
-		} = await this.zeroExAggregator.quote(
-			indexInterface.address,
-			outputToken,
-			indexAmount,
-		);
+		const [
+			{buyAmount: zeroExAmount, to: swapTarget, data: assetQuote},
+			{buyAmount},
+		] = await Promise.all([
+			this.zeroExAggregator.quote(
+				indexInterface.address,
+				outputToken,
+				indexAmount,
+			),
+			this.zeroExAggregator.price(
+				indexInterface.address,
+				this.mintThreshold.tokenAddress,
+				indexAmount,
+			),
+		]);
 
-		if (BigNumber.from(this.mintThreshold.amount).lt(zeroExAmount)) {
+		if (BigNumber.from(this.mintThreshold.amount).lt(buyAmount)) {
 			const {amounts, amountToSell} = await indexInterface.scaleAmount(
 				indexAmount,
 			);
