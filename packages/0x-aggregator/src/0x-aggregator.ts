@@ -22,23 +22,49 @@ export class ZeroExAggregator {
 	/** ### Client instance for doing calls to the ZeroX API */
 	private readonly client: AxiosInstance;
 
+	/** ### Default options for the 0x endpoints */
+	private _defaultQueryParams = {
+		/** ### Slippage protection for the aggregator */
+		slippageProtection: true,
+	};
+
 	/**
 	 * ### Constructs an instance of the swap class
 	 *
 	 * @param baseUrl The base endpoint to query
+	 * @param apiKey The API key to use for the query
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet) {
+	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet, apiKey?: string) {
 		this.client = axios.create({
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
 			headers: {
 				'Content-Type': 'application/json',
+				...(apiKey ? {'0x-api-key': apiKey} : {}),
 			},
 		});
 
 		debug('Created client with base URL: %s', baseUrl);
+	}
+
+	/**
+	 * ### Makes a call to the slippage endpoint and returns the slippage
+	 *
+	 * @returns True if slippage protection is enabled
+	 */
+	get slippageProtection(): boolean {
+		return this._defaultQueryParams.slippageProtection;
+	}
+
+	/**
+	 * ### Sets the slippage protection for the aggregator
+	 *
+	 * @param slippageProtection Whether to enable slippage protection
+	 */
+	set slippageProtection(slippageProtection: boolean) {
+		this._defaultQueryParams.slippageProtection = slippageProtection;
 	}
 
 	/**
@@ -66,6 +92,7 @@ export class ZeroExAggregator {
 		);
 		const {data} = await this.client.get<Zero0xQuoteResponse>('swap/v1/quote', {
 			params: {
+				...this._defaultQueryParams,
 				sellToken,
 				buyToken,
 				sellAmount: BigNumber.from(sellAmount).toString(),
@@ -109,6 +136,7 @@ export class ZeroExAggregator {
 		);
 		const {data} = await this.client.get<Zero0xPriceResponse>('swap/v1/price', {
 			params: {
+				...this._defaultQueryParams,
 				sellToken,
 				buyToken,
 				sellAmount: BigNumber.from(sellAmount).toString(),
