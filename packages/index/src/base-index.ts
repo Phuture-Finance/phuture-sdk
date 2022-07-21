@@ -39,6 +39,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * ### Connect repository to Index
 	 *
 	 * @param {IndexRepo} indexRepo Repository to connect to Index
+	 *
 	 * @returns {this} Index instance
 	 */
 	public withRepo(indexRepo: IndexRepo): this {
@@ -51,6 +52,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * ### Connect price source to Index
 	 *
 	 * @param {IndexRepo} priceSource Price source to connect to Index
+	 *
 	 * @returns {this} Index instance
 	 */
 	public withPriceSource(priceSource: PriceSource): this {
@@ -105,6 +107,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 *
 	 * @param {Address} sellToken Token to sell
 	 * @param {BigNumberish} sellAmount Amount of tokens to sell
+	 *
 	 * @returns {Promise<BigNumber>} Price of the index in sellToken
 	 */
 	public async price(
@@ -117,9 +120,21 @@ export class Index extends Erc20Permit<BaseIndex> {
 	}
 
 	/**
+	 * ### Get price of the index
+	 *
+	 * @param {BigNumberish} sellAmount Amount of tokens to sell
+	 *
+	 * @returns {Promise<BigNumber>} Price of the index in sellToken
+	 */
+	public async priceEth(sellAmount?: BigNumberish): Promise<BigNumber> {
+		return this._indexRepo.priceEth(this.address, sellAmount);
+	}
+
+	/**
 	 * ### Get market cap of the index
 	 *
 	 * @param {Address} sellToken Token to sell
+	 *
 	 * @returns {Promise<BigNumber>} Market cap of the index in sellToken
 	 */
 	public async marketCap(sellToken: Address): Promise<BigNumber> {

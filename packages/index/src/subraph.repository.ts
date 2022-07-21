@@ -1,6 +1,6 @@
 import {gql, Subgraph} from '@phuture/subgraph';
-import {constants} from 'ethers';
-import {Address} from '@phuture/types';
+import {Address} from '@phuture/types/dist';
+import {BigNumber, constants} from 'ethers';
 import {Fees, IndexRepo} from './interfaces';
 
 /** ### Subgraph Index Repository */
@@ -127,6 +127,29 @@ export class SubgraphIndexRepo implements IndexRepo {
 			management: data.index.feeBurn,
 			redemption: data.index.feeAUMPercent,
 		};
+	}
+
+	async priceEth(indexAddress: Address): Promise<BigNumber> {
+		interface IndexUniqueHoldersData {
+			index: {
+				basePriceETH: string;
+			};
+		}
+
+		const {data} = await this._subgraph.query<IndexUniqueHoldersData>({
+			query: gql`
+				query IndexHolders($indexAddress: ID!) {
+					index(id: $indexAddress) {
+						basePriceETH
+					}
+				}
+			`,
+			variables: {
+				indexAddress,
+			},
+		});
+
+		return BigNumber.from(data.index.basePriceETH);
 	}
 }
 

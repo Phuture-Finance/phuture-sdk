@@ -150,27 +150,26 @@ export class AutoRouter {
 	 * @returns burn or swap transaction
 	 */
 	async autoSell(
-		index: Index | Address,
+		index: Index,
 		indexAmount: BigNumberish,
 		outputToken?: Erc20 | Address,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
 	) {
-		const indexInstance = isAddress(index)
-			? new Index(this.indexRouter.account, index)
-			: index;
+		let outputTokenAddress: Address | undefined;
+		let outputTokenPriceEth: BigNumber = BigNumber.from(10).pow(18);
 
-		let outputTokenPriceInEth: BigNumber = BigNumber.from(10).pow(18);
 		if (outputToken) {
 			outputToken = isAddress(outputToken)
 				? new Erc20(this.indexRouter.account, outputToken)
 				: outputToken;
+			outputTokenAddress = outputToken.address
 			const {buyAmount} = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals()),
 			);
 
-			outputTokenPriceInEth = BigNumber.from(buyAmount);
+			outputTokenPriceEth = BigNumber.from(buyAmount);
 		} else {
 			outputToken = new Erc20(
 				this.indexRouter.account,
@@ -178,21 +177,22 @@ export class AutoRouter {
 			);
 		}
 
-		const {
+		const [{
 			buyAmount: zeroExAmount,
 			to: swapTarget,
 			data: assetQuote,
 			gasPrice,
 			estimatedGas: zeroExGas,
-		} = await this.zeroExAggregator.quote(
-			indexInstance.address,
-			outputToken.address,
-			indexAmount,
-		);
-
-		const {amounts, amountToSell} = await indexInstance.scaleAmount(
-			indexAmount,
-		);
+		}, {amounts, amountToSell}] = await Promise.all([
+			this.zeroExAggregator.quote(
+				index.address,
+				outputToken.address,
+				indexAmount,
+			),
+			index.scaleAmount(
+				indexAmount,
+			)
+		]);
 
 		const quotes = await Promise.all(
 			Object.entries(amounts).map(async ([asset, amount]) => {
@@ -201,7 +201,7 @@ export class AutoRouter {
 					to: swapTarget,
 					data: assetQuote,
 				} = await this.zeroExAggregator.quote(
-					indexInstance.address,
+					index.address,
 					asset,
 					amount,
 				);
@@ -215,40 +215,27 @@ export class AutoRouter {
 			}),
 		);
 
-		if (permitOptions) {
-			const options = {
-				outputAsset:
-					outputToken.address === (await this.indexRouter.weth())
-						? undefined
-						: outputToken.address,
-				quotes,
-				permitOptions,
-			};
-			const {outputAmount, estimatedGas} =
-				await this.indexRouter.burnSwapStatic(
-					indexInstance.address,
-					amountToSell,
-					await this.indexRouter.account.address(),
-					options,
-				);
+		const options = {
+			outputAsset: outputTokenAddress,
+			quotes,
+			permitOptions,
+		};
 
-			const outputAmountInEth = outputAmount.mul(outputTokenPriceInEth);
-			if (
-				outputAmountInEth
-					.add(estimatedGas.mul(gasPrice))
-					.gte(
-						BigNumber.from(zeroExAmount).add(
-							BigNumber.from(zeroExGas).mul(gasPrice),
-						),
-					)
-			)
-				return this.indexRouter.burnSwap(
-					indexInstance.address,
-					amountToSell,
-					await this.indexRouter.account.address(),
-					options,
-				);
-		}
+		const {outputAmount, estimatedGas} =
+			await this.indexRouter.burnSwapStatic(
+				index.address,
+				amountToSell,
+				await this.indexRouter.account.address(),
+				options,
+			);
+
+		if (estimatedGas.sub(zeroExGas).mul(gasPrice).gte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth)))
+			return this.indexRouter.burnSwap(
+				index.address,
+				amountToSell,
+				await this.indexRouter.account.address(),
+				options,
+			);
 
 		return this.indexRouter.account.signer.call({
 			to: swapTarget,
