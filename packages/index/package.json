@@ -15,6 +15,7 @@
 		"coverage": "jest --coverage"
 	},
 	"dependencies": {
+		"@phuture/account": "workspace:*",
 		"@phuture/erc-20": "workspace:*",
 		"@phuture/subgraph": "workspace:*",
 		"ethers": "5.6.8",

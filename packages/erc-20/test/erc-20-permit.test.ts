@@ -7,6 +7,7 @@ import {
 	StandardPermitArguments,
 } from "../src";
 import { ERC20Permit as ERC20PermitContractInterface } from "../src/types";
+import {Account} from "@phuture/account";
 
 const erc20contract = new Mock<ERC20PermitContractInterface>()
 	.setup((c) => c.address)
@@ -29,8 +30,8 @@ const allowedPermitOptions: AllowedPermitArguments = {
 };
 
 describe("Erc20Permit", () => {
-	const signer: Signer = ethers.Wallet.createRandom();
-	const erc20Permit = new Erc20Permit(signer, erc20contract);
+	const account = new Mock<Account>().object();
+	const erc20Permit = new Erc20Permit(account, erc20contract);
 
 	describe("#encodePermit", () => {
 		it("works with StandardPermitArguments", () => {

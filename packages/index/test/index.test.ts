@@ -1,45 +1,37 @@
-import { expect } from "chai";
-import { BigNumber, constants, ethers, Signer } from "ethers";
-import { Mock } from "moq.ts";
-import { Index } from "../src";
-import {
-	BaseIndex as BaseIndexContractInterface,
-	BaseIndex__factory,
-} from "../src/types";
+import {expect} from "chai";
+import {BigNumber, constants} from "ethers";
+import {Mock} from "moq.ts";
+import {Index} from "../src";
+import {BaseIndex} from "../src/types";
+import {Account} from "@phuture/account";
 
 describe("Index", () => {
-	const signer: Signer = ethers.Wallet.createRandom();
+	const account = new Mock<Account>().object();
 	const contractAddress = "0xf9ccb834adbe4591fd517aa69a24bf97d1386092";
-	const indexContract = BaseIndex__factory.connect(contractAddress, signer);
+	let indexContract: BaseIndex
 
-	it("create Index instance from address", () => {
-		const index = new Index(signer, contractAddress);
-		expect(index.address).to.be.eq(contractAddress);
+	beforeAll(async () => {
+		indexContract = new Mock<BaseIndex>()
+			.setup((c) => c.address)
+			.returns(contractAddress)
+			.setup(
+				async (c) =>
+					(await c.anatomy()) as { _assets: string[]; _weights: number[] }
+			)
+			.returnsAsync({_assets: ["0x01", "0x02"], _weights: [155, 100]})
+			.object();
 	});
 
-	it("create Index instance from contract", () => {
-		const index = new Index(signer, indexContract);
-		expect(index.address).to.be.eq(contractAddress);
+	it("create Index instance from address", () => {
+		const index = new Index(account, indexContract);
+		expect(index.address).to.be.eq(indexContract);
 	});
 
 	describe("Index constructed", () => {
-		let indexContract: Index;
-
-		beforeAll(async () => {
-			const mockedContract = new Mock<BaseIndexContractInterface>()
-				.setup((c) => c.address)
-				.returns(constants.AddressZero)
-				.setup(
-					async (c) =>
-						(await c.anatomy()) as { _assets: string[]; _weights: number[] }
-				)
-				.returnsAsync({ _assets: ["0x01", "0x02"], _weights: [155, 100] })
-				.object();
-			indexContract = new Index(signer, mockedContract);
-		});
+		const index = new Index(account, indexContract);
 
 		it("#scaleAmount returns proper values", async () => {
-			const { amounts, amountToSell } = await indexContract.scaleAmount(
+			const {amounts, amountToSell} = await index.scaleAmount(
 				10000000000
 			);
 

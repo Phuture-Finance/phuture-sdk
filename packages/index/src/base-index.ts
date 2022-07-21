@@ -1,6 +1,7 @@
 import {Erc20Permit} from '@phuture/erc-20';
 import type {Address, ContractFactory, PriceSource} from '@phuture/types';
 import {BigNumber, BigNumberish, Signer} from 'ethers';
+import {Account} from '@phuture/account';
 import {BaseIndex, BaseIndex__factory} from './types';
 import {Fees, IndexRepo} from './interfaces';
 import {subgraphIndexRepo} from './subraph.repository';
@@ -18,18 +19,18 @@ export class Index extends Erc20Permit<BaseIndex> {
 	/**
 	 * ### Creates a new Index instance
 	 *
-	 * @param signer Signer or provider to use for interacting with the contract
+	 * @param account Account to use for interacting with the contract
 	 * @param contract Contract instance or address of the Index token contract
 	 * @param factory Contract factory to use for creating the contract
 	 *
 	 * @returns New Index token instance
 	 */
 	constructor(
-		signer: Signer,
+		account: Account,
 		contract: Address | BaseIndex,
 		factory: ContractFactory = BaseIndex__factory,
 	) {
-		super(signer, contract, factory);
+		super(account, contract, factory);
 
 		this._indexRepo = subgraphIndexRepo;
 	}

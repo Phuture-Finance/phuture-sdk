@@ -1,23 +1,24 @@
-import { expect } from "chai";
-import { BigNumber, constants, ethers, Signer } from "ethers";
-import { Mock } from "moq.ts";
-import { Erc20 } from "../src";
-import { ERC20 as ERC20ContractInterface } from "../src/types";
+import {expect} from "chai";
+import {BigNumber, constants} from "ethers";
+import {Mock} from "moq.ts";
+import {Erc20} from "../src";
+import {ERC20 as ERC20ContractInterface} from "../src/types";
+import {Account} from "@phuture/account";
 
 describe("Erc20", () => {
-	const signer: Signer = ethers.Wallet.createRandom();
+	const account = new Mock<Account>().object();
 	const erc20contract = new Mock<ERC20ContractInterface>()
 		.setup((c) => c.address)
 		.returns(constants.AddressZero)
 		.object();
 
 	it("create erc20 instance from address", () => {
-		const erc20 = new Erc20(signer, constants.AddressZero);
+		const erc20 = new Erc20(account, constants.AddressZero);
 		expect(erc20.contract.address).to.eq(constants.AddressZero);
 	});
 
 	it("should create erc20 instance from contract", () => {
-		const erc20 = new Erc20(signer, erc20contract);
+		const erc20 = new Erc20(account, erc20contract);
 		expect(erc20.contract.address).to.eq(constants.AddressZero);
 	});
 
@@ -36,7 +37,7 @@ describe("Erc20", () => {
 				.returnsAsync(18)
 				.object();
 
-			erc20 = new Erc20(signer, erc20contract);
+			erc20 = new Erc20(account, erc20contract);
 		});
 
 		it("should return formatted total supply", async () => {

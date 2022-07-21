@@ -3,9 +3,7 @@ import {withDefaults} from '@phuture/with-defaults';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Phuture {
-	/**
-	 * ### Interface for options of Phuture core constructor
-	 */
+	/** ### Interface for options of Phuture core constructor */
 	export interface Options<T = any> {
 		/** Any additional options */
 		[option: string]: any;
@@ -15,16 +13,12 @@ export namespace Phuture {
 	}
 }
 
-/**
- * ### Default options of Phuture core constructor
- */
+/** ### Default options of Phuture core constructor */
 const defaultOptions = <T>(): Phuture.Options<T> => ({
 	apiUrl: 'https://api.phuture.finance',
 });
 
-/**
- * ### Class for Phuture Core
- */
+/** ### Class for Phuture Core */
 export class Phuture<T> {
 	/** ### Options of Phuture core constructor */
 	protected options: Phuture.Options<T>;

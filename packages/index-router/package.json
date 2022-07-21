@@ -15,6 +15,7 @@
 		"coverage": "jest --coverage"
 	},
 	"dependencies": {
+		"@phuture/account": "workspace:*",
 		"@phuture/contract": "workspace:*",
 		"@phuture/erc-20": "workspace:*",
 		"@phuture/errors": "workspace:*",

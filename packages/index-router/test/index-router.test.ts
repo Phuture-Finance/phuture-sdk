@@ -1,18 +1,20 @@
 import {Erc20, Erc20Permit, StandardPermitArguments} from "@phuture/erc-20";
 import {InsufficientAllowanceError} from "@phuture/errors";
 import {expect} from "chai";
-import {BigNumber, constants, ethers, Signer} from "ethers";
+import {BigNumber, constants} from "ethers";
 import {ContractTransaction} from "ethers/lib/ethers";
 import {Mock, PlayTimes} from "moq.ts";
 import {DefaultIndexRouterAddress, IndexRouter} from "../src";
 import {IndexRouter as IndexRouterContractInterface} from "../src/types";
 import {IIndexRouter} from "../src/types/IndexRouter";
 import {DeepMockProxy, mockDeep} from "jest-mock-extended";
+import {Account} from "@phuture/account";
 
 describe("IndexRouter", () => {
-	const signer: Signer = ethers.Wallet.createRandom().connect(
-		ethers.getDefaultProvider()
-	);
+	const account = new Mock<Account>()
+		.setup(async (a) => a.address())
+		.returnsAsync(constants.AddressZero)
+		.object();
 
 	const routerContract = new Mock<IndexRouterContractInterface>()
 		.setup((c) => c.address)
@@ -20,35 +22,29 @@ describe("IndexRouter", () => {
 		.object();
 
 	it("create IndexRouter instance from address", () => {
-		const router = new IndexRouter(signer, routerContract.address);
+		const router = new IndexRouter(account, routerContract.address);
 		expect(router.contract.address).to.eq(constants.AddressZero);
 	});
 
-	it("get signer with getter function", () => {
-		const router = new IndexRouter(signer, routerContract.address);
-		expect(router.signer).to.eq(signer);
+	it("get account with getter function", () => {
+		const router = new IndexRouter(account, routerContract.address);
+		expect(router.account).to.eq(account);
 	});
 
 	describe("Setters: ", () => {
-		const sameRouterOne = new IndexRouter(
-			signer,
-			constants.AddressZero.slice(0, -1).concat("1")
-		);
-		const sameRouterTwo = new IndexRouter(
-			signer,
+		const router = new IndexRouter(
+			account,
 			constants.AddressZero.slice(0, -1).concat("1")
 		);
 
-		beforeAll(async () => {
-			const createdSigner = ethers.Wallet.fromMnemonic(
-				"route dentist belt excess hire crawl tourist price damp slight cotton whip"
-			).connect(ethers.getDefaultProvider());
-			sameRouterOne.signer = await createdSigner;
-		});
+		it("set a new account with setter function", async () => {
+			router.account = new Mock<Account>()
+				.setup(async (a) => a.address())
+				.returnsAsync(constants.AddressZero)
+				.object();
 
-		it("set a new signer with setter function", async () => {
-			expect(sameRouterOne.signer.getAddress()).to.not.eq(
-				sameRouterTwo.signer.getAddress()
+			expect(router.account.address()).to.not.eq(
+				router.account.address()
 			);
 		});
 	});
@@ -80,7 +76,7 @@ describe("IndexRouter", () => {
 					index: "0xc11f8e173ee67ffa7bbdd185d2399994aad23ec6",
 					inputToken: "0x01",
 					amountInInputToken: "1",
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 					quotes: randomQuotes,
 				};
 			});
@@ -91,7 +87,7 @@ describe("IndexRouter", () => {
 					.play(PlayTimes.Once())
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 
 				const response = await router.mintSwap(
 					mintSwapOptions,
@@ -101,13 +97,13 @@ describe("IndexRouter", () => {
 			});
 
 			it("mintSwap return something", async () => {
-				const signerAddress = await signer.getAddress();
+				const accountAddress = await account.address();
 
 				const routerContract = contract
 					.setup(async (c) => c.mintSwap(mintSwapOptions))
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 
 				const erc20 = new Mock<Erc20>()
 					.setup(async (c) =>
@@ -145,7 +141,7 @@ describe("IndexRouter", () => {
 					.play(PlayTimes.Once())
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 
 				const erc20permit = new Mock<Erc20Permit>().object();
 
@@ -164,7 +160,7 @@ describe("IndexRouter", () => {
 					.play(PlayTimes.Once())
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 
 				const erc20 = new Mock<Erc20>()
 					.setup(async (c) =>
@@ -195,7 +191,7 @@ describe("IndexRouter", () => {
 					index: "0xc11f8e173ee67ffa7bbdd185d2399994aad23ec6",
 					inputToken: "0x01",
 					amountInInputToken: "1",
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 					quotes: randomQuotes,
 				};
 				permitArguments = {
@@ -219,7 +215,7 @@ describe("IndexRouter", () => {
 			});
 
 			it("mintSwapValue static return something", async () => {
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 
 				const response = await router.mintSwapStatic(
 					mintSwapOptions,
@@ -229,7 +225,7 @@ describe("IndexRouter", () => {
 			});
 
 			it("mintSwap static return something", async () => {
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 
 				const erc20 = new Mock<Erc20>()
 					.setup(async (c) =>
@@ -247,7 +243,7 @@ describe("IndexRouter", () => {
 			});
 
 			it("mintSwapWithPermit static return something", async () => {
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 
 				const erc20permit = new Mock<Erc20Permit>().object();
 
@@ -261,7 +257,7 @@ describe("IndexRouter", () => {
 			});
 
 			it("mintSwap static functions throws on 0 allowance", async () => {
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 
 				const erc20 = new Mock<Erc20Permit>()
 					.setup(async (c) =>
@@ -288,13 +284,13 @@ describe("IndexRouter", () => {
 				.returns(DefaultIndexRouterAddress.Mainnet);
 
 			it("mintAmounts with native token", async () => {
-				const signerAddress = await signer.getAddress();
+				const accountAddress = await account.address();
 				const nativeOption = {
 					inputToken: "0x0",
 					amountInInputToken: "100",
 					quotes: randomQuotes,
 					index: DefaultIndexRouterAddress.Mainnet,
-					recipient: signerAddress,
+					recipient: accountAddress,
 				};
 				const routerContract = contract
 					.setup(async (c) => c.mintSwapIndexAmount(nativeOption))
@@ -302,7 +298,7 @@ describe("IndexRouter", () => {
 					.setup(async (c) => c.WETH())
 					.returnsAsync(constants.AddressZero)
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 
 				const result = await router.mintIndexAmount(
 					nativeOption.index,
@@ -318,14 +314,14 @@ describe("IndexRouter", () => {
 					amountInInputToken: "100",
 					quotes: randomQuotes,
 					index: DefaultIndexRouterAddress.Mainnet,
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 				};
 				const routerContract = contract
 					.setup(async (c) => c.mintSwapIndexAmount(singleOption))
 					.play(PlayTimes.Once())
 					.returnsAsync(BigNumber.from(10))
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const result = await router.mintIndexAmount(
 					singleOption.index,
 					singleOption.amountInInputToken,
@@ -354,12 +350,12 @@ describe("IndexRouter", () => {
 				burnParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 				};
 				burnSwapParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 					quotes: randomQuotes,
 					outputAsset: "0x01",
 				};
@@ -378,7 +374,7 @@ describe("IndexRouter", () => {
 					)
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const response = await router.burn(
 					burnParameters.index,
 					burnParameters.amount,
@@ -395,7 +391,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -420,7 +416,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -455,7 +451,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const response = await router.burnSwap(
 					indexContract,
 					"0",
@@ -475,7 +471,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -502,7 +498,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -535,7 +531,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup((c) => c.contract.address)
 					.returns("0x01")
@@ -563,7 +559,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -592,7 +588,7 @@ describe("IndexRouter", () => {
 					.returnsAsync(new Mock<ContractTransaction>().object())
 					.object();
 
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -629,12 +625,12 @@ describe("IndexRouter", () => {
 				burnParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "10",
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 				};
 				burnSwapParameters = {
 					index: DefaultIndexRouterAddress.Mainnet,
 					amount: "0",
-					recipient: await signer.getAddress(),
+					recipient: await account.address(),
 					quotes: randomQuotes,
 					outputAsset: "0x01",
 				};
@@ -663,7 +659,7 @@ describe("IndexRouter", () => {
 					.returns("0x01")
 					.object();
 
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 				const response = await router.burnSwapStatic(
 					indexContract,
 					"0",
@@ -677,7 +673,7 @@ describe("IndexRouter", () => {
 			});
 
 			it("burnSwapValue static return something", async () => {
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -707,7 +703,7 @@ describe("IndexRouter", () => {
 					get: () => "0x1291ba229d69b630f12320a72f43ee17df07425d",
 				});
 
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 
 				router
 					.burnSwapStatic(indexContract, "100", burnSwapParameters.recipient, {
@@ -724,7 +720,7 @@ describe("IndexRouter", () => {
 					.returns("0x01")
 					.object();
 
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 				const response = await router.burnSwapStatic(
 					indexContract,
 					"0",
@@ -739,7 +735,7 @@ describe("IndexRouter", () => {
 			});
 
 			it("burnSwap static return something", async () => {
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 				const indexContract = new Mock<Erc20>()
 					.setup(async (c) =>
 						c.checkAllowance(router.address, burnParameters.amount)
@@ -770,7 +766,7 @@ describe("IndexRouter", () => {
 					get: () => "0x1291ba229d69b630f12320a72f43ee17df07425d",
 				});
 
-				const router = new IndexRouter(signer, mockContract);
+				const router = new IndexRouter(account, mockContract);
 
 				router
 					.burnSwapStatic(indexContract, "1000", burnSwapParameters.recipient, {
@@ -801,7 +797,7 @@ describe("IndexRouter", () => {
 					.play(PlayTimes.Once())
 					.returnsAsync([BigNumber.from(1000), BigNumber.from(2000)])
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 
 				const result = await router.burnAmount(
 					indexRouterContract.address,
@@ -818,14 +814,14 @@ describe("IndexRouter", () => {
 					.play(PlayTimes.Once())
 					.returnsAsync([BigNumber.from(1000), BigNumber.from(2000)])
 					.object();
-				const router = new IndexRouter(signer, routerContract);
+				const router = new IndexRouter(account, routerContract);
 				const result = await router.burnAmount(
 					indexRouterContract.address,
 					amount,
 					[1, 1]
 				);
 
-				expect(result.toNumber()).to.be.eq(3000);
+				expect(result).to.be.eq(3000);
 			});
 		});
 	});
