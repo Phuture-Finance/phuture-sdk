@@ -1,63 +1,75 @@
 {
-	"name": "@phuture/sdk",
-	"version": "0.1.0",
-	"repository": "Phuture-Finance/phuture-sdk",
-	"author": "Eugene Lepeico <eugenelepeico@gmail.com>",
-	"workspaces": [
-		"packages/*"
+  "name": "@phuture/sdk",
+  "version": "0.1.0",
+  "repository": "Phuture-Finance/phuture-sdk",
+  "author": "Eugene Lepeico <eugenelepeico@gmail.com>",
+  "workspaces": [
+	"core",
+	"packages/*"
+  ],
+  "scripts": {
+	"prepare": "husky install",
+	"build": "turbo run build",
+	"dev": "turbo run dev --parallel",
+	"format": "prettier --write '**/*.{json,md}'",
+	"lint": "xo '**/!(*.test).ts'",
+	"lint:fix": "xo '**/!(*.test).ts' --fix",
+	"test": "turbo run test --parallel",
+	"docs": "typedoc ."
+  },
+  "devDependencies": {
+	"@auto-it/all-contributors": "10.37.2",
+	"@auto-it/conventional-commits": "10.37.2",
+	"@auto-it/first-time-contributor": "10.37.2",
+	"@auto-it/released": "10.37.2",
+	"auto": "10.37.2",
+	"husky": "8.0.1",
+	"lint-staged": "13.0.3",
+	"prettier": "2.7.1",
+	"turbo": "1.3.3",
+	"typedoc": "0.23.8",
+	"xo": "0.51.0"
+  },
+  "engines": {
+	"node": ">=14.0.0",
+	"pnpm": "7"
+  },
+  "auto": {
+	"plugins": [
+	  "npm",
+	  "all-contributors",
+	  "conventional-commits",
+	  "first-time-contributor",
+	  "released"
 	],
-	"scripts": {
-		"prepare": "husky install",
-		"build": "turbo run build",
-		"dev": "turbo run dev --parallel",
-		"format": "prettier --write '**/*.{json,md}'",
-		"lint": "xo '**/!(*.test).ts'",
-		"lint:fix": "xo '**/!(*.test).ts' --fix",
-		"test": "turbo run test --parallel",
-		"docs": "typedoc ."
+	"onlyPublishWithReleaseLabel": true
+  },
+  "lint-staged": {
+	"*.{js,jsx,ts,tsx}": [
+	  "pnpm lint:fix",
+	  "git add"
+	],
+	"*.{md,json}": [
+	  "pnpm format",
+	  "git add"
+	]
+  },
+  "packageManager": "pnpm@7.1.0",
+  "xo": {
+	"prettier": true,
+	"envs": [
+	  "browser",
+	  "node",
+	  "es2021"
+	],
+	"rules": {
+	  "import/extensions": 0,
+	  "unicorn/prefer-node-protocol": 0
 	},
-	"devDependencies": {
-		"@auto-it/all-contributors": "10.37.1",
-		"@auto-it/conventional-commits": "10.37.1",
-		"@auto-it/first-time-contributor": "10.37.1",
-		"@auto-it/released": "10.37.1",
-		"@types/jest": "28.1.1",
-		"auto": "10.37.1",
-		"husky": "^8.0.1",
-		"lint-staged": "13.0.0",
-		"prettier": "2.7.1",
-		"turbo": "1.2.10",
-		"typedoc": "0.22.17",
-		"xo": "0.49.0"
-	},
-	"auto": {
-		"plugins": [
-			"npm",
-			"all-contributors",
-			"conventional-commits",
-			"first-time-contributor",
-			"released"
-		],
-		"onlyPublishWithReleaseLabel": true
-	},
-	"lint-staged": {
-		"*.{js,jsx,ts,tsx}": [
-			"pnpm lint:fix"
-		],
-		"*.{md,json}": [
-			"pnpm format"
-		]
-	},
-	"packageManager": "pnpm@7.1.0",
-	"xo": {
-		"prettier": true,
-		"rules": {
-			"import/extensions": 0
-		},
-		"ignores": [
-			"./packages/**/test/**",
-			"./packages/**/tests/**",
-			"./packages/**/src/generated/**"
-		]
-	}
+	"ignores": [
+	  "./packages/**/test/**",
+	  "./packages/**/tests/**",
+	  "./packages/**/src/generated/**"
+	]
+  }
 }

@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import EventEmitter from 'events';
 import {BigNumber, Signer} from 'ethers';
 
 /** ### Account class for interacting with the blockchain through the Signer */

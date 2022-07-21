@@ -23,8 +23,7 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator,
-	) {
-	}
+	) {}
 
 	/**
 	 * ### Auto Buy
@@ -162,7 +161,7 @@ export class AutoRouter {
 			outputToken = isAddress(outputToken)
 				? new Erc20(this.indexRouter.account, outputToken)
 				: outputToken;
-			outputTokenAddress = outputToken.address
+			outputTokenAddress = outputToken.address;
 			const {buyAmount} = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
@@ -177,21 +176,22 @@ export class AutoRouter {
 			);
 		}
 
-		const [{
-			buyAmount: zeroExAmount,
-			to: swapTarget,
-			data: assetQuote,
-			gasPrice,
-			estimatedGas: zeroExGas,
-		}, {amounts, amountToSell}] = await Promise.all([
+		const [
+			{
+				buyAmount: zeroExAmount,
+				to: swapTarget,
+				data: assetQuote,
+				gasPrice,
+				estimatedGas: zeroExGas,
+			},
+			{amounts, amountToSell},
+		] = await Promise.all([
 			this.zeroExAggregator.quote(
 				index.address,
 				outputToken.address,
 				indexAmount,
 			),
-			index.scaleAmount(
-				indexAmount,
-			)
+			index.scaleAmount(indexAmount),
 		]);
 
 		const quotes = await Promise.all(
@@ -200,11 +200,7 @@ export class AutoRouter {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
-				} = await this.zeroExAggregator.quote(
-					index.address,
-					asset,
-					amount,
-				);
+				} = await this.zeroExAggregator.quote(index.address, asset, amount);
 
 				return {
 					asset,
@@ -221,15 +217,19 @@ export class AutoRouter {
 			permitOptions,
 		};
 
-		const {outputAmount, estimatedGas} =
-			await this.indexRouter.burnSwapStatic(
-				index.address,
-				amountToSell,
-				await this.indexRouter.account.address(),
-				options,
-			);
+		const {outputAmount, estimatedGas} = await this.indexRouter.burnSwapStatic(
+			index.address,
+			amountToSell,
+			await this.indexRouter.account.address(),
+			options,
+		);
 
-		if (estimatedGas.sub(zeroExGas).mul(gasPrice).gte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth)))
+		if (
+			estimatedGas
+				.sub(zeroExGas)
+				.mul(gasPrice)
+				.gte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth))
+		)
 			return this.indexRouter.burnSwap(
 				index.address,
 				amountToSell,

@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import EventEmitter from 'events';
 import {Contract as EthersContract} from 'ethers';
 import type {Address, ContractFactory} from '@phuture/types';
 import {isAddress} from '@phuture/types';
