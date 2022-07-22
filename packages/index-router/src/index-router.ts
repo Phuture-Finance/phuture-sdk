@@ -356,6 +356,16 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		return {outputAmount, estimatedGas};
 	}
 
+	// Get burn amounts of multiple tokens
+	burnAmount(index: Address, amount: BigNumberish): Promise<BigNumber[]>;
+
+	// Get burn amount of single tokens
+	burnAmount(
+		index: Address,
+		amount: BigNumberish,
+		prices?: BigNumberish[],
+	): Promise<BigNumber>;
+
 	/**
 	 * ### Burn amount
 	 *

@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import {BigNumber, Signer} from 'ethers';
+import {Address} from "@phuture/types";
 
 /** ### Account class for interacting with the blockchain through the Signer */
 export class Account extends EventEmitter {
@@ -38,7 +39,7 @@ export class Account extends EventEmitter {
 	 *
 	 * @returns The address of the current signer
 	 */
-	public async address(): Promise<string> {
+	public async address(): Promise<Address> {
 		return this.signer.getAddress();
 	}
 
