@@ -1,31 +1,52 @@
 import * as React from 'react';
-import {ReactNode} from 'react';
+import {ReactNode, useCallback, useMemo, useReducer} from 'react';
+import {getPhutureContext, initialState, PhutureState} from './phuture-context';
+import {Signer} from "ethers";
+import {Account} from "@phuture/account";
 
-import {Phuture} from '../..';
-import {getPhutureContext} from './phuture-context';
+type Action = { type: 'CONNECT', signer: Signer };
+
+function reducer(state: PhutureState, action: Action): PhutureState {
+	switch (action.type) {
+		case "CONNECT": {
+			if (state.account) {
+				const account = state.account;
+				account.signer = action.signer;
+
+				return {
+					...state,
+					account
+				};
+			}
+
+			return {...state, account: new Account(action.signer)}
+		}
+	}
+}
 
 export interface PhutureProviderProps {
-	core: Phuture;
 	children: ReactNode | ReactNode[] | null;
 }
 
-export const PhutureProvider: React.FC<PhutureProviderProps> = ({
-																		core,
-																		children
-																	}) => {
+export const PhutureProvider: React.FC<PhutureProviderProps> = ({children}) => {
 	const PhutureContext = getPhutureContext();
 
+	const [state, dispatch] = useReducer(reducer, initialState)
+
+	const connectSigner = useCallback(
+		(signer: Signer) => dispatch({type: "CONNECT", signer}),
+		[dispatch]
+	)
+
+	const value = useMemo(
+		() => ({
+			...state,
+			connectSigner
+		}),
+		[state]
+	)
+
 	return (
-		<PhutureContext.Consumer>
-			{(context: any = {}) => {
-				if (core && context.core !== core)
-					context = Object.assign({}, context, {core});
-
-				if (!context.core)
-					throw 'PhutureProvider was not passed a core instance. Make sure you pass it via the "core" prop.'
-
-				return <PhutureContext.Provider value={context}>{children}</PhutureContext.Provider>
-			}}
-		</PhutureContext.Consumer>
+		<PhutureContext.Provider value={value}>{children}</PhutureContext.Provider>
 	);
 };

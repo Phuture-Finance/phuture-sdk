@@ -67,7 +67,7 @@
 			"unicorn/prefer-node-protocol": 0
 		},
 		"ignores": [
-		  	"./examples/**/*.d.ts",
+			"./examples/**/*.d.ts",
 			"./packages/**/test/**",
 			"**/generated/**"
 		]

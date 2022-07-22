@@ -30,17 +30,25 @@ importers:
 
   core:
     specifiers:
+      '@phuture/0x-aggregator': workspace:*
       '@phuture/account': workspace:*
+      '@phuture/auto-router': workspace:*
+      '@phuture/index': workspace:*
+      '@phuture/index-router': workspace:*
+      '@phuture/subgraph': workspace:*
       '@phuture/types': workspace:*
-      '@phuture/with-defaults': workspace:*
       '@types/react': 18.0.15
       ethers: 5.6.9
       react: 18.2.0
       rimraf: 3.0.2
       typescript: 4.7.4
     dependencies:
+      '@phuture/0x-aggregator': link:../packages/0x-aggregator
       '@phuture/account': link:../packages/account
-      '@phuture/with-defaults': link:../packages/with-defaults
+      '@phuture/auto-router': link:../packages/auto-router
+      '@phuture/index': link:../packages/index
+      '@phuture/index-router': link:../packages/index-router
+      '@phuture/subgraph': link:../packages/subgraph
       ethers: 5.6.9
       react: 18.2.0
     devDependencies:

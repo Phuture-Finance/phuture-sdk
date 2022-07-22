@@ -7,7 +7,6 @@ import {createClient, WagmiConfig} from 'wagmi'
 import {MetaMaskConnector} from 'wagmi/connectors/metaMask'
 import {getDefaultProvider} from "ethers";
 import Connect from "../components/connect";
-import {Phuture} from "@phuture/sdk";
 import {PhutureProvider} from "@phuture/sdk";
 
 const client = createClient({
@@ -18,12 +17,10 @@ const client = createClient({
 	}
 })
 
-const phuture = new Phuture()
-
 function App({Component, pageProps}: AppProps) {
 	return (
 		<WagmiConfig client={client}>
-			<PhutureProvider core={phuture}>
+			<PhutureProvider>
 				<NextHead>
 					<title>Phuture</title>
 				</NextHead>
