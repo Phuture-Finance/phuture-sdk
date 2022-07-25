@@ -4,13 +4,15 @@
 		"target": "es2018",
 		"module": "esnext",
 		"lib": ["esnext", "dom"],
+		"importHelpers": true,
+		"removeComments": true,
 		"declaration": true,
 		"outDir": "dist",
 		"strict": true,
 		"esModuleInterop": true,
-		"sourceMap": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"jsx": "react"
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "react/**/*"],
 	"exclude": ["node_modules", "dist"]
 }

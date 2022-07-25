@@ -1,6 +1,7 @@
 import {Address, ContractFactory, isAddress, Signature} from '@phuture/types';
-import {BigNumber, BigNumberish, Signer} from 'ethers';
+import {BigNumber, BigNumberish} from 'ethers';
 import {Interface} from '@ethersproject/abi';
+import {Account} from '@phuture/account';
 import {Erc20} from './erc-20';
 import {
 	ERC20Permit as ERC20PermitContractInterface,
@@ -218,17 +219,17 @@ export class Erc20Permit<
 	/**
 	 * ### Creates a new Erc20Permit instance
 	 *
-	 * @param signer Signer or provider to use for interacting with the contract
+	 * @param account Account to use for interacting with the contract
 	 * @param contract Contract instance or address of the Erc20Permit token contract
 	 * @param factory Contract factory to use for creating the contract
 	 *
 	 * @returns New Erc20Permit token instance
 	 */
 	constructor(
-		signer: Signer,
+		account: Account,
 		contract: Address | C,
 		factory: ContractFactory = ERC20Permit__factory,
 	) {
-		super(signer, contract, factory);
+		super(account, contract, factory);
 	}
 }

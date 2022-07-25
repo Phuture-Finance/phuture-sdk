@@ -1,5 +1,5 @@
 import {Address} from '@phuture/types';
-import {BytesLike} from 'ethers';
+import {BigNumberish, BytesLike} from 'ethers';
 
 /** ### Options for 0x price endpoint */
 export interface Zero0xPriceOptions {
@@ -18,9 +18,13 @@ export interface Zero0xPriceOptions {
 /** ### Response from the 0x price endpoint */
 export interface Zero0xPriceResponse {
 	/** ### Amount of tokens to buy */
-	buyAmount: string;
+	buyAmount: BigNumberish;
 	/** ### Amount of tokens to sell */
-	sellAmount: string;
+	sellAmount: BigNumberish;
+	/** ### Estimated Gas */
+	estimatedGas: BigNumberish;
+	/** ### Gas price */
+	gasPrice: BigNumberish;
 }
 
 /** ### Options for 0x quote endpoint */

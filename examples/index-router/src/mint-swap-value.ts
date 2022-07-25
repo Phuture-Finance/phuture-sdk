@@ -4,6 +4,7 @@ import {Index} from '@phuture/index';
 import {IndexRouter} from '@phuture/index-router';
 import dotenv from 'dotenv';
 import {BigNumber, ethers, utils} from 'ethers';
+import {Account} from '@phuture/account';
 
 dotenv.config();
 
@@ -19,15 +20,17 @@ async function main() {
 	const nodeUrl = process.env.NODE_URL;
 	if (!nodeUrl) throw new Error('NODE_URL is not set');
 
-	const wallet = new ethers.Wallet(
-		privateKey,
-		new ethers.providers.JsonRpcProvider(nodeUrl),
+	const account = new Account(
+		new ethers.Wallet(
+			privateKey,
+			new ethers.providers.JsonRpcProvider(nodeUrl),
+		),
 	);
 
 	const indexAddress = process.env.INDEX_ADDRESS;
 	if (!indexAddress) throw new Error('INDEX_ADDRESS is not set');
 
-	const index = new Index(wallet, indexAddress);
+	const index = new Index(account, indexAddress);
 
 	const {amounts, amountToSell} = await index.scaleAmount(amountToSellDesired);
 
@@ -65,7 +68,7 @@ async function main() {
 	const indexRouterAddress = process.env.INDEX_ROUTER_ADDRESS;
 	if (!indexRouterAddress) throw new Error('INDEX_ROUTER_ADDRESS is not set');
 
-	const indexRouter = new IndexRouter(wallet, indexRouterAddress);
+	const indexRouter = new IndexRouter(account, indexRouterAddress);
 
 	/**
 	 * Once we have our quotes in the form of an array of {@see Zero0xQuoteResponse}
@@ -74,7 +77,7 @@ async function main() {
 	await indexRouter.mintSwap(
 		{
 			index: index.address,
-			recipient: wallet.address,
+			recipient: await account.address(),
 			quotes,
 		},
 		amountToSell,

@@ -1,17 +1,13 @@
-import { Erc20, Erc20Permit, StandardPermitArguments } from "@phuture/erc-20";
-import { InsufficientAllowanceError } from "@phuture/errors";
-import { expect } from "chai";
-import { BigNumber, constants, ethers, Signer } from "ethers";
-import { Contract, ContractTransaction } from "ethers/lib/ethers";
-import { Mock, PlayTimes } from "moq.ts";
-import { AutoRouter, MintThreshold } from "../src";
-import { IndexRouter } from "@phuture/index-router";
-import { ZeroExAggregator, ZeroExBaseUrl } from "@phuture/0x-aggregator";
-import { ZeroExAggregator as IZeroExAggregator } from "@phuture/0x-aggregator/dist/src/0x-aggregator";
-import { Zero0xQuoteResponse } from "@phuture/0x-aggregator/dist/src/types";
-import { Index } from "@phuture/index";
-import { IndexRouter as IndexRouterContractInterface } from "@phuture/index-router/dist/src/types";
-import { DeepMockProxy, mockDeep } from "jest-mock-extended";
+import {Erc20, StandardPermitArguments} from "@phuture/erc-20";
+import {expect} from "chai";
+import {BigNumber, constants, Signer} from "ethers";
+import {AutoRouter} from "../src";
+import {IndexRouter} from "@phuture/index-router";
+import {Index} from "@phuture/index";
+import {IndexRouter as IndexRouterContractInterface} from "@phuture/index-router/dist/src/types";
+import {DeepMockProxy, mockDeep} from "jest-mock-extended";
+import {ZeroExAggregator} from "@phuture/0x-aggregator";
+import {Mock} from "moq.ts";
 
 describe("AutoRouter", () => {
 	const usdcTokenAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
@@ -26,7 +22,7 @@ describe("AutoRouter", () => {
 
 	let indexRouterContract: DeepMockProxy<IndexRouterContractInterface>;
 	let indexRouter: DeepMockProxy<IndexRouter>;
-	let zeroAggregator: DeepMockProxy<IZeroExAggregator>;
+	let zeroAggregator: DeepMockProxy<ZeroExAggregator>;
 	let signerInterface: DeepMockProxy<Signer>;
 	let indexTokenInterface: DeepMockProxy<Index>;
 	let erc20: DeepMockProxy<Erc20>;
@@ -38,6 +34,9 @@ describe("AutoRouter", () => {
 		);
 
 		indexRouter = mockDeep<IndexRouter>();
+		indexRouter.weth.mockImplementation(async () =>
+			constants.AddressZero
+		);
 		indexRouter.mintSwapStatic.mockImplementation(async () =>
 			BigNumber.from(1000)
 		);
@@ -53,7 +52,7 @@ describe("AutoRouter", () => {
 			get: () => usdcTokenAddress,
 		});
 
-		zeroAggregator = mockDeep<IZeroExAggregator>();
+		zeroAggregator = mockDeep<ZeroExAggregator>();
 		zeroAggregator.quote.mockImplementation(async () => {
 			return {
 				to: usdcTokenAddress,
@@ -83,27 +82,8 @@ describe("AutoRouter", () => {
 		});
 	});
 
-	const mintThreshold: MintThreshold = {
-		amount: "100000000",
-		tokenAddress: usdcTokenAddress,
-	};
 
 	describe("Auto Buy: ", () => {
-		it("running autoBuy function when AutoRouter interface was created from address & value is less than mintThreshold(run 0x)", async () => {
-			const indexRouterInterface = new IndexRouter(
-				signerInterface,
-				indexRouterContract
-			);
-			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
-			const autoRouter = new AutoRouter(
-				signerInterface,
-				indexRouterInterface,
-				zeroAggregatorInterface,
-				mintThreshold
-			);
-			const result = await autoRouter.autoBuy(indexTokenAddress, "1000");
-			expect(result).to.not.null;
-		});
 		it("running autoBuy function when 0x amount is more beneficial than IndexRouter's mintSwap", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
@@ -116,7 +96,7 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
 			indexRouter.mintSwapStatic.mockImplementation(async () =>
@@ -124,10 +104,8 @@ describe("AutoRouter", () => {
 			);
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouter,
 				zeroAggregatorInterface,
-				mintThreshold
 			);
 			const result = await autoRouter.autoBuy(
 				indexTokenInterface,
@@ -148,15 +126,13 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouter,
 				zeroAggregatorInterface,
-				mintThreshold
 			);
 			const result = await autoRouter.autoBuy(
 				indexTokenInterface,
@@ -178,15 +154,13 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouter,
 				zeroAggregatorInterface,
-				mintThreshold
 			);
 			const result = await autoRouter.autoBuy(
 				indexTokenInterface,
@@ -207,7 +181,7 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
 			indexRouter.mintSwapStatic.mockImplementation(async () =>
@@ -215,10 +189,8 @@ describe("AutoRouter", () => {
 			);
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouter,
-				zeroAggregatorInterface,
-				mintThreshold
+				zeroAggregatorInterface
 			);
 			const result = await autoRouter.autoBuy(
 				indexTokenInterface,
@@ -230,30 +202,6 @@ describe("AutoRouter", () => {
 		});
 	});
 	describe("Auto Sell: ", () => {
-		it("running autoSell function when AutoRouter interface was created from address & value is less than mintThreshold(run 0x)", async () => {
-			zeroAggregator.price.mockImplementation(async () => {
-				return {
-					to: usdcTokenAddress,
-					data: "1",
-					buyAmount: "10000",
-					sellAmount: "100",
-				};
-			});
-
-			const indexRouterInterface = new IndexRouter(
-				signerInterface,
-				indexRouterContract
-			);
-			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
-			const autoRouter = new AutoRouter(
-				signerInterface,
-				indexRouterInterface,
-				zeroAggregatorInterface,
-				mintThreshold
-			);
-			const result = await autoRouter.autoSell(indexTokenAddress, "1000");
-			expect(result).to.not.null;
-		});
 		it("running autoSell function when AutoRouter interface was created from Index interface & 0x amount is more beneficial than IndexRouter's mintSwap", async () => {
 			zeroAggregator.price.mockImplementation(async () => {
 				return {
@@ -267,19 +215,14 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
-			const indexRouterInterface = new IndexRouter(
-				signerInterface,
-				indexRouterContract
-			);
+			const indexRouterInterface = new Mock<IndexRouter>().object();
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouterInterface,
-				zeroAggregatorInterface,
-				mintThreshold
+				zeroAggregatorInterface
 			);
 			const result = await autoRouter.autoSell(indexTokenInterface, "1000");
 			expect(result).to.not.null;
@@ -297,19 +240,14 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
-			const indexRouterInterface = new IndexRouter(
-				signerInterface,
-				indexRouterContract
-			);
+			const indexRouterInterface = new Mock<IndexRouter>().object();
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouterInterface,
 				zeroAggregatorInterface,
-				mintThreshold
 			);
 			const result = await autoRouter.autoSell(indexTokenInterface, "1000");
 			expect(result).to.not.null;
@@ -327,7 +265,7 @@ describe("AutoRouter", () => {
 			indexTokenInterface.scaleAmount.mockImplementation(async () => {
 				return {
 					amountToSell: BigNumber.from(1000000000),
-					amounts: { ["0x0001"]: BigNumber.from(10) },
+					amounts: {["0x0001"]: BigNumber.from(10)},
 				};
 			});
 
@@ -336,10 +274,8 @@ describe("AutoRouter", () => {
 			);
 			const zeroAggregatorInterface = zeroAggregator as ZeroExAggregator;
 			const autoRouter = new AutoRouter(
-				signerInterface,
 				indexRouter,
-				zeroAggregatorInterface,
-				mintThreshold
+				zeroAggregatorInterface
 			);
 			const result = await autoRouter.autoSell(
 				indexTokenInterface,

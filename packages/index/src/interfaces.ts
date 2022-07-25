@@ -1,4 +1,5 @@
 import type {Address} from '@phuture/types';
+import {BigNumber, BigNumberish} from 'ethers';
 
 /** ### Index Repository Interface */
 export interface IndexRepo {
@@ -28,6 +29,16 @@ export interface IndexRepo {
 	 * @returns {Promise<Fees>} Fees of the index
 	 */
 	fees(indexAddress: Address): Promise<Fees>;
+
+	/**
+	 * ### Get price of the index in ETH
+	 *
+	 * @param indexAddress The address of the index
+	 * @param amount The amount of the index
+	 *
+	 * @returns Price of the index in ETH
+	 */
+	priceEth(indexAddress: Address, amount?: BigNumberish): Promise<BigNumber>;
 }
 
 /** ### Fees Interface */
