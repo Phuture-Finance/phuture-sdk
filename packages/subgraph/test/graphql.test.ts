@@ -8,16 +8,17 @@ describe("get graphql client", () => {
 	const phutureGraphQlEndpoint =
 		"https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp";
 	const client = Subgraph.fromUrl(phutureGraphQlEndpoint);
-
+	client.query;
 	it("should get user", async () => {
 		const { data } = await client.query({
 			query: gql`
-		  query User($userId: ID!) {
-			  user(id: $userId) {
-				  id
-			  }
-		  }`,
-			variables: { userId }
+				query User($userId: ID!) {
+					user(id: $userId) {
+						id
+					}
+				}
+			`,
+			variables: { userId },
 		});
 
 		expect(data.user.id).to.equal(userId);

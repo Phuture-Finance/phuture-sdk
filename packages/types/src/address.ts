@@ -1,7 +1,7 @@
-import {utils} from 'ethers';
+import { utils } from "ethers";
 
 /**
- * ### The unique identifier of the contract or an EAO.
+ * ### The unique identifier of the contract or an EOA.
  * Keccak hash of an ECDSA public key (160 bits).
  *
  * @see https://ethereum.org/en/glossary/#address
@@ -15,4 +15,4 @@ import {utils} from 'ethers';
 export type Address = string; // `0x${string}`
 
 export const isAddress = (address: unknown): address is Address =>
-	typeof address === 'string' && utils.isAddress(address);
+	typeof address === "string" && utils.isAddress(address);
