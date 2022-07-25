@@ -1,28 +1,26 @@
 {
-	"name": "@phuture/sdk",
-	"version": "0.1.0",
+	"name": "phuture",
+	"private": true,
 	"repository": "Phuture-Finance/phuture-sdk",
-	"author": "Eugene Lepeico <eugenelepeico@gmail.com>",
 	"workspaces": [
 		"core",
 		"packages/*"
 	],
 	"scripts": {
+		"bump": "changeset version && pnpm update-manifests",
+		"changeset": "changeset",
+		"release": "pnpm publish --access=public",
 		"prepare": "husky install",
 		"build": "turbo run build",
 		"dev": "turbo run dev --parallel",
-		"format": "prettier --write '**/*.{json,md}'",
-		"lint": "xo '**/!(*.test).ts'",
-		"lint:fix": "xo '**/!(*.test).ts' --fix",
+		"format": "prettier --write '**/*.{json,md,yml}'",
+		"lint": "xo",
+		"lint:fix": "xo --fix",
 		"test": "turbo run test --parallel",
 		"docs": "typedoc ."
 	},
 	"devDependencies": {
-		"@auto-it/all-contributors": "10.37.2",
-		"@auto-it/conventional-commits": "10.37.2",
-		"@auto-it/first-time-contributor": "10.37.2",
-		"@auto-it/released": "10.37.2",
-		"auto": "10.37.2",
+		"@changesets/cli": "^2.24.0",
 		"husky": "8.0.1",
 		"lint-staged": "13.0.3",
 		"prettier": "2.7.1",
@@ -34,25 +32,22 @@
 		"node": ">=14.0.0",
 		"pnpm": "7"
 	},
-	"auto": {
-		"plugins": [
-			"npm",
-			"all-contributors",
-			"conventional-commits",
-			"first-time-contributor",
-			"released"
-		],
-		"onlyPublishWithReleaseLabel": true
-	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
 			"pnpm lint:fix",
 			"git add"
 		],
-		"*.{md,json}": [
+		"*.{md,json,yml}": [
 			"pnpm format",
 			"git add"
 		]
+	},
+	"syncpack": {
+		"versionGroups": {
+			"dependencies": [
+				"!@phuture/**"
+			]
+		}
 	},
 	"packageManager": "pnpm@7.1.0",
 	"xo": {

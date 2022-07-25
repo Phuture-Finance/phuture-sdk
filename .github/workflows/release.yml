@@ -1,23 +1,17 @@
-name: CI
+name: Release
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-    types: [opened, synchronize]
+
+env:
+  CI: true
 
 jobs:
-  ci:
-    name: Build, Lint and Test
+  version:
     timeout-minutes: 15
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -52,13 +46,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build code
-        run: pnpm build
-
-      - name: Lint code
-        run: pnpm lint
-
-      - name: Test code
-        run: pnpm test
+      - name: create and publish versions
+        uses: changesets/action@v1
+        with:
+          version: pnpm ci:version
+          commit: "chore: update versions"
+          title: "chore: update versions"
+          publish: pnpm ci:publish
         env:
-          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

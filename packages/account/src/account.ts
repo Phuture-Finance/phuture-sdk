@@ -31,7 +31,7 @@ export class Account extends EventEmitter {
 	 */
 	set signer(_signer: Signer) {
 		this._signer = _signer;
-		this.emit('change', this.signer);
+		this.emit('change', this);
 	}
 
 	/**

@@ -27,6 +27,10 @@ export class Contract<C extends EthersContract> extends EventEmitter {
 		this.contract = isAddress(contract)
 			? (contractFactory.connect(contract, _account.signer) as C)
 			: contract;
+
+		_account.on('change', (account) => {
+			this.account = account;
+		})
 	}
 
 	/**
