@@ -7,8 +7,8 @@
 		"dist"
 	],
 	"scripts": {
-		"prepublishOnly": "npm build",
-		"build": "pnpm typechain && tsc",
+		"prepublishOnly": "pnpm build",
+		"build": "pnpm typechain && pnpm clean && tsc",
 		"typechain": "typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json",
 		"clean": "rimraf dist",
 		"test": "jest",

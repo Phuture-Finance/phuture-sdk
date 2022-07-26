@@ -7,8 +7,8 @@
 		"dist"
 	],
 	"scripts": {
-		"prepublishOnly": "npm build",
-		"build": "tsc",
+		"prepublishOnly": "pnpm build",
+		"build": "pnpm clean && tsc",
 		"clean": "rimraf dist"
 	},
 	"dependencies": {
