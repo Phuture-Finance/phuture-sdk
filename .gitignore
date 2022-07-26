@@ -107,3 +107,4 @@ dist
 .idea
 
 packages/**/src/types/
+.DS_Store

@@ -42,13 +42,6 @@
 			"git add"
 		]
 	},
-	"syncpack": {
-		"versionGroups": {
-			"dependencies": [
-				"!@phuture/**"
-			]
-		}
-	},
 	"packageManager": "pnpm@7.1.0",
 	"xo": {
 		"prettier": true,
