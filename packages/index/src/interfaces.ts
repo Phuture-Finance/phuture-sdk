@@ -34,11 +34,10 @@ export interface IndexRepo {
 	 * ### Get price of the index in ETH
 	 *
 	 * @param indexAddress The address of the index
-	 * @param amount The amount of the index
 	 *
 	 * @returns Price of the index in ETH
 	 */
-	priceEth(indexAddress: Address, amount?: BigNumberish): Promise<BigNumber>;
+	priceEth(indexAddress: Address): Promise<BigNumber>;
 }
 
 /** ### Fees Interface */

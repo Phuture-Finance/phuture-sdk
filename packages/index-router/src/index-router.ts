@@ -4,10 +4,7 @@ import {Address, isAddress} from '@phuture/types';
 import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
 import {Contract} from '@phuture/contract';
 import {Account} from '@phuture/account';
-import {
-	IndexRouter as IndexRouterContractInterface,
-	IndexRouter__factory,
-} from './types';
+import {IndexRouter as IndexRouterContractInterface, IndexRouter__factory,} from './types';
 import {IIndexRouter} from './types/IndexRouter';
 
 /** ### Default IndexRouter address for network */
@@ -105,28 +102,57 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		sellAmount: BigNumberish,
 		sellToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
-	): Promise<BigNumber> {
-		if (!sellToken)
-			return this.contract.callStatic.mintSwapValue(
-				options as IIndexRouter.MintSwapValueParamsStruct,
-				{value: sellAmount},
-			);
+	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
+		if (!sellToken) {
+			const [outputAmount, estimatedGas] = await Promise.all([
+				this.contract.callStatic.mintSwapValue(
+					options as IIndexRouter.MintSwapValueParamsStruct,
+					{value: sellAmount},
+				),
+				this.contract.estimateGas.mintSwapValue(
+					options as IIndexRouter.MintSwapValueParamsStruct,
+					{value: sellAmount},
+				)
+			]);
 
-		if (permitOptions !== undefined)
-			return this.contract.callStatic.mintSwapWithPermit(
-				options as IIndexRouter.MintSwapParamsStruct,
-				permitOptions.deadline,
-				permitOptions.v,
-				permitOptions.r,
-				permitOptions.s,
-			);
+			return {outputAmount, estimatedGas};
+		}
+
+		if (permitOptions !== undefined) {
+			const [outputAmount, estimatedGas] = await Promise.all([
+				this.contract.callStatic.mintSwapWithPermit(
+					options as IIndexRouter.MintSwapParamsStruct,
+					permitOptions.deadline,
+					permitOptions.v,
+					permitOptions.r,
+					permitOptions.s,
+				),
+				this.contract.estimateGas.mintSwapWithPermit(
+					options as IIndexRouter.MintSwapParamsStruct,
+					permitOptions.deadline,
+					permitOptions.v,
+					permitOptions.r,
+					permitOptions.s,
+				),
+			])
+
+			return {outputAmount, estimatedGas};
+		}
 
 		if (!(await sellToken.checkAllowance(this.address, sellAmount)))
 			throw new InsufficientAllowanceError(sellAmount);
 
-		return this.contract.callStatic.mintSwap(
-			options as IIndexRouter.MintSwapParamsStruct,
-		);
+
+		const [outputAmount, estimatedGas] = await Promise.all([
+			this.contract.callStatic.mintSwap(
+				options as IIndexRouter.MintSwapParamsStruct,
+			),
+			this.contract.estimateGas.mintSwap(
+				options as IIndexRouter.MintSwapParamsStruct,
+			)
+		])
+
+		return {outputAmount, estimatedGas};
 	}
 
 	/**
@@ -278,7 +304,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			outputAsset?: Address;
 			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
 		},
-	): Promise<{outputAmount: BigNumber; estimatedGas: BigNumber}> {
+	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
 		const indexInstance = isAddress(index)
 			? new Erc20(this.account, index)
 			: index;

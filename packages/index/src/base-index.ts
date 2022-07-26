@@ -122,12 +122,10 @@ export class Index extends Erc20Permit<BaseIndex> {
 	/**
 	 * ### Get price of the index
 	 *
-	 * @param {BigNumberish} sellAmount Amount of tokens to sell
-	 *
 	 * @returns {Promise<BigNumber>} Price of the index in sellToken
 	 */
-	public async priceEth(sellAmount?: BigNumberish): Promise<BigNumber> {
-		return this._indexRepo.priceEth(this.address, sellAmount);
+	public async priceEth(): Promise<BigNumber> {
+		return this._indexRepo.priceEth(this.address);
 	}
 
 	/**

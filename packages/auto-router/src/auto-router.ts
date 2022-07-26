@@ -23,7 +23,8 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator,
-	) {}
+	) {
+	}
 
 	/**
 	 * ### Auto Buy
@@ -41,113 +42,70 @@ export class AutoRouter {
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
 	) {
-		// let inputTokenAddress: Address | undefined;
-		// let inputTokenPriceEth: BigNumber
-		//
-		// if (inputToken) {
-		// 	inputTokenAddress = inputToken.address;
-		// 	const {buyAmount} = await this.zeroExAggregator.price(
-		// 		inputToken.address,
-		// 		await this.indexRouter.weth(),
-		// 		BigNumber.from(10).pow(await inputToken.decimals()),
-		// 	);
-		//
-		// 	inputTokenPriceEth = BigNumber.from(buyAmount);
-		// } else {
-		// 	inputToken = new Erc20(
-		// 		this.indexRouter.account,
-		// 		await this.indexRouter.weth(),
-		// 	);
-		// }
-		//
-		// const {
-		// 	buyAmount: zeroExAmount,
-		// 	to: swapTarget,
-		// 	data: indexQuote,
-		// } = await this.zeroExAggregator.quote(
-		// 	inputTokenAddress,
-		// 	index.address,
-		// 	amountInInputToken,
-		// );
-		//
-		// const {amounts, amountToSell} = await index.scaleAmount(amountInInputToken);
-		//
-		// const quotes = await Promise.all(
-		// 	Object.entries(amounts).map(async ([asset, amount]) => {
-		// 		const {
-		// 			buyAmount: buyAssetMinAmount,
-		// 			to: swapTarget,
-		// 			data: assetQuote,
-		// 		} = await this.zeroExAggregator.quote(inputTokenAddress, asset, amount);
-		//
-		// 		return {
-		// 			asset,
-		// 			swapTarget,
-		// 			buyAssetMinAmount,
-		// 			assetQuote,
-		// 		};
-		// 	}),
-		// );
-		//
-		// if (permitOptions) {
-		// 	const indexRouterAmount = await this.indexRouter.mintSwapStatic(
-		// 		{
-		// 			index: index.address,
-		// 			recipient: await this.indexRouter.account.address(),
-		// 			quotes,
-		// 			amountInInputToken,
-		// 			inputToken: inputTokenAddress,
-		// 		},
-		// 		amountToSell,
-		// 		inputToken,
-		// 		permitOptions,
-		// 	);
-		//
-		// 	if (indexRouterAmount.gte(zeroExAmount))
-		// 		return this.indexRouter.mintSwap(
-		// 			{
-		// 				index: index.address,
-		// 				recipient: await this.indexRouter.account.address(),
-		// 				quotes,
-		// 				amountInInputToken,
-		// 				inputToken: inputTokenAddress,
-		// 			},
-		// 			amountToSell,
-		// 			inputToken,
-		// 			permitOptions,
-		// 		);
-		// }
-		//
-		// const indexRouterAmount = await this.indexRouter.mintSwapStatic(
-		// 	{
-		// 		index: index.address,
-		// 		recipient: await this.indexRouter.account.address(),
-		// 		quotes,
-		// 		amountInInputToken,
-		// 		inputToken: inputTokenAddress,
-		// 	},
-		// 	amountToSell,
-		// 	inputToken,
-		// );
-		//
-		// if (indexRouterAmount.gte(zeroExAmount))
-		// 	return this.indexRouter.mintSwap(
-		// 		{
-		// 			index: index.address,
-		// 			recipient: await this.indexRouter.account.address(),
-		// 			quotes,
-		// 			amountInInputToken,
-		// 			inputToken: inputTokenAddress,
-		// 		},
-		// 		amountToSell,
-		// 		inputToken,
-		// 	);
-		//
-		// return this.indexRouter.account.signer.call({
-		// 	to: swapTarget,
-		// 	data: indexQuote,
-		// 	value: inputToken ? 0 : zeroExAmount,
-		// });
+		const inputTokenAddress = inputToken?.address || (await this.indexRouter.weth());
+		const [{
+			buyAmount: zeroExAmount,
+			to: swapTarget,
+			data: indexQuote,
+			gasPrice,
+			estimatedGas: zeroExGas,
+		}, {amounts, amountToSell}, indexPriceEth] = await Promise.all([
+			this.zeroExAggregator.quote(
+				inputTokenAddress,
+				index.address,
+				amountInInputToken,
+			),
+			index.scaleAmount(amountInInputToken),
+			index.priceEth()
+		]);
+
+		const quotes = await Promise.all(
+			Object.entries(amounts).map(async ([asset, amount]) => {
+				const {
+					buyAmount: buyAssetMinAmount,
+					to: swapTarget,
+					data: assetQuote,
+				} = await this.zeroExAggregator.quote(inputTokenAddress, asset, amount);
+
+				return {
+					asset,
+					swapTarget,
+					buyAssetMinAmount,
+					assetQuote,
+				};
+			}),
+		);
+
+		const options = {
+			index: index.address,
+			recipient: await this.indexRouter.account.address(),
+			quotes,
+			amountInInputToken,
+			inputToken: inputTokenAddress,
+		};
+		const {estimatedGas, outputAmount} = await this.indexRouter.mintSwapStatic(
+			options,
+			amountToSell,
+			inputToken,
+			permitOptions,
+		);
+
+		if (estimatedGas
+			.sub(zeroExGas)
+			.mul(gasPrice)
+			.gte(outputAmount.sub(zeroExAmount).mul(indexPriceEth)))
+			return this.indexRouter.mintSwap(
+				options,
+				amountToSell,
+				inputToken,
+				permitOptions,
+			);
+
+		return this.indexRouter.account.signer.call({
+			to: swapTarget,
+			data: indexQuote,
+			value: inputToken ? 0 : zeroExAmount,
+		});
 	}
 
 	/**
