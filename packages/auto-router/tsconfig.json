@@ -1,14 +1,18 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		"module": "commonjs",
-		"lib": ["es6", "dom"],
+		"moduleResolution": "node",
+		"target": "es2018",
+		"module": "esnext",
+		"lib": ["esnext", "dom"],
+		"importHelpers": true,
+		"removeComments": true,
 		"declaration": true,
+		"sourceMap": true,
 		"outDir": "dist",
 		"strict": true,
 		"esModuleInterop": true,
-		"sourceMap": true
+		"skipLibCheck": true,
 	},
-	"include": ["src/**/*", "**/*.test.ts"],
+	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"]
 }

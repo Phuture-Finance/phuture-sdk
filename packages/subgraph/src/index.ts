@@ -1,2 +1,2 @@
-export * from './generated/phuture.graphql';
-export * from './subgraph';
+export * as Types from "./generated/phuture.graphql";
+export * from "./subgraph";
