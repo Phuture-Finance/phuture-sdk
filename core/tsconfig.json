@@ -7,12 +7,12 @@
 		"importHelpers": true,
 		"removeComments": true,
 		"declaration": true,
+		"sourceMap": true,
 		"outDir": "dist",
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"jsx": "react"
 	},
-	"include": ["src/**/*", "react/**/*"],
+	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"]
 }

@@ -141,29 +141,15 @@ const indexPDI = new Index(account, "INDEX_CONTRACT");
 
 const zeroAggregator = new ZeroExAggregator();
 
-// scale amounts
-const { amounts, amountToSell } = await indexPDI.scaleAmount("AMOUNT_FOR_SELL");
-
-//get quotes for each amount using ZeroEx
-const quotes = await Promise.all(
-	Object.entries(amounts).map(async ([asset, amount]) => {
-		const {
-			buyAmount: buyAssetMinAmount,
-			to: swapTarget,
-			data: assetQuote,
-		} = await zeroEx.quote(
-			"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
-			asset,
-			amount
-		);
-
-		return {
-			asset,
-			swapTarget,
-			buyAssetMinAmount,
-			assetQuote,
-		};
-	})
+// get WETH/PDI swap params
+const {
+	buyAmount: buyAssetMinAmount,
+	to: swapTarget,
+	data: assetQuote,
+} = await zeroEx.quote(
+	"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH
+	indexPDI,
+	amount
 );
 ```
 
@@ -174,10 +160,7 @@ Subgraph package has been created to get data related to index and users that ho
 ```typescript
 import { Subgraph } from "@phuture/sdk";
 
-const phutureGraphQlEndpoint =
-	"https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp";
-
-const client = Subgraph.fromUrl(phutureGraphQlEndpoint);
+const client = Subgraph.fromUrl();
 
 // get user data
 const { data } = await client.query({
