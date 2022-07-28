@@ -1,2 +1,2 @@
-export * from './insufficient-allowance.error';
-export * from './phuture.error';
+export * from './lib/insufficient-allowance.error';
+export * from './lib/phuture.error';

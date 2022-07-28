@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/nx/schemas/workspace-schema.json",
+	"version": 2,
+	"projects": {
+		"zeroex-aggregator": "packages/zeroex-aggregator",
+		"account": "packages/account",
+		"auto-router": "packages/auto-router",
+		"contract": "packages/contract",
+		"erc-20": "packages/erc-20",
+		"errors": "packages/errors",
+		"index": "packages/index",
+		"index-router": "packages/index-router",
+		"subgraph": "packages/subgraph",
+		"types": "packages/types"
+	}
+}

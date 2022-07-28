@@ -1,1 +1,1 @@
-export * from './auto-router';
+export * from './lib/auto-router';

@@ -1,10 +1,10 @@
 import process from 'node:process';
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
-import {Index} from '@phuture/index';
-import {IndexRouter} from '@phuture/index-router';
+import {ZeroExAggregator} from '../../../packages/0x-aggregator-';
+import {Index} from '../../../packages/index-';
+import {IndexRouter} from '../../../packages/index-router-';
 import dotenv from 'dotenv';
 import {BigNumber, ethers, utils} from 'ethers';
-import {Account} from '@phuture/account';
+import {Account} from '../../../packages/account-';
 
 dotenv.config();
 

@@ -1,9 +1,9 @@
 import {BigNumber, ethers} from 'ethers';
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
-import {IndexRouter} from '@phuture/index-router';
-import {AutoRouter} from '@phuture/auto-router';
+import {ZeroExAggregator} from '../../../packages/0x-aggregator-';
+import {IndexRouter} from '../../../packages/index-router-';
+import {AutoRouter} from '../../../packages/auto-router-';
 import dotenv from 'dotenv';
-import {Account} from '@phuture/account';
+import {Account} from '../../../packages/account-';
 import {getEnv} from './utils';
 
 dotenv.config();
