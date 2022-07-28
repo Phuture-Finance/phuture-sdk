@@ -1,0 +1,9 @@
+[33m@phuture/subgraph:build[0m: cache hit, replaying output [2me87ff50b82ce6c26[0m
+[33m@phuture/subgraph:build: [0m
+[33m@phuture/subgraph:build: [0m> @phuture/subgraph@0.1.0 build /Users/jnlp/WebstormProjects/phuture-sdk/packages/subgraph
+[33m@phuture/subgraph:build: [0m> pnpm clean && tsc
+[33m@phuture/subgraph:build: [0m
+[33m@phuture/subgraph:build: [0m
+[33m@phuture/subgraph:build: [0m> @phuture/subgraph@0.1.0 clean /Users/jnlp/WebstormProjects/phuture-sdk/packages/subgraph
+[33m@phuture/subgraph:build: [0m> rimraf dist
+[33m@phuture/subgraph:build: [0m

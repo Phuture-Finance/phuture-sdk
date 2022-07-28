@@ -1,0 +1,14 @@
+[33m@phuture/index-router:build[0m: cache hit, replaying output [2m0c909e02b763daf0[0m
+[33m@phuture/index-router:build: [0m
+[33m@phuture/index-router:build: [0m> @phuture/index-router@0.1.0 build /Users/jnlp/WebstormProjects/phuture-sdk/packages/index-router
+[33m@phuture/index-router:build: [0m> pnpm typechain && pnpm clean && tsc
+[33m@phuture/index-router:build: [0m
+[33m@phuture/index-router:build: [0m
+[33m@phuture/index-router:build: [0m> @phuture/index-router@0.1.0 typechain /Users/jnlp/WebstormProjects/phuture-sdk/packages/index-router
+[33m@phuture/index-router:build: [0m> typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json
+[33m@phuture/index-router:build: [0m
+[33m@phuture/index-router:build: [0mSuccessfully generated 5 typings!
+[33m@phuture/index-router:build: [0m
+[33m@phuture/index-router:build: [0m> @phuture/index-router@0.1.0 clean /Users/jnlp/WebstormProjects/phuture-sdk/packages/index-router
+[33m@phuture/index-router:build: [0m> rimraf dist
+[33m@phuture/index-router:build: [0m

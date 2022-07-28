@@ -1,0 +1,9 @@
+[36m@phuture/auto-router:build[0m: cache hit, replaying output [2m496c51856c8289c8[0m
+[36m@phuture/auto-router:build: [0m
+[36m@phuture/auto-router:build: [0m> @phuture/auto-router@0.1.1 build /Users/jnlp/WebstormProjects/phuture-sdk/packages/auto-router
+[36m@phuture/auto-router:build: [0m> pnpm clean && tsc
+[36m@phuture/auto-router:build: [0m
+[36m@phuture/auto-router:build: [0m
+[36m@phuture/auto-router:build: [0m> @phuture/auto-router@0.1.1 clean /Users/jnlp/WebstormProjects/phuture-sdk/packages/auto-router
+[36m@phuture/auto-router:build: [0m> rimraf dist
+[36m@phuture/auto-router:build: [0m

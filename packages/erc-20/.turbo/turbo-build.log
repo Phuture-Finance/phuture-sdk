@@ -1,0 +1,14 @@
+[32m@phuture/erc-20:build[0m: cache hit, replaying output [2m5cdc66360f33d987[0m
+[32m@phuture/erc-20:build: [0m
+[32m@phuture/erc-20:build: [0m> @phuture/erc-20@0.1.0 build /Users/jnlp/WebstormProjects/phuture-sdk/packages/erc-20
+[32m@phuture/erc-20:build: [0m> pnpm typechain && pnpm clean && tsc
+[32m@phuture/erc-20:build: [0m
+[32m@phuture/erc-20:build: [0m
+[32m@phuture/erc-20:build: [0m> @phuture/erc-20@0.1.0 typechain /Users/jnlp/WebstormProjects/phuture-sdk/packages/erc-20
+[32m@phuture/erc-20:build: [0m> typechain --target=ethers-v5 --out-dir=src/types abis/**/*.json
+[32m@phuture/erc-20:build: [0m
+[32m@phuture/erc-20:build: [0mSuccessfully generated 7 typings!
+[32m@phuture/erc-20:build: [0m
+[32m@phuture/erc-20:build: [0m> @phuture/erc-20@0.1.0 clean /Users/jnlp/WebstormProjects/phuture-sdk/packages/erc-20
+[32m@phuture/erc-20:build: [0m> rimraf dist
+[32m@phuture/erc-20:build: [0m

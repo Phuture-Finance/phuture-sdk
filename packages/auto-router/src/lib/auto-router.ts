@@ -1,4 +1,4 @@
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
+import {ZeroExAggregator} from '@phuture/zeroex-aggregator';
 import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
 import {Index} from '@phuture/index';
 import {IndexRouter} from '@phuture/index-router';

@@ -1,10 +1,10 @@
 import {Erc20Permit} from '@phuture/erc-20';
 import type {Address, ContractFactory, PriceSource} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import {BigNumber, BigNumberish, utils} from 'ethers';
 import {Account} from '@phuture/account';
 import {Fees, IndexRepo} from './interfaces';
 import {subgraphIndexRepo} from './subraph.repository';
-import { BaseIndex } from '../types';
+import {BaseIndex, BaseIndex__factory} from '../types';
 
 /**
  * ### Index Contract
@@ -122,10 +122,10 @@ export class Index extends Erc20Permit<BaseIndex> {
 	/**
 	 * ### Get price of the index
 	 *
-	 * @returns {Promise<BigNumber>} Price of the index in sellToken
+	 * @returns Price of the index in sellToken
 	 */
 	public async priceEth(): Promise<BigNumber> {
-		return this._indexRepo.priceEth(this.address);
+		return utils.parseEther(await this._indexRepo.priceEth(this.address));
 	}
 
 	/**
