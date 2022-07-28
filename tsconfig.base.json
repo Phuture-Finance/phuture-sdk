@@ -25,7 +25,7 @@
 			"@phuture/sdk": ["packages/sdk/src/index.ts"],
 			"@phuture/subgraph": ["packages/subgraph/src/index.ts"],
 			"@phuture/types": ["packages/types/src/index.ts"],
-			"@phuture/zeroex-aggregator": ["packages/zeroex-aggregator/src/index.ts"]
+			"@phuture/0x-aggregator": ["packages/0x-aggregator/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules"]

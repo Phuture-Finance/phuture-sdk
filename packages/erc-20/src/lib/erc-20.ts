@@ -6,9 +6,7 @@ import {Account} from '@phuture/account';
 import {ERC20 as ERC20ContractInterface, ERC20__factory} from '../types';
 
 /** ### ERC20 Token Contract */
-export class Erc20<
-	C extends ERC20ContractInterface = ERC20ContractInterface,
-> extends Contract<C> {
+export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> extends Contract<C> {
 	/** ### Decimals of the token */
 	private _decimals?: number;
 

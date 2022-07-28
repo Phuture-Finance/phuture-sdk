@@ -9,11 +9,7 @@
 				"cacheableOperations": [
 					"prepublishOnly",
 					"build",
-					"clean",
 					"test",
-					"coverage",
-					"typechain",
-					"prepare",
 					"generate"
 				]
 			}

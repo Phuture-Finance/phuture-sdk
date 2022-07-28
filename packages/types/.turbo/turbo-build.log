@@ -1,9 +1,0 @@
-[35m@phuture/types:build[0m: cache hit, replaying output [2m612c4f1fbf048b6c[0m
-[35m@phuture/types:build: [0m
-[35m@phuture/types:build: [0m> @phuture/types@0.1.0 build /Users/jnlp/WebstormProjects/phuture-sdk/packages/types
-[35m@phuture/types:build: [0m> pnpm clean && tsc
-[35m@phuture/types:build: [0m
-[35m@phuture/types:build: [0m
-[35m@phuture/types:build: [0m> @phuture/types@0.1.0 clean /Users/jnlp/WebstormProjects/phuture-sdk/packages/types
-[35m@phuture/types:build: [0m> rimraf dist
-[35m@phuture/types:build: [0m

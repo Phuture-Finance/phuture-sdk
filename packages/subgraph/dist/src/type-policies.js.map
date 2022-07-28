@@ -1,1 +1,0 @@
-{"version":3,"file":"type-policies.js","sourceRoot":"","sources":["../../src/type-policies.ts"],"names":[],"mappings":";;;AAGA,gDAAgD;AACnC,QAAA,YAAY,GAA4B;IACpD,KAAK,EAAE;QACN,SAAS,EAAE,CAAC,IAAI,EAAE,QAAQ,EAAE,MAAM,CAAC;KACnC;IACD,IAAI,EAAE;QACL,SAAS,EAAE,CAAC,IAAI,CAAC;KACjB;CACD,CAAC"}

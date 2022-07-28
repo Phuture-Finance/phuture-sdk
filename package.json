@@ -14,8 +14,7 @@
 	  	"exec": "nx exec",
 		"build": "nx run-many --target=build --all",
 		"format": "prettier --write '**/*.{json,md,yml}'",
-		"lint": "nx lint",
-		"lint:fix": "xo --fix",
+		"lint": "nx run-many --target=lint --all",
 		"test": "nx run-many --target=test --all",
 		"docs": "typedoc ."
 	},
@@ -70,23 +69,6 @@
 		]
 	},
 	"packageManager": "pnpm@7.1.0",
-	"xo": {
-		"prettier": true,
-		"envs": [
-			"browser",
-			"node",
-			"es2021"
-		],
-		"rules": {
-			"import/extensions": 0,
-			"unicorn/prefer-node-protocol": 0
-		},
-		"ignores": [
-			"./examples/**/*.d.ts",
-			"./packages/**/test/**",
-			"**/generated/**"
-		]
-	},
 	"dependencies": {
 		"@apollo/client": "^3.6.9",
 		"@ethersproject/abi": "^5.6.4",

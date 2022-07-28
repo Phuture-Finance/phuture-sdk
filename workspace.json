@@ -13,6 +13,6 @@
 		"sdk": "packages/sdk",
 		"subgraph": "packages/subgraph",
 		"types": "packages/types",
-		"zeroex-aggregator": "packages/zeroex-aggregator"
+		"0x-aggregator": "packages/0x-aggregator"
 	}
 }

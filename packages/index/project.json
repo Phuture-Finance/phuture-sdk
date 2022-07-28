@@ -1,45 +1,65 @@
 {
-	"$schema": "../../node_modules/nx/schemas/project-schema.json",
-	"sourceRoot": "packages/index/src",
-	"projectType": "library",
-	"targets": {
-		"build": {
-			"executor": "@nrwl/js:tsc",
-			"outputs": ["{options.outputPath}"],
-			"options": {
-				"outputPath": "dist/packages/index",
-				"main": "packages/index/src/index.ts",
-				"tsConfig": "packages/index/tsconfig.lib.json",
-				"assets": ["packages/index/*.md"]
-			}
-		},
-		"publish": {
-			"executor": "@nrwl/workspace:run-commands",
-			"options": {
-				"command": "node tools/scripts/publish.mjs index {args.ver} {args.tag}"
-			},
-			"dependsOn": [
-				{
-					"projects": "self",
-					"target": "build"
-				}
-			]
-		},
-		"lint": {
-			"executor": "@nrwl/linter:eslint",
-			"outputs": ["{options.outputFile}"],
-			"options": {
-				"lintFilePatterns": ["packages/index/**/*.ts"]
-			}
-		},
-		"test": {
-			"executor": "@nrwl/jest:jest",
-			"outputs": ["coverage/packages/index"],
-			"options": {
-				"jestConfig": "packages/index/jest.config.ts",
-				"passWithNoTests": true
-			}
-		}
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/index/src",
+  "projectType": "library",
+  "targets": {
+	"build": {
+	  "executor": "@nrwl/js:tsc",
+	  "outputs": [
+		"{options.outputPath}"
+	  ],
+	  "options": {
+		"outputPath": "dist/packages/index",
+		"main": "packages/index/src/index.ts",
+		"tsConfig": "packages/index/tsconfig.lib.json",
+		"assets": [
+		  "packages/index/*.md"
+		]
+	  }
 	},
-	"tags": []
+	"publish": {
+	  "executor": "@nrwl/workspace:run-commands",
+	  "options": {
+		"command": "node tools/scripts/publish.mjs index {args.ver} {args.tag}"
+	  },
+	  "dependsOn": [
+		{
+		  "projects": "self",
+		  "target": "build"
+		}
+	  ]
+	},
+	"generate": {
+	  "executor": "@nrwl/workspace:run-commands",
+	  "options": {
+		"commands": [
+		  {
+			"command": "npx typechain --target=ethers-v5 --out-dir=packages/index/src/types packages/index/abis/**/*.json"
+		  }
+		]
+	  }
+	},
+	"lint": {
+	  "executor": "@nrwl/linter:eslint",
+	  "outputs": [
+		"{options.outputFile}"
+	  ],
+	  "options": {
+		"lintFilePatterns": [
+		  "packages/index/**/*.ts"
+		]
+	  }
+	},
+	"test": {
+	  "executor": "@nrwl/jest:jest",
+	  "outputs": [
+		"coverage/packages/index"
+	  ],
+	  "options": {
+		"jestConfig": "packages/index/jest.config.ts",
+		"passWithNoTests": true
+	  }
+	}
+  },
+  "tags": []
 }

@@ -1,9 +1,0 @@
-[35m@phuture/contract:build[0m: cache hit, replaying output [2mf5776b6425823476[0m
-[35m@phuture/contract:build: [0m
-[35m@phuture/contract:build: [0m> @phuture/contract@0.1.0 build /Users/jnlp/WebstormProjects/phuture-sdk/packages/contract
-[35m@phuture/contract:build: [0m> pnpm clean && tsc
-[35m@phuture/contract:build: [0m
-[35m@phuture/contract:build: [0m
-[35m@phuture/contract:build: [0m> @phuture/contract@0.1.0 clean /Users/jnlp/WebstormProjects/phuture-sdk/packages/contract
-[35m@phuture/contract:build: [0m> rimraf dist
-[35m@phuture/contract:build: [0m

@@ -1,5 +1,4 @@
 import type {Address} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
 
 /** ### Index Repository Interface */
 export interface IndexRepo {
