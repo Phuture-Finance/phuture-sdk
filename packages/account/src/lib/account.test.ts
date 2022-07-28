@@ -1,4 +1,2 @@
 /** @test {account} */
-test("account", () => {
-
-});
+test('account', () => {});

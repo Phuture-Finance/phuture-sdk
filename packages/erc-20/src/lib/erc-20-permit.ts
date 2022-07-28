@@ -1,8 +1,8 @@
-import {Address, ContractFactory, isAddress, Signature} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
-import {Interface} from '@ethersproject/abi';
-import {Account} from '@phuture/account';
-import {Erc20} from './erc-20';
+import { Address, ContractFactory, isAddress, Signature } from '@phuture/types';
+import { BigNumber, BigNumberish } from 'ethers';
+import { Interface } from '@ethersproject/abi';
+import { Account } from '@phuture/account';
+import { Erc20 } from './erc-20';
 import {
 	ERC20Permit as ERC20PermitContractInterface,
 	ERC20Permit__factory,
@@ -29,7 +29,7 @@ export type PermitOptions = StandardPermitArguments | AllowedPermitArguments;
  * @returns True if options are allowed, false otherwise
  */
 const isAllowedPermit = (
-	options: PermitOptions,
+	options: PermitOptions
 ): options is AllowedPermitArguments => 'nonce' in options;
 
 /** ### Erc20Permit Contract Interface */
@@ -194,25 +194,25 @@ const permitInterface = new Interface([
  */
 export const encodePermit =
 	(erc20: Erc20 | Address) =>
-		(options: PermitOptions): string => {
-			const [functionName, amount, deadline] = isAllowedPermit(options)
-				? ['selfPermitAllowed', options.nonce, options.expiry]
-				: ['selfPermit', options.amount, options.deadline];
+	(options: PermitOptions): string => {
+		const [functionName, amount, deadline] = isAllowedPermit(options)
+			? ['selfPermitAllowed', options.nonce, options.expiry]
+			: ['selfPermit', options.amount, options.deadline];
 
-			return permitInterface.encodeFunctionData(functionName, [
-				isAddress(erc20) ? erc20 : erc20.address,
-				BigNumber.from(amount).toHexString(),
-				BigNumber.from(deadline).toHexString(),
-				options.v,
-				options.r,
-				options.s,
-			]);
-		};
+		return permitInterface.encodeFunctionData(functionName, [
+			isAddress(erc20) ? erc20 : erc20.address,
+			BigNumber.from(amount).toHexString(),
+			BigNumber.from(deadline).toHexString(),
+			options.v,
+			options.r,
+			options.s,
+		]);
+	};
 
 /** ### Erc20Permit Token Contract */
 export class Erc20Permit<
-	C extends ERC20PermitContractInterface = ERC20PermitContractInterface,
-	> extends Erc20<C> {
+	C extends ERC20PermitContractInterface = ERC20PermitContractInterface
+> extends Erc20<C> {
 	/** Encodes permit data for the given options */
 	public encodePermit = encodePermit(this);
 
@@ -228,7 +228,7 @@ export class Erc20Permit<
 	constructor(
 		account: Account,
 		contract: Address | C,
-		factory: ContractFactory = ERC20Permit__factory,
+		factory: ContractFactory = ERC20Permit__factory
 	) {
 		super(account, contract, factory);
 	}

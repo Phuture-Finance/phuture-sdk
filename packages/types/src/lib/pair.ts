@@ -1,5 +1,5 @@
-import {BigNumberish} from 'ethers';
-import {Address} from './address';
+import { BigNumberish } from 'ethers';
+import { Address } from './address';
 
 /**
  * Pair of tokens represented by their addresses

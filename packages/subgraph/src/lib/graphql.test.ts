@@ -1,15 +1,15 @@
-import { expect } from "chai";
-import { Subgraph } from "../src";
-import { gql } from "@apollo/client/core";
+import { expect } from 'chai';
+import { Subgraph } from '../src';
+import { gql } from '@apollo/client/core';
 
-const userId = "0x000000000000000000000000000000000000dead";
+const userId = '0x000000000000000000000000000000000000dead';
 
-describe("get graphql client", () => {
+describe('get graphql client', () => {
 	const phutureGraphQlEndpoint =
-		"https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp";
+		'https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp';
 	const client = Subgraph.fromUrl(phutureGraphQlEndpoint);
 
-	it("should get user", async () => {
+	it('should get user', async () => {
 		const { data } = await client.query({
 			query: gql`
 				query User($userId: ID!) {

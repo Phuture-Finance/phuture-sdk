@@ -1,8 +1,8 @@
-import {gql, Subgraph} from '@phuture/subgraph';
-import {Address} from '@phuture/types';
-import {BigNumber, constants, utils} from 'ethers';
-import {Fees, IndexRepo} from './interfaces';
-import {Types} from "@phuture/subgraph";
+import { gql, Subgraph } from '@phuture/subgraph';
+import { Address } from '@phuture/types';
+import { BigNumber, constants, utils } from 'ethers';
+import { Fees, IndexRepo } from './interfaces';
+import { Types } from '@phuture/subgraph';
 
 /** ### Subgraph Index Repository */
 export class SubgraphIndexRepo implements IndexRepo {
@@ -29,11 +29,11 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 */
 	async holders(indexAddress: Address): Promise<Address[]> {
 		interface IndexHoldersData {
-			index: Types.Index
+			index: Types.Index;
 		}
 
 		// TODO: fix pagination for large array of holders
-		const {data} = await this._subgraph.query<IndexHoldersData>({
+		const { data } = await this._subgraph.query<IndexHoldersData>({
 			query: gql`
 				query IndexHolders($indexAddress: ID!) {
 					index(id: $indexAddress) {
@@ -53,11 +53,11 @@ export class SubgraphIndexRepo implements IndexRepo {
 
 		// TODO: move dead address to global constants
 		return data.index.users
-			.map(({user}) => user.id)
+			.map(({ user }) => user.id)
 			.filter(
 				(address) =>
 					address !== '0x000000000000000000000000000000000000dead' &&
-					address !== constants.AddressZero,
+					address !== constants.AddressZero
 			);
 	}
 
@@ -70,10 +70,10 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 */
 	public async holdersCount(indexAddress: Address): Promise<number> {
 		interface IndexUniqueHoldersData {
-			index: Types.Index
+			index: Types.Index;
 		}
 
-		const {data} = await this._subgraph.query<IndexUniqueHoldersData>({
+		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
 			query: gql`
 				query IndexHolders($indexAddress: ID!) {
 					index(id: $indexAddress) {
@@ -99,10 +99,10 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 */
 	public async fees(indexAddress: Address): Promise<Fees> {
 		interface IndexUniqueHoldersData {
-			index: Types.Index
+			index: Types.Index;
 		}
 
-		const {data} = await this._subgraph.query<IndexUniqueHoldersData>({
+		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
 			query: gql`
 				query IndexHolders($indexAddress: ID!) {
 					index(id: $indexAddress) {
@@ -127,10 +127,10 @@ export class SubgraphIndexRepo implements IndexRepo {
 
 	async priceEth(indexAddress: Address): Promise<string> {
 		interface IndexUniqueHoldersData {
-			index: Types.Index
+			index: Types.Index;
 		}
 
-		const {data} = await this._subgraph.query<IndexUniqueHoldersData>({
+		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
 			query: gql`
 				query IndexHolders($indexAddress: ID!) {
 					index(id: $indexAddress) {

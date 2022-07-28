@@ -6,12 +6,7 @@
 		"default": {
 			"runner": "nx/tasks-runners/default",
 			"options": {
-				"cacheableOperations": [
-					"prepublishOnly",
-					"build",
-					"test",
-					"generate"
-				]
+				"cacheableOperations": ["prepublishOnly", "build", "test", "generate"]
 			}
 		}
 	},

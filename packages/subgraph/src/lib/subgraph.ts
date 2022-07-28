@@ -7,11 +7,11 @@ import {
 	OperationVariables,
 	QueryOptions,
 } from '@apollo/client/core';
-import {Url} from '@phuture/types';
+import { Url } from '@phuture/types';
 import fetch from 'cross-fetch';
-import {typePolicies} from './type-policies';
+import { typePolicies } from './type-policies';
 
-export {gql} from '@apollo/client/core';
+export { gql } from '@apollo/client/core';
 
 /** ### Defaults Phuture Subgraph address */
 const defaultPhutureSubgraphUrl =
@@ -28,8 +28,8 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	 */
 	public static fromUrl(uri: Url = defaultPhutureSubgraphUrl): Subgraph {
 		const client = new ApolloClient({
-			link: new HttpLink({uri, fetch}),
-			cache: new InMemoryCache({typePolicies}),
+			link: new HttpLink({ uri, fetch }),
+			cache: new InMemoryCache({ typePolicies }),
 		});
 
 		return new Subgraph(client);
@@ -42,8 +42,7 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	 *
 	 * @returns {Subgraph} The new Subgraph client
 	 */
-	constructor(private readonly client: ApolloClient<CacheShape>) {
-	}
+	constructor(private readonly client: ApolloClient<CacheShape>) {}
 
 	/**
 	 * ### Queries the Subgraph
@@ -53,7 +52,7 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	 * @returns {Promise<ApolloQueryResult>} The query result
 	 */
 	public async query<T = any, Variables = OperationVariables>(
-		options: QueryOptions<Variables, T>,
+		options: QueryOptions<Variables, T>
 	): Promise<ApolloQueryResult<T>> {
 		return this.client.query(options);
 	}

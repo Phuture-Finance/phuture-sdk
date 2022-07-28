@@ -1,12 +1,14 @@
-import {Address, ContractFactory} from '@phuture/types';
-import {BigNumberish} from 'ethers';
-import {formatUnits} from 'ethers/lib/utils';
-import {Contract} from '@phuture/contract';
-import {Account} from '@phuture/account';
-import {ERC20 as ERC20ContractInterface, ERC20__factory} from '../types';
+import { Address, ContractFactory } from '@phuture/types';
+import { BigNumberish } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
+import { Contract } from '@phuture/contract';
+import { Account } from '@phuture/account';
+import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types';
 
 /** ### ERC20 Token Contract */
-export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> extends Contract<C> {
+export class Erc20<
+	C extends ERC20ContractInterface = ERC20ContractInterface
+> extends Contract<C> {
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
@@ -28,7 +30,7 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> ex
 	constructor(
 		account: Account,
 		contract: Address | C,
-		factory: ContractFactory = ERC20__factory,
+		factory: ContractFactory = ERC20__factory
 	) {
 		super(account, contract, factory);
 	}
@@ -111,11 +113,11 @@ export class Erc20<C extends ERC20ContractInterface = ERC20ContractInterface> ex
 	 */
 	public async checkAllowance(
 		account: Address,
-		amount: BigNumberish,
+		amount: BigNumberish
 	): Promise<boolean> {
 		const allowance = await this.contract.allowance(
 			await this.account.address(),
-			account,
+			account
 		);
 
 		return allowance.gte(amount);

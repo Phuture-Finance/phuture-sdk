@@ -1,5 +1,5 @@
-import {Address} from '@phuture/types';
-import {BigNumberish, BytesLike} from 'ethers';
+import { Address } from '@phuture/types';
+import { BigNumberish, BytesLike } from 'ethers';
 
 /** ### Options for 0x price endpoint */
 export interface Zero0xPriceOptions {

@@ -1,4 +1,4 @@
-import {Address, Network, Networkish, TokenSymbol} from '@phuture/types';
+import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
 
 /** ### Default addresses for network ### */
 export const setOfAssets: {

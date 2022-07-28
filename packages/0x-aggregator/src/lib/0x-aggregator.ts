@@ -1,6 +1,6 @@
-import {Address, TokenSymbol, Url} from '@phuture/types';
-import axios, {AxiosInstance} from 'axios';
-import {BigNumber, BigNumberish} from 'ethers';
+import { Address, TokenSymbol, Url } from '@phuture/types';
+import axios, { AxiosInstance } from 'axios';
+import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
 import {
 	Zero0xPriceOptions,
@@ -43,7 +43,7 @@ export class ZeroExAggregator {
 			baseURL: baseUrl,
 			headers: {
 				'Content-Type': 'application/json',
-				...(apiKey ? {'0x-api-key': apiKey} : {}),
+				...(apiKey ? { '0x-api-key': apiKey } : {}),
 			},
 		});
 
@@ -83,30 +83,33 @@ export class ZeroExAggregator {
 		sellToken: Address,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options?: Partial<Zero0xQuoteOptions>,
+		options?: Partial<Zero0xQuoteOptions>
 	): Promise<Zero0xQuoteResponse> {
 		debug(
 			'Making quote call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount,
+			sellAmount
 		);
-		const {data} = await this.client.get<Zero0xQuoteResponse>('/swap/v1/quote', {
-			params: {
-				...this._defaultQueryParams,
-				sellToken,
-				buyToken,
-				sellAmount: BigNumber.from(sellAmount).toString(),
-				...options,
-			},
-		});
+		const { data } = await this.client.get<Zero0xQuoteResponse>(
+			'/swap/v1/quote',
+			{
+				params: {
+					...this._defaultQueryParams,
+					sellToken,
+					buyToken,
+					sellAmount: BigNumber.from(sellAmount).toString(),
+					...options,
+				},
+			}
+		);
 
 		// TODO: cover error codes and add retry logic
 
 		debug(
 			'Received quote buyAmount: %s for buyToken: %s',
 			data.buyAmount,
-			buyToken,
+			buyToken
 		);
 
 		return data;
@@ -127,30 +130,33 @@ export class ZeroExAggregator {
 		sellToken: Address | TokenSymbol,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options?: Partial<Zero0xPriceOptions>,
+		options?: Partial<Zero0xPriceOptions>
 	): Promise<Zero0xPriceResponse> {
 		debug(
 			'Making price call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount,
+			sellAmount
 		);
-		const {data} = await this.client.get<Zero0xPriceResponse>('/swap/v1/price', {
-			params: {
-				...this._defaultQueryParams,
-				sellToken,
-				buyToken,
-				sellAmount: BigNumber.from(sellAmount).toString(),
-				...options,
-			},
-		});
+		const { data } = await this.client.get<Zero0xPriceResponse>(
+			'/swap/v1/price',
+			{
+				params: {
+					...this._defaultQueryParams,
+					sellToken,
+					buyToken,
+					sellAmount: BigNumber.from(sellAmount).toString(),
+					...options,
+				},
+			}
+		);
 
 		// TODO: cover error codes and add retry logic
 
 		debug(
 			'Received price buyAmount: %s for buyToken: %s',
 			data.buyAmount,
-			buyToken,
+			buyToken
 		);
 
 		return data;
@@ -163,8 +169,8 @@ export class ZeroExAggregator {
 	 */
 	async sources(): Promise<Zero0xSourcesResponse> {
 		debug('Making sources call');
-		const {data} = await this.client.get<Zero0xSourcesResponse>(
-			'/swap/v1/sources',
+		const { data } = await this.client.get<Zero0xSourcesResponse>(
+			'/swap/v1/sources'
 		);
 
 		// TODO: cover error codes and add retry logic

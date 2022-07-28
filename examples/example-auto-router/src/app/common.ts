@@ -1,13 +1,19 @@
-import {ethers} from 'ethers';
-import {Account, AutoRouter, Index, IndexRouter, ZeroExAggregator} from '@phuture/sdk';
+import { ethers } from 'ethers';
+import {
+	Account,
+	AutoRouter,
+	Index,
+	IndexRouter,
+	ZeroExAggregator,
+} from '@phuture/sdk';
 import 'dotenv/config';
-import {getEnv} from './utils';
+import { getEnv } from './utils';
 
 const account = new Account(
 	new ethers.Wallet(
 		getEnv('PRIVATE_KEY'),
-		new ethers.providers.JsonRpcProvider(getEnv('NODE_URL')),
-	),
+		new ethers.providers.JsonRpcProvider(getEnv('NODE_URL'))
+	)
 );
 
 const zeroEx = new ZeroExAggregator();

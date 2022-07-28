@@ -1,6 +1,6 @@
-import {PriceSource} from '@phuture/types';
-import {BigNumber} from 'ethers';
-import {ZeroExAggregator} from './0x-aggregator';
+import { PriceSource } from '@phuture/types';
+import { BigNumber } from 'ethers';
+import { ZeroExAggregator } from './0x-aggregator';
 
 /** Price Source for 0x */
 export class ZeroExPriceSource implements PriceSource {
@@ -23,12 +23,12 @@ export class ZeroExPriceSource implements PriceSource {
 	public async price(
 		buyToken: string,
 		sellToken: string,
-		sellAmount: string,
+		sellAmount: string
 	): Promise<BigNumber> {
-		const {buyAmount} = await this.client.quote(
+		const { buyAmount } = await this.client.quote(
 			sellToken,
 			buyToken,
-			sellAmount,
+			sellAmount
 		);
 		return BigNumber.from(buyAmount);
 	}

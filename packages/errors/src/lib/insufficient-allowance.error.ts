@@ -1,5 +1,5 @@
-import {BigNumber, BigNumberish} from 'ethers';
-import {canSetPrototype} from './can-set-prototype';
+import { BigNumber, BigNumberish } from 'ethers';
+import { canSetPrototype } from './can-set-prototype';
 
 /**
  * ### Error thrown on insufficient allowance
@@ -21,7 +21,7 @@ export class InsufficientAllowanceError extends Error {
 	 */
 	constructor(
 		expectedAllowance: BigNumberish,
-		actualAllowance: BigNumberish = 0,
+		actualAllowance: BigNumberish = 0
 	) {
 		expectedAllowance = BigNumber.from(expectedAllowance);
 		actualAllowance = BigNumber.from(actualAllowance);

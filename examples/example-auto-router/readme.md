@@ -18,7 +18,7 @@ The process is as follows:
 
 ```typescript
 // create an instance of the index
-const index = new Index(wallet, "0x778b8cc9d9d8e97ab7f6e100e45c1e576bb1d6d4");
+const index = new Index(wallet, '0x778b8cc9d9d8e97ab7f6e100e45c1e576bb1d6d4');
 
 // get the amount to be minted for each token in the index
 const { amounts, amountToSellQuoted } = await index.scaleAmount(
@@ -36,7 +36,7 @@ const quotes = await Promise.all(
 			buyAmount: buyAssetMinAmount,
 			to: swapTarget,
 			data: assetQuote,
-		} = await zeroEx.quote("ETH", asset, amount);
+		} = await zeroEx.quote('ETH', asset, amount);
 
 		return {
 			asset,

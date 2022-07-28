@@ -11,7 +11,7 @@
 		"bump": "changeset version && pnpm update-manifests",
 		"release": "pnpm publish --access=public",
 		"prepare": "husky install",
-	  	"exec": "nx exec",
+		"exec": "nx exec",
 		"build": "nx run-many --target=build --all",
 		"format": "prettier --write '**/*.{json,md,yml}'",
 		"lint": "nx run-many --target=lint --all",

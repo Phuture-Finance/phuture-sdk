@@ -1,6 +1,6 @@
-import {EventEmitter} from 'events';
-import {BigNumber, Signer} from 'ethers';
-import {Address} from "@phuture/types";
+import { EventEmitter } from 'events';
+import { BigNumber, Signer } from 'ethers';
+import { Address } from '@phuture/types';
 
 /** ### Account class for interacting with the blockchain through the Signer */
 export class Account extends EventEmitter {
