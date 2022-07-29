@@ -24,8 +24,7 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {
-	}
+	) {}
 
 	/**
 	 * ### Auto Buy
@@ -103,7 +102,7 @@ export class AutoRouter {
 		);
 
 		const quotes = await Promise.all(
-			Object.entries(amounts).map(async ([asset, {amount}], i) => {
+			Object.entries(amounts).map(async ([asset, amount]) => {
 				const {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
@@ -186,7 +185,7 @@ export class AutoRouter {
 				? new Erc20(this.indexRouter.account, outputToken)
 				: outputToken;
 			outputTokenAddress = outputToken.address;
-			const {buyAmount} = await this.zeroExAggregator.price(
+			const { buyAmount } = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals())
