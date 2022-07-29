@@ -59,19 +59,23 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 * @returns mint transaction
 	 */
 	async mintSwap(
-		options:
-			| IIndexRouter.MintParamsStruct
-			| IIndexRouter.MintSwapParamsStruct
-			| IIndexRouter.MintSwapValueParamsStruct,
+		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
 		sellToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<ContractTransaction> {
-		if (!sellToken)
+		if (!sellToken) {
+			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
+				index: options.index,
+				quotes: options.quotes,
+				recipient: options.recipient
+			}
+
 			return this.contract.mintSwapValue(
-				options as IIndexRouter.MintSwapValueParamsStruct,
+				mintSwapValueOptions,
 				{ value: sellAmount }
 			);
+		}
 
 		if (permitOptions !== undefined)
 			return this.contract.mintSwapWithPermit(
@@ -99,22 +103,24 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 * @returns mint amount
 	 */
 	async mintSwapStatic(
-		options:
-			| IIndexRouter.MintParamsStruct
-			| IIndexRouter.MintSwapParamsStruct
-			| IIndexRouter.MintSwapValueParamsStruct,
+		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
 		sellToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
 		if (!sellToken) {
+			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
+				index: options.index,
+				quotes: options.quotes,
+				recipient: options.recipient
+			}
 			const [outputAmount, estimatedGas] = await Promise.all([
 				this.contract.callStatic.mintSwapValue(
-					options as IIndexRouter.MintSwapValueParamsStruct,
+					mintSwapValueOptions,
 					{ value: sellAmount }
 				),
 				this.contract.estimateGas.mintSwapValue(
-					options as IIndexRouter.MintSwapValueParamsStruct,
+					mintSwapValueOptions,
 					{ value: sellAmount }
 				),
 			]);
