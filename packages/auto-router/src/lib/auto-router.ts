@@ -82,7 +82,8 @@ export class AutoRouter {
 		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
 		const buyAmountsInBase = await Promise.all(
 			buyAmounts.map(async ({ asset, buyAmount }) => {
-				const price = await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
+				const price =
+					await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
 						asset
 					);
 				return {
@@ -201,26 +202,32 @@ export class AutoRouter {
 				gasPrice,
 				estimatedGas: zeroExGas,
 			},
-			{ amounts },
+			anatomy,
+			inactiveAnatomy,
+			amounts,
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
 				index.address,
 				outputToken.address,
 				indexAmount
 			),
-			index.scaleAmount(indexAmount),
+			index.contract.anatomy(),
+			index.contract.inactiveAnatomy(),
+			this.indexRouter.burnAmount(index.address, indexAmount),
 		]);
 
+		const assets: Address[] = [...anatomy._assets, ...inactiveAnatomy];
+
 		const quotes = await Promise.all(
-			Object.entries(amounts).map(async ([asset, amount]) => {
+			amounts.map(async (amount, i) => {
 				const {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
-				} = await this.zeroExAggregator.quote(index.address, asset, amount);
+				} = await this.zeroExAggregator.quote(index.address, assets[i], amount);
 
 				return {
-					asset,
+					asset: assets[i],
 					swapTarget,
 					buyAssetMinAmount,
 					assetQuote,

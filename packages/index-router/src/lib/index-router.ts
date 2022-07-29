@@ -9,6 +9,7 @@ import {
 	IndexRouter__factory,
 } from '../types';
 import { IIndexRouter } from '../types/IndexRouter';
+import { Index } from '@phuture/index';
 
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
