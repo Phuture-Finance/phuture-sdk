@@ -325,6 +325,8 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			outputAsset: '',
 		};
 
+		console.log(burnParameters);
+
 		if (options.outputAsset === undefined) {
 			if (options.permitOptions !== undefined) {
 				const [outputAmount, estimatedGas] = await Promise.all([

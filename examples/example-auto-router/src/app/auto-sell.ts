@@ -4,7 +4,7 @@ import {Erc20Permit} from "@phuture/erc-20";
 
 export default async function autoSell(amountToSellDesired: BigNumber) {
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
-	if (tokenAddress) {
+	if (!tokenAddress) {
 		await autoRouter.autoSell(index, amountToSellDesired);
 	}
 
