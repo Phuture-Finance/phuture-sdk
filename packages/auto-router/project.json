@@ -7,6 +7,7 @@
 			"executor": "@nrwl/js:tsc",
 			"outputs": ["{options.outputPath}"],
 			"options": {
+			  	"buildableProjectDepsInPackageJsonType": "dependencies",
 				"outputPath": "dist/packages/auto-router",
 				"main": "packages/auto-router/src/index.ts",
 				"tsConfig": "packages/auto-router/tsconfig.lib.json",
