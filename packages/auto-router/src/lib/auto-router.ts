@@ -107,6 +107,7 @@ export class AutoRouter {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
+					sellAmount,
 				} = await this.zeroExAggregator.quote(
 					inputTokenAddress,
 					asset,
@@ -118,12 +119,13 @@ export class AutoRouter {
 					buyAssetMinAmount,
 					swapTarget,
 					assetQuote,
+					sellAmount
 				};
 			})
 		);
 
 		amountInInputToken = quotes.reduce((sum, curr) =>
-			sum.add(curr.buyAssetMinAmount), BigNumber.from(0)
+			sum.add(curr.sellAmount), BigNumber.from(0)
 		);
 
 		const options = {
