@@ -40,4 +40,5 @@ Thumbs.db
 
 .env
 
-types/**
+packages/**/src/types
+packages/**/src/generated
