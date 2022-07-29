@@ -102,7 +102,7 @@ export class AutoRouter {
 		);
 
 		const quotes = await Promise.all(
-			Object.entries(amounts).map(async ([asset, amount]) => {
+			Object.entries(amounts).map(async ([asset, { amount }], i) => {
 				const {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
