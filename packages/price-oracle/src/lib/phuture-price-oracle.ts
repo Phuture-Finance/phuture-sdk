@@ -10,7 +10,7 @@ import {
 /** ### Default PhuturePriceOracle address for network */
 export const DefaultPhuturePriceOracleAddress: Record<Network, Address> = {
 	/** ### Default PhuturePriceOracle address on mainnet. */
-	[Network.Mainnet]: '0x7b6c3e5486d9e6959441ab554a889099eed76290',
+	[Network.Mainnet]: '0x384ac33558821383fF4fC73D1DEe3539a74bf540',
 };
 
 /** ### ERC20 Token Contract */

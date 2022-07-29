@@ -1,9 +1,10 @@
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {Index} from '@phuture/index';
-import {IndexRouter} from '@phuture/index-router';
-import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import { ZeroExAggregator } from '@phuture/0x-aggregator';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { Index } from '@phuture/index';
+import { IndexRouter } from '@phuture/index-router';
+import { Address, isAddress } from '@phuture/types';
+import { BigNumber, BigNumberish } from 'ethers';
+import { getDefaultPriceOracle } from '@phuture/price-oracle';
 
 export interface MintThreshold {
 	amount: BigNumberish;
@@ -23,8 +24,7 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {
-	}
+	) {}
 
 	/**
 	 * ### Auto Buy
@@ -45,14 +45,6 @@ export class AutoRouter {
 		const inputTokenAddress =
 			inputToken?.address || (await this.indexRouter.weth());
 
-		// Most aggregators provide buy/sell details for both sides.
-		// 	If the sum of sold input is greater than the input amount, the order should be scaled down by:
-		// 	inputAmount / estimatedInputNeeded * (1 - slippage) and quoted by the aggregator again.
-		// (If aggregator cannot estimate total amount of assets needed to be sold,
-		// we can do it ourselves by callStatic-simulating a mint with provided calldata:
-		// 	constituentQuantity[i] = inputAmount * weight * P)
-		// Execute mint transaction
-		// inputAmount / estimatedInputNeeded * (1 - slippage) and quoted by the aggregator again.
 		const [
 			{
 				buyAmount: zeroExAmount,
@@ -61,7 +53,7 @@ export class AutoRouter {
 				gasPrice,
 				estimatedGas: zeroExGas,
 			},
-			{ amounts, amountToSell },
+			amounts,
 			indexPriceEth,
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
@@ -73,18 +65,56 @@ export class AutoRouter {
 			index.priceEth(),
 		]);
 
+		const buyAmounts = await Promise.all(
+			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				const { buyAmount } = await this.zeroExAggregator.price(
+					inputTokenAddress,
+					asset,
+					amount
+				);
+				return {
+					asset,
+					buyAmount,
+				};
+			})
+		);
+
+		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
+		const buyAmountsInBase = await Promise.all(
+			buyAmounts.map(async ({ asset, buyAmount }) => {
+				const price = await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
+						asset
+					);
+				return {
+					asset,
+					buyAmount: BigNumber.from(buyAmount)
+						.mul(BigNumber.from(2).pow(112))
+						.mul(255)
+						.div(price.mul(amounts[asset].weight)),
+				};
+			})
+		);
+
+		const minAmount = buyAmountsInBase.reduce((min, curr) =>
+			min.buyAmount.lte(curr.buyAmount) ? min : curr
+		);
+
 		const quotes = await Promise.all(
-			Object.entries(amounts).map(async ([asset, amount]) => {
+			Object.entries(amounts).map(async ([asset, { amount }], i) => {
 				const {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
-				} = await this.zeroExAggregator.quote(inputTokenAddress, asset, amount);
+				} = await this.zeroExAggregator.quote(
+					inputTokenAddress,
+					asset,
+					amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
+				);
 
 				return {
 					asset,
-					swapTarget,
 					buyAssetMinAmount,
+					swapTarget,
 					assetQuote,
 				};
 			})
@@ -97,7 +127,7 @@ export class AutoRouter {
 			amountInInputToken,
 			inputToken: inputTokenAddress,
 		};
-		const {estimatedGas, outputAmount} =
+		const { estimatedGas, outputAmount } =
 			await this.indexRouter.mintSwapStatic(
 				options,
 				amountInInputToken,
@@ -149,7 +179,7 @@ export class AutoRouter {
 				? new Erc20(this.indexRouter.account, outputToken)
 				: outputToken;
 			outputTokenAddress = outputToken.address;
-			const {buyAmount} = await this.zeroExAggregator.price(
+			const { buyAmount } = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals())
@@ -171,7 +201,7 @@ export class AutoRouter {
 				gasPrice,
 				estimatedGas: zeroExGas,
 			},
-			{amounts, amountToSell},
+			{ amounts },
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
 				index.address,
@@ -204,10 +234,10 @@ export class AutoRouter {
 			permitOptions,
 		};
 
-		const {outputAmount, estimatedGas} =
+		const { outputAmount, estimatedGas } =
 			await this.indexRouter.burnSwapStatic(
 				index.address,
-				amountToSell,
+				indexAmount,
 				await this.indexRouter.account.address(),
 				options
 			);
@@ -220,7 +250,7 @@ export class AutoRouter {
 		)
 			return this.indexRouter.burnSwap(
 				index.address,
-				amountToSell,
+				indexAmount,
 				await this.indexRouter.account.address(),
 				options
 			);

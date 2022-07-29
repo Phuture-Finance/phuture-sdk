@@ -1,6 +1,6 @@
 {
 	"$schema": "https://typedoc.org/schema.json",
-	"entryPointStrategy": "Packages",
+	"entryPointStrategy": "expand",
 	"name": "@phuture/sdk",
 	"readme": ".github/README.md",
 	"hideGenerator": true,

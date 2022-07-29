@@ -1,11 +1,10 @@
-import {Erc20Permit} from '@phuture/erc-20';
-import type {Address, ContractFactory} from '@phuture/types';
-import {BigNumber, BigNumberish, utils} from 'ethers';
-import {Account} from '@phuture/account';
-import {Fees, IndexRepo} from './interfaces';
-import {subgraphIndexRepo} from './subraph.repository';
-import {BaseIndex, BaseIndex__factory} from '../types';
-import {getDefaultPriceOracle} from '@phuture/price-oracle';
+import { Erc20Permit } from '@phuture/erc-20';
+import type { Address, ContractFactory } from '@phuture/types';
+import { BigNumber, BigNumberish, utils } from 'ethers';
+import { Account } from '@phuture/account';
+import { Fees, IndexRepo } from './interfaces';
+import { subgraphIndexRepo } from './subraph.repository';
+import { BaseIndex, BaseIndex__factory } from '../types';
 
 /**
  * ### Index Contract
@@ -55,32 +54,18 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 */
 	public async scaleAmount(
 		amountDesired: BigNumberish
-	): Promise<{
-		amountToSell: BigNumber;
-		amounts: Record<Address, BigNumber>
-	}> {
-		const {_assets, _weights} = await this.contract.anatomy();
+	): Promise<Record<Address, { amount: BigNumber; weight: number }>> {
+		const { _assets, _weights } = await this.contract.anatomy();
 
-		// TODO: fix for non-mainnet
-		const priceOracle = getDefaultPriceOracle(this.account);
-
-		let amountToSell = BigNumber.from(0)
-		const amounts: Record<Address, BigNumber> = {};
+		const amounts: Record<Address, { amount: BigNumber; weight: number }> = {};
 		for (const [index, asset] of _assets.entries()) {
-			const price =
-				await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(asset);
-
-			const amount = BigNumber.from(amountDesired)
-				.mul(_weights[index])
-				.div(255)
-				.mul(price);
-
-			amountToSell = amountToSell.add(amount);
-
-			amounts[asset] = amount.mul(price);
+			amounts[asset] = {
+				amount: BigNumber.from(amountDesired).mul(_weights[index]).div(255),
+				weight: _weights[index],
+			};
 		}
 
-		return {amountToSell, amounts};
+		return amounts;
 	}
 
 	/**
