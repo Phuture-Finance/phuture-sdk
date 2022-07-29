@@ -1,0 +1,26 @@
+{
+	"extends": "nx/presets/npm.json",
+	"$schema": "./node_modules/nx/schemas/nx-schema.json",
+	"npmScope": "phuture",
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "nx/tasks-runners/default",
+			"options": {
+				"cacheableOperations": ["prepublishOnly", "build", "test", "generate"]
+			}
+		}
+	},
+	"targetDefaults": {
+		"build": {
+			"dependsOn": ["generate", "^build"]
+		}
+	},
+	"affected": {
+		"defaultBase": "main"
+	},
+	"pluginsConfig": {
+		"@nrwl/js": {
+			"analyzeSourceFiles": true
+		}
+	}
+}

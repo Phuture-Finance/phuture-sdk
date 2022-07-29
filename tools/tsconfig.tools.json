@@ -1,0 +1,9 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "../dist/out-tsc/tools",
+		"module": "commonjs",
+		"types": ["node"]
+	},
+	"include": ["**/*.ts"]
+}

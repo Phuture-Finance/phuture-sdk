@@ -1,0 +1,19 @@
+{
+	"$schema": "./node_modules/nx/schemas/workspace-schema.json",
+	"version": 2,
+	"projects": {
+		"0x-aggregator": "packages/0x-aggregator",
+		"account": "packages/account",
+		"auto-router": "packages/auto-router",
+		"contract": "packages/contract",
+		"erc-20": "packages/erc-20",
+		"errors": "packages/errors",
+		"example-auto-router": "examples/example-auto-router",
+		"index": "packages/index",
+		"index-router": "packages/index-router",
+		"price-oracle": "packages/price-oracle",
+		"sdk": "packages/sdk",
+		"subgraph": "packages/subgraph",
+		"types": "packages/types"
+	}
+}

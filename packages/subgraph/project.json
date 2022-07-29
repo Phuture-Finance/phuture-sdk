@@ -1,0 +1,55 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/subgraph/src",
+	"projectType": "library",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/js:tsc",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/packages/subgraph",
+				"main": "packages/subgraph/src/index.ts",
+				"tsConfig": "packages/subgraph/tsconfig.lib.json",
+				"assets": ["packages/subgraph/*.md"]
+			}
+		},
+		"publish": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"command": "node tools/scripts/publish.mjs subgraph {args.ver} {args.tag}"
+			},
+			"dependsOn": [
+				{
+					"projects": "self",
+					"target": "build"
+				}
+			]
+		},
+		"generate": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"commands": [
+					{
+						"command": "npx graphql-codegen --config packages/subgraph/codegen.yml"
+					}
+				]
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/subgraph/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/packages/subgraph"],
+			"options": {
+				"jestConfig": "packages/subgraph/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
+}

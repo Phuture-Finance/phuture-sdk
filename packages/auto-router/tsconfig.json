@@ -1,18 +1,22 @@
 {
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"target": "es2018",
-		"module": "esnext",
-		"lib": ["esnext", "dom"],
-		"importHelpers": true,
-		"removeComments": true,
-		"declaration": true,
-		"sourceMap": true,
-		"outDir": "dist",
+		"module": "commonjs",
+		"forceConsistentCasingInFileNames": true,
 		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules", "dist"]
+	"files": [],
+	"include": [],
+	"references": [
+		{
+			"path": "./tsconfig.lib.json"
+		},
+		{
+			"path": "./tsconfig.spec.json"
+		}
+	]
 }

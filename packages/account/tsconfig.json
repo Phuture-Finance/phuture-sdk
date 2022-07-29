@@ -1,14 +1,22 @@
 {
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"target": "es5",
 		"module": "commonjs",
-		"lib": ["es6", "dom"],
-		"declaration": true,
-		"outDir": "dist",
+		"forceConsistentCasingInFileNames": true,
 		"strict": true,
-		"esModuleInterop": true,
-		"sourceMap": true
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true
 	},
-	"include": ["src/**/*", "**/*.test.ts"],
-	"exclude": ["node_modules", "dist"]
+	"files": [],
+	"include": [],
+	"references": [
+		{
+			"path": "./tsconfig.lib.json"
+		},
+		{
+			"path": "./tsconfig.spec.json"
+		}
+	]
 }

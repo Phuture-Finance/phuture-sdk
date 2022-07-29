@@ -1,18 +1,5 @@
 {
 	"name": "@phuture/types",
-	"version": "0.1.0",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"prepublishOnly": "pnpm build",
-		"build": "pnpm clean && tsc",
-		"clean": "rimraf dist"
-	},
-	"dependencies": {
-		"ethers": "5.6.9"
-	},
-	"devDependencies": {
-		"typescript": "4.7.4",
-		"rimraf": "3.0.2"
-	}
+	"version": "0.1.2",
+	"type": "commonjs"
 }

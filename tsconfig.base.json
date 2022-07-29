@@ -1,0 +1,33 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"target": "es2015",
+		"module": "esnext",
+		"lib": ["es2017", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@phuture/0x-aggregator": ["packages/0x-aggregator/src/index.ts"],
+			"@phuture/account": ["packages/account/src/index.ts"],
+			"@phuture/auto-router": ["packages/auto-router/src/index.ts"],
+			"@phuture/contract": ["packages/contract/src/index.ts"],
+			"@phuture/erc-20": ["packages/erc-20/src/index.ts"],
+			"@phuture/errors": ["packages/errors/src/index.ts"],
+			"@phuture/index": ["packages/index/src/index.ts"],
+			"@phuture/index-router": ["packages/index-router/src/index.ts"],
+			"@phuture/price-oracle": ["packages/price-oracle/src/index.ts"],
+			"@phuture/sdk": ["packages/sdk/src/index.ts"],
+			"@phuture/subgraph": ["packages/subgraph/src/index.ts"],
+			"@phuture/types": ["packages/types/src/index.ts"]
+		}
+	},
+	"exclude": ["node_modules", "tmp"]
+}

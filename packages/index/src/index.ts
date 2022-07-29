@@ -1,3 +1,3 @@
-export * from './base-index';
-export * from './interfaces';
-export * from './subraph.repository';
+export * from './lib/base-index';
+export * from './lib/interfaces';
+export * from './lib/subraph.repository';

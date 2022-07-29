@@ -1,3 +1,3 @@
-export * from './erc-20';
-export * from './erc-20-permit';
-export * from './addresses';
+export * from './lib/addresses';
+export * from './lib/erc-20';
+export * from './lib/erc-20-permit';
