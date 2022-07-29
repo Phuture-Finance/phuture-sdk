@@ -6,6 +6,7 @@ export default async function autoBuy(amountToSellDesired: BigNumber) {
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
 	if (!tokenAddress) {
 		await autoRouter.autoBuy(index, amountToSellDesired);
+		return
 	}
 
 	const token = new Erc20Permit(account, tokenAddress);

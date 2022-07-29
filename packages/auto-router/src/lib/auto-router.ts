@@ -6,11 +6,6 @@ import {Address, isAddress} from '@phuture/types';
 import {BigNumber, BigNumberish} from 'ethers';
 import {getDefaultPriceOracle} from '@phuture/price-oracle';
 
-export interface MintThreshold {
-	amount: BigNumberish;
-	tokenAddress: Address;
-}
-
 /** ### AutoRouter class */
 export class AutoRouter {
 	/**
@@ -180,7 +175,7 @@ export class AutoRouter {
 		outputToken?: Erc20 | Address,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	) {
-		let outputTokenAddress: Address | undefined;
+		let outputTokenAddress: Address;
 		let outputTokenPriceEth: BigNumber = BigNumber.from(10).pow(18);
 
 		if (outputToken) {
@@ -196,9 +191,10 @@ export class AutoRouter {
 
 			outputTokenPriceEth = BigNumber.from(buyAmount);
 		} else {
+			outputTokenAddress = await this.indexRouter.weth()
 			outputToken = new Erc20(
 				this.indexRouter.account,
-				await this.indexRouter.weth()
+				outputTokenAddress
 			);
 		}
 

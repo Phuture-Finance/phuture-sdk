@@ -8,7 +8,7 @@ import autoSell from './app/auto-sell';
  */
 const amountToSellDesired = BigNumber.from(utils.parseEther(getEnv('AMOUNT')));
 
-const func = getEnv('IS_SELL') === 'true ' ? autoSell : autoBuy;
+const func = getEnv('IS_SELL') === 'true' ? autoSell : autoBuy;
 
 const main = async () => {
 	await func(amountToSellDesired);

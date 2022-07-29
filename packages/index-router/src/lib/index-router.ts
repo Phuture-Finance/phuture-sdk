@@ -310,7 +310,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		recipient: Address,
 		options: {
 			quotes: IIndexRouter.BurnQuoteParamsStruct[];
-			outputAsset?: Address;
+			outputAsset: Address;
 			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
 		}
 	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
@@ -322,10 +322,8 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			amount,
 			recipient,
 			quotes: options.quotes,
-			outputAsset: '',
+			outputAsset: options.outputAsset,
 		};
-
-		console.log(burnParameters);
 
 		if (options.outputAsset === undefined) {
 			if (options.permitOptions !== undefined) {
@@ -360,7 +358,6 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			return { outputAmount, estimatedGas };
 		}
 
-		burnParameters.outputAsset = options.outputAsset;
 		if (options.permitOptions !== undefined) {
 			const [outputAmount, estimatedGas] = await Promise.all([
 				this.contract.callStatic.burnSwapWithPermit(
@@ -418,15 +415,12 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		prices?: BigNumberish[]
 	): Promise<BigNumber | BigNumber[]> {
 		const amounts = await this.contract.burnTokensAmount(index, amount);
-		if (!prices) {
+		if (!prices)
 			return amounts;
-		}
 
 		let totalAmount = BigNumber.from(0);
-
-		for (const [index, amount] of amounts.entries()) {
+		for (const [index, amount] of amounts.entries())
 			totalAmount = totalAmount.add(amount).mul(prices[index]);
-		}
 
 		return totalAmount;
 	}
