@@ -1,4 +1,4 @@
-import { Address } from '@phuture/types';
+import type { Address } from '@phuture/types';
 import { BigNumberish, BytesLike } from 'ethers';
 
 /** ### Options for 0x price endpoint */
@@ -28,7 +28,7 @@ export interface Zero0xPriceResponse {
 }
 
 /** ### Options for 0x quote endpoint */
-export interface Zero0xQuoteOptions extends Zero0xPriceOptions {}
+export type Zero0xQuoteOptions = Zero0xPriceOptions;
 
 /** ### Response from the 0x quote endpoint */
 export interface Zero0xQuoteResponse extends Zero0xPriceResponse {

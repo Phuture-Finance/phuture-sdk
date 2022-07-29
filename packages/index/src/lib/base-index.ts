@@ -1,10 +1,11 @@
-import { Erc20Permit } from '@phuture/erc-20';
-import type { Address, ContractFactory, PriceSource } from '@phuture/types';
-import { BigNumber, BigNumberish, utils } from 'ethers';
-import { Account } from '@phuture/account';
-import { Fees, IndexRepo } from './interfaces';
-import { subgraphIndexRepo } from './subraph.repository';
-import { BaseIndex, BaseIndex__factory } from '../types';
+import {Erc20Permit} from '@phuture/erc-20';
+import type {Address, ContractFactory} from '@phuture/types';
+import {BigNumber, BigNumberish, utils} from 'ethers';
+import {Account} from '@phuture/account';
+import {Fees, IndexRepo} from './interfaces';
+import {subgraphIndexRepo} from './subraph.repository';
+import {BaseIndex, BaseIndex__factory} from '../types';
+import {getDefaultPriceOracle} from '@phuture/price-oracle';
 
 /**
  * ### Index Contract
@@ -12,9 +13,6 @@ import { BaseIndex, BaseIndex__factory } from '../types';
 export class Index extends Erc20Permit<BaseIndex> {
 	/** ### Index repository */
 	private _indexRepo: IndexRepo;
-
-	/** ### Price source */
-	private _priceSource?: PriceSource;
 
 	/**
 	 * ### Creates a new Index instance
@@ -49,39 +47,40 @@ export class Index extends Erc20Permit<BaseIndex> {
 	}
 
 	/**
-	 * ### Connect price source to Index
-	 *
-	 * @param {IndexRepo} priceSource Price source to connect to Index
-	 *
-	 * @returns {this} Index instance
-	 */
-	public withPriceSource(priceSource: PriceSource): this {
-		this._priceSource = priceSource;
-
-		return this;
-	}
-
-	/**
-	 * ### Scale amount of input tokens to set underlying tokens amount
+	 * ### Scale amount of input tokens to set underlying tokens amount in baseToken
 	 *
 	 * @param amountDesired Amount of input tokens to scale
+	 *
+	 * @returns Scaled amounts of underlying tokens and total amount in baseToken
 	 */
-	public async scaleAmount(amountDesired: BigNumberish): Promise<{
+	public async scaleAmount(
+		amountDesired: BigNumberish
+	): Promise<{
 		amountToSell: BigNumber;
-		amounts: Record<Address, BigNumber>;
+		amounts: Record<Address, BigNumber>
 	}> {
-		const { _assets, _weights } = await this.contract.anatomy();
+		const {_assets, _weights} = await this.contract.anatomy();
 
-		let amountToSell = BigNumber.from(0);
+		// TODO: fix for non-mainnet
+		const priceOracle = getDefaultPriceOracle(this.account);
+
+		let amountToSell = BigNumber.from(0)
 		const amounts: Record<Address, BigNumber> = {};
 		for (const [index, asset] of _assets.entries()) {
-			amounts[asset] = BigNumber.from(amountDesired)
+			const price =
+				await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(asset);
+
+			const amount = BigNumber.from(amountDesired)
 				.mul(_weights[index])
-				.div(255);
-			amountToSell = amountToSell.add(amounts[asset]);
+				.div(255)
+				.mul(price);
+
+			amountToSell = amountToSell.add(amount);
+
+			amounts[asset] = amount.mul(price);
 		}
 
-		return { amountToSell, amounts };
+		return {amountToSell, amounts};
 	}
 
 	/**
@@ -100,23 +99,6 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 */
 	public async holdersCount(): Promise<number> {
 		return this._indexRepo.holdersCount(this.address);
-	}
-
-	/**
-	 * ### Get price of the index
-	 *
-	 * @param {Address} sellToken Token to sell
-	 * @param {BigNumberish} sellAmount Amount of tokens to sell
-	 *
-	 * @returns {Promise<BigNumber>} Price of the index in sellToken
-	 */
-	public async price(
-		sellToken: Address,
-		sellAmount: BigNumberish
-	): Promise<BigNumber> {
-		if (!this._priceSource) throw new Error('No price source');
-
-		return this._priceSource.price(this.address, sellToken, sellAmount);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import { Address, TokenSymbol, Url } from '@phuture/types';
+import type { Address, TokenSymbol, Url } from '@phuture/types';
 import axios, { AxiosInstance } from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';

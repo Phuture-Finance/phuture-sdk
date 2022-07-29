@@ -1,9 +1,9 @@
-import { ZeroExAggregator } from '@phuture/0x-aggregator';
-import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Index } from '@phuture/index';
-import { IndexRouter } from '@phuture/index-router';
-import { Address, isAddress } from '@phuture/types';
-import { BigNumber, BigNumberish } from 'ethers';
+import {ZeroExAggregator} from '@phuture/0x-aggregator';
+import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
+import {Index} from '@phuture/index';
+import {IndexRouter} from '@phuture/index-router';
+import {Address, isAddress} from '@phuture/types';
+import {BigNumber, BigNumberish} from 'ethers';
 
 export interface MintThreshold {
 	amount: BigNumberish;
@@ -23,7 +23,8 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {}
+	) {
+	}
 
 	/**
 	 * ### Auto Buy
@@ -43,6 +44,15 @@ export class AutoRouter {
 	) {
 		const inputTokenAddress =
 			inputToken?.address || (await this.indexRouter.weth());
+
+		// Most aggregators provide buy/sell details for both sides.
+		// 	If the sum of sold input is greater than the input amount, the order should be scaled down by:
+		// 	inputAmount / estimatedInputNeeded * (1 - slippage) and quoted by the aggregator again.
+		// (If aggregator cannot estimate total amount of assets needed to be sold,
+		// we can do it ourselves by callStatic-simulating a mint with provided calldata:
+		// 	constituentQuantity[i] = inputAmount * weight * P)
+		// Execute mint transaction
+		// inputAmount / estimatedInputNeeded * (1 - slippage) and quoted by the aggregator again.
 		const [
 			{
 				buyAmount: zeroExAmount,
@@ -87,10 +97,10 @@ export class AutoRouter {
 			amountInInputToken,
 			inputToken: inputTokenAddress,
 		};
-		const { estimatedGas, outputAmount } =
+		const {estimatedGas, outputAmount} =
 			await this.indexRouter.mintSwapStatic(
 				options,
-				amountToSell,
+				amountInInputToken,
 				inputToken,
 				permitOptions
 			);
@@ -103,7 +113,7 @@ export class AutoRouter {
 		)
 			return this.indexRouter.mintSwap(
 				options,
-				amountToSell,
+				amountInInputToken,
 				inputToken,
 				permitOptions
 			);
@@ -139,7 +149,7 @@ export class AutoRouter {
 				? new Erc20(this.indexRouter.account, outputToken)
 				: outputToken;
 			outputTokenAddress = outputToken.address;
-			const { buyAmount } = await this.zeroExAggregator.price(
+			const {buyAmount} = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals())
@@ -161,7 +171,7 @@ export class AutoRouter {
 				gasPrice,
 				estimatedGas: zeroExGas,
 			},
-			{ amounts, amountToSell },
+			{amounts, amountToSell},
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
 				index.address,
@@ -194,7 +204,7 @@ export class AutoRouter {
 			permitOptions,
 		};
 
-		const { outputAmount, estimatedGas } =
+		const {outputAmount, estimatedGas} =
 			await this.indexRouter.burnSwapStatic(
 				index.address,
 				amountToSell,

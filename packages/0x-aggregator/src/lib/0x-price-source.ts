@@ -1,4 +1,4 @@
-import { PriceSource } from '@phuture/types';
+import type { PriceSource } from '@phuture/types';
 import { BigNumber } from 'ethers';
 import { ZeroExAggregator } from './0x-aggregator';
 

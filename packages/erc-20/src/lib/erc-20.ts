@@ -1,14 +1,18 @@
-import { Address, ContractFactory } from '@phuture/types';
-import { BigNumberish } from 'ethers';
+import { Address, ContractFactory, Network, PriceSource } from '@phuture/types';
+import { BigNumber, BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
 import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types';
+import { Addresses } from './addresses';
 
 /** ### ERC20 Token Contract */
 export class Erc20<
 	C extends ERC20ContractInterface = ERC20ContractInterface
 > extends Contract<C> {
+	/** ### Price source */
+	protected _priceSource?: PriceSource;
+
 	/** ### Decimals of the token */
 	private _decimals?: number;
 
@@ -33,6 +37,19 @@ export class Erc20<
 		factory: ContractFactory = ERC20__factory
 	) {
 		super(account, contract, factory);
+	}
+
+	/**
+	 * ### Connect price source to Index
+	 *
+	 * @param {IndexRepo} priceSource Price source to connect to Index
+	 *
+	 * @returns {this} Index instance
+	 */
+	public withPriceSource(priceSource: PriceSource): this {
+		this._priceSource = priceSource;
+
+		return this;
 	}
 
 	/**
@@ -121,5 +138,22 @@ export class Erc20<
 		);
 
 		return allowance.gte(amount);
+	}
+
+	/**
+	 * ### Get price of the token
+	 *
+	 * @param {Address} sellToken Token to sell
+	 * @param {BigNumberish} sellAmount Amount of tokens to sell
+	 *
+	 * @returns {Promise<BigNumber>} Price of the index in sellToken
+	 */
+	public async price(
+		sellToken: Address = Addresses[Network.Mainnet]['usdc'],
+		sellAmount: BigNumberish
+	): Promise<BigNumber> {
+		if (!this._priceSource) throw new Error('No price source');
+
+		return this._priceSource.price(this.address, sellToken, sellAmount);
 	}
 }

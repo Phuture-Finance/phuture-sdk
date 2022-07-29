@@ -1,3 +1,4 @@
+export * from '@phuture/0x-aggregator';
 export * from '@phuture/account';
 export * from '@phuture/index';
 export * from '@phuture/auto-router';
@@ -5,6 +6,6 @@ export * from '@phuture/erc-20';
 export * from '@phuture/errors';
 export * from '@phuture/index';
 export * from '@phuture/index-router';
+export * from '@phuture/price-oracle';
 export * from '@phuture/subgraph';
 export * from '@phuture/types';
-export * from '@phuture/0x-aggregator';

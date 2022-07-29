@@ -1,7 +1,7 @@
 import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
 
 /** ### Default addresses for network ### */
-export const setOfAssets: {
+export const Addresses: {
 	[key in Networkish]: Record<TokenSymbol, Address>;
 } = {
 	/** ### Default addresses on mainnet. */
