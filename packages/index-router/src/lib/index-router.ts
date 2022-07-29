@@ -259,7 +259,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			amount,
 			recipient,
 			quotes: options.quotes,
-			outputAsset: '',
+			outputAsset: options.outputAsset ?? await this.weth(),
 		};
 
 		if (options.outputAsset === undefined) {
@@ -278,7 +278,6 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			return this.contract.burnSwapValue(burnParameters);
 		}
 
-		burnParameters.outputAsset = options.outputAsset;
 		if (options.permitOptions !== undefined)
 			return this.contract.burnSwapWithPermit(
 				burnParameters,
@@ -310,7 +309,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		recipient: Address,
 		options: {
 			quotes: IIndexRouter.BurnQuoteParamsStruct[];
-			outputAsset: Address;
+			outputAsset?: Address;
 			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
 		}
 	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
@@ -322,7 +321,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			amount,
 			recipient,
 			quotes: options.quotes,
-			outputAsset: options.outputAsset,
+			outputAsset: options.outputAsset ?? await this.weth(),
 		};
 
 		if (options.outputAsset === undefined) {

@@ -175,7 +175,7 @@ export class AutoRouter {
 		outputToken?: Erc20 | Address,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	) {
-		let outputTokenAddress: Address;
+		let outputTokenAddress: Address | undefined;
 		let outputTokenPriceEth: BigNumber = BigNumber.from(10).pow(18);
 
 		if (outputToken) {
@@ -191,10 +191,9 @@ export class AutoRouter {
 
 			outputTokenPriceEth = BigNumber.from(buyAmount);
 		} else {
-			outputTokenAddress = await this.indexRouter.weth()
 			outputToken = new Erc20(
 				this.indexRouter.account,
-				outputTokenAddress
+				await this.indexRouter.weth()
 			);
 		}
 
