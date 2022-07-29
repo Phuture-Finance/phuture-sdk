@@ -7,6 +7,7 @@
 			"executor": "@nrwl/js:tsc",
 			"outputs": ["{options.outputPath}"],
 			"options": {
+			  	"buildableProjectDepsInPackageJsonType": "dependencies",
 				"outputPath": "dist/packages/erc-20",
 				"main": "packages/erc-20/src/index.ts",
 				"tsConfig": "packages/erc-20/tsconfig.lib.json",
