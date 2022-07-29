@@ -230,7 +230,6 @@ export class AutoRouter {
 				} = await this.zeroExAggregator.quote(assets[i], outputTokenAddress ?? await this.indexRouter.weth(), amount);
 
 				return {
-					asset: assets[i],
 					swapTarget,
 					buyAssetMinAmount,
 					assetQuote,
