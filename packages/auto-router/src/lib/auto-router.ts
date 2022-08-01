@@ -158,8 +158,8 @@ export class AutoRouter {
 		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: indexQuote,
-			value: inputToken ? 0 : zeroExSellAmount,
-			gasLimit: zeroExGas
+			value: inputToken ? 0x0 : BigNumber.from(zeroExSellAmount).toHexString(),
+			gasLimit: BigNumber.from(zeroExGas).toHexString(),
 		});
 	}
 
@@ -275,7 +275,7 @@ export class AutoRouter {
 		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: assetQuote,
-			gasLimit: zeroExGas
+			gasLimit: BigNumber.from(zeroExGas).toHexString(),
 		});
 	}
 }
