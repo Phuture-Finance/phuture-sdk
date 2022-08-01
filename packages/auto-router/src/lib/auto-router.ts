@@ -3,8 +3,9 @@ import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address, isAddress } from '@phuture/types';
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
 
 /** ### AutoRouter class */
 export class AutoRouter {
@@ -36,7 +37,7 @@ export class AutoRouter {
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	): Promise<string | ContractTransaction> {
+	): Promise<TransactionResponse> {
 		const routerInputTokenAddress =
 			inputToken?.address || (await this.indexRouter.weth());
 
@@ -159,7 +160,8 @@ export class AutoRouter {
 				permitOptions
 			);
 
-		if (inputToken) await index.checkAllowance(swapTarget, zeroExSellAmount);
+		if (inputToken)
+			await inputToken.checkAllowance(swapTarget, zeroExSellAmount);
 
 		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
@@ -184,7 +186,7 @@ export class AutoRouter {
 		indexAmount: BigNumberish,
 		outputToken?: Erc20 | Address,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	) {
+	): Promise<TransactionResponse> {
 		let outputTokenAddress: Address | undefined;
 		let outputTokenPriceEth: BigNumber = BigNumber.from(10).pow(18);
 

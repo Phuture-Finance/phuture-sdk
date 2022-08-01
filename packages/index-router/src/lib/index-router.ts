@@ -1,5 +1,4 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { InsufficientAllowanceError } from '@phuture/errors';
 import { Address, isAddress } from '@phuture/types';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Contract } from '@phuture/contract';
