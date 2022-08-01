@@ -3,7 +3,7 @@ import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
 import {Index} from '@phuture/index';
 import {IndexRouter} from '@phuture/index-router';
 import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
 import {getDefaultPriceOracle} from '@phuture/price-oracle';
 
 /** ### AutoRouter class */
@@ -37,7 +37,7 @@ export class AutoRouter {
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	) {
+	): Promise<string | ContractTransaction> {
 		const inputTokenAddress =
 			inputToken?.address || (await this.indexRouter.weth());
 

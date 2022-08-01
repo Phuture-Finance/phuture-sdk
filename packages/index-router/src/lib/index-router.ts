@@ -413,7 +413,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		amount: BigNumberish,
 		prices?: BigNumberish[]
 	): Promise<BigNumber | BigNumber[]> {
-		const amounts = await this.contract.burnTokensAmount(index, amount);
+		const amounts = await this.contract.callStatic.burnTokensAmount(index, amount);
 		if (!prices)
 			return amounts;
 

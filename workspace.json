@@ -11,6 +11,7 @@
 		"example-auto-router": "examples/example-auto-router",
 		"index": "packages/index",
 		"index-router": "packages/index-router",
+		"next": "examples/next",
 		"price-oracle": "packages/price-oracle",
 		"sdk": "packages/sdk",
 		"subgraph": "packages/subgraph",

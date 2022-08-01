@@ -22,5 +22,19 @@
 		"@nrwl/js": {
 			"analyzeSourceFiles": true
 		}
-	}
+	},
+	"generators": {
+		"@nrwl/react": {
+			"application": {
+				"babel": true
+			}
+		},
+		"@nrwl/next": {
+			"application": {
+				"style": "styled-components",
+				"linter": "eslint"
+			}
+		}
+	},
+	"defaultProject": "next"
 }
