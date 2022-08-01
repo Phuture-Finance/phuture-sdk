@@ -400,17 +400,29 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_index",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
+				"components": [
+					{
+						"internalType": "address",
+						"name": "index",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					}
+				],
+				"internalType": "struct IIndexRouter.BurnParams",
+				"name": "_params",
+				"type": "tuple"
 			}
 		],
-		"name": "burnTokensAmount",
+		"name": "burnWithAmounts",
 		"outputs": [
 			{
 				"internalType": "uint256[]",
@@ -418,7 +430,7 @@
 				"type": "uint256[]"
 			}
 		],
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

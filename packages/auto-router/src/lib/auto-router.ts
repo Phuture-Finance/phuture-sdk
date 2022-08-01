@@ -3,7 +3,7 @@ import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
 import {Index} from '@phuture/index';
 import {IndexRouter} from '@phuture/index-router';
 import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
 import {getDefaultPriceOracle} from '@phuture/price-oracle';
 
 /** ### AutoRouter class */
@@ -37,8 +37,8 @@ export class AutoRouter {
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	) {
-		const inputTokenAddress =
+	): Promise<string | ContractTransaction> {
+		const routerInputTokenAddress =
 			inputToken?.address || (await this.indexRouter.weth());
 
 		const [
@@ -54,7 +54,7 @@ export class AutoRouter {
 			indexPriceEth,
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
-				inputTokenAddress,
+				inputToken?.address || 'ETH',
 				index.address,
 				amountInInputToken
 			),
@@ -65,7 +65,7 @@ export class AutoRouter {
 		const buyAmounts = await Promise.all(
 			Object.entries(amounts).map(async ([asset, {amount}]) => {
 				const {buyAmount} = await this.zeroExAggregator.price(
-					inputTokenAddress,
+					routerInputTokenAddress,
 					asset,
 					amount
 				);
@@ -99,7 +99,7 @@ export class AutoRouter {
 
 		const scaledSellAmounts = Object.values(amounts).map(({amount}, i) =>
 			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
-		)
+		);
 
 		const quotes = await Promise.all(
 			Object.keys(amounts).map(async (asset, i) => {
@@ -108,7 +108,7 @@ export class AutoRouter {
 					to: swapTarget,
 					data: assetQuote,
 				} = await this.zeroExAggregator.quote(
-					inputTokenAddress,
+					routerInputTokenAddress,
 					asset,
 					scaledSellAmounts[i]
 				);
@@ -122,14 +122,17 @@ export class AutoRouter {
 			})
 		);
 
-		amountInInputToken = scaledSellAmounts.reduce((sum, curr) => sum.add(curr), BigNumber.from(0));
+		amountInInputToken = scaledSellAmounts.reduce(
+			(sum, curr) => sum.add(curr),
+			BigNumber.from(0)
+		);
 
 		const options = {
 			index: index.address,
 			recipient: await this.indexRouter.account.address(),
 			quotes,
 			amountInInputToken,
-			inputToken: inputTokenAddress,
+			inputToken: routerInputTokenAddress,
 		};
 		const {estimatedGas, outputAmount} =
 			await this.indexRouter.mintSwapStatic(
@@ -143,7 +146,7 @@ export class AutoRouter {
 			estimatedGas
 				.sub(zeroExGas)
 				.mul(gasPrice)
-				.gte(outputAmount.sub(zeroExBuyAmount).mul(indexPriceEth))
+				.lte(outputAmount.sub(zeroExBuyAmount).mul(indexPriceEth))
 		)
 			return this.indexRouter.mintSwap(
 				options,
@@ -152,10 +155,11 @@ export class AutoRouter {
 				permitOptions
 			);
 
-		return this.indexRouter.account.signer.call({
+		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: indexQuote,
-			value: inputToken ? 0 : zeroExSellAmount,
+			value: inputToken ? 0x0 : BigNumber.from(zeroExSellAmount).toHexString(),
+			gasLimit: BigNumber.from(zeroExGas).toHexString(),
 		});
 	}
 
@@ -227,7 +231,11 @@ export class AutoRouter {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
-				} = await this.zeroExAggregator.quote(assets[i], outputTokenAddress ?? await this.indexRouter.weth(), amount);
+				} = await this.zeroExAggregator.quote(
+					assets[i],
+					outputTokenAddress ?? (await this.indexRouter.weth()),
+					amount.mul(BigNumber.from(.999))
+				);
 
 				return {
 					swapTarget,
@@ -250,12 +258,12 @@ export class AutoRouter {
 				await this.indexRouter.account.address(),
 				options
 			);
-
+		//todo: check if this is correct
 		if (
 			estimatedGas
 				.sub(zeroExGas)
 				.mul(gasPrice)
-				.gte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth))
+				.lte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth))
 		)
 			return this.indexRouter.burnSwap(
 				index.address,
@@ -264,9 +272,10 @@ export class AutoRouter {
 				options
 			);
 
-		return this.indexRouter.account.signer.call({
+		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: assetQuote,
+			gasLimit: BigNumber.from(zeroExGas).toHexString(),
 		});
 	}
 }

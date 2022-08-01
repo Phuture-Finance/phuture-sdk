@@ -1,20 +1,16 @@
-import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { InsufficientAllowanceError } from '@phuture/errors';
-import { Address, isAddress } from '@phuture/types';
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
-import { Contract } from '@phuture/contract';
-import { Account } from '@phuture/account';
-import {
-	IndexRouter as IndexRouterContractInterface,
-	IndexRouter__factory,
-} from '../types';
-import { IIndexRouter } from '../types/IndexRouter';
-import { Index } from '@phuture/index';
+import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
+import {InsufficientAllowanceError} from '@phuture/errors';
+import {Address, isAddress} from '@phuture/types';
+import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
+import {Contract} from '@phuture/contract';
+import {Account} from '@phuture/account';
+import {IndexRouter as IndexRouterContractInterface, IndexRouter__factory,} from '../types';
+import {IIndexRouter} from '../types/IndexRouter';
 
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x7b6c3e5486d9e6959441ab554a889099eed76290',
+	Mainnet = '0x84DBB1F040C475ceF0A2310a11e1377B44bC8026',
 }
 
 /** ### IndexRouter Contract */
@@ -68,13 +64,12 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
 				index: options.index,
 				quotes: options.quotes,
-				recipient: options.recipient
-			}
+				recipient: options.recipient,
+			};
 
-			return this.contract.mintSwapValue(
-				mintSwapValueOptions,
-				{ value: sellAmount }
-			);
+			return this.contract.mintSwapValue(mintSwapValueOptions, {
+				value: sellAmount,
+			});
 		}
 
 		if (permitOptions !== undefined)
@@ -112,20 +107,21 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
 				index: options.index,
 				quotes: options.quotes,
-				recipient: options.recipient
-			}
+				recipient: options.recipient,
+			};
 			const [outputAmount, estimatedGas] = await Promise.all([
-				this.contract.callStatic.mintSwapValue(
-					mintSwapValueOptions,
-					{ value: sellAmount }
-				),
-				this.contract.estimateGas.mintSwapValue(
-					mintSwapValueOptions,
-					{ value: sellAmount }
-				),
+				this.contract.callStatic.mintSwapValue(mintSwapValueOptions, {
+					value: sellAmount,
+				}),
+				this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
+					value: sellAmount,
+				}),
 			]);
 
-			return { outputAmount, estimatedGas };
+			return {
+				outputAmount,
+				estimatedGas,
+			};
 		}
 
 		if (permitOptions !== undefined) {
@@ -146,7 +142,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				),
 			]);
 
-			return { outputAmount, estimatedGas };
+			return {outputAmount, estimatedGas};
 		}
 
 		if (!(await sellToken.checkAllowance(this.address, sellAmount)))
@@ -161,7 +157,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			),
 		]);
 
-		return { outputAmount, estimatedGas };
+		return {outputAmount, estimatedGas};
 	}
 
 	/**
@@ -259,7 +255,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			amount,
 			recipient,
 			quotes: options.quotes,
-			outputAsset: options.outputAsset ?? await this.weth(),
+			outputAsset: options.outputAsset ?? (await this.weth()),
 		};
 
 		if (options.outputAsset === undefined) {
@@ -321,7 +317,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			amount,
 			recipient,
 			quotes: options.quotes,
-			outputAsset: options.outputAsset ?? await this.weth(),
+			outputAsset: options.outputAsset ?? (await this.weth()),
 		};
 
 		if (options.outputAsset === undefined) {
@@ -343,7 +339,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 					),
 				]);
 
-				return { outputAmount, estimatedGas };
+				return {outputAmount, estimatedGas};
 			}
 
 			if (!(await indexInstance.checkAllowance(this.address, amount)))
@@ -354,7 +350,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				this.contract.estimateGas.burnSwapValue(burnParameters),
 			]);
 
-			return { outputAmount, estimatedGas };
+			return {outputAmount, estimatedGas};
 		}
 
 		if (options.permitOptions !== undefined) {
@@ -375,7 +371,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				),
 			]);
 
-			return { outputAmount, estimatedGas };
+			return {outputAmount, estimatedGas};
 		}
 
 		if (!(await indexInstance.checkAllowance(this.address, amount)))
@@ -386,7 +382,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			this.contract.estimateGas.burnSwap(burnParameters),
 		]);
 
-		return { outputAmount, estimatedGas };
+		return {outputAmount, estimatedGas};
 	}
 
 	// Get burn amounts of multiple tokens
@@ -413,9 +409,12 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		amount: BigNumberish,
 		prices?: BigNumberish[]
 	): Promise<BigNumber | BigNumber[]> {
-		const amounts = await this.contract.burnTokensAmount(index, amount);
-		if (!prices)
-			return amounts;
+		const amounts = await this.contract.callStatic.burnWithAmounts({
+			index,
+			recipient: this.account.address(),
+			amount
+		});
+		if (!prices) return amounts;
 
 		let totalAmount = BigNumber.from(0);
 		for (const [index, amount] of amounts.entries())
