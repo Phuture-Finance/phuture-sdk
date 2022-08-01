@@ -77,11 +77,13 @@
 		"@ethersproject/abi": "^5.6.4",
 		"@ethersproject/providers": "^5.6.8",
 		"axios": "^0.27.2",
+		"chalk": "5.0.1",
 		"cross-fetch": "^3.1.5",
 		"debug": "^4.3.4",
 		"dotenv": "^16.0.1",
 		"ethereumjs-util": "^7.1.5",
 		"ethers": "5.6.9",
-		"events": "3.3.0"
+		"events": "3.3.0",
+		"tslib": "2.4.0"
 	}
 }

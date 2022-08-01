@@ -1,10 +1,10 @@
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {Index} from '@phuture/index';
-import {IndexRouter} from '@phuture/index-router';
-import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
-import {getDefaultPriceOracle} from '@phuture/price-oracle';
+import { ZeroExAggregator } from '@phuture/0x-aggregator';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { Index } from '@phuture/index';
+import { IndexRouter } from '@phuture/index-router';
+import { Address, isAddress } from '@phuture/types';
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
+import { getDefaultPriceOracle } from '@phuture/price-oracle';
 
 /** ### AutoRouter class */
 export class AutoRouter {
@@ -19,8 +19,7 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {
-	}
+	) {}
 
 	/**
 	 * ### Auto Buy
@@ -63,8 +62,8 @@ export class AutoRouter {
 		]);
 
 		const buyAmounts = await Promise.all(
-			Object.entries(amounts).map(async ([asset, {amount}]) => {
-				const {buyAmount} = await this.zeroExAggregator.price(
+			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				const { buyAmount } = await this.zeroExAggregator.price(
 					routerInputTokenAddress,
 					asset,
 					amount
@@ -78,7 +77,7 @@ export class AutoRouter {
 
 		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
 		const buyAmountsInBase = await Promise.all(
-			buyAmounts.map(async ({asset, buyAmount}) => {
+			buyAmounts.map(async ({ asset, buyAmount }) => {
 				const price =
 					await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
 						asset
@@ -97,7 +96,7 @@ export class AutoRouter {
 			min.buyAmount.lte(curr.buyAmount) ? min : curr
 		);
 
-		const scaledSellAmounts = Object.values(amounts).map(({amount}, i) =>
+		const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
 			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
 		);
 
@@ -134,7 +133,7 @@ export class AutoRouter {
 			amountInInputToken,
 			inputToken: routerInputTokenAddress,
 		};
-		const {estimatedGas, outputAmount} =
+		const { estimatedGas, outputAmount } =
 			await this.indexRouter.mintSwapStatic(
 				options,
 				amountInInputToken,
@@ -187,7 +186,7 @@ export class AutoRouter {
 				? new Erc20(this.indexRouter.account, outputToken)
 				: outputToken;
 			outputTokenAddress = outputToken.address;
-			const {buyAmount} = await this.zeroExAggregator.price(
+			const { buyAmount } = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals())
@@ -234,7 +233,7 @@ export class AutoRouter {
 				} = await this.zeroExAggregator.quote(
 					assets[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
-					amount.mul(BigNumber.from(.999))
+					amount.mul(BigNumber.from(0.999))
 				);
 
 				return {
@@ -251,7 +250,7 @@ export class AutoRouter {
 			permitOptions,
 		};
 
-		const {outputAmount, estimatedGas} =
+		const { outputAmount, estimatedGas } =
 			await this.indexRouter.burnSwapStatic(
 				index.address,
 				indexAmount,
