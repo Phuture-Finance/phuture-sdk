@@ -155,10 +155,11 @@ export class AutoRouter {
 				permitOptions
 			);
 
-		return this.indexRouter.account.signer.call({
+		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: indexQuote,
 			value: inputToken ? 0 : zeroExSellAmount,
+			gasLimit: zeroExGas
 		});
 	}
 
@@ -271,9 +272,10 @@ export class AutoRouter {
 				options
 			);
 
-		return this.indexRouter.account.signer.call({
+		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: assetQuote,
+			gasLimit: zeroExGas
 		});
 	}
 }
