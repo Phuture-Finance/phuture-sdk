@@ -233,7 +233,7 @@ export class AutoRouter {
 				} = await this.zeroExAggregator.quote(
 					assets[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
-					amount.mul(BigNumber.from(0.999))
+					amount.mul(999).div(1000)
 				);
 
 				return {
