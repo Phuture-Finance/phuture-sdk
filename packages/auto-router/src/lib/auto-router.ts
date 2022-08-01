@@ -145,7 +145,12 @@ export class AutoRouter {
 			estimatedGas
 				.sub(zeroExGas)
 				.mul(gasPrice)
-				.lte(outputAmount.sub(zeroExBuyAmount).mul(indexPriceEth))
+				.lte(
+					outputAmount
+						.sub(zeroExBuyAmount)
+						.mul(indexPriceEth)
+						.div(BigNumber.from(10).pow(18))
+				)
 		)
 			return this.indexRouter.mintSwap(
 				options,
@@ -233,7 +238,7 @@ export class AutoRouter {
 				} = await this.zeroExAggregator.quote(
 					assets[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
-					amount.mul(BigNumber.from(0.999))
+					amount.mul(999).div(1000)
 				);
 
 				return {
@@ -257,12 +262,17 @@ export class AutoRouter {
 				await this.indexRouter.account.address(),
 				options
 			);
-		//todo: check if this is correct
+
 		if (
 			estimatedGas
 				.sub(zeroExGas)
 				.mul(gasPrice)
-				.lte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth))
+				.lte(
+					outputAmount
+						.sub(zeroExAmount)
+						.mul(outputTokenPriceEth)
+						.div(BigNumber.from(10).pow(await outputToken.decimals()))
+				)
 		)
 			return this.indexRouter.burnSwap(
 				index.address,
