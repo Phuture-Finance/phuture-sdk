@@ -7,7 +7,7 @@
 			"executor": "@nrwl/js:tsc",
 			"outputs": ["{options.outputPath}"],
 			"options": {
-			  	"buildableProjectDepsInPackageJsonType": "dependencies",
+				"buildableProjectDepsInPackageJsonType": "dependencies",
 				"outputPath": "dist/packages/price-oracle",
 				"main": "packages/price-oracle/src/index.ts",
 				"tsConfig": "packages/price-oracle/tsconfig.lib.json",

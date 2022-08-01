@@ -38,7 +38,7 @@ export class AutoRouter {
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<string | ContractTransaction> {
-		const inputTokenAddress =
+		const routerInputTokenAddress =
 			inputToken?.address || (await this.indexRouter.weth());
 
 		const [
@@ -54,7 +54,7 @@ export class AutoRouter {
 			indexPriceEth,
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
-				inputTokenAddress,
+				inputToken?.address || "ETH",
 				index.address,
 				amountInInputToken
 			),
@@ -65,7 +65,7 @@ export class AutoRouter {
 		const buyAmounts = await Promise.all(
 			Object.entries(amounts).map(async ([asset, {amount}]) => {
 				const {buyAmount} = await this.zeroExAggregator.price(
-					inputTokenAddress,
+					routerInputTokenAddress,
 					asset,
 					amount
 				);
@@ -99,7 +99,7 @@ export class AutoRouter {
 
 		const scaledSellAmounts = Object.values(amounts).map(({amount}, i) =>
 			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
-		)
+		);
 
 		const quotes = await Promise.all(
 			Object.keys(amounts).map(async (asset, i) => {
@@ -108,7 +108,7 @@ export class AutoRouter {
 					to: swapTarget,
 					data: assetQuote,
 				} = await this.zeroExAggregator.quote(
-					inputTokenAddress,
+					routerInputTokenAddress,
 					asset,
 					scaledSellAmounts[i]
 				);
@@ -122,14 +122,17 @@ export class AutoRouter {
 			})
 		);
 
-		amountInInputToken = scaledSellAmounts.reduce((sum, curr) => sum.add(curr), BigNumber.from(0));
+		amountInInputToken = scaledSellAmounts.reduce(
+			(sum, curr) => sum.add(curr),
+			BigNumber.from(0)
+		);
 
 		const options = {
 			index: index.address,
 			recipient: await this.indexRouter.account.address(),
 			quotes,
 			amountInInputToken,
-			inputToken: inputTokenAddress,
+			inputToken: routerInputTokenAddress,
 		};
 		const {estimatedGas, outputAmount} =
 			await this.indexRouter.mintSwapStatic(
@@ -143,7 +146,7 @@ export class AutoRouter {
 			estimatedGas
 				.sub(zeroExGas)
 				.mul(gasPrice)
-				.gte(outputAmount.sub(zeroExBuyAmount).mul(indexPriceEth))
+				.lte(outputAmount.sub(zeroExBuyAmount).mul(indexPriceEth))
 		)
 			return this.indexRouter.mintSwap(
 				options,
@@ -227,7 +230,11 @@ export class AutoRouter {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
-				} = await this.zeroExAggregator.quote(assets[i], outputTokenAddress ?? await this.indexRouter.weth(), amount);
+				} = await this.zeroExAggregator.quote(
+					assets[i],
+					outputTokenAddress ?? (await this.indexRouter.weth()),
+					amount
+				);
 
 				return {
 					swapTarget,
@@ -250,12 +257,12 @@ export class AutoRouter {
 				await this.indexRouter.account.address(),
 				options
 			);
-
+//todo: check if this is correct
 		if (
 			estimatedGas
 				.sub(zeroExGas)
 				.mul(gasPrice)
-				.gte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth))
+				.lte(outputAmount.sub(zeroExAmount).mul(outputTokenPriceEth))
 		)
 			return this.indexRouter.burnSwap(
 				index.address,

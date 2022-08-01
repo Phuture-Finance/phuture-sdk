@@ -1,7 +1,13 @@
-import {ethers} from 'ethers';
-import {Account, AutoRouter, Index, IndexRouter, ZeroExAggregator,} from '@phuture/sdk';
+import { ethers } from 'ethers';
+import {
+	Account,
+	AutoRouter,
+	Index,
+	IndexRouter,
+	ZeroExAggregator,
+} from '@phuture/sdk';
 import 'dotenv/config';
-import {getEnv} from './utils';
+import { getEnv } from './utils';
 
 export const account = new Account(
 	new ethers.Wallet(
