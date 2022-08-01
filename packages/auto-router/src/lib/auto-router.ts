@@ -54,7 +54,7 @@ export class AutoRouter {
 			indexPriceEth,
 		] = await Promise.all([
 			this.zeroExAggregator.quote(
-				inputToken?.address || "ETH",
+				inputToken?.address || 'ETH',
 				index.address,
 				amountInInputToken
 			),
@@ -234,7 +234,7 @@ export class AutoRouter {
 				} = await this.zeroExAggregator.quote(
 					assets[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
-					amount
+					amount.mul(BigNumber.from(.999))
 				);
 
 				return {
@@ -258,7 +258,7 @@ export class AutoRouter {
 				await this.indexRouter.account.address(),
 				options
 			);
-//todo: check if this is correct
+		//todo: check if this is correct
 		if (
 			estimatedGas
 				.sub(zeroExGas)

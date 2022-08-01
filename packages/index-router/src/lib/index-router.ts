@@ -1,7 +1,7 @@
 import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
 import {InsufficientAllowanceError} from '@phuture/errors';
 import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish, ContractTransaction,} from 'ethers';
+import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
 import {Contract} from '@phuture/contract';
 import {Account} from '@phuture/account';
 import {IndexRouter as IndexRouterContractInterface, IndexRouter__factory,} from '../types';
@@ -107,21 +107,20 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
 				index: options.index,
 				quotes: options.quotes,
-				recipient: options.recipient
-			}
+				recipient: options.recipient,
+			};
 			const [outputAmount, estimatedGas] = await Promise.all([
-				this.contract.callStatic.mintSwapValue(
-					mintSwapValueOptions,
-					{value: sellAmount}
-				),
-				this.contract.estimateGas.mintSwapValue(
-					mintSwapValueOptions,
-					{value: sellAmount}
-				),
+				this.contract.callStatic.mintSwapValue(mintSwapValueOptions, {
+					value: sellAmount,
+				}),
+				this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
+					value: sellAmount,
+				}),
 			]);
 
 			return {
-				outputAmount, estimatedGas
+				outputAmount,
+				estimatedGas,
 			};
 		}
 
@@ -410,10 +409,11 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		amount: BigNumberish,
 		prices?: BigNumberish[]
 	): Promise<BigNumber | BigNumber[]> {
-		const amounts = await this.contract.callStatic.burnTokensAmount(
+		const amounts = await this.contract.callStatic.burnWithAmounts({
 			index,
+			recipient: this.account.address(),
 			amount
-		);
+		});
 		if (!prices) return amounts;
 
 		let totalAmount = BigNumber.from(0);
