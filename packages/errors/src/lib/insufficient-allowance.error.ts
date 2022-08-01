@@ -1,10 +1,14 @@
 import { BigNumber, BigNumberish } from 'ethers';
 import { canSetPrototype } from './can-set-prototype';
+import { Address } from '@phuture/types';
 
 /**
  * ### Error thrown on insufficient allowance
  */
 export class InsufficientAllowanceError extends Error {
+	/** ### Address of the allowance target */
+	public readonly target: Address;
+
 	/** ### Excepted allowance */
 	public readonly expectedAllowance: BigNumber;
 
@@ -14,12 +18,14 @@ export class InsufficientAllowanceError extends Error {
 	/**
 	 * ### Creates an instance of InsufficientAllowanceError
 	 *
+	 * @param target Address of the allowance target
 	 * @param expectedAllowance Expected allowance
 	 * @param actualAllowance Actual allowance
 	 *
 	 * @returns Instance of InsufficientAllowanceError
 	 */
 	constructor(
+		target: Address,
 		expectedAllowance: BigNumberish,
 		actualAllowance: BigNumberish = 0
 	) {
@@ -29,6 +35,7 @@ export class InsufficientAllowanceError extends Error {
 		super(message);
 		this.name = this.constructor.name;
 
+		this.target = target;
 		this.expectedAllowance = expectedAllowance;
 		this.actualAllowance = actualAllowance;
 
