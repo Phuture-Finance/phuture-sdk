@@ -84,8 +84,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.s
 			);
 
-		if (!(await sellToken.checkAllowance(this.address, sellAmount)))
-			throw new InsufficientAllowanceError(sellAmount);
+		await sellToken.checkAllowance(this.address, sellAmount);
 
 		return this.contract.mintSwap(options as IIndexRouter.MintSwapParamsStruct);
 	}
@@ -148,8 +147,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			return { outputAmount, estimatedGas };
 		}
 
-		if (!(await sellToken.checkAllowance(this.address, sellAmount)))
-			throw new InsufficientAllowanceError(sellAmount);
+		await sellToken.checkAllowance(this.address, sellAmount);
 
 		const [outputAmount, estimatedGas] = await Promise.all([
 			this.contract.callStatic.mintSwap(
@@ -224,8 +222,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.s
 			);
 
-		if (!(await indexInstance.checkAllowance(this.address, amount)))
-			throw new InsufficientAllowanceError(amount);
+		await indexInstance.checkAllowance(this.address, amount);
 
 		return this.contract.burn(burnParameters);
 	}
@@ -271,8 +268,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 					options.permitOptions.s
 				);
 
-			if (!(await indexInstance.checkAllowance(this.address, amount)))
-				throw new InsufficientAllowanceError(amount);
+			await indexInstance.checkAllowance(this.address, amount);
 
 			return this.contract.burnSwapValue(burnParameters);
 		}
@@ -286,8 +282,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				options.permitOptions.s
 			);
 
-		if (!(await indexInstance.checkAllowance(this.address, amount)))
-			throw new InsufficientAllowanceError(amount);
+		await indexInstance.checkAllowance(this.address, amount);
 
 		return this.contract.burnSwap(burnParameters);
 	}
@@ -345,8 +340,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				return { outputAmount, estimatedGas };
 			}
 
-			if (!(await indexInstance.checkAllowance(this.address, amount)))
-				throw new InsufficientAllowanceError(amount);
+			await indexInstance.checkAllowance(this.address, amount);
 
 			const [outputAmount, estimatedGas] = await Promise.all([
 				this.contract.callStatic.burnSwapValue(burnParameters),
@@ -377,8 +371,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			return { outputAmount, estimatedGas };
 		}
 
-		if (!(await indexInstance.checkAllowance(this.address, amount)))
-			throw new InsufficientAllowanceError(amount);
+		await indexInstance.checkAllowance(this.address, amount);
 
 		const [outputAmount, estimatedGas] = await Promise.all([
 			this.contract.callStatic.burnSwap(burnParameters),

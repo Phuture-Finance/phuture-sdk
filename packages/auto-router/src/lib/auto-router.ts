@@ -159,6 +159,8 @@ export class AutoRouter {
 				permitOptions
 			);
 
+		if (inputToken) await index.checkAllowance(swapTarget, zeroExSellAmount);
+
 		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,
 			data: indexQuote,
@@ -280,6 +282,8 @@ export class AutoRouter {
 				await this.indexRouter.account.address(),
 				options
 			);
+
+		await index.checkAllowance(swapTarget, zeroExAmount);
 
 		return this.indexRouter.account.signer.sendTransaction({
 			to: swapTarget,

@@ -5,6 +5,7 @@ import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
 import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types';
 import { Addresses } from './addresses';
+import { InsufficientAllowanceError } from '@phuture/errors';
 
 /** ### ERC20 Token Contract */
 export class Erc20<
@@ -124,20 +125,23 @@ export class Erc20<
 	 * ### Check Allowance
 	 *
 	 * @param account Address of the account
-	 * @param amount Token amount
+	 * @param expectedAmount Amount of tokens to check
 	 *
 	 * @returns true if the account has enough tokens to transfer the amount
 	 */
 	public async checkAllowance(
 		account: Address,
-		amount: BigNumberish
-	): Promise<boolean> {
+		expectedAmount: BigNumberish
+	): Promise<true> {
 		const allowance = await this.contract.allowance(
 			await this.account.address(),
 			account
 		);
 
-		return allowance.gte(amount);
+		if (allowance.lt(expectedAmount))
+			throw new InsufficientAllowanceError(account, expectedAmount, allowance);
+
+		return true;
 	}
 
 	/**
