@@ -13,7 +13,7 @@ import { IIndexRouter } from '../types/IndexRouter';
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x84DBB1F040C475ceF0A2310a11e1377B44bC8026',
+	Mainnet = '0x3c9cc19302B48F050378D14C40cF1EaA81D9d46D',
 }
 
 /** ### IndexRouter Contract */
