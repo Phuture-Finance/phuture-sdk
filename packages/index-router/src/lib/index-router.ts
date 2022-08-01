@@ -1,11 +1,14 @@
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {InsufficientAllowanceError} from '@phuture/errors';
-import {Address, isAddress} from '@phuture/types';
-import {BigNumber, BigNumberish, ContractTransaction} from 'ethers';
-import {Contract} from '@phuture/contract';
-import {Account} from '@phuture/account';
-import {IndexRouter as IndexRouterContractInterface, IndexRouter__factory,} from '../types';
-import {IIndexRouter} from '../types/IndexRouter';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { InsufficientAllowanceError } from '@phuture/errors';
+import { Address, isAddress } from '@phuture/types';
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
+import { Contract } from '@phuture/contract';
+import { Account } from '@phuture/account';
+import {
+	IndexRouter as IndexRouterContractInterface,
+	IndexRouter__factory,
+} from '../types';
+import { IIndexRouter } from '../types/IndexRouter';
 
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
@@ -142,7 +145,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				),
 			]);
 
-			return {outputAmount, estimatedGas};
+			return { outputAmount, estimatedGas };
 		}
 
 		if (!(await sellToken.checkAllowance(this.address, sellAmount)))
@@ -157,7 +160,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			),
 		]);
 
-		return {outputAmount, estimatedGas};
+		return { outputAmount, estimatedGas };
 	}
 
 	/**
@@ -339,7 +342,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 					),
 				]);
 
-				return {outputAmount, estimatedGas};
+				return { outputAmount, estimatedGas };
 			}
 
 			if (!(await indexInstance.checkAllowance(this.address, amount)))
@@ -350,7 +353,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				this.contract.estimateGas.burnSwapValue(burnParameters),
 			]);
 
-			return {outputAmount, estimatedGas};
+			return { outputAmount, estimatedGas };
 		}
 
 		if (options.permitOptions !== undefined) {
@@ -371,7 +374,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				),
 			]);
 
-			return {outputAmount, estimatedGas};
+			return { outputAmount, estimatedGas };
 		}
 
 		if (!(await indexInstance.checkAllowance(this.address, amount)))
@@ -382,7 +385,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			this.contract.estimateGas.burnSwap(burnParameters),
 		]);
 
-		return {outputAmount, estimatedGas};
+		return { outputAmount, estimatedGas };
 	}
 
 	// Get burn amounts of multiple tokens
@@ -412,7 +415,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		const amounts = await this.contract.callStatic.burnWithAmounts({
 			index,
 			recipient: this.account.address(),
-			amount
+			amount,
 		});
 		if (!prices) return amounts;
 
