@@ -4,8 +4,8 @@ import { Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address } from '@phuture/types';
 import { BigNumber, BigNumberish } from 'ethers';
-import { getDefaultPriceOracle } from '@phuture/price-oracle';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { getDefaultPriceOracle } from '@phuture/price-oracle';
 
 /** ### AutoRouter class */
 export class AutoRouter {
@@ -38,24 +38,39 @@ export class AutoRouter {
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<BigNumber> {
-		const { zeroExSwap, indexPriceEth, indexRouterMint } =
-			await this.prepareBuy(index, amountInInputToken, inputToken);
+		const { zeroExSwap, indexPriceEth, quotes } = await this.prepareBuy(
+			index,
+			amountInInputToken,
+			inputToken,
+			permitOptions
+		);
 
-		const isMint = indexRouterMint.estimatedGas
+		const indexRouterMintOutputAmount = await this.indexRouter.mintIndexAmount(
+			index.address,
+			amountInInputToken,
+			quotes,
+			inputToken?.address
+		);
+
+		const isMint = BigNumber.from(750_000 + 250_000 * quotes.length)
 			.sub(zeroExSwap.estimatedGas)
 			.mul(zeroExSwap.gasPrice)
 			.lte(
-				indexRouterMint.outputAmount
+				indexRouterMintOutputAmount
 					.sub(zeroExSwap.buyAmount)
 					.mul(indexPriceEth)
 					.div(BigNumber.from(10).pow(18))
 			);
-		if (isMint) return indexRouterMint.outputAmount;
+		if (inputToken) {
+			await inputToken.checkAllowance(
+				isMint ? this.indexRouter.address : zeroExSwap.to,
+				amountInInputToken
+			);
+		}
 
-		if (inputToken)
-			await inputToken.checkAllowance(zeroExSwap.to, zeroExSwap.sellAmount);
-
-		return BigNumber.from(zeroExSwap.buyAmount);
+		return isMint
+			? indexRouterMintOutputAmount
+			: BigNumber.from(zeroExSwap.buyAmount);
 	}
 
 	/**
@@ -74,8 +89,99 @@ export class AutoRouter {
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<TransactionResponse> {
-		const { zeroExSwap, indexPriceEth, options, indexRouterMint } =
-			await this.prepareBuy(index, amountInInputToken, inputToken);
+		const {
+			zeroExSwap,
+			indexPriceEth,
+			amounts,
+			quotes: buyAmounts,
+		} = await this.prepareBuy(
+			index,
+			amountInInputToken,
+			inputToken,
+			permitOptions,
+			await this.indexRouter.account.address()
+		);
+
+		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
+		const buyAmountsInBase = await Promise.all(
+			buyAmounts.map(async ({ asset, buyAssetMinAmount }) => {
+				const price =
+					await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
+						asset
+					);
+				return {
+					asset,
+					buyAmount: BigNumber.from(buyAssetMinAmount)
+						.mul(BigNumber.from(2).pow(112))
+						.mul(255)
+						.div(price.mul(amounts[asset].weight)),
+				};
+			})
+		);
+
+		const minAmount = buyAmountsInBase.reduce((min, curr) =>
+			min.buyAmount.lte(curr.buyAmount) ? min : curr
+		);
+
+		const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
+			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
+		);
+
+		const routerInputTokenAddress =
+			inputToken?.address ?? (await this.indexRouter.weth());
+
+		const quotes = await Promise.all(
+			Object.keys(amounts).map(async (asset, i) => {
+				const {
+					buyAmount: buyAssetMinAmount,
+					to: swapTarget,
+					data: assetQuote,
+				} = await this.zeroExAggregator.quote(
+					routerInputTokenAddress,
+					asset,
+					scaledSellAmounts[i]
+				);
+
+				// const {
+				// 	buyAmount: buyAssetMinAmount,
+				// 	to: swapTarget,
+				// 	data: assetQuote,
+				// } = await this.zeroExAggregator.quote(
+				// 		asset,
+				// 		USDC,
+				// 		buyAssetMinAmount
+				// 	);
+
+				// get subgraph index market cap
+
+				return {
+					asset,
+					buyAssetMinAmount,
+					swapTarget,
+					assetQuote,
+				};
+			})
+		);
+
+		amountInInputToken = scaledSellAmounts.reduce(
+			(sum, curr) => sum.add(curr),
+			BigNumber.from(0)
+		);
+
+		const options = {
+			index: index.address,
+			recipient: await this.indexRouter.account.address(),
+			quotes,
+			amountInInputToken,
+			inputToken: routerInputTokenAddress,
+		};
+
+		const indexRouterMint = await this.indexRouter.mintSwapStatic(
+			options,
+			amountInInputToken,
+			inputToken,
+			permitOptions
+		);
 
 		const isMint = indexRouterMint.estimatedGas
 			.sub(zeroExSwap.estimatedGas)
@@ -111,108 +217,38 @@ export class AutoRouter {
 		index: Index,
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>
+		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+		takerAddress?: Address
 	) {
-		const routerInputTokenAddress =
-			inputToken?.address || (await this.indexRouter.weth());
-
 		const [zeroExSwap, amounts, indexPriceEth] = await Promise.all([
 			this.zeroExAggregator.quote(
 				inputToken?.address || 'ETH',
 				index.address,
 				amountInInputToken,
-				{ takerAddress: await this.indexRouter.account.address() }
+				{ takerAddress }
 			),
 			index.scaleAmount(amountInInputToken),
 			index.priceEth(),
 		]);
 
-		const buyAmounts = await Promise.all(
+		const quotes = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
-				const { buyAmount } = await this.zeroExAggregator.price(
-					routerInputTokenAddress,
+				const { to, buyAmount, data } = await this.zeroExAggregator.quote(
+					inputToken?.address ?? (await this.indexRouter.weth()),
 					asset,
 					amount
 				);
+
 				return {
 					asset,
-					buyAmount,
+					swapTarget: to,
+					buyAssetMinAmount: buyAmount,
+					assetQuote: data,
 				};
 			})
 		);
 
-		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
-		const buyAmountsInBase = await Promise.all(
-			buyAmounts.map(async ({ asset, buyAmount }) => {
-				const price =
-					await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
-						asset
-					);
-				return {
-					asset,
-					buyAmount: BigNumber.from(buyAmount)
-						.mul(BigNumber.from(2).pow(112))
-						.mul(255)
-						.div(price.mul(amounts[asset].weight)),
-				};
-			})
-		);
-
-		const minAmount = buyAmountsInBase.reduce((min, curr) =>
-			min.buyAmount.lte(curr.buyAmount) ? min : curr
-		);
-
-		const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
-			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
-		);
-
-		const quotes = await Promise.all(
-			Object.keys(amounts).map(async (asset, i) => {
-				const {
-					buyAmount: buyAssetMinAmount,
-					to: swapTarget,
-					data: assetQuote,
-				} = await this.zeroExAggregator.quote(
-					routerInputTokenAddress,
-					asset,
-					scaledSellAmounts[i]
-				);
-
-				return {
-					asset,
-					buyAssetMinAmount,
-					swapTarget,
-					assetQuote,
-				};
-			})
-		);
-
-		amountInInputToken = scaledSellAmounts.reduce(
-			(sum, curr) => sum.add(curr),
-			BigNumber.from(0)
-		);
-
-		const options = {
-			index: index.address,
-			recipient: await this.indexRouter.account.address(),
-			quotes,
-			amountInInputToken,
-			inputToken: routerInputTokenAddress,
-		};
-
-		const indexRouterMint = await this.indexRouter.mintSwapStatic(
-			options,
-			amountInInputToken,
-			inputToken,
-			permitOptions
-		);
-
-		return {
-			zeroExSwap,
-			indexPriceEth,
-			options,
-			indexRouterMint,
-		};
+		return { zeroExSwap, indexPriceEth, amounts, quotes };
 	}
 
 	/**
