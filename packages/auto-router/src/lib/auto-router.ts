@@ -1,11 +1,17 @@
-import {ZeroExAggregator} from '@phuture/0x-aggregator';
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {Index} from '@phuture/index';
-import {IndexRouter} from '@phuture/index-router';
-import {Address} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
-import {TransactionResponse} from '@ethersproject/abstract-provider';
-import {getDefaultPriceOracle} from '@phuture/price-oracle';
+import { ZeroExAggregator } from '@phuture/0x-aggregator';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { Index } from '@phuture/index';
+import { IndexRouter } from '@phuture/index-router';
+import { Address } from '@phuture/types';
+import { BigNumber, BigNumberish } from 'ethers';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { getDefaultPriceOracle } from '@phuture/price-oracle';
+
+const baseMintGas = 260_000;
+const additionalMintGasPerAsset = 65_000;
+
+const baseBurnGas = 100_000;
+const additionalBurnGasPerAsset = 150_000;
 
 /** ### AutoRouter class */
 export class AutoRouter {
@@ -20,8 +26,7 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {
-	}
+	) {}
 
 	/**
 	 * ### Static auto Buy
@@ -39,7 +44,7 @@ export class AutoRouter {
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<BigNumber> {
-		const {zeroExSwap, indexPriceEth, quotes} = await this.prepareBuy(
+		const { zeroExSwap, indexPriceEth, quotes } = await this.prepareBuy(
 			index,
 			amountInInputToken,
 			inputToken,
@@ -53,7 +58,15 @@ export class AutoRouter {
 			inputToken?.address
 		);
 
-		const isMint = BigNumber.from(750_000 + 250_000 * quotes.length) // TODO: 750_000 is the gas limit for minting
+		const totalMintGas = BigNumber.from(
+			quotes
+				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
+				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
+		);
+
+		console.dir({ totalBurnGas: totalMintGas.toString() });
+
+		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
 			.mul(zeroExSwap.gasPrice)
 			.lte(
@@ -105,7 +118,7 @@ export class AutoRouter {
 
 		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
 		const buyAmountsInBase = await Promise.all(
-			buyAmounts.map(async ({asset, buyAssetMinAmount}) => {
+			buyAmounts.map(async ({ asset, buyAssetMinAmount }) => {
 				const price =
 					await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
 						asset
@@ -124,7 +137,7 @@ export class AutoRouter {
 			min.buyAmount.lte(curr.buyAmount) ? min : curr
 		);
 
-		const scaledSellAmounts = Object.values(amounts).map(({amount}, i) =>
+		const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
 			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
 		);
 
@@ -137,6 +150,7 @@ export class AutoRouter {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
+					estimatedGas,
 				} = await this.zeroExAggregator.quote(
 					routerInputTokenAddress,
 					asset,
@@ -148,6 +162,7 @@ export class AutoRouter {
 					buyAssetMinAmount,
 					swapTarget,
 					assetQuote,
+					estimatedGas,
 				};
 			})
 		);
@@ -165,18 +180,36 @@ export class AutoRouter {
 			inputToken: routerInputTokenAddress,
 		};
 
-		const indexRouterMint = await this.indexRouter.mintSwapStatic(
+		const indexRouterMintOutputAmount = await this.indexRouter.mintSwapStatic(
 			options,
 			amountInInputToken,
 			inputToken,
 			permitOptions
 		);
 
-		const isMint = indexRouterMint.estimatedGas
+		const totalMintGas = BigNumber.from(
+			quotes
+				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
+				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
+		);
+
+		console.dir({
+			gasDiff: totalMintGas
+				.sub(zeroExSwap.estimatedGas)
+				.mul(zeroExSwap.gasPrice)
+				.toString(),
+			amountDiff: indexRouterMintOutputAmount
+				.sub(zeroExSwap.buyAmount)
+				.mul(indexPriceEth)
+				.div(BigNumber.from(10).pow(18))
+				.toString(),
+		});
+
+		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
 			.mul(zeroExSwap.gasPrice)
 			.lte(
-				indexRouterMint.outputAmount
+				indexRouterMintOutputAmount
 					.sub(zeroExSwap.buyAmount)
 					.mul(indexPriceEth)
 					.div(BigNumber.from(10).pow(18))
@@ -198,7 +231,7 @@ export class AutoRouter {
 			gasLimit: BigNumber.from(zeroExSwap.estimatedGas).toHexString(),
 			...(inputToken
 				? {}
-				: {value: BigNumber.from(zeroExSwap.sellAmount).toHexString()}),
+				: { value: BigNumber.from(zeroExSwap.sellAmount).toHexString() }),
 		});
 	}
 
@@ -214,30 +247,32 @@ export class AutoRouter {
 				inputToken?.address || 'ETH',
 				index.address,
 				amountInInputToken,
-				{takerAddress}
+				{ takerAddress }
 			),
 			index.scaleAmount(amountInInputToken),
 			index.priceEth(),
 		]);
 
 		const quotes = await Promise.all(
-			Object.entries(amounts).map(async ([asset, {amount}]) => {
-				const {to, buyAmount, data} = await this.zeroExAggregator.quote(
-					inputToken?.address ?? (await this.indexRouter.weth()),
-					asset,
-					amount
-				);
+			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				const { to, buyAmount, data, estimatedGas } =
+					await this.zeroExAggregator.quote(
+						inputToken?.address ?? (await this.indexRouter.weth()),
+						asset,
+						amount
+					);
 
 				return {
 					asset,
 					swapTarget: to,
 					buyAssetMinAmount: buyAmount,
 					assetQuote: data,
+					estimatedGas,
 				};
 			})
 		);
 
-		return {zeroExSwap, indexPriceEth, amounts, quotes};
+		return { zeroExSwap, indexPriceEth, amounts, quotes };
 	}
 
 	/**
@@ -261,7 +296,7 @@ export class AutoRouter {
 
 		if (outputToken) {
 			outputTokenAddress = outputToken.address;
-			const {buyAmount} = await this.zeroExAggregator.price(
+			const { buyAmount } = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals())
@@ -280,7 +315,7 @@ export class AutoRouter {
 				index.address,
 				outputToken.address,
 				indexAmount,
-				{takerAddress: await this.indexRouter.account.address()}
+				{ takerAddress: await this.indexRouter.account.address() }
 			),
 			index.contract.anatomy(),
 			index.contract.inactiveAnatomy(),
@@ -289,25 +324,35 @@ export class AutoRouter {
 
 		const assets: Address[] = [...anatomy._assets, ...inactiveAnatomy];
 
-		const buyAssetMinAmounts = await Promise.all(
+		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
-				const {buyAmount: buyAssetMinAmount} =
-					await this.zeroExAggregator.price(
-						assets[i],
-						outputTokenAddress ?? (await this.indexRouter.weth()),
-						amount.mul(999).div(1000)
-					);
+				const { buyAmount, estimatedGas } = await this.zeroExAggregator.price(
+					assets[i],
+					outputTokenAddress ?? (await this.indexRouter.weth()),
+					amount.mul(999).div(1000)
+				);
 
-				return BigNumber.from(buyAssetMinAmount);
+				return { buyAmount, estimatedGas };
 			})
 		);
 
-		const indexRouterBurnOutputAmount = buyAssetMinAmounts.reduce(
-			(acc, amount) => acc.add(amount),
+		const indexRouterBurnOutputAmount = quotes.reduce(
+			(acc, { buyAmount }) => acc.add(buyAmount),
 			BigNumber.from(0)
 		);
 
-		const isBurn = BigNumber.from(750_000 + 250_000 * anatomy._assets.length) // TODO: 750_000 is the gas limit for minting
+		const totalBurnGas = BigNumber.from(
+			quotes
+				.reduce(
+					(curr, { estimatedGas }) => curr.add(estimatedGas),
+					BigNumber.from(0)
+				)
+				.add(baseBurnGas + quotes.length * additionalBurnGasPerAsset)
+		);
+
+		console.dir({ totalBurnGas: totalBurnGas.toString() });
+
+		const isBurn = totalBurnGas
 			.sub(zeroExSwap.estimatedGas)
 			.mul(zeroExSwap.gasPrice)
 			.lte(
@@ -320,9 +365,14 @@ export class AutoRouter {
 						)
 					)
 			);
-		await index.checkAllowance(isBurn ? this.indexRouter.address : zeroExSwap.to, indexAmount);
+		await index.checkAllowance(
+			isBurn ? this.indexRouter.address : zeroExSwap.to,
+			indexAmount
+		);
 
-		return isBurn ? indexRouterBurnOutputAmount : BigNumber.from(zeroExSwap.buyAmount);
+		return isBurn
+			? indexRouterBurnOutputAmount
+			: BigNumber.from(zeroExSwap.buyAmount);
 	}
 
 	/**
@@ -346,7 +396,7 @@ export class AutoRouter {
 
 		if (outputToken) {
 			outputTokenAddress = outputToken.address;
-			const {buyAmount} = await this.zeroExAggregator.price(
+			const { buyAmount } = await this.zeroExAggregator.price(
 				outputToken.address,
 				await this.indexRouter.weth(),
 				BigNumber.from(10).pow(await outputToken.decimals())
@@ -365,7 +415,7 @@ export class AutoRouter {
 				index.address,
 				outputToken.address,
 				indexAmount,
-				{takerAddress: await this.indexRouter.account.address()}
+				{ takerAddress: await this.indexRouter.account.address() }
 			),
 			index.contract.anatomy(),
 			index.contract.inactiveAnatomy(),
@@ -380,6 +430,7 @@ export class AutoRouter {
 					buyAmount: buyAssetMinAmount,
 					to: swapTarget,
 					data: assetQuote,
+					estimatedGas,
 				} = await this.zeroExAggregator.quote(
 					assets[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
@@ -390,6 +441,7 @@ export class AutoRouter {
 					swapTarget,
 					buyAssetMinAmount,
 					assetQuote,
+					estimatedGas,
 				};
 			})
 		);
@@ -400,18 +452,43 @@ export class AutoRouter {
 			permitOptions,
 		};
 
-		const indexRouterBurn = await this.indexRouter.burnSwapStatic(
+		const indexRouterBurnOutputAmount = await this.indexRouter.burnSwapStatic(
 			index.address,
 			indexAmount,
 			await this.indexRouter.account.address(),
 			options
 		);
 
-		const isBurn = indexRouterBurn.estimatedGas
+		const totalBurnGas = BigNumber.from(
+			quotes
+				.reduce(
+					(curr, { estimatedGas }) => curr.add(estimatedGas),
+					BigNumber.from(0)
+				)
+				.add(baseBurnGas + quotes.length * additionalBurnGasPerAsset)
+		);
+
+		console.dir({
+			gasDiff: totalBurnGas
+				.sub(zeroExSwap.estimatedGas)
+				.mul(zeroExSwap.gasPrice)
+				.toString(),
+			amountDiff: indexRouterBurnOutputAmount
+				.sub(zeroExSwap.buyAmount)
+				.mul(outputTokenPriceEth)
+				.div(
+					BigNumber.from(10).pow(
+						outputToken ? await outputToken.decimals() : 18
+					)
+				)
+				.toString(),
+		});
+
+		const isBurn = totalBurnGas
 			.sub(zeroExSwap.estimatedGas)
 			.mul(zeroExSwap.gasPrice)
 			.lte(
-				indexRouterBurn.outputAmount
+				indexRouterBurnOutputAmount
 					.sub(zeroExSwap.buyAmount)
 					.mul(outputTokenPriceEth)
 					.div(
