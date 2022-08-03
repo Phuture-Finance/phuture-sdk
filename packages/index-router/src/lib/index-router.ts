@@ -59,7 +59,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	async mintSwap(
 		options: IIndexRouter.MintSwapParamsStruct,
 		sellAmount: BigNumberish,
-		sellToken?: Erc20,
+		sellToken?: Erc20 | Address,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
 	): Promise<ContractTransaction> {
 		if (!sellToken) {
@@ -82,6 +82,8 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.r,
 				permitOptions.s
 			);
+
+		if (isAddress(sellToken)) sellToken = new Erc20(this.account, sellToken);
 
 		await sellToken.checkAllowance(this.address, sellAmount);
 
