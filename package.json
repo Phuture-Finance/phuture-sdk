@@ -7,10 +7,11 @@
 		"examples/*"
 	],
 	"scripts": {
-		"bump": "changeset version && pnpm update-manifests",
+		"nx": "nx",
 		"release": "pnpm publish --access=public",
 		"prepare": "husky install",
 		"start": "nx exec",
+		"generate": "nx run-many --target=generate --all",
 		"build": "nx run-many --target=build --all",
 		"format": "prettier --write '**/*.{json,md,yml}'",
 		"lint": "nx run-many --target=lint --all",
