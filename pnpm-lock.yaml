@@ -55,6 +55,7 @@ importers:
       typedoc: 0.23.8
       typedoc-plugin-markdown: 3.11.6
       typescript: ~4.7.2
+      yesno: ^0.4.0
     dependencies:
       '@apollo/client': 3.6.9_graphql@16.5.0
       '@ethersproject/abi': 5.6.4
@@ -69,6 +70,7 @@ importers:
       ethers: 5.6.9
       events: 3.3.0
       tslib: 2.4.0
+      yesno: 0.4.0
     devDependencies:
       '@graphql-codegen/cli': 2.7.0_coyzfjge32jlfb2chmficl5a2y
       '@graphql-codegen/typescript': 2.7.2_graphql@16.5.0
@@ -8652,6 +8654,10 @@ packages:
       y18n: 5.0.8
       yargs-parser: 21.0.1
     dev: true
+
+  /yesno/0.4.0:
+    resolution: {integrity: sha512-tdBxmHvbXPBKYIg81bMCB7bVeDmHkRzk5rVJyYYXurwKkHq/MCd8rz4HSJUP7hW0H2NlXiq8IFiWvYKEHhlotA==}
+    dev: false
 
   /yn/3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
