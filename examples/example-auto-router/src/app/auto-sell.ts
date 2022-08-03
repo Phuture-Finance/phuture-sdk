@@ -6,7 +6,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
 	if (!tokenAddress) {
 		console.dir(
-			await (process.env['IS_STATIC']
+			await (process.env['IS_STATIC'] === 'true'
 				? autoRouter.autoSellStatic(index, amountToSellDesired)
 				: autoRouter.autoSell(index, amountToSellDesired))
 		);
@@ -16,7 +16,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 	const token = new Erc20Permit(account, tokenAddress);
 
 	console.dir(
-		await (process.env['IS_STATIC']
+		await (process.env['IS_STATIC'] === 'true'
 			? autoRouter.autoSellStatic(index, amountToSellDesired, token)
 			: autoRouter.autoSell(index, amountToSellDesired, token))
 	);
