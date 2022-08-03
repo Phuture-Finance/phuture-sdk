@@ -31,7 +31,7 @@
 			"options": {
 				"commands": [
 					{
-						"command": "npx graphql-codegen --config packages/subgraph/codegen.yml"
+						"command": "pnpm graphql-codegen --config packages/subgraph/codegen.yml"
 					}
 				]
 			}

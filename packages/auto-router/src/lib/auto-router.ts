@@ -9,10 +9,10 @@ import { getDefaultPriceOracle } from '@phuture/price-oracle';
 import { InsufficientAllowanceError } from '@phuture/errors';
 
 const baseMintGas = 260_000;
-const additionalMintGasPerAsset = 65_000;
+const additionalMintGasPerAsset = 135_000;
 
 const baseBurnGas = 100_000;
-const additionalBurnGasPerAsset = 150_000;
+const additionalBurnGasPerAsset = 300_000;
 
 /** ### AutoRouter class */
 export class AutoRouter {
@@ -49,7 +49,6 @@ export class AutoRouter {
 			index,
 			amountInInputToken,
 			inputToken,
-			permitOptions
 		);
 
 		const indexRouterMintOutputAmount = await this.indexRouter.mintIndexAmount(
@@ -65,7 +64,7 @@ export class AutoRouter {
 				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
 		);
 
-		console.dir({ totalBurnGas: totalMintGas.toString() });
+		console.dir({ totalMintGas: totalMintGas.toString() });
 
 		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
@@ -126,7 +125,6 @@ export class AutoRouter {
 			index,
 			amountInInputToken,
 			inputToken,
-			permitOptions,
 			await this.indexRouter.account.address()
 		);
 
@@ -253,7 +251,6 @@ export class AutoRouter {
 		index: Index,
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
 		takerAddress?: Address
 	) {
 		const [zeroExSwap, amounts, indexPriceEth] = await Promise.all([
