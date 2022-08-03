@@ -44,11 +44,16 @@ export class AutoRouter {
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	): Promise<{ outputAmount: BigNumber; allowanceTarget?: Address }> {
+	): Promise<{
+		isMint: boolean;
+		target: Address;
+		outputAmount: BigNumber;
+		expectedAllowance?: BigNumber;
+	}> {
 		const { zeroExSwap, indexPriceEth, quotes } = await this.prepareBuy(
 			index,
 			amountInInputToken,
-			inputToken,
+			inputToken
 		);
 
 		const indexRouterMintOutputAmount = await this.indexRouter.mintIndexAmount(
@@ -76,16 +81,15 @@ export class AutoRouter {
 					.div(BigNumber.from(10).pow(18))
 			);
 
-		let allowanceTarget: Address | undefined;
+		const target = isMint ? this.indexRouter.address : zeroExSwap.to;
+
+		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
 			try {
-				await inputToken.checkAllowance(
-					isMint ? this.indexRouter.address : zeroExSwap.to,
-					amountInInputToken
-				);
+				await inputToken.checkAllowance(target, amountInInputToken);
 			} catch (error) {
 				if (error instanceof InsufficientAllowanceError) {
-					allowanceTarget = error.target;
+					expectedAllowance = error.expectedAllowance;
 				} else {
 					throw error;
 				}
@@ -93,10 +97,12 @@ export class AutoRouter {
 		}
 
 		return {
+			isMint,
+			target,
 			outputAmount: isMint
 				? indexRouterMintOutputAmount
 				: BigNumber.from(zeroExSwap.buyAmount),
-			allowanceTarget,
+			expectedAllowance,
 		};
 	}
 
@@ -301,7 +307,12 @@ export class AutoRouter {
 		indexAmount: BigNumberish,
 		outputToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	): Promise<{ outputAmount: BigNumber; allowanceTarget?: Address }> {
+	): Promise<{
+		isBurn: boolean;
+		outputAmount: BigNumber;
+		target: Address;
+		expectedAllowance?: BigNumber;
+	}> {
 		let outputTokenAddress: Address | undefined;
 		let outputTokenPriceEth: BigNumber = BigNumber.from(10).pow(18);
 
@@ -376,25 +387,25 @@ export class AutoRouter {
 					)
 			);
 
-		let allowanceTarget: Address | undefined;
+		const target = isBurn ? this.indexRouter.address : zeroExSwap.to;
+		let expectedAllowance: BigNumber | undefined;
 		try {
-			await index.checkAllowance(
-				isBurn ? this.indexRouter.address : zeroExSwap.to,
-				indexAmount
-			);
+			await index.checkAllowance(target, indexAmount);
 		} catch (error) {
 			if (error instanceof InsufficientAllowanceError) {
-				allowanceTarget = error.target;
+				expectedAllowance = error.expectedAllowance;
 			} else {
 				throw error;
 			}
 		}
 
 		return {
+			isBurn,
+			target,
 			outputAmount: isBurn
 				? indexRouterBurnOutputAmount
 				: BigNumber.from(zeroExSwap.buyAmount),
-			allowanceTarget,
+			expectedAllowance,
 		};
 	}
 
