@@ -17,7 +17,7 @@ export const account = new Account(
 );
 
 const zeroEx = new ZeroExAggregator();
-const indexRouter = new IndexRouter(account, getEnv('INDEX_ROUTER_ADDRESS'));
+const indexRouter = new IndexRouter(account);
 
 export const index = new Index(account, getEnv('INDEX_ADDRESS'));
 
