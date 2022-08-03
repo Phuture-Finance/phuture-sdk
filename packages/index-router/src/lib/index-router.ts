@@ -12,7 +12,7 @@ import { IIndexRouter } from '../types/IndexRouter';
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x3c9cc19302B48F050378D14C40cF1EaA81D9d46D',
+	Mainnet = '0x01c4D578d26C90265F7EC587c1f235E65608d7D3',
 }
 
 /** ### IndexRouter Contract */
@@ -103,61 +103,34 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		sellAmount: BigNumberish,
 		sellToken?: Erc20,
 		permitOptions?: Omit<StandardPermitArguments, 'amount'>
-	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
+	): Promise<BigNumber> {
 		if (!sellToken) {
 			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
 				index: options.index,
 				quotes: options.quotes,
 				recipient: options.recipient,
 			};
-			const [outputAmount, estimatedGas] = await Promise.all([
-				this.contract.callStatic.mintSwapValue(mintSwapValueOptions, {
-					value: sellAmount,
-				}),
-				this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
-					value: sellAmount,
-				}),
-			]);
 
-			return {
-				outputAmount,
-				estimatedGas,
-			};
+			return this.contract.callStatic.mintSwapValue(mintSwapValueOptions, {
+				value: sellAmount,
+			})
 		}
 
 		if (permitOptions !== undefined) {
-			const [outputAmount, estimatedGas] = await Promise.all([
-				this.contract.callStatic.mintSwapWithPermit(
-					options as IIndexRouter.MintSwapParamsStruct,
-					permitOptions.deadline,
-					permitOptions.v,
-					permitOptions.r,
-					permitOptions.s
-				),
-				this.contract.estimateGas.mintSwapWithPermit(
-					options as IIndexRouter.MintSwapParamsStruct,
-					permitOptions.deadline,
-					permitOptions.v,
-					permitOptions.r,
-					permitOptions.s
-				),
-			]);
-
-			return { outputAmount, estimatedGas };
+			return this.contract.callStatic.mintSwapWithPermit(
+				options as IIndexRouter.MintSwapParamsStruct,
+				permitOptions.deadline,
+				permitOptions.v,
+				permitOptions.r,
+				permitOptions.s
+			);
 		}
 
 		await sellToken.checkAllowance(this.address, sellAmount);
 
-		const [outputAmount, estimatedGas] = await Promise.all([
-			this.contract.callStatic.mintSwap(
-				options as IIndexRouter.MintSwapParamsStruct
-			),
-			this.contract.estimateGas.mintSwap(
-				options as IIndexRouter.MintSwapParamsStruct
-			),
-		]);
-
-		return { outputAmount, estimatedGas };
+		return this.contract.callStatic.mintSwap(
+			options as IIndexRouter.MintSwapParamsStruct
+		);
 	}
 
 	/**
@@ -305,7 +278,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			outputAsset?: Address;
 			permitOptions?: Omit<StandardPermitArguments, 'amount'>;
 		}
-	): Promise<{ outputAmount: BigNumber; estimatedGas: BigNumber }> {
+	):  Promise<BigNumber> {
 		const indexInstance = isAddress(index)
 			? new Erc20(this.account, index)
 			: index;
@@ -319,65 +292,33 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 
 		if (options.outputAsset === undefined) {
 			if (options.permitOptions !== undefined) {
-				const [outputAmount, estimatedGas] = await Promise.all([
-					this.contract.callStatic.burnSwapValueWithPermit(
-						burnParameters,
-						options.permitOptions.deadline,
-						options.permitOptions.v,
-						options.permitOptions.r,
-						options.permitOptions.s
-					),
-					this.contract.estimateGas.burnSwapValueWithPermit(
-						burnParameters,
-						options.permitOptions.deadline,
-						options.permitOptions.v,
-						options.permitOptions.r,
-						options.permitOptions.s
-					),
-				]);
-
-				return { outputAmount, estimatedGas };
+				return this.contract.callStatic.burnSwapValueWithPermit(
+					burnParameters,
+					options.permitOptions.deadline,
+					options.permitOptions.v,
+					options.permitOptions.r,
+					options.permitOptions.s
+				);
 			}
 
 			await indexInstance.checkAllowance(this.address, amount);
 
-			const [outputAmount, estimatedGas] = await Promise.all([
-				this.contract.callStatic.burnSwapValue(burnParameters),
-				this.contract.estimateGas.burnSwapValue(burnParameters),
-			]);
-
-			return { outputAmount, estimatedGas };
+			return this.contract.callStatic.burnSwapValue(burnParameters);
 		}
 
 		if (options.permitOptions !== undefined) {
-			const [outputAmount, estimatedGas] = await Promise.all([
-				this.contract.callStatic.burnSwapWithPermit(
-					burnParameters,
-					options.permitOptions.deadline,
-					options.permitOptions.v,
-					options.permitOptions.r,
-					options.permitOptions.s
-				),
-				this.contract.estimateGas.burnSwapWithPermit(
-					burnParameters,
-					options.permitOptions.deadline,
-					options.permitOptions.v,
-					options.permitOptions.r,
-					options.permitOptions.s
-				),
-			]);
-
-			return { outputAmount, estimatedGas };
+			return this.contract.callStatic.burnSwapWithPermit(
+				burnParameters,
+				options.permitOptions.deadline,
+				options.permitOptions.v,
+				options.permitOptions.r,
+				options.permitOptions.s
+			);
 		}
 
 		await indexInstance.checkAllowance(this.address, amount);
 
-		const [outputAmount, estimatedGas] = await Promise.all([
-			this.contract.callStatic.burnSwap(burnParameters),
-			this.contract.estimateGas.burnSwap(burnParameters),
-		]);
-
-		return { outputAmount, estimatedGas };
+		return this.contract.callStatic.burnSwap(burnParameters);
 	}
 
 	// Get burn amounts of multiple tokens
