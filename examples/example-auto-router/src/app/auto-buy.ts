@@ -5,15 +5,19 @@ import { Erc20Permit } from '@phuture/erc-20';
 export default async function autoBuy(amountToSellDesired: BigNumber) {
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
 	if (!tokenAddress) {
-		await (process.env['IS_STATIC'] === 'true'
-			? autoRouter.autoBuyStatic(index, amountToSellDesired)
-			: autoRouter.autoBuy(index, amountToSellDesired));
+		console.dir(
+			await (process.env['IS_STATIC']
+				? autoRouter.autoBuyStatic(index, amountToSellDesired)
+				: autoRouter.autoBuy(index, amountToSellDesired))
+		);
 		return;
 	}
 
 	const token = new Erc20Permit(account, tokenAddress);
 
-	await (process.env['IS_STATIC'] === 'true'
-		? autoRouter.autoBuyStatic(index, amountToSellDesired, token)
-		: autoRouter.autoBuy(index, amountToSellDesired, token));
+	console.dir(
+		await (process.env['IS_STATIC']
+			? autoRouter.autoBuyStatic(index, amountToSellDesired, token)
+			: autoRouter.autoBuy(index, amountToSellDesired, token))
+	);
 }

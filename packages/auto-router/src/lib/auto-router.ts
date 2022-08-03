@@ -328,8 +328,7 @@ export class AutoRouter {
 			this.zeroExAggregator.quote(
 				index.address,
 				outputToken.address,
-				indexAmount,
-				{ takerAddress: await this.indexRouter.account.address() }
+				indexAmount
 			),
 			index.contract.anatomy(),
 			index.contract.inactiveAnatomy(),
