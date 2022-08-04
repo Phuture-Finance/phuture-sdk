@@ -42,8 +42,7 @@ export class AutoRouter {
 	async selectBuy(
 		index: Index,
 		amountInInputToken: BigNumberish,
-		inputToken?: Erc20,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>
+		inputToken?: Erc20
 	): Promise<{
 		isMint: boolean;
 		target: Address;
@@ -292,8 +291,7 @@ export class AutoRouter {
 	async selectSell(
 		index: Index,
 		indexAmount: BigNumberish,
-		outputToken?: Erc20,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>
+		outputToken?: Erc20
 	): Promise<{
 		isBurn: boolean;
 		outputAmount: BigNumber;
@@ -322,7 +320,7 @@ export class AutoRouter {
 		const [zeroExSwap, anatomy, inactiveAnatomy, amounts] = await Promise.all([
 			this.zeroExAggregator.quote(
 				index.address,
-				outputToken.address,
+				outputTokenAddress ?? 'ETH',
 				indexAmount
 			),
 			index.contract.anatomy(),
@@ -480,7 +478,7 @@ export class AutoRouter {
 	): Promise<TransactionResponse> {
 		const { to, data, estimatedGas } = await this.zeroExAggregator.quote(
 			indexAddress,
-			outputTokenAddress ?? (await this.indexRouter.weth()),
+			outputTokenAddress ?? 'ETH',
 			indexAmount,
 			{ takerAddress: await this.indexRouter.account.address() }
 		);
