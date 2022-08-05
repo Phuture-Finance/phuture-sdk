@@ -35,7 +35,6 @@ export class AutoRouter {
 	 * @param index index address or it's Index interface
 	 * @param amountInInputToken amount in input token
 	 * @param inputToken Erc20 or Erc20Permit interface of input token
-	 * @param permitOptions permit options for transaction
 	 *
 	 * @returns output amount of Index
 	 */
@@ -90,8 +89,6 @@ export class AutoRouter {
 				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
 				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
 		);
-
-		console.dir({ totalMintGas: totalMintGas.toString() });
 
 		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
@@ -284,7 +281,6 @@ export class AutoRouter {
 	 * @param index index address or it's Index interface
 	 * @param indexAmount amount in index token
 	 * @param outputToken instance or address of output token
-	 * @param permitOptions permit options for transaction
 	 *
 	 * @returns output token amount
 	 */
@@ -355,8 +351,6 @@ export class AutoRouter {
 				)
 				.add(baseBurnGas + quotes.length * additionalBurnGasPerAsset)
 		);
-
-		console.dir({ totalBurnGas: totalBurnGas.toString() });
 
 		const isBurn = totalBurnGas
 			.sub(zeroExSwap.estimatedGas)
