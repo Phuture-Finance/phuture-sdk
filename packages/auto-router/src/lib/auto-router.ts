@@ -35,15 +35,13 @@ export class AutoRouter {
 	 * @param index index address or it's Index interface
 	 * @param amountInInputToken amount in input token
 	 * @param inputToken Erc20 or Erc20Permit interface of input token
-	 * @param permitOptions permit options for transaction
 	 *
 	 * @returns output amount of Index
 	 */
 	async selectBuy(
 		index: Index,
 		amountInInputToken: BigNumberish,
-		inputToken?: Erc20,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>
+		inputToken?: Erc20
 	): Promise<{
 		isMint: boolean;
 		target: Address;
@@ -91,8 +89,6 @@ export class AutoRouter {
 				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
 				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
 		);
-
-		console.dir({ totalMintGas: totalMintGas.toString() });
 
 		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
@@ -285,15 +281,13 @@ export class AutoRouter {
 	 * @param index index address or it's Index interface
 	 * @param indexAmount amount in index token
 	 * @param outputToken instance or address of output token
-	 * @param permitOptions permit options for transaction
 	 *
 	 * @returns output token amount
 	 */
 	async selectSell(
 		index: Index,
 		indexAmount: BigNumberish,
-		outputToken?: Erc20,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>
+		outputToken?: Erc20
 	): Promise<{
 		isBurn: boolean;
 		outputAmount: BigNumber;
@@ -322,7 +316,7 @@ export class AutoRouter {
 		const [zeroExSwap, anatomy, inactiveAnatomy, amounts] = await Promise.all([
 			this.zeroExAggregator.quote(
 				index.address,
-				outputToken.address,
+				outputTokenAddress ?? 'ETH',
 				indexAmount
 			),
 			index.contract.anatomy(),
@@ -357,8 +351,6 @@ export class AutoRouter {
 				)
 				.add(baseBurnGas + quotes.length * additionalBurnGasPerAsset)
 		);
-
-		console.dir({ totalBurnGas: totalBurnGas.toString() });
 
 		const isBurn = totalBurnGas
 			.sub(zeroExSwap.estimatedGas)
@@ -480,7 +472,7 @@ export class AutoRouter {
 	): Promise<TransactionResponse> {
 		const { to, data, estimatedGas } = await this.zeroExAggregator.quote(
 			indexAddress,
-			outputTokenAddress ?? (await this.indexRouter.weth()),
+			outputTokenAddress ?? 'ETH',
 			indexAmount,
 			{ takerAddress: await this.indexRouter.account.address() }
 		);
