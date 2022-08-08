@@ -27,7 +27,7 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {}
+	) { }
 
 	/**
 	 * ### Static auto Buy
@@ -218,7 +218,7 @@ export class AutoRouter {
 		const quotes = await Promise.all(
 			Object.keys(amounts).map(async (asset, i) => {
 				const {
-					buyAmount: buyAssetMinAmount,
+					buyAmount,
 					to: swapTarget,
 					data: assetQuote,
 					estimatedGas,
@@ -229,6 +229,9 @@ export class AutoRouter {
 					options?.zeroExOptions
 				);
 
+				const buyAssetMinAmount = options?.zeroExOptions?.slippagePercentage
+					? BigNumber.from(buyAmount).mul(1000 - options?.zeroExOptions?.slippagePercentage * 1000).div(1000)
+					: buyAmount
 				return {
 					asset,
 					buyAssetMinAmount,
@@ -456,7 +459,7 @@ export class AutoRouter {
 		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
 				const {
-					buyAmount: buyAssetMinAmount,
+					buyAmount,
 					to: swapTarget,
 					data: assetQuote,
 					estimatedGas,
@@ -467,6 +470,9 @@ export class AutoRouter {
 					options
 				);
 
+				const buyAssetMinAmount = options?.slippagePercentage
+					? BigNumber.from(buyAmount).mul(1000 - options?.slippagePercentage * 1000).div(1000)
+					: buyAmount
 				return {
 					swapTarget,
 					buyAssetMinAmount,
