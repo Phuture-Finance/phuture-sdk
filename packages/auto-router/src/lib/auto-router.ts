@@ -63,16 +63,6 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
-				if(amount.isZero()) {
-					return {
-						asset,
-						swapTarget: constants.AddressZero,
-						buyAssetMinAmount: 0,
-						assetQuote: '',
-						estimatedGas: 0,
-					}
-				}
-
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
 						inputToken?.address ?? (await this.indexRouter.weth()),
@@ -179,16 +169,6 @@ export class AutoRouter {
 
 		const buyAmounts = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
-				if(amount.isZero()) {
-					return {
-						asset,
-						swapTarget: constants.AddressZero,
-						buyAssetMinAmount: 0,
-						assetQuote: '',
-						estimatedGas: 0,
-					}
-				}
-
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
 						inputTokenAddress ?? (await this.indexRouter.weth()),
@@ -485,6 +465,15 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
+				if(amount.isZero()) {
+					return {
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: 0,
+						assetQuote: '',
+						estimatedGas: 0,
+					}
+				}
+
 				const {
 					buyAmount,
 					to: swapTarget,
