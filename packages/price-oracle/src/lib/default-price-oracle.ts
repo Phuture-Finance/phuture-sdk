@@ -1,12 +1,13 @@
 import {
-	DefaultPhuturePriceOracleAddress,
+	defaultPhuturePriceOracleAddress,
 	PhuturePriceOracle,
 } from './phuture-price-oracle';
-import { Network } from '@phuture/types';
+import {Network, Networkish} from '@phuture/types';
 import { Account } from '@phuture/account';
 
-const defaultPriceOracles: Record<Network, PhuturePriceOracle | undefined> = {
+const defaultPriceOracles: Record<Networkish, PhuturePriceOracle | undefined> = {
 	[Network.Mainnet]: undefined,
+	[Network.CChain]: undefined,
 };
 
 export const getDefaultPriceOracle = (
@@ -20,7 +21,7 @@ export const getDefaultPriceOracle = (
 
 	const newPriceOracle = new PhuturePriceOracle(
 		account,
-		DefaultPhuturePriceOracleAddress[network]
+		defaultPhuturePriceOracleAddress[network]
 	);
 	defaultPriceOracles[network] = newPriceOracle;
 

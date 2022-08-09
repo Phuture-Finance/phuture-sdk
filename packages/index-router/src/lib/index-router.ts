@@ -1,5 +1,5 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Address, isAddress } from '@phuture/types';
+import {Address, isAddress, Network, Networkish} from '@phuture/types';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
@@ -10,9 +10,11 @@ import {
 import { IIndexRouter } from '../types/IndexRouter';
 
 /** ### Default IndexRouter address for network */
-export enum DefaultIndexRouterAddress {
+export const defaultIndexRouterAddress: Record<Networkish, Address> = {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x01c4D578d26C90265F7EC587c1f235E65608d7D3',
+	[Network.Mainnet]: '0x1985426d77c431fc95E5Ca51547BcB9b793E8482',
+	/** ### Default IndexRouter address on c-chain. */
+	[Network.CChain]: '0x2ca1bA7fF498DB460DD40F43e596c9A2eF35a066',
 }
 
 /** ### IndexRouter Contract */
@@ -31,7 +33,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		account: Account,
 		contract:
 			| IndexRouterContractInterface
-			| Address = DefaultIndexRouterAddress.Mainnet
+			| Address = defaultIndexRouterAddress[Network.Mainnet]
 	) {
 		super(account, contract, IndexRouter__factory);
 	}
@@ -234,66 +236,33 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 
 		if (options.outputAsset === undefined) {
 			if (options.permitOptions !== undefined) {
-				// const estimatedGas =
-				// 	await this.contract.estimateGas.burnSwapValueWithPermit(
-				// 		burnParameters,
-				// 		options.permitOptions.deadline,
-				// 		options.permitOptions.v,
-				// 		options.permitOptions.r,
-				// 		options.permitOptions.s
-				// 	);
-
 				return this.contract.burnSwapValueWithPermit(
 					burnParameters,
 					options.permitOptions.deadline,
 					options.permitOptions.v,
 					options.permitOptions.r,
 					options.permitOptions.s
-					// { gasLimit: estimatedGas.mul(105).div(100) }
 				);
 			}
 
 			await indexInstance.checkAllowance(this.address, amount);
 
-			// const estimatedGas = await this.contract.estimateGas.burnSwapValue(
-			// 	burnParameters
-			// );
-
-			return this.contract.burnSwapValue(
-				burnParameters
-				// { gasLimit: estimatedGas.mul(105).div(100) }
-			);
+			return this.contract.burnSwapValue(burnParameters);
 		}
 
 		if (options.permitOptions !== undefined) {
-			// const estimatedGas = await this.contract.estimateGas.burnSwapWithPermit(
-			// 	burnParameters,
-			// 	options.permitOptions.deadline,
-			// 	options.permitOptions.v,
-			// 	options.permitOptions.r,
-			// 	options.permitOptions.s
-			// );
-
 			return this.contract.burnSwapWithPermit(
 				burnParameters,
 				options.permitOptions.deadline,
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s
-				// { gasLimit: estimatedGas.mul(105).div(100) }
 			);
 		}
 
 		await indexInstance.checkAllowance(this.address, amount);
 
-		// const estimatedGas = await this.contract.estimateGas.burnSwap(
-		// 	burnParameters
-		// );
-
-		return this.contract.burnSwap(
-			burnParameters
-			// { gasLimit: estimatedGas.mul(105).div(100) }
-		);
+		return this.contract.burnSwap(burnParameters);
 	}
 
 	/**

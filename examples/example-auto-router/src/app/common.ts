@@ -16,8 +16,8 @@ export const account = new Account(
 	)
 );
 
-const zeroEx = new ZeroExAggregator();
-const indexRouter = new IndexRouter(account);
+const zeroEx = new ZeroExAggregator("https://avalanche.api.0x.org");
+const indexRouter = new IndexRouter(account, "0x2ca1bA7fF498DB460DD40F43e596c9A2eF35a066");
 
 export const index = new Index(account, getEnv('INDEX_ADDRESS'));
 
