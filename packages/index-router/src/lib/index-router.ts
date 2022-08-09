@@ -12,7 +12,7 @@ import { IIndexRouter } from '../types/IndexRouter';
 /** ### Default IndexRouter address for network */
 export enum DefaultIndexRouterAddress {
 	/** ### Default IndexRouter address on mainnet. */
-	Mainnet = '0x01c4D578d26C90265F7EC587c1f235E65608d7D3',
+	Mainnet = '0x1985426d77c431fc95E5Ca51547BcB9b793E8482',
 }
 
 /** ### IndexRouter Contract */
@@ -29,11 +29,9 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 */
 	constructor(
 		account: Account,
-		contract:
-			| IndexRouterContractInterface
-			| Address = DefaultIndexRouterAddress.Mainnet
+		contract?: IndexRouterContractInterface | Address
 	) {
-		super(account, contract, IndexRouter__factory);
+		super(account, contract ?? DefaultIndexRouterAddress.Mainnet, IndexRouter__factory);
 	}
 
 	async weth(): Promise<Address> {
