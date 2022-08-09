@@ -469,7 +469,7 @@ export class AutoRouter {
 					return {
 						swapTarget: constants.AddressZero,
 						buyAssetMinAmount: 0,
-						assetQuote: '',
+						assetQuote: [],
 						estimatedGas: 0,
 					}
 				}
