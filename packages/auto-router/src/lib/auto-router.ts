@@ -3,7 +3,7 @@ import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address } from '@phuture/types';
-import { BigNumber, BigNumberish } from 'ethers';
+import {BigNumber, BigNumberish, constants} from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
@@ -63,6 +63,16 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				if(amount.isZero()) {
+					return {
+						asset,
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: 0,
+						assetQuote: '',
+						estimatedGas: 0,
+					}
+				}
+
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
 						inputToken?.address ?? (await this.indexRouter.weth()),
@@ -169,6 +179,16 @@ export class AutoRouter {
 
 		const buyAmounts = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				if(amount.isZero()) {
+					return {
+						asset,
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: 0,
+						assetQuote: '',
+						estimatedGas: 0,
+					}
+				}
+
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
 						inputTokenAddress ?? (await this.indexRouter.weth()),
@@ -217,6 +237,16 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			Object.keys(amounts).map(async (asset, i) => {
+				if(scaledSellAmounts[i].isZero()) {
+					return {
+						asset,
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: 0,
+						assetQuote: '',
+						estimatedGas: 0,
+					}
+				}
+
 				const {
 					buyAmount,
 					to: swapTarget,
