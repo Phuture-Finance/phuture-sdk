@@ -20,6 +20,15 @@ const defaultPhutureSubgraphUrl =
 /** Subgraph client */
 export class Subgraph<CacheShape = NormalizedCacheObject> {
 	/**
+	 * ### Creates a new Subgraph client
+	 *
+	 * @param client The Apollo client
+	 *
+	 * @returns {Subgraph} The new Subgraph client
+	 */
+	constructor(private readonly client: ApolloClient<CacheShape>) {}
+
+	/**
 	 * ### Creates a new Subgraph client from the given url
 	 *
 	 * @param {Url} uri The url of the Subgraph
@@ -34,15 +43,6 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 
 		return new Subgraph(client);
 	}
-
-	/**
-	 * ### Creates a new Subgraph client
-	 *
-	 * @param client The Apollo client
-	 *
-	 * @returns {Subgraph} The new Subgraph client
-	 */
-	constructor(private readonly client: ApolloClient<CacheShape>) {}
 
 	/**
 	 * ### Queries the Subgraph

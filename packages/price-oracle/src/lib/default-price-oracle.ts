@@ -1,14 +1,15 @@
+import { Network, Networkish } from '@phuture/types';
+import { Account } from '@phuture/account';
 import {
 	defaultPhuturePriceOracleAddress,
 	PhuturePriceOracle,
 } from './phuture-price-oracle';
-import {Network, Networkish} from '@phuture/types';
-import { Account } from '@phuture/account';
 
-const defaultPriceOracles: Record<Networkish, PhuturePriceOracle | undefined> = {
-	[Network.Mainnet]: undefined,
-	[Network.CChain]: undefined,
-};
+const defaultPriceOracles: Record<Networkish, PhuturePriceOracle | undefined> =
+	{
+		[Network.Mainnet]: undefined,
+		[Network.CChain]: undefined,
+	};
 
 export const getDefaultPriceOracle = (
 	account: Account,

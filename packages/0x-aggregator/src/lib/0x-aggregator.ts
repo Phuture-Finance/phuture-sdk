@@ -1,7 +1,8 @@
-import type { Address, TokenSymbol, Url } from '@phuture/types';
+import type { Address, Networkish, TokenSymbol, Url } from '@phuture/types';
 import axios, { AxiosInstance } from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
+import { Network } from '@phuture/types';
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
@@ -13,10 +14,10 @@ import {
 const debug = newDebug('@phuture:0x-aggregator');
 
 /** ### Addresses of the ZeroX API endpoint */
-export enum ZeroExBaseUrl {
-	Mainnet = 'https://api.0x.org/',
-	GatedMainnet = 'https:///gated.api.0x.org/',
-}
+export const zeroExBaseUrl: Record<Networkish, Url> = {
+	[Network.Mainnet]: 'https://api.0x.org/',
+	[Network.CChain]: 'https://avalanche.api.0x.org/',
+};
 
 /** ### Facilitates swaps for end user */
 export class ZeroExAggregator {
@@ -37,7 +38,7 @@ export class ZeroExAggregator {
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet, apiKey?: string) {
+	constructor(baseUrl: Url = zeroExBaseUrl[Network.Mainnet], apiKey?: string) {
 		this.client = axios.create({
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,

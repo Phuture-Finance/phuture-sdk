@@ -1,5 +1,5 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import {Address, isAddress, Network, Networkish} from '@phuture/types';
+import { Address, isAddress, Network, Networkish } from '@phuture/types';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
@@ -15,7 +15,7 @@ export const defaultIndexRouterAddress: Record<Networkish, Address> = {
 	[Network.Mainnet]: '0x1985426d77c431fc95E5Ca51547BcB9b793E8482',
 	/** ### Default IndexRouter address on c-chain. */
 	[Network.CChain]: '0x2ca1bA7fF498DB460DD40F43e596c9A2eF35a066',
-}
+};
 
 /** ### IndexRouter Contract */
 export class IndexRouter extends Contract<IndexRouterContractInterface> {
@@ -33,7 +33,11 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		account: Account,
 		contract?: IndexRouterContractInterface | Address
 	) {
-		super(account, contract ?? defaultIndexRouterAddress[Network.Mainnet], IndexRouter__factory);
+		super(
+			account,
+			contract ?? defaultIndexRouterAddress[Network.Mainnet],
+			IndexRouter__factory
+		);
 	}
 
 	async weth(): Promise<Address> {
@@ -338,27 +342,27 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	/**
 	 * ### Burn amount
 	 *
-	 * @param index index address
+	 * @param indexAddress index address
 	 * @param amount index amount
 	 * @param prices (optional) prices
 	 *
 	 * @returns burn amount in single token or total from array of tokens
 	 */
 	async burnAmount(
-		index: Address,
+		indexAddress: Address,
 		amount: BigNumberish,
 		prices?: BigNumberish[]
 	): Promise<BigNumber | BigNumber[]> {
-		const amounts = await this.contract.callStatic.burnWithAmounts({
-			index,
+		const burnAmounts = await this.contract.callStatic.burnWithAmounts({
+			index: indexAddress,
 			recipient: this.account.address(),
 			amount,
 		});
-		if (!prices) return amounts;
+		if (!prices) return burnAmounts;
 
 		let totalAmount = BigNumber.from(0);
-		for (const [index, amount] of amounts.entries())
-			totalAmount = totalAmount.add(amount).mul(prices[index]);
+		for (const [index, burnAmount] of burnAmounts.entries())
+			totalAmount = totalAmount.add(burnAmount).mul(prices[index]);
 
 		return totalAmount;
 	}

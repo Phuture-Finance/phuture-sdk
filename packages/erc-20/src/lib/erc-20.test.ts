@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { BigNumber, constants } from 'ethers';
 import { Mock } from 'moq.ts';
-import { Erc20 } from './erc-20';
-import { ERC20 as ERC20ContractInterface } from '../types';
 import { Account } from '@phuture/account';
+import { ERC20 as ERC20ContractInterface } from '../types';
+import { Erc20 } from './erc-20';
 
 describe('Erc20', () => {
 	const account = new Mock<Account>().object();

@@ -1,8 +1,8 @@
 import { gql, Subgraph } from '@phuture/subgraph';
 import { Address } from '@phuture/types';
 import { BigNumber, constants, utils } from 'ethers';
-import { Fees, IndexRepo } from './interfaces';
 import { Types } from '@phuture/subgraph';
+import { Fees, IndexRepo } from './interfaces';
 
 /** ### Subgraph Index Repository */
 export class SubgraphIndexRepo implements IndexRepo {
