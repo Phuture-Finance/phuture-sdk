@@ -3,7 +3,7 @@ import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
 import {Index} from '@phuture/index';
 import {IndexRouter} from '@phuture/index-router';
 import {Address, Network, Networkish, TokenSymbol} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import {BigNumber, BigNumberish, constants} from 'ethers';
 import {TransactionResponse} from '@ethersproject/abstract-provider';
 import {InsufficientAllowanceError} from '@phuture/errors';
 import {getDefaultPriceOracle} from '@phuture/price-oracle';
@@ -471,6 +471,14 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
+				if (assets[i] === await this.indexRouter.weth()) {
+					return {
+						buyAssetMinAmount: amount, estimatedGas: BigNumber.from(0),
+						swapTarget: constants.AddressZero,
+						assetQuote: []
+					};
+				}
+
 				const {
 					buyAmount,
 					to: swapTarget,

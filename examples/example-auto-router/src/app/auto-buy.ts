@@ -6,14 +6,14 @@ import * as yesno from 'yesno';
 export default async function autoBuy(amountToSellDesired: BigNumber) {
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
 	if (!tokenAddress) {
-		const select = await autoRouter.selectBuy(index, amountToSellDesired);
-
-		console.dir(select);
-
-		const ok = await yesno({ question: 'Ready to continue?' });
-		if (ok) {
-			await autoRouter.buy(select.isMint, index, amountToSellDesired);
-		}
+		// const select = await autoRouter.selectBuy(index, amountToSellDesired);
+		//
+		// console.dir(select);
+		//
+		// const ok = await yesno({ question: 'Ready to continue?' });
+		// if (ok) {
+			await autoRouter.buy(false, index, amountToSellDesired);
+		// }
 
 		return;
 	}
