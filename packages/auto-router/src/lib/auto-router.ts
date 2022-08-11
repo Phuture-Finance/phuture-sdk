@@ -1,12 +1,12 @@
-import {Zero0xQuoteOptions, ZeroExAggregator} from '@phuture/0x-aggregator';
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {Index} from '@phuture/index';
-import {IndexRouter} from '@phuture/index-router';
-import {Address, Network, Networkish, TokenSymbol} from '@phuture/types';
-import {BigNumber, BigNumberish, constants} from 'ethers';
-import {TransactionResponse} from '@ethersproject/abstract-provider';
-import {InsufficientAllowanceError} from '@phuture/errors';
-import {getDefaultPriceOracle} from '@phuture/price-oracle';
+import { Zero0xQuoteOptions, ZeroExAggregator } from '@phuture/0x-aggregator';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { Index } from '@phuture/index';
+import { IndexRouter } from '@phuture/index-router';
+import { Address } from '@phuture/types';
+import { BigNumber, BigNumberish } from 'ethers';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { InsufficientAllowanceError } from '@phuture/errors';
+import { getDefaultPriceOracle } from '@phuture/price-oracle';
 
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = 135_000;
@@ -361,7 +361,7 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
-				const {buyAmount, estimatedGas} = await this.zeroExAggregator.price(
+				const { buyAmount, estimatedGas } = await this.zeroExAggregator.price(
 					assets[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
 					amount.mul(999).div(1000),
@@ -471,14 +471,6 @@ export class AutoRouter {
 
 		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
-				if (assets[i] === await this.indexRouter.weth()) {
-					return {
-						buyAssetMinAmount: amount, estimatedGas: BigNumber.from(0),
-						swapTarget: constants.AddressZero,
-						assetQuote: []
-					};
-				}
-
 				const {
 					buyAmount,
 					to: swapTarget,

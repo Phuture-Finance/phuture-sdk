@@ -31,11 +31,9 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 */
 	constructor(
 		account: Account,
-		contract:
-			| IndexRouterContractInterface
-			| Address = defaultIndexRouterAddress[Network.Mainnet]
+		contract?: IndexRouterContractInterface | Address
 	) {
-		super(account, contract, IndexRouter__factory);
+		super(account, contract ?? defaultIndexRouterAddress[Network.Mainnet], IndexRouter__factory);
 	}
 
 	async weth(): Promise<Address> {
