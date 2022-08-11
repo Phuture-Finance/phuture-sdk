@@ -4,6 +4,8 @@ import {
 	AutoRouter,
 	Index,
 	IndexRouter,
+	subgraphIndexRepo,
+	SubgraphIndexRepo,
 	ZeroExAggregator,
 	zeroExBaseUrl,
 } from '@phuture/sdk';
@@ -25,7 +27,9 @@ const prepare = async () => {
 		'0x2ca1bA7fF498DB460DD40F43e596c9A2eF35a066'
 	);
 
-	const index = new Index(account, getEnv('INDEX_ADDRESS'));
+	const index = new Index(account, getEnv('INDEX_ADDRESS')).withRepo(
+		subgraphIndexRepo(await account.chainId())
+	);
 
 	const autoRouter = new AutoRouter(indexRouter, zeroEx);
 

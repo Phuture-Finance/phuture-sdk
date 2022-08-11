@@ -11,10 +11,11 @@ const defaultPriceOracles: Record<Networkish, PhuturePriceOracle | undefined> =
 		[Network.CChain]: undefined,
 	};
 
-export const getDefaultPriceOracle = (
-	account: Account,
-	network: Network = Network.Mainnet
-): PhuturePriceOracle => {
+export const getDefaultPriceOracle = async (
+	account: Account
+): Promise<PhuturePriceOracle> => {
+	const network = await account.chainId();
+
 	const priceOracle = defaultPriceOracles[network];
 	if (priceOracle) {
 		return priceOracle;

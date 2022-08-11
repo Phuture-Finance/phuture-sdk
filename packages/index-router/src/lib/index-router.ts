@@ -329,41 +329,22 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		return this.contract.callStatic.burnSwap(burnParameters);
 	}
 
-	// Get burn amounts of multiple tokens
-	burnAmount(index: Address, amount: BigNumberish): Promise<BigNumber[]>;
-
-	// Get burn amount of single tokens
-	burnAmount(
-		index: Address,
-		amount: BigNumberish,
-		prices?: BigNumberish[]
-	): Promise<BigNumber>;
-
 	/**
 	 * ### Burn amount
 	 *
 	 * @param indexAddress index address
 	 * @param amount index amount
-	 * @param prices (optional) prices
 	 *
 	 * @returns burn amount in single token or total from array of tokens
 	 */
 	async burnAmount(
 		indexAddress: Address,
-		amount: BigNumberish,
-		prices?: BigNumberish[]
-	): Promise<BigNumber | BigNumber[]> {
-		const burnAmounts = await this.contract.callStatic.burnWithAmounts({
+		amount: BigNumberish
+	): Promise<BigNumber[]> {
+		return this.contract.callStatic.burnWithAmounts({
 			index: indexAddress,
 			recipient: this.account.address(),
 			amount,
 		});
-		if (!prices) return burnAmounts;
-
-		let totalAmount = BigNumber.from(0);
-		for (const [index, burnAmount] of burnAmounts.entries())
-			totalAmount = totalAmount.add(burnAmount).mul(prices[index]);
-
-		return totalAmount;
 	}
 }

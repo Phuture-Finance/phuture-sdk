@@ -7,15 +7,19 @@ import {
 	OperationVariables,
 	QueryOptions,
 } from '@apollo/client/core';
-import { Url } from '@phuture/types';
+import { Network, Networkish, Url } from '@phuture/types';
 import fetch from 'cross-fetch';
 import { typePolicies } from './type-policies';
 
 export { gql } from '@apollo/client/core';
 
 /** ### Defaults Phuture Subgraph address */
-const defaultPhutureSubgraphUrl =
-	'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-v1';
+export const defaultPhutureSubgraphUrl: Record<Networkish, Url> = {
+	[Network.Mainnet]:
+		'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-v1',
+	[Network.CChain]:
+		'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-avax-core',
+};
 
 /** Subgraph client */
 export class Subgraph<CacheShape = NormalizedCacheObject> {
@@ -35,7 +39,9 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	 *
 	 * @returns {Subgraph} The new Subgraph client
 	 */
-	public static fromUrl(uri: Url = defaultPhutureSubgraphUrl): Subgraph {
+	public static fromUrl(
+		uri: Url = defaultPhutureSubgraphUrl[Network.Mainnet]
+	): Subgraph {
 		const client = new ApolloClient({
 			link: new HttpLink({ uri, fetch }),
 			cache: new InMemoryCache({ typePolicies }),

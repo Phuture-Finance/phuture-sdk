@@ -1,5 +1,6 @@
 import { Erc20Permit } from '@phuture/erc-20';
 import type { Address, ContractFactory } from '@phuture/types';
+import { Network } from '@phuture/types';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 import { Account } from '@phuture/account';
 import { BaseIndex, BaseIndex__factory } from '../types';
@@ -29,7 +30,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	) {
 		super(account, contract, factory);
 
-		this._indexRepo = subgraphIndexRepo;
+		this._indexRepo = subgraphIndexRepo();
 	}
 
 	/**

@@ -13,7 +13,7 @@ export default async function autoBuy(amountToSellDesired: BigNumber) {
 		console.dir(select);
 
 		if (await yesno({ question: 'Ready to continue?' })) {
-			await autoRouter.buy(select.isMint, index, amountToSellDesired);
+			return autoRouter.buy(select.isMint, index, amountToSellDesired);
 		}
 
 		return;
@@ -29,7 +29,7 @@ export default async function autoBuy(amountToSellDesired: BigNumber) {
 	console.dir(selectWithToken);
 
 	if (await yesno({ question: 'Ready to continue?' })) {
-		await autoRouter.buy(
+		return autoRouter.buy(
 			selectWithToken.isMint,
 			index,
 			amountToSellDesired,

@@ -1,4 +1,10 @@
-import { Address, ContractFactory, Network, PriceSource } from '@phuture/types';
+import {
+	Address,
+	ContractFactory,
+	Network,
+	Networkish,
+	PriceSource,
+} from '@phuture/types';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
 
@@ -8,7 +14,7 @@ import {
 } from '../types';
 
 /** ### Default PhuturePriceOracle address for network */
-export const defaultPhuturePriceOracleAddress: Record<Network, Address> = {
+export const defaultPhuturePriceOracleAddress: Record<Networkish, Address> = {
 	/** ### Default PhuturePriceOracle address on mainnet. */
 	[Network.Mainnet]: '0x384ac33558821383fF4fC73D1DEe3539a74bf540',
 	/** ### Default PhuturePriceOracle address on c-chain. */

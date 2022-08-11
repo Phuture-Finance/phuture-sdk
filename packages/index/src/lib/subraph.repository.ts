@@ -1,7 +1,11 @@
-import { gql, Subgraph } from '@phuture/subgraph';
-import { Address } from '@phuture/types';
-import { BigNumber, constants, utils } from 'ethers';
-import { Types } from '@phuture/subgraph';
+import {
+	defaultPhutureSubgraphUrl,
+	gql,
+	Subgraph,
+	Types,
+} from '@phuture/subgraph';
+import { Address, Network, Networkish } from '@phuture/types';
+import { constants } from 'ethers';
 import { Fees, IndexRepo } from './interfaces';
 
 /** ### Subgraph Index Repository */
@@ -16,8 +20,8 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 *
 	 * @returns {SubgraphIndexRepo} Subgraph Index Repository instance
 	 */
-	constructor(_subgraph?: Subgraph) {
-		this._subgraph = _subgraph ?? Subgraph.fromUrl();
+	constructor(_subgraph: Subgraph) {
+		this._subgraph = _subgraph;
 	}
 
 	/**
@@ -151,4 +155,5 @@ export class SubgraphIndexRepo implements IndexRepo {
 }
 
 /** ### Subgraph Index Repository Singleton */
-export const subgraphIndexRepo = new SubgraphIndexRepo();
+export const subgraphIndexRepo = (network: Networkish = Network.Mainnet) =>
+	new SubgraphIndexRepo(Subgraph.fromUrl(defaultPhutureSubgraphUrl[network]));

@@ -3,7 +3,7 @@ import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, constants } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
@@ -73,11 +73,23 @@ export class AutoRouter {
 			index.priceEth(),
 		]);
 
+		const inputTokenAddress =
+			inputToken?.address ?? (await this.indexRouter.weth());
+
 		const quotes = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				if (asset === inputTokenAddress)
+					return {
+						asset,
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: amount,
+						assetQuote: [],
+						estimatedGas: 0,
+					};
+
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
-						inputToken?.address ?? (await this.indexRouter.weth()),
+						inputTokenAddress,
 						asset,
 						amount,
 						options
@@ -184,11 +196,22 @@ export class AutoRouter {
 	): Promise<TransactionResponse> {
 		const amounts = await index.scaleAmount(amountInInputToken);
 
+		const routerInputTokenAddress =
+			inputTokenAddress ?? (await this.indexRouter.weth());
 		const buyAmounts = await Promise.all(
 			Object.entries(amounts).map(async ([asset, { amount }]) => {
+				if (asset === routerInputTokenAddress)
+					return {
+						asset,
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: amount,
+						assetQuote: [],
+						estimatedGas: 0,
+					};
+
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
-						inputTokenAddress ?? (await this.indexRouter.weth()),
+						routerInputTokenAddress,
 						asset,
 						amount,
 						options?.zeroExOptions
@@ -204,7 +227,7 @@ export class AutoRouter {
 			})
 		);
 
-		const priceOracle = getDefaultPriceOracle(this.indexRouter.account);
+		const priceOracle = await getDefaultPriceOracle(this.indexRouter.account);
 		const buyAmountsInBase = await Promise.all(
 			buyAmounts.map(async ({ asset, buyAssetMinAmount }) => {
 				const price =
@@ -229,11 +252,17 @@ export class AutoRouter {
 			amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
 		);
 
-		const routerInputTokenAddress =
-			inputTokenAddress ?? (await this.indexRouter.weth());
-
 		const quotes = await Promise.all(
 			Object.keys(amounts).map(async (asset, i) => {
+				if (asset === routerInputTokenAddress)
+					return {
+						asset,
+						swapTarget: constants.AddressZero,
+						buyAssetMinAmount: scaledSellAmounts[i],
+						assetQuote: [],
+						estimatedGas: 0,
+					};
+
 				const {
 					buyAmount,
 					to: swapTarget,

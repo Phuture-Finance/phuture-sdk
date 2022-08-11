@@ -14,7 +14,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 
 		const ok = await yesno({ question: 'Ready to continue?' });
 		if (ok) {
-			await autoRouter.sell(select.isBurn, index, amountToSellDesired);
+			return autoRouter.sell(select.isBurn, index, amountToSellDesired);
 		}
 
 		return;
@@ -27,7 +27,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 
 	const ok = await yesno({ question: 'Ready to continue?' });
 	if (ok) {
-		await autoRouter.sell(
+		return autoRouter.sell(
 			select.isBurn,
 			index,
 			amountToSellDesired,
