@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
 import {
 	Account,
-	AutoRouter, defaultIndexRouterAddress,
+	AutoRouter,
+	defaultIndexRouterAddress,
 	Index,
 	IndexRouter,
 	subgraphIndexRepo,

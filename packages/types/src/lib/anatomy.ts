@@ -1,3 +1,6 @@
 import { Address } from './address';
 
-export type Anatomy = Record<Address, number>;
+export type Anatomy = {
+	asset: Address;
+	weight: number;
+}[];
