@@ -77,7 +77,7 @@ export class AutoRouter {
 			inputToken?.address ?? (await this.indexRouter.weth());
 
 		const quotes = await Promise.all(
-			Object.entries(amounts).map(async ([asset, { amount }]) => {
+			amounts.map(async ({ amount, asset }) => {
 				if (asset === inputTokenAddress)
 					return {
 						asset,
@@ -199,7 +199,7 @@ export class AutoRouter {
 		const routerInputTokenAddress =
 			inputTokenAddress ?? (await this.indexRouter.weth());
 		const buyAmounts = await Promise.all(
-			Object.entries(amounts).map(async ([asset, { amount }]) => {
+			amounts.map(async ({ asset, amount }) => {
 				if (asset === routerInputTokenAddress || amount.isZero())
 					return {
 						asset,
@@ -253,7 +253,7 @@ export class AutoRouter {
 		);
 
 		const quotes = await Promise.all(
-			Object.keys(amounts).map(async (asset, i) => {
+			amounts.map(async ({asset}, i) => {
 				if (asset === routerInputTokenAddress || scaledSellAmounts[i].isZero())
 					return {
 						asset,
