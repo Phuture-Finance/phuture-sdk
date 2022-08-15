@@ -60,18 +60,14 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 */
 	public async scaleAmount(
 		amountDesired: BigNumberish
-	): Promise<Record<Address, { amount: BigNumber; weight: number }>> {
+	): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
 		const anatomy = await this.anatomy();
 
-		const amounts: Record<Address, { amount: BigNumber; weight: number }> = {};
-		for (const asset in anatomy) {
-			amounts[asset] = {
-				amount: BigNumber.from(amountDesired).mul(anatomy[asset]).div(255),
-				weight: anatomy[asset],
-			};
-		}
-
-		return amounts;
+		return anatomy.map(({ asset, weight }) => ({
+			asset,
+			amount: BigNumber.from(amountDesired).mul(weight).div(255),
+			weight,
+		}));
 	}
 
 	public async anatomy(): Promise<Anatomy> {
@@ -162,13 +158,11 @@ export class Index extends Erc20Permit<BaseIndex> {
 
 	private async getAnatomy(): Promise<Anatomy> {
 		const { _assets, _weights } = await this.contract.anatomy();
-		return Object.fromEntries(
-			_assets.map((asset, index) => [asset, _weights[index]])
-		);
+		return _assets.map((asset, index) => ({ asset, weight: _weights[index] }));
 	}
 
 	private async getInactiveAnatomy(): Promise<Anatomy> {
 		const _assets = await this.contract.inactiveAnatomy();
-		return Object.fromEntries(_assets.map((asset) => [asset, 0]));
+		return _assets.map((asset, index) => ({ asset, weight: 0 }));
 	}
 }
