@@ -1,7 +1,7 @@
 import { ChainId } from './chain-id';
 
 /** ### Collection of ChainIds mapped to their network name */
-export const enum Network {
+export enum Network {
 	/** ### Ethereum Mainnet */
 	Mainnet = 1,
 	/** ### Avalanche C-Chain */

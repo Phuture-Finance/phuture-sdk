@@ -44,7 +44,7 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	): Subgraph {
 		const client = new ApolloClient({
 			link: new HttpLink({ uri, fetch }),
-			cache: new InMemoryCache({ typePolicies }),
+			cache: new InMemoryCache(),
 		});
 
 		return new Subgraph(client);

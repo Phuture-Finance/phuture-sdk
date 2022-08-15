@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import {
 	Account,
-	AutoRouter,
+	AutoRouter, defaultIndexRouterAddress,
 	Index,
 	IndexRouter,
 	subgraphIndexRepo,
@@ -25,7 +25,7 @@ const prepare = async () => {
 
 	const indexRouter = new IndexRouter(
 		account,
-		'0x2ca1bA7fF498DB460DD40F43e596c9A2eF35a066'
+		defaultIndexRouterAddress[await account.chainId()]
 	);
 
 	const index = new Index(account, getEnv('INDEX_ADDRESS')).withRepo(

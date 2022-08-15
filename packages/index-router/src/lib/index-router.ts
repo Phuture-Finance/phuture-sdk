@@ -347,10 +347,10 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	async burnTokensAmount(
 		index: Index,
 		amount: BigNumberish
-	): Promise<[Anatomy, BigNumber[]]> {
+	): Promise<[BigNumber[], Anatomy]> {
 		return Promise.all([
-			index.constituents(),
 			this.contract.callStatic.burnTokensAmount(index.address, amount),
+			index.constituents(),
 		]);
 	}
 
@@ -365,14 +365,15 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	async burnAmount(
 		index: Index,
 		amount: BigNumberish
-	): Promise<[Anatomy, BigNumber[]]> {
+	): Promise<[BigNumber[], Anatomy, Anatomy]> {
 		return Promise.all([
-			index.constituents(),
 			this.contract.callStatic.burnWithAmounts({
 				index: index.address,
 				recipient: this.account.address(),
 				amount,
 			}),
+			index.anatomy(),
+			index.inactiveAnatomy(),
 		]);
 	}
 }
