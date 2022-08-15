@@ -396,7 +396,7 @@ export class AutoRouter {
 		]);
 
 		const prices = await Promise.all(
-			amounts.map(async ({amount, asset}) => {
+			amounts.map(async ({ amount, asset }) => {
 				if (!amount || amount.isZero()) {
 					return {
 						buyAmount: 0,
@@ -504,13 +504,10 @@ export class AutoRouter {
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
 		}>
 	): Promise<TransactionResponse> {
-		const amounts = await this.indexRouter.burnAmount(
-			index,
-			indexAmount
-		);
+		const amounts = await this.indexRouter.burnAmount(index, indexAmount);
 
 		const quotes = await Promise.all(
-			amounts.map(async ({amount, asset}, i) => {
+			amounts.map(async ({ amount, asset }, i) => {
 				if (!amount || amount.isZero()) {
 					return {
 						swapTarget: constants.AddressZero,

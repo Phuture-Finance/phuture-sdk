@@ -120,7 +120,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 
 		return this.contract.mintSwap(
 			options as IIndexRouter.MintSwapParamsStruct,
-			{ gasPrice: 0, gasLimit: estimatedGas.mul(100).div(95) }
+			{ gasLimit: estimatedGas.mul(100).div(95) }
 		);
 	}
 
@@ -437,7 +437,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	async burnAmount(
 		index: Index,
 		amount: BigNumberish
-	): Promise<{ asset: Address; amount: BigNumber; weight: number }[]>  {
+	): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
 		const [constituents, burnTokensAmounts] = await Promise.all([
 			index.constituents(),
 			this.contract.callStatic.burnWithAmounts({
