@@ -1,12 +1,10 @@
-import {Erc20Permit} from '@phuture/erc-20';
-import type {Address, ContractFactory} from '@phuture/types';
-import {BigNumber, BigNumberish, utils} from 'ethers';
-import {Account} from '@phuture/account';
-import {BaseIndex, BaseIndex__factory} from '../types';
-import {Fees, IndexRepo} from './interfaces';
-import {subgraphIndexRepo} from './subraph.repository';
-
-type Anatomy = Record<Address, number>
+import { Erc20Permit } from '@phuture/erc-20';
+import type { Address, Anatomy, ContractFactory } from '@phuture/types';
+import { BigNumber, BigNumberish, utils } from 'ethers';
+import { Account } from '@phuture/account';
+import { BaseIndex, BaseIndex__factory } from '../types';
+import { Fees, IndexRepo } from './interfaces';
+import { subgraphIndexRepo } from './subraph.repository';
 
 /**
  * ### Index Contract
@@ -16,7 +14,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	private _indexRepo: IndexRepo;
 
 	/** ### List of assets of the index */
-	private _anatomy?: Anatomy
+	private _anatomy?: Anatomy;
 
 	/** ### List of inactive (with 0 weight) assets of the index */
 	private _inactiveAnatomy?: Anatomy;
@@ -91,7 +89,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 		if (!this._inactiveAnatomy) {
 			this._inactiveAnatomy = await this.getInactiveAnatomy();
 			this.on('update', async () => {
-				this._inactiveAnatomy = await this.inactiveAnatomy()
+				this._inactiveAnatomy = await this.inactiveAnatomy();
 			});
 		}
 
@@ -104,7 +102,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 			this.inactiveAnatomy(),
 		]);
 
-		return {...anatomy, ...inactiveAnatomy};
+		return { ...anatomy, ...inactiveAnatomy };
 	}
 
 	/**
@@ -163,12 +161,14 @@ export class Index extends Erc20Permit<BaseIndex> {
 	}
 
 	private async getAnatomy(): Promise<Anatomy> {
-		const {_assets, _weights} = await this.contract.anatomy();
-		return Object.fromEntries(_assets.map((asset, index) => [asset, _weights[index]]));
+		const { _assets, _weights } = await this.contract.anatomy();
+		return Object.fromEntries(
+			_assets.map((asset, index) => [asset, _weights[index]])
+		);
 	}
 
 	private async getInactiveAnatomy(): Promise<Anatomy> {
 		const _assets = await this.contract.inactiveAnatomy();
-		return Object.fromEntries(_assets.map((asset) => [asset, 0]))
+		return Object.fromEntries(_assets.map((asset) => [asset, 0]));
 	}
 }

@@ -1,8 +1,15 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Address, isAddress, Network, Networkish } from '@phuture/types';
+import {
+	Address,
+	Anatomy,
+	isAddress,
+	Network,
+	Networkish,
+} from '@phuture/types';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
+import { Index } from '@phuture/index';
 import {
 	IndexRouter as IndexRouterContractInterface,
 	IndexRouter__factory,
@@ -330,21 +337,42 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	}
 
 	/**
-	 * ### Burn amount
+	 * ### Burn tokens amount view
 	 *
-	 * @param indexAddress index address
+	 * @param index index interface
+	 * @param amount index amount
+	 *
+	 * @returns burn amount in single token or total from array of tokens
+	 */
+	async burnTokensAmount(
+		index: Index,
+		amount: BigNumberish
+	): Promise<[Anatomy, BigNumber[]]> {
+		return Promise.all([
+			index.constituents(),
+			this.contract.callStatic.burnTokensAmount(index.address, amount),
+		]);
+	}
+
+	/**
+	 * ### Burn amounts static
+	 *
+	 * @param index index interface
 	 * @param amount index amount
 	 *
 	 * @returns burn amount in single token or total from array of tokens
 	 */
 	async burnAmount(
-		indexAddress: Address,
+		index: Index,
 		amount: BigNumberish
-	): Promise<BigNumber[]> {
-		return this.contract.callStatic.burnWithAmounts({
-			index: indexAddress,
-			recipient: this.account.address(),
-			amount,
-		});
+	): Promise<[Anatomy, BigNumber[]]> {
+		return Promise.all([
+			index.constituents(),
+			this.contract.callStatic.burnWithAmounts({
+				index: index.address,
+				recipient: this.account.address(),
+				amount,
+			}),
+		]);
 	}
 }

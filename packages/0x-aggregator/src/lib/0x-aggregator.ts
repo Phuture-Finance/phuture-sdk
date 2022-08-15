@@ -1,7 +1,7 @@
-import type {Address, Networkish, TokenSymbol, Url} from '@phuture/types';
-import {Network} from '@phuture/types';
-import axios, {AxiosInstance} from 'axios';
-import {BigNumber, BigNumberish} from 'ethers';
+import type { Address, Networkish, TokenSymbol, Url } from '@phuture/types';
+import { Network } from '@phuture/types';
+import axios, { AxiosInstance } from 'axios';
+import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
 import {
 	Zero0xPriceOptions,
@@ -34,8 +34,7 @@ export class ZeroExAggregator {
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	constructor(private readonly client: AxiosInstance) {
-	}
+	constructor(private readonly client: AxiosInstance) {}
 
 	/**
 	 * ### Creates a new client instance for the 0x API for a url
@@ -45,7 +44,10 @@ export class ZeroExAggregator {
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	static fromUrl(baseUrl: Url, apiKey?: string): [ZeroExAggregator, AbortController] {
+	static fromUrl(
+		baseUrl: Url,
+		apiKey?: string
+	): [ZeroExAggregator, AbortController] {
 		const abortController = new AbortController();
 
 		const client = axios.create({
@@ -54,7 +56,7 @@ export class ZeroExAggregator {
 			baseURL: baseUrl,
 			headers: {
 				'Content-Type': 'application/json',
-				...(apiKey ? {'0x-api-key': apiKey} : {}),
+				...(apiKey ? { '0x-api-key': apiKey } : {}),
 			},
 			validateStatus: (status) => status < 500,
 		});
@@ -105,7 +107,7 @@ export class ZeroExAggregator {
 			buyToken,
 			sellAmount
 		);
-		const {data} = await this.client.get<Zero0xQuoteResponse>(
+		const { data } = await this.client.get<Zero0xQuoteResponse>(
 			'/swap/v1/quote',
 			{
 				params: {
@@ -152,7 +154,7 @@ export class ZeroExAggregator {
 			buyToken,
 			sellAmount
 		);
-		const {data} = await this.client.get<Zero0xPriceResponse>(
+		const { data } = await this.client.get<Zero0xPriceResponse>(
 			'/swap/v1/price',
 			{
 				params: {
@@ -183,7 +185,7 @@ export class ZeroExAggregator {
 	 */
 	async sources(): Promise<Zero0xSourcesResponse> {
 		debug('Making sources call');
-		const {data} = await this.client.get<Zero0xSourcesResponse>(
+		const { data } = await this.client.get<Zero0xSourcesResponse>(
 			'/swap/v1/sources'
 		);
 

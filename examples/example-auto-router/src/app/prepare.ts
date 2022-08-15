@@ -5,7 +5,6 @@ import {
 	Index,
 	IndexRouter,
 	subgraphIndexRepo,
-	SubgraphIndexRepo,
 	ZeroExAggregator,
 	zeroExBaseUrl,
 } from '@phuture/sdk';
@@ -20,7 +19,9 @@ const prepare = async () => {
 		)
 	);
 
-	const [zeroEx] = ZeroExAggregator.fromUrl(zeroExBaseUrl[await account.chainId()]);
+	const [zeroEx] = ZeroExAggregator.fromUrl(
+		zeroExBaseUrl[await account.chainId()]
+	);
 
 	const indexRouter = new IndexRouter(
 		account,
