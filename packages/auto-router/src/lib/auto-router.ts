@@ -466,7 +466,7 @@ export class AutoRouter {
 	 * ### Auto Sell
 	 *
 	 * @param isBurn true if burn, false if swap
-	 * @param index index address or it's Index interface
+	 * @param index index  nterface
 	 * @param indexAmount amount in index token
 	 * @param outputTokenAddress instance or address of output token
 	 * @param permitOptions permit options for transaction
@@ -479,23 +479,19 @@ export class AutoRouter {
 		index: Index,
 		indexAmount: BigNumberish,
 		outputTokenAddress?: Address,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<{
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+			zeroExOptions: Partial<Zero0xQuoteOptions>;
+		}>
 	): Promise<TransactionResponse> {
 		if (isBurn)
-			return this.sellBurn(
-				index,
-				indexAmount,
-				outputTokenAddress,
-				permitOptions,
-				options
-			);
+			return this.sellBurn(index, indexAmount, outputTokenAddress, options);
 
 		return this.sellSwap(
 			index.address,
 			indexAmount,
 			outputTokenAddress,
-			options
+			options?.zeroExOptions
 		);
 	}
 
@@ -503,16 +499,15 @@ export class AutoRouter {
 		index: Index,
 		indexAmount: BigNumberish,
 		outputTokenAddress?: Address,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<{
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+			zeroExOptions: Partial<Zero0xQuoteOptions>;
+		}>
 	): Promise<TransactionResponse> {
-		const [anatomy, inactiveAnatomy, amounts] = await Promise.all([
-			index.contract.anatomy(),
-			index.contract.inactiveAnatomy(),
-			this.indexRouter.burnAmount(index.address, indexAmount),
-		]);
-
-		const assets: Address[] = [...anatomy._assets, ...inactiveAnatomy];
+		const [constituents, amounts] = await this.indexRouter.burnAmount(
+			index,
+			indexAmount
+		);
 
 		const quotes = await Promise.all(
 			amounts.map(async (amount, i) => {
@@ -522,15 +517,15 @@ export class AutoRouter {
 					data: assetQuote,
 					estimatedGas,
 				} = await this.zeroExAggregator.quote(
-					assets[i],
+					Object.keys(constituents)[i],
 					outputTokenAddress ?? (await this.indexRouter.weth()),
 					amount.mul(999).div(1000),
-					options
+					options?.zeroExOptions
 				);
 
-				const buyAssetMinAmount = options?.slippagePercentage
+				const buyAssetMinAmount = options?.zeroExOptions?.slippagePercentage
 					? BigNumber.from(buyAmount)
-							.mul(1000 - options?.slippagePercentage * 1000)
+							.mul(1000 - options?.zeroExOptions?.slippagePercentage * 1000)
 							.div(1000)
 					: buyAmount;
 				return {
@@ -549,7 +544,7 @@ export class AutoRouter {
 			{
 				outputAsset: outputTokenAddress,
 				quotes,
-				permitOptions,
+				permitOptions: options?.permitOptions,
 			}
 		);
 	}

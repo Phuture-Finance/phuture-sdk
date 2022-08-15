@@ -1,8 +1,8 @@
 import type { Address, Networkish, TokenSymbol, Url } from '@phuture/types';
+import { Network } from '@phuture/types';
 import axios, { AxiosInstance } from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
-import { Network } from '@phuture/types';
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
@@ -21,9 +21,6 @@ export const zeroExBaseUrl: Record<Networkish, Url> = {
 
 /** ### Facilitates swaps for end user */
 export class ZeroExAggregator {
-	/** ### Client instance for doing calls to the ZeroX API */
-	private readonly client: AxiosInstance;
-
 	/** ### Default options for the 0x endpoints */
 	private _defaultQueryParams = {
 		/** ### Slippage protection for the aggregator */
@@ -33,22 +30,40 @@ export class ZeroExAggregator {
 	/**
 	 * ### Constructs an instance of the swap class
 	 *
+	 * @param client The axios client to use for the API calls
+	 *
+	 * @returns {ZeroExAggregator} The 0x Aggregator instance
+	 */
+	constructor(private readonly client: AxiosInstance) {}
+
+	/**
+	 * ### Creates a new client instance for the 0x API for a url
+	 *
 	 * @param baseUrl The base endpoint to query
 	 * @param apiKey The API key to use for the query
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	constructor(baseUrl: Url = zeroExBaseUrl[Network.Mainnet], apiKey?: string) {
-		this.client = axios.create({
+	static fromUrl(
+		baseUrl: Url,
+		apiKey?: string
+	): [ZeroExAggregator, AbortController] {
+		const abortController = new AbortController();
+
+		const client = axios.create({
+			signal: abortController?.signal,
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
 			headers: {
 				'Content-Type': 'application/json',
 				...(apiKey ? { '0x-api-key': apiKey } : {}),
 			},
+			validateStatus: (status) => status < 500,
 		});
 
 		debug('Created client with base URL: %s', baseUrl);
+
+		return [new ZeroExAggregator(client), abortController];
 	}
 
 	/**

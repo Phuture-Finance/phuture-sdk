@@ -1,6 +1,5 @@
 import { Erc20Permit } from '@phuture/erc-20';
-import type { Address, ContractFactory } from '@phuture/types';
-import { Network } from '@phuture/types';
+import type { Address, Anatomy, ContractFactory } from '@phuture/types';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 import { Account } from '@phuture/account';
 import { BaseIndex, BaseIndex__factory } from '../types';
@@ -13,6 +12,12 @@ import { subgraphIndexRepo } from './subraph.repository';
 export class Index extends Erc20Permit<BaseIndex> {
 	/** ### Index repository */
 	private _indexRepo: IndexRepo;
+
+	/** ### List of assets of the index */
+	private _anatomy?: Anatomy;
+
+	/** ### List of inactive (with 0 weight) assets of the index */
+	private _inactiveAnatomy?: Anatomy;
 
 	/**
 	 * ### Creates a new Index instance
@@ -56,17 +61,48 @@ export class Index extends Erc20Permit<BaseIndex> {
 	public async scaleAmount(
 		amountDesired: BigNumberish
 	): Promise<Record<Address, { amount: BigNumber; weight: number }>> {
-		const { _assets, _weights } = await this.contract.anatomy();
+		const anatomy = await this.anatomy();
 
 		const amounts: Record<Address, { amount: BigNumber; weight: number }> = {};
-		for (const [index, asset] of _assets.entries()) {
+		for (const asset in anatomy) {
 			amounts[asset] = {
-				amount: BigNumber.from(amountDesired).mul(_weights[index]).div(255),
-				weight: _weights[index],
+				amount: BigNumber.from(amountDesired).mul(anatomy[asset]).div(255),
+				weight: anatomy[asset],
 			};
 		}
 
 		return amounts;
+	}
+
+	public async anatomy(): Promise<Anatomy> {
+		if (!this._anatomy) {
+			this._anatomy = await this.getAnatomy();
+			this.on('update', async () => {
+				this._anatomy = await this.getAnatomy();
+			});
+		}
+
+		return this._anatomy;
+	}
+
+	public async inactiveAnatomy(): Promise<Anatomy> {
+		if (!this._inactiveAnatomy) {
+			this._inactiveAnatomy = await this.getInactiveAnatomy();
+			this.on('update', async () => {
+				this._inactiveAnatomy = await this.inactiveAnatomy();
+			});
+		}
+
+		return this._inactiveAnatomy;
+	}
+
+	public async constituents(): Promise<Anatomy> {
+		const [anatomy, inactiveAnatomy] = await Promise.all([
+			this.anatomy(),
+			this.inactiveAnatomy(),
+		]);
+
+		return { ...anatomy, ...inactiveAnatomy };
 	}
 
 	/**
@@ -122,5 +158,17 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 */
 	public async fees(): Promise<Fees> {
 		return this._indexRepo.fees(this.address);
+	}
+
+	private async getAnatomy(): Promise<Anatomy> {
+		const { _assets, _weights } = await this.contract.anatomy();
+		return Object.fromEntries(
+			_assets.map((asset, index) => [asset, _weights[index]])
+		);
+	}
+
+	private async getInactiveAnatomy(): Promise<Anatomy> {
+		const _assets = await this.contract.inactiveAnatomy();
+		return Object.fromEntries(_assets.map((asset) => [asset, 0]));
 	}
 }

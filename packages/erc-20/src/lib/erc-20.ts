@@ -43,7 +43,7 @@ export class Erc20<
 	/**
 	 * ### Connect price source to Index
 	 *
-	 * @param {IndexRepo} priceSource Price source to connect to Index
+	 * @param priceSource Price source to connect to Index
 	 *
 	 * @returns {this} Index instance
 	 */
