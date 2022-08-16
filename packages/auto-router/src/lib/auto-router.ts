@@ -398,7 +398,14 @@ export class AutoRouter {
 
 		const prices = await Promise.all(
 			amounts.map(async ({ amount, asset }) => {
-				if (!amount || amount.isZero() || asset === outputTokenAddress) {
+				if(asset === outputTokenAddress) {
+					return {
+						buyAmount: amount,
+						estimatedGas: 0
+					}
+				}
+
+ 				if (!amount || amount.isZero()) {
 					return {
 						buyAmount: 0,
 						estimatedGas: 0,
