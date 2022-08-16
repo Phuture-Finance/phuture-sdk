@@ -29,8 +29,6 @@ const prepare = async () => {
 		defaultIndexRouterAddress[await account.chainId()]
 	);
 
-	console.log('IndexRouter address:', getEnv('INDEX_ADDRESS'));
-
 	const index = new Index(account, getEnv('INDEX_ADDRESS')).withRepo(
 		subgraphIndexRepo(await account.chainId())
 	);

@@ -98,7 +98,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 			this.inactiveAnatomy(),
 		]);
 
-		return { ...anatomy, ...inactiveAnatomy };
+		return [...anatomy, ...inactiveAnatomy];
 	}
 
 	/**

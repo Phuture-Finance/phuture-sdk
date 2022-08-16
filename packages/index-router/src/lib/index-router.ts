@@ -1,11 +1,5 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import {
-	Address,
-	Anatomy,
-	isAddress,
-	Network,
-	Networkish,
-} from '@phuture/types';
+import { Address, isAddress, Network, Networkish } from '@phuture/types';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';

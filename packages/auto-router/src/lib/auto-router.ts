@@ -253,7 +253,7 @@ export class AutoRouter {
 		);
 
 		const quotes = await Promise.all(
-			amounts.map(async ({asset}, i) => {
+			amounts.map(async ({ asset }, i) => {
 				if (asset === routerInputTokenAddress || scaledSellAmounts[i].isZero())
 					return {
 						asset,
@@ -364,7 +364,7 @@ export class AutoRouter {
 		target: Address;
 		expectedAllowance?: BigNumber;
 	}> {
-		let outputTokenAddress: Address | undefined;
+		let outputTokenAddress: Address;
 		let outputTokenPriceEth: BigNumber = BigNumber.from(10).pow(18);
 
 		if (outputToken) {
@@ -378,6 +378,7 @@ export class AutoRouter {
 
 			outputTokenPriceEth = BigNumber.from(buyAmount);
 		} else {
+			outputTokenAddress = await this.indexRouter.weth();
 			outputToken = new Erc20(
 				this.indexRouter.account,
 				await this.indexRouter.weth()
@@ -397,7 +398,7 @@ export class AutoRouter {
 
 		const prices = await Promise.all(
 			amounts.map(async ({ amount, asset }) => {
-				if (!amount || amount.isZero()) {
+				if (!amount || amount.isZero() || asset === outputTokenAddress) {
 					return {
 						buyAmount: 0,
 						estimatedGas: 0,
@@ -406,7 +407,7 @@ export class AutoRouter {
 
 				return this.zeroExAggregator.price(
 					asset,
-					outputTokenAddress ?? (await this.indexRouter.weth()),
+					outputTokenAddress,
 					amount.mul(999).div(1000),
 					options
 				);
@@ -506,9 +507,10 @@ export class AutoRouter {
 	): Promise<TransactionResponse> {
 		const amounts = await this.indexRouter.burnAmount(index, indexAmount);
 
+		const routerOutputTokenAddress = outputTokenAddress ?? (await this.indexRouter.weth())
 		const quotes = await Promise.all(
 			amounts.map(async ({ amount, asset }, i) => {
-				if (!amount || amount.isZero()) {
+				if (!amount || amount.isZero() || asset === routerOutputTokenAddress) {
 					return {
 						swapTarget: constants.AddressZero,
 						assetQuote: [],
@@ -524,7 +526,7 @@ export class AutoRouter {
 					estimatedGas,
 				} = await this.zeroExAggregator.quote(
 					asset,
-					outputTokenAddress ?? (await this.indexRouter.weth()),
+					routerOutputTokenAddress,
 					amount.mul(999).div(1000),
 					options?.zeroExOptions
 				);
