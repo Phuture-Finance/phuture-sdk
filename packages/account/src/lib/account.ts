@@ -60,4 +60,13 @@ export class Account extends EventEmitter {
 	public async gasPrice(): Promise<BigNumber> {
 		return this.signer.getGasPrice();
 	}
+
+	/**
+	 * ### Gets the chain id
+	 *
+	 * @returns The chain id
+	 */
+	public async chainId(): Promise<number> {
+		return this.signer.getChainId();
+	}
 }

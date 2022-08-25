@@ -4,6 +4,8 @@ import { ChainId } from './chain-id';
 export enum Network {
 	/** ### Ethereum Mainnet */
 	Mainnet = 1,
+	/** ### Avalanche C-Chain */
+	CChain = 43114,
 }
 
 /** ### Network enum value of the chainId */

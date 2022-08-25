@@ -1,6 +1,6 @@
-import { ZeroExAggregator } from './0x-aggregator';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { ZeroExAggregator } from './0x-aggregator';
 
 const payload = {
 	buyToken: 'PDI',

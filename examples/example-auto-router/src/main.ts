@@ -10,7 +10,9 @@ const amountToSellDesired = BigNumber.from(utils.parseEther(getEnv('AMOUNT')));
 
 const main = async () => {
 	const isSell = process.env['IS_SELL'] === 'true';
-	await (isSell ? autoSell : autoBuy)(amountToSellDesired);
+	console.dir(await (isSell ? autoSell : autoBuy)(amountToSellDesired), {
+		depth: null,
+	});
 };
 
 main().catch(console.error);

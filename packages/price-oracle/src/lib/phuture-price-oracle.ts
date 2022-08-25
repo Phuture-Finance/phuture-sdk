@@ -1,4 +1,10 @@
-import { Address, ContractFactory, Network, PriceSource } from '@phuture/types';
+import {
+	Address,
+	ContractFactory,
+	Network,
+	Networkish,
+	PriceSource,
+} from '@phuture/types';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
 
@@ -8,9 +14,11 @@ import {
 } from '../types';
 
 /** ### Default PhuturePriceOracle address for network */
-export const DefaultPhuturePriceOracleAddress: Record<Network, Address> = {
+export const defaultPhuturePriceOracleAddress: Record<Networkish, Address> = {
 	/** ### Default PhuturePriceOracle address on mainnet. */
 	[Network.Mainnet]: '0x384ac33558821383fF4fC73D1DEe3539a74bf540',
+	/** ### Default PhuturePriceOracle address on c-chain. */
+	[Network.CChain]: '0xee53039D099Fc73171Ee94386d59F24B05Ceb68A',
 };
 
 /** ### ERC20 Token Contract */
@@ -28,7 +36,7 @@ export class PhuturePriceOracle<
 	 */
 	constructor(
 		account: Account,
-		contract: Address | C = DefaultPhuturePriceOracleAddress[Network.Mainnet],
+		contract: Address | C = defaultPhuturePriceOracleAddress[Network.Mainnet],
 		factory: ContractFactory = PhuturePriceOracle__factory
 	) {
 		super(account, contract, factory);

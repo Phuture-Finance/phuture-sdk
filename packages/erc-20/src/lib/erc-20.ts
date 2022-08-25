@@ -3,9 +3,9 @@ import { BigNumber, BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
+import { InsufficientAllowanceError } from '@phuture/errors';
 import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types';
 import { Addresses } from './addresses';
-import { InsufficientAllowanceError } from '@phuture/errors';
 
 /** ### ERC20 Token Contract */
 export class Erc20<
@@ -43,7 +43,7 @@ export class Erc20<
 	/**
 	 * ### Connect price source to Index
 	 *
-	 * @param {IndexRepo} priceSource Price source to connect to Index
+	 * @param priceSource Price source to connect to Index
 	 *
 	 * @returns {this} Index instance
 	 */

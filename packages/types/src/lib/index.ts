@@ -1,4 +1,5 @@
 export * from './address';
+export * from './anatomy';
 export * from './chain-id';
 export * from './constructor';
 export * from './contract-factory';
