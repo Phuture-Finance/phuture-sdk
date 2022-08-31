@@ -27,5 +27,5 @@ export class FRPViews<
 /** ### Default FRPViews address for network */
 export const DefaultFRPViewsAddress: Record<Network, Address> = {
 	/** ### Default FRPViews address on mainnet. */
-	[Network.Mainnet]: '...TBD', // TODO deploy an instance of the FRPViews
+	[Network.Mainnet]: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369', // TODO deploy an instance of the FRPViews
 };
