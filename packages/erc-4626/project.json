@@ -1,0 +1,56 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/erc-4626/src",
+	"projectType": "library",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/js:tsc",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"buildableProjectDepsInPackageJsonType": "dependencies",
+				"outputPath": "dist/packages/erc-4626",
+				"main": "packages/erc-4626/src/index.ts",
+				"tsConfig": "packages/erc-4626/tsconfig.lib.json",
+				"assets": ["packages/erc-4626/*.md"]
+			}
+		},
+		"publish": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"command": "node tools/scripts/publish.mjs erc-4626 {args.ver} {args.tag}"
+			},
+			"dependsOn": [
+				{
+					"projects": "self",
+					"target": "build"
+				}
+			]
+		},
+		"generate": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"commands": [
+					{
+						"command": "npx typechain --target=ethers-v5 --out-dir=packages/erc-4626/src/types packages/erc-4626/abis/**/*.json"
+					}
+				]
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/erc-4626/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/packages/erc-4626"],
+			"options": {
+				"jestConfig": "packages/erc-4626/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
+}

@@ -1,0 +1,56 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/frp/src",
+	"projectType": "library",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/js:tsc",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"buildableProjectDepsInPackageJsonType": "dependencies",
+				"outputPath": "dist/packages/frp",
+				"main": "packages/frp/src/index.ts",
+				"tsConfig": "packages/frp/tsconfig.lib.json",
+				"assets": ["packages/frp/*.md"]
+			}
+		},
+		"publish": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"command": "node tools/scripts/publish.mjs frp {args.ver} {args.tag}"
+			},
+			"dependsOn": [
+				{
+					"projects": "self",
+					"target": "build"
+				}
+			]
+		},
+		"generate": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"commands": [
+					{
+						"command": "npx typechain --target=ethers-v5 --out-dir=packages/frp/src/types packages/frp/abis/**/*.json"
+					}
+				]
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/frp/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/packages/frp"],
+			"options": {
+				"jestConfig": "packages/frp/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
+}
