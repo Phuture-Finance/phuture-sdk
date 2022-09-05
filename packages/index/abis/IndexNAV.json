@@ -1,0 +1,21 @@
+[
+  {
+	"inputs": [
+	  {
+		"internalType": "contract IIndex",
+		"name": "_index",
+		"type": "address"
+	  }
+	],
+	"name": "getNAV",
+	"outputs": [
+	  {
+		"internalType": "uint256",
+		"name": "_nav",
+		"type": "uint256"
+	  }
+	],
+	"stateMutability": "view",
+	"type": "function"
+  }
+]
