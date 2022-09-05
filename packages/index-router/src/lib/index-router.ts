@@ -15,7 +15,7 @@ export const defaultIndexRouterAddress: Record<Networkish, Address> = {
 	/** ### Default IndexRouter address on mainnet. */
 	[Network.Mainnet]: '0x1985426d77c431fc95E5Ca51547BcB9b793E8482',
 	/** ### Default IndexRouter address on c-chain. */
-	[Network.CChain]: '0x3DAD1208AFEc6ECCda25169a5D16119CE2BA76bD',
+	[Network.CChain]: '0xD6dd95610fC3A3579a2C32fe06158d8bfB8F4eE9',
 };
 
 /** ### IndexRouter Contract */
