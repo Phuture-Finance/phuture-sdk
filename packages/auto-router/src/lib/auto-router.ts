@@ -1,6 +1,6 @@
 import { Zero0xQuoteOptions, ZeroExAggregator } from '@phuture/0x-aggregator';
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Index } from '@phuture/index';
+import {Index, IndexNav} from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
 import { BigNumber, BigNumberish, constants } from 'ethers';
@@ -27,6 +27,8 @@ export const nativeTokenSymbol = (network: Networkish): TokenSymbol => {
 
 /** ### AutoRouter class */
 export class AutoRouter {
+	private indexNav: IndexNav
+
 	/**
 	 * ### Creates a new AutoRouter instance
 	 *
@@ -38,7 +40,9 @@ export class AutoRouter {
 	constructor(
 		public readonly indexRouter: IndexRouter,
 		public readonly zeroExAggregator: ZeroExAggregator
-	) {}
+	) {
+		this.indexNav = new IndexNav(indexRouter.account);
+	}
 
 	/**
 	 * ### Static auto Buy
@@ -61,7 +65,7 @@ export class AutoRouter {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		const [zeroExSwap, amounts, indexPriceEth] = await Promise.all([
+		const [zeroExSwap, amounts, indexNav] = await Promise.all([
 			this.zeroExAggregator.quote(
 				inputToken?.address ||
 					nativeTokenSymbol(await this.indexRouter.account.chainId()),
@@ -70,7 +74,7 @@ export class AutoRouter {
 				options
 			),
 			index.scaleAmount(amountInInputToken),
-			index.priceEth(),
+			this.indexNav.contract.getNAV(index.address),
 		]);
 
 		const inputTokenAddress =
@@ -118,14 +122,21 @@ export class AutoRouter {
 				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
 		);
 
+		const priceOracle = await getDefaultPriceOracle(this.indexRouter.account);
+		const ethBasePrice = await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
+			await this.indexRouter.weth()
+		);
+
 		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
 			.mul(zeroExSwap.gasPrice)
 			.lte(
 				indexRouterMintOutputAmount
 					.sub(zeroExSwap.buyAmount)
-					.mul(indexPriceEth)
-					.div(BigNumber.from(10).pow(18))
+					.mul(indexNav._nav)
+					.div(indexNav._totalSupply)
+					.mul(ethBasePrice)
+					.div(BigNumber.from(2).pow(112))
 			);
 
 		const target = isMint ? this.indexRouter.address : zeroExSwap.to;

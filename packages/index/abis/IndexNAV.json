@@ -2,7 +2,7 @@
   {
 	"inputs": [
 	  {
-		"internalType": "contract IIndex",
+		"internalType": "address",
 		"name": "_index",
 		"type": "address"
 	  }
@@ -12,6 +12,11 @@
 	  {
 		"internalType": "uint256",
 		"name": "_nav",
+		"type": "uint256"
+	  },
+	  {
+		"internalType": "uint256",
+		"name": "_totalSupply",
 		"type": "uint256"
 	  }
 	],
