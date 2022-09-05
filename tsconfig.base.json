@@ -26,7 +26,9 @@
 			"@phuture/price-oracle": ["packages/price-oracle/src/index.ts"],
 			"@phuture/sdk": ["packages/sdk/src/index.ts"],
 			"@phuture/subgraph": ["packages/subgraph/src/index.ts"],
-			"@phuture/types": ["packages/types/src/index.ts"]
+			"@phuture/types": ["packages/types/src/index.ts"],
+			"@phuture/v-token": ["packages/v-token/src/index.ts"],
+			"@phuture/v-token-factory": ["packages/v-token-factory/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]

@@ -14,6 +14,8 @@
 		"price-oracle": "packages/price-oracle",
 		"sdk": "packages/sdk",
 		"subgraph": "packages/subgraph",
-		"types": "packages/types"
+		"types": "packages/types",
+		"v-token": "packages/v-token",
+		"v-token-factory": "packages/v-token-factory"
 	}
 }

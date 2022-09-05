@@ -1,0 +1,56 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/v-token/src",
+	"projectType": "library",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/js:tsc",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"buildableProjectDepsInPackageJsonType": "dependencies",
+				"outputPath": "dist/packages/v-token",
+				"main": "packages/v-token/src/index.ts",
+				"tsConfig": "packages/v-token/tsconfig.lib.json",
+				"assets": ["packages/v-token/*.md"]
+			}
+		},
+		"publish": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"command": "node tools/scripts/publish.mjs v-token {args.ver} {args.tag}"
+			},
+			"dependsOn": [
+				{
+					"projects": "self",
+					"target": "build"
+				}
+			]
+		},
+		"generate": {
+			"executor": "@nrwl/workspace:run-commands",
+			"options": {
+				"commands": [
+					{
+						"command": "npx typechain --target=ethers-v5 --out-dir=packages/v-token/src/types packages/v-token/abis/**/*.json"
+					}
+				]
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/v-token/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/packages/v-token"],
+			"options": {
+				"jestConfig": "packages/v-token/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
+}
