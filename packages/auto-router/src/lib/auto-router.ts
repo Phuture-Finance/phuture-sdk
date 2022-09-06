@@ -9,10 +9,24 @@ import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
 
 const baseMintGas = 260_000;
-const additionalMintGasPerAsset = 135_000;
+const additionalMintGasPerAsset = (network: Networkish): number => {
+	const gas = {
+		[Network.Mainnet]: 135_000,
+		[Network.CChain]: 100_000,
+	}[network];
+
+	return gas ?? 135_000;
+}
 
 const baseBurnGas = 100_000;
-const additionalBurnGasPerAsset = 300_000;
+const additionalBurnGasPerAsset = (network: Networkish) => {
+	const gas = {
+		[Network.Mainnet]: 300_000,
+		[Network.CChain]: 200_000,
+	}[network];
+
+	return gas ?? 300_000;
+}
 
 export const nativeTokenSymbol = (network: Networkish): TokenSymbol => {
 	const symbol = {
@@ -115,7 +129,7 @@ export class AutoRouter {
 		const totalMintGas = BigNumber.from(
 			quotes
 				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
-				.add(baseMintGas + quotes.length * additionalMintGasPerAsset)
+				.add(baseMintGas + quotes.length * additionalMintGasPerAsset(await this.indexRouter.account.chainId()))
 		);
 
 		const isMint = totalMintGas
@@ -432,7 +446,7 @@ export class AutoRouter {
 					(curr, { estimatedGas }) => curr.add(estimatedGas),
 					BigNumber.from(0)
 				)
-				.add(baseBurnGas + prices.length * additionalBurnGasPerAsset)
+				.add(baseBurnGas + prices.length * additionalBurnGasPerAsset(await this.indexRouter.account.chainId()))
 		);
 
 		const isBurn = totalBurnGas
