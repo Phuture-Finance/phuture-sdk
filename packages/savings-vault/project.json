@@ -1,6 +1,6 @@
 {
 	"$schema": "../../node_modules/nx/schemas/project-schema.json",
-	"sourceRoot": "packages/frp/src",
+	"sourceRoot": "packages/savings-vault/src",
 	"projectType": "library",
 	"targets": {
 		"build": {
@@ -8,16 +8,16 @@
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"buildableProjectDepsInPackageJsonType": "dependencies",
-				"outputPath": "dist/packages/frp",
-				"main": "packages/frp/src/index.ts",
-				"tsConfig": "packages/frp/tsconfig.lib.json",
-				"assets": ["packages/frp/*.md"]
+				"outputPath": "dist/packages/savings-vault",
+				"main": "packages/savings-vault/src/index.ts",
+				"tsConfig": "packages/savings-vault/tsconfig.lib.json",
+				"assets": ["packages/savings-vault/*.md"]
 			}
 		},
 		"publish": {
 			"executor": "@nrwl/workspace:run-commands",
 			"options": {
-				"command": "node tools/scripts/publish.mjs frp {args.ver} {args.tag}"
+				"command": "node tools/scripts/publish.mjs savings-vault {args.ver} {args.tag}"
 			},
 			"dependsOn": [
 				{
@@ -31,7 +31,7 @@
 			"options": {
 				"commands": [
 					{
-						"command": "npx typechain --target=ethers-v5 --out-dir=packages/frp/src/types packages/frp/abis/**/*.json"
+						"command": "npx typechain --target=ethers-v5 --out-dir=packages/savings-vault/src/types packages/savings-vault/abis/**/*.json"
 					}
 				]
 			}
@@ -40,14 +40,14 @@
 			"executor": "@nrwl/linter:eslint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["packages/frp/**/*.ts"]
+				"lintFilePatterns": ["packages/savings-vault/**/*.ts"]
 			}
 		},
 		"test": {
 			"executor": "@nrwl/jest:jest",
-			"outputs": ["coverage/packages/frp"],
+			"outputs": ["coverage/packages/savings-vault"],
 			"options": {
-				"jestConfig": "packages/frp/jest.config.ts",
+				"jestConfig": "packages/savings-vault/jest.config.ts",
 				"passWithNoTests": true
 			}
 		}

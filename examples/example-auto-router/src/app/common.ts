@@ -1,9 +1,8 @@
 import { ethers } from 'ethers';
 import {
 	Account,
-	AutoRouter,
-	Index,
-	IndexRouter,
+	Index, IndexAutoRouter,
+	IndexRouter, MetaRouter, ProductType, SavingsVault,
 	ZeroExAggregator,
 } from '@phuture/sdk';
 import 'dotenv/config';
@@ -20,5 +19,10 @@ const zeroEx = new ZeroExAggregator();
 const indexRouter = new IndexRouter(account);
 
 export const index = new Index(account, getEnv('INDEX_ADDRESS'));
+export const savingVault = new SavingsVault(account, getEnv('SAVINGS_VAULT_ADDRESS'));
 
-export const autoRouter = new AutoRouter(indexRouter, zeroEx);
+export const indexAutoRouter = new IndexAutoRouter(indexRouter, zeroEx);
+export const metaRouter = new MetaRouter(indexRouter, zeroEx, {
+	[ProductType.INDEX]: [index.address],
+	[ProductType.SAVINGS_VAULT]: [savingVault.address]
+});

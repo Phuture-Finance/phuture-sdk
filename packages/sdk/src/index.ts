@@ -3,7 +3,7 @@ export * from '@phuture/auto-router';
 export * from '@phuture/contract';
 export * from '@phuture/erc-20';
 export * from '@phuture/erc-4626';
-export * from '@phuture/frp';
+export * from '@phuture/savings-vault';
 export * from '@phuture/errors';
 export * from '@phuture/index';
 export * from '@phuture/index-router';

@@ -11,7 +11,7 @@
 		"errors": "packages/errors",
 		"example-auto-router": "examples/example-auto-router",
 		"index": "packages/index",
-		"frp": "packages/frp",
+		"savings-vault": "packages/savings-vault",
 		"index-router": "packages/index-router",
 		"price-oracle": "packages/price-oracle",
 		"sdk": "packages/sdk",
