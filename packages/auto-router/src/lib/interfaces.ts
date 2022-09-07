@@ -5,8 +5,8 @@ import { Address } from '@phuture/types';
 import {BigNumber, BigNumberish} from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 
-/** ### Auto Router Interface */
-export interface AutoRouter {
+/** ### Router Interface */
+export interface Router {
 
 	/**
 	 * ### Select Buy
@@ -168,7 +168,7 @@ export interface AutoRouter {
 	 * @returns burn transaction
 	 */
 	sellSwap(
-		contractAddress: Address,
+		contractAddress: Address, //change it here to address of Contract
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<Zero0xQuoteOptions>

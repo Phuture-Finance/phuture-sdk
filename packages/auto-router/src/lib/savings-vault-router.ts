@@ -1,13 +1,13 @@
 import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
 import {SavingsVault} from '@phuture/savings-vault';
 import {Address} from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import {BigNumber, BigNumberish, constants} from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import {InsufficientAllowanceError, PhutureError} from '@phuture/errors';
-import {AutoRouter} from "./interfaces";
+import {Router} from "./interfaces";
 
-/** ### SavingsVaultAutoRouter class */
-export class SavingsVaultAutoRouter implements AutoRouter {
+/** ### SavingsVaultRouter class */
+export class SavingsVaultRouter implements Router {
 
 	/**
 	 * ### Select Buy
@@ -31,7 +31,7 @@ export class SavingsVaultAutoRouter implements AutoRouter {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		const target = savingsVault.address
+		let target = constants.AddressZero;
 
 		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
@@ -42,6 +42,7 @@ export class SavingsVaultAutoRouter implements AutoRouter {
 				await inputToken.checkAllowance(target, amountInInputToken);
 			} catch(error) {
 				if (error instanceof InsufficientAllowanceError) {
+					target = savingsVault.address;
 					expectedAllowance = error.expectedAllowance;
 				} else {
 					throw error;
@@ -123,6 +124,7 @@ export class SavingsVaultAutoRouter implements AutoRouter {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address
 	): Promise<TransactionResponse> {
+		// throw Error if it is address.
 		throw new PhutureError({status: 404, message: "buySwap method is not defined"});
 	}
 

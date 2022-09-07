@@ -1,30 +1,31 @@
 import { Address } from '@phuture/types';
-import {IndexRouter} from "@phuture/index-router";
-import {Zero0xQuoteOptions, ZeroExAggregator} from "@phuture/0x-aggregator";
+import {Zero0xQuoteOptions} from "@phuture/0x-aggregator";
 import {Erc20, Erc20Permit, StandardPermitArguments} from "@phuture/erc-20";
 import {BigNumber, BigNumberish} from "ethers";
 import {SavingsVault} from "@phuture/savings-vault";
 import {Index} from "@phuture/index";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import {PhutureError} from "@phuture/errors";
-import {AutoRouter} from "./interfaces";
-import {SavingsVaultAutoRouter} from "./savings-vault-auto-router";
-import {IndexAutoRouter} from "./index-auto-router";
+import {Router} from "./interfaces";
+import {SavingsVaultRouter} from "./savings-vault-router";
+import {AutoRouter} from "./auto-router";
 
-export class MetaRouter implements AutoRouter {
-	private savingsVaultAutoRouter: SavingsVaultAutoRouter;
-	private indexAutoRouter: IndexAutoRouter;
-	private products: Record<ProductType, Address[]>
+export class MetaRouter implements Router {
 
+	/**
+	 * ### Creates a new MetaRouter instance
+	 *
+	 * @param savingsVaultRouter Instance of SavingsVaultRouter
+	 * @param autoRouter Instance of AutoRouter
+	 * @param products Record of product type and an array of its corresponding addresses
+	 *
+	 * @returns New MetaRouter instance
+	 */
 	constructor(
-		public readonly indexRouter: IndexRouter,
-		public readonly zeroExAggregator: ZeroExAggregator,
-		public _products: Record<ProductType, Address[]>
-	) {
-		this.savingsVaultAutoRouter = new SavingsVaultAutoRouter();
-		this.indexAutoRouter = new IndexAutoRouter(indexRouter, zeroExAggregator);
-		this.products = _products;
-	}
+		private savingsVaultRouter: SavingsVaultRouter,
+		private autoRouter: AutoRouter,
+		private products: Record<ProductType, Address[]>
+	) {}
 
 	async selectBuy(
 		erc20Permit: Erc20Permit,
@@ -38,8 +39,8 @@ export class MetaRouter implements AutoRouter {
 		expectedAllowance?: BigNumber;
 	}> {
 		switch (this.findProductType(erc20Permit.address)) {
-			case ProductType.INDEX: return this.indexAutoRouter.selectBuy(erc20Permit as Index, amountInInputToken, inputToken, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.selectBuy(erc20Permit as SavingsVault, amountInInputToken, inputToken);
+			case ProductType.INDEX: return this.autoRouter.selectBuy(erc20Permit as Index, amountInInputToken, inputToken, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.selectBuy(erc20Permit as SavingsVault, amountInInputToken, inputToken);
 		}
 	}
 
@@ -54,8 +55,8 @@ export class MetaRouter implements AutoRouter {
 		}>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
-			case ProductType.INDEX: return this.indexAutoRouter.buy(isMint, erc20Permit as Index, amountInInputToken, inputToken, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.buy(isMint, erc20Permit as SavingsVault, amountInInputToken, inputToken, options);
+			case ProductType.INDEX: return this.autoRouter.buy(isMint, erc20Permit as Index, amountInInputToken, inputToken, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.buy(isMint, erc20Permit as SavingsVault, amountInInputToken, inputToken, options);
 		}
 	}
 
@@ -69,8 +70,8 @@ export class MetaRouter implements AutoRouter {
 		}>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
-			case ProductType.INDEX: return this.indexAutoRouter.buyMint(erc20Permit as Index, amountInInputToken, inputTokenAddress, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.buyMint(erc20Permit as SavingsVault, amountInInputToken, inputTokenAddress, options);
+			case ProductType.INDEX: return this.autoRouter.buyMint(erc20Permit as Index, amountInInputToken, inputTokenAddress, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.buyMint(erc20Permit as SavingsVault, amountInInputToken, inputTokenAddress, options);
 		}
 	}
 
@@ -81,8 +82,8 @@ export class MetaRouter implements AutoRouter {
 		zeroExOptions?: Partial<Zero0xQuoteOptions>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(contractAddress)) {
-			case ProductType.INDEX: return this.indexAutoRouter.buySwap(contractAddress, amountInInputToken, inputTokenAddress, zeroExOptions);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.buySwap(contractAddress, amountInInputToken, inputTokenAddress);
+			case ProductType.INDEX: return this.autoRouter.buySwap(contractAddress, amountInInputToken, inputTokenAddress, zeroExOptions);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.buySwap(contractAddress, amountInInputToken, inputTokenAddress);
 		}
 	}
 
@@ -98,8 +99,8 @@ export class MetaRouter implements AutoRouter {
 		expectedAllowance?: BigNumber;
 	}> {
 		switch (this.findProductType(erc20Permit.address)) {
-			case ProductType.INDEX: return this.indexAutoRouter.selectSell(erc20Permit as Index, sharesAmount, outputToken, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.selectSell(erc20Permit as SavingsVault, sharesAmount);
+			case ProductType.INDEX: return this.autoRouter.selectSell(erc20Permit as Index, sharesAmount, outputToken, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.selectSell(erc20Permit as SavingsVault, sharesAmount);
 		}
 	}
 
@@ -112,8 +113,8 @@ export class MetaRouter implements AutoRouter {
 		options?: Partial<Zero0xQuoteOptions>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
-			case ProductType.INDEX: return this.indexAutoRouter.sell(isBurn, erc20Permit as Index, sharesAmount, outputTokenAddress, permitOptions, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.sell(isBurn, erc20Permit as SavingsVault, sharesAmount);
+			case ProductType.INDEX: return this.autoRouter.sell(isBurn, erc20Permit as Index, sharesAmount, outputTokenAddress, permitOptions, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.sell(isBurn, erc20Permit as SavingsVault, sharesAmount);
 		}
 	}
 
@@ -125,8 +126,8 @@ export class MetaRouter implements AutoRouter {
 		options?: Partial<Zero0xQuoteOptions>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
-			case ProductType.INDEX: return this.indexAutoRouter.sellBurn(erc20Permit as Index, sharesAmount, outputTokenAddress, permitOptions, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.sellBurn(erc20Permit as SavingsVault, sharesAmount);
+			case ProductType.INDEX: return this.autoRouter.sellBurn(erc20Permit as Index, sharesAmount, outputTokenAddress, permitOptions, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.sellBurn(erc20Permit as SavingsVault, sharesAmount);
 		}
 	}
 
@@ -137,8 +138,8 @@ export class MetaRouter implements AutoRouter {
 		options?: Partial<Zero0xQuoteOptions>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(contractAddress)) {
-			case ProductType.INDEX: return this.indexAutoRouter.sellSwap(contractAddress, sharesAmount, outputTokenAddress, options);
-			case ProductType.SAVINGS_VAULT: return this.savingsVaultAutoRouter.sellSwap(contractAddress, sharesAmount);
+			case ProductType.INDEX: return this.autoRouter.sellSwap(contractAddress, sharesAmount, outputTokenAddress, options);
+			case ProductType.SAVINGS_VAULT: return this.savingsVaultRouter.sellSwap(contractAddress, sharesAmount);
 		}
 	}
 

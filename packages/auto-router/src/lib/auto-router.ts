@@ -7,7 +7,7 @@ import {BigNumber, BigNumberish, constants} from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
-import {AutoRouter} from "./interfaces";
+import {Router} from "./interfaces";
 
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = 135_000;
@@ -15,8 +15,8 @@ const additionalMintGasPerAsset = 135_000;
 const baseBurnGas = 100_000;
 const additionalBurnGasPerAsset = 300_000;
 
-/** ### IndexAutoRouter class */
-export class IndexAutoRouter implements AutoRouter {
+/** ### AutoRouter class */
+export class AutoRouter implements Router {
     /**
      * ### Creates a new IndexAutoRouter instance
      *

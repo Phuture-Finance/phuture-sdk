@@ -4,8 +4,10 @@ import {IndexRouter} from "@phuture/index-router";
 import {ZeroExAggregator} from "@phuture/0x-aggregator";
 import {Address} from "@phuture/types";
 import {SavingsVault} from "@phuture/savings-vault";
-import {BigNumber, constants, ContractReceipt, ContractTransaction} from "ethers";
+import {BigNumber, constants} from "ethers";
 import { expect } from 'chai';
+import {AutoRouter} from "./auto-router";
+import {SavingsVaultRouter} from "./savings-vault-router";
 
 describe('MetaRouter', () => {
 	let indexRouter: DeepMockProxy<IndexRouter>;
@@ -25,8 +27,8 @@ describe('MetaRouter', () => {
 			[ProductType.SAVINGS_VAULT]: savingsVaultAddresses,
 
 		}
-		metaRouter = new MetaRouter(indexRouter, zeroAggregator, products);
 		savingsVaultInterface = mockDeep<SavingsVault>();
+		metaRouter = new MetaRouter(new SavingsVaultRouter(), new AutoRouter(indexRouter, zeroAggregator), products);
 		Object.defineProperty(savingsVaultInterface, 'address', {
 			get: () => savingsVaultAddresses[0]
 		});
@@ -49,7 +51,7 @@ describe('MetaRouter', () => {
 		const result = await metaRouter.selectBuy(savingsVaultInterface, sharesAmount);
 		expect(result).to.deep.equal({
 			isMint: true,
-			target: '0xc365c3315cf926351ccaf13fa7d19c8c4058c8e1',
+			target: constants.AddressZero,
 			outputAmount: sharesAmount,
 			expectedAllowance: undefined
 		})
