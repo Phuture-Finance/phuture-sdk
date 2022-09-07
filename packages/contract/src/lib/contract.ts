@@ -1,11 +1,10 @@
-import { EventEmitter } from 'events';
 import { Contract as EthersContract } from 'ethers';
 import type { Address, ContractFactory } from '@phuture/types';
 import { isAddress } from '@phuture/types';
 import { Account } from '@phuture/account';
 
 /** ### Contract Instance */
-export class Contract<C extends EthersContract> extends EventEmitter {
+export class Contract<C extends EthersContract> {
 	/** ### Contract instance */
 	public contract: C;
 
@@ -23,14 +22,9 @@ export class Contract<C extends EthersContract> extends EventEmitter {
 		contract: C | Address,
 		protected readonly contractFactory: ContractFactory
 	) {
-		super();
 		this.contract = isAddress(contract)
 			? (contractFactory.connect(contract, _account.signer) as C)
 			: contract;
-
-		_account.on('change', (account) => {
-			this.account = account;
-		});
 	}
 
 	/**
@@ -52,7 +46,6 @@ export class Contract<C extends EthersContract> extends EventEmitter {
 			address,
 			this._account.signer
 		) as C;
-		this.emit('change', this.contract);
 	}
 
 	/**
@@ -75,6 +68,5 @@ export class Contract<C extends EthersContract> extends EventEmitter {
 			this.address,
 			account.signer
 		) as C;
-		this.emit('change', this.contract);
 	}
 }

@@ -59,10 +59,7 @@ export class Erc20<
 	 * @returns Decimals of the token
 	 */
 	public async decimals(): Promise<number> {
-		const getDecimals = async () => this.contract.decimals();
-
-		this.on('update', getDecimals);
-		this._decimals ??= await getDecimals();
+		this._decimals ??= await this.contract.decimals();
 
 		return this._decimals;
 	}
@@ -73,10 +70,7 @@ export class Erc20<
 	 * @returns Symbol of the token
 	 */
 	public async symbol(): Promise<string> {
-		const getSymbol = async () => this.contract.symbol();
-
-		this.on('update', getSymbol);
-		this._symbol ??= await getSymbol();
+		this._symbol ??= await this.contract.symbol();
 
 		return this._symbol;
 	}
@@ -87,10 +81,7 @@ export class Erc20<
 	 * @returns Name of the token
 	 */
 	public async name(): Promise<string> {
-		const getName = async () => this.contract.name();
-
-		this.on('update', getName);
-		this._name ??= await getName();
+		this._name ??= await this.contract.name();
 
 		return this._name;
 	}

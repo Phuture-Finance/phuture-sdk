@@ -16,7 +16,7 @@ const additionalMintGasPerAsset = (network: Networkish): number => {
 	}[network];
 
 	return gas ?? 135_000;
-}
+};
 
 const baseBurnGas = 100_000;
 const additionalBurnGasPerAsset = (network: Networkish) => {
@@ -26,7 +26,7 @@ const additionalBurnGasPerAsset = (network: Networkish) => {
 	}[network];
 
 	return gas ?? 300_000;
-}
+};
 
 export const nativeTokenSymbol = (network: Networkish): TokenSymbol => {
 	const symbol = {
@@ -129,7 +129,13 @@ export class AutoRouter {
 		const totalMintGas = BigNumber.from(
 			quotes
 				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
-				.add(baseMintGas + quotes.length * additionalMintGasPerAsset(await this.indexRouter.account.chainId()))
+				.add(
+					baseMintGas +
+						quotes.length *
+							additionalMintGasPerAsset(
+								await this.indexRouter.account.chainId()
+							)
+				)
 		);
 
 		const isMint = totalMintGas
@@ -243,7 +249,7 @@ export class AutoRouter {
 
 		const priceOracle = await getDefaultPriceOracle(this.indexRouter.account);
 		const buyAmountsInBase = await Promise.all(
-			buyAmounts.map(async ({ asset, buyAssetMinAmount }, index) => {
+			buyAmounts.map(async ({ asset, buyAssetMinAmount }, amountIndex) => {
 				const price =
 					await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(
 						asset
@@ -253,7 +259,7 @@ export class AutoRouter {
 					buyAmount: BigNumber.from(buyAssetMinAmount)
 						.mul(BigNumber.from(2).pow(112))
 						.mul(255)
-						.div(price.mul(amounts[index].weight)),
+						.div(price.mul(amounts[amountIndex].weight)),
 				};
 			})
 		);
@@ -412,14 +418,14 @@ export class AutoRouter {
 
 		const prices = await Promise.all(
 			amounts.map(async ({ amount, asset }) => {
-				if(asset === outputTokenAddress) {
+				if (asset === outputTokenAddress) {
 					return {
 						buyAmount: amount,
-						estimatedGas: 0
-					}
+						estimatedGas: 0,
+					};
 				}
 
- 				if (!amount || amount.isZero()) {
+				if (!amount || amount.isZero()) {
 					return {
 						buyAmount: 0,
 						estimatedGas: 0,
@@ -446,7 +452,13 @@ export class AutoRouter {
 					(curr, { estimatedGas }) => curr.add(estimatedGas),
 					BigNumber.from(0)
 				)
-				.add(baseBurnGas + prices.length * additionalBurnGasPerAsset(await this.indexRouter.account.chainId()))
+				.add(
+					baseBurnGas +
+						prices.length *
+							additionalBurnGasPerAsset(
+								await this.indexRouter.account.chainId()
+							)
+				)
 		);
 
 		const isBurn = totalBurnGas
@@ -528,9 +540,10 @@ export class AutoRouter {
 	): Promise<TransactionResponse> {
 		const amounts = await this.indexRouter.burnAmount(index, indexAmount);
 
-		const routerOutputTokenAddress = outputTokenAddress ?? (await this.indexRouter.weth())
+		const routerOutputTokenAddress =
+			outputTokenAddress ?? (await this.indexRouter.weth());
 		const quotes = await Promise.all(
-			amounts.map(async ({ amount, asset }, i) => {
+			amounts.map(async ({ amount, asset }) => {
 				if (!amount || amount.isZero() || asset === routerOutputTokenAddress) {
 					return {
 						swapTarget: constants.AddressZero,

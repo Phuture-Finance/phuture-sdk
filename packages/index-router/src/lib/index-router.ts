@@ -43,10 +43,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 
 	async weth(): Promise<Address> {
 		// eslint-disable-next-line new-cap
-		const getWeth = async () => this.contract.WETH();
-
-		this.on('change', getWeth);
-		this._weth ??= await getWeth();
+		this._weth ??= await this.contract.WETH();
 
 		return this._weth;
 	}
