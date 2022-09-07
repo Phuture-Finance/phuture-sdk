@@ -1,9 +1,8 @@
-import { EventEmitter } from 'events';
 import { BigNumber, Signer } from 'ethers';
 import { Address } from '@phuture/types';
 
 /** ### Account class for interacting with the blockchain through the Signer */
-export class Account extends EventEmitter {
+export class Account {
 	/**
 	 * ### Constructs an instance of the Account class
 	 *
@@ -11,9 +10,7 @@ export class Account extends EventEmitter {
 	 *
 	 * @returns {Account} The account instance
 	 */
-	constructor(private _signer: Signer) {
-		super();
-	}
+	constructor(private _signer: Signer) {}
 
 	/**
 	 * ### Gets the signer used for the account
@@ -31,7 +28,6 @@ export class Account extends EventEmitter {
 	 */
 	set signer(_signer: Signer) {
 		this._signer = _signer;
-		this.emit('change', this);
 	}
 
 	/**

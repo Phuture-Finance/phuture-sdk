@@ -73,9 +73,6 @@ export class Index extends Erc20Permit<BaseIndex> {
 	public async anatomy(): Promise<Anatomy> {
 		if (!this._anatomy) {
 			this._anatomy = await this.getAnatomy();
-			this.on('update', async () => {
-				this._anatomy = await this.getAnatomy();
-			});
 		}
 
 		return this._anatomy;
@@ -84,9 +81,6 @@ export class Index extends Erc20Permit<BaseIndex> {
 	public async inactiveAnatomy(): Promise<Anatomy> {
 		if (!this._inactiveAnatomy) {
 			this._inactiveAnatomy = await this.getInactiveAnatomy();
-			this.on('update', async () => {
-				this._inactiveAnatomy = await this.inactiveAnatomy();
-			});
 		}
 
 		return this._inactiveAnatomy;
