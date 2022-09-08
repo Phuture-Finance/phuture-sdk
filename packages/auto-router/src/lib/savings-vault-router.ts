@@ -35,11 +35,11 @@ export class SavingsVaultRouter implements Router {
 
 		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
-			if (inputToken.address !== await savingsVault.contract.asset()) {
+			if (inputToken.address.toLowerCase() !== (await savingsVault.contract.asset()).toLowerCase()) {
 				throw new PhutureError({status: 400, message: "Input token is not the underlying asset token of the SavingsVault"});
 			}
 			try {
-				await inputToken.checkAllowance(target, amountInInputToken);
+				await inputToken.checkAllowance(savingsVault.address, amountInInputToken);
 			} catch(error) {
 				if (error instanceof InsufficientAllowanceError) {
 					target = savingsVault.address;
