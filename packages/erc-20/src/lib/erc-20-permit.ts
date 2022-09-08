@@ -2,11 +2,11 @@ import { Address, ContractFactory, isAddress, Signature } from '@phuture/types';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Interface } from '@ethersproject/abi';
 import { Account } from '@phuture/account';
-import { Erc20 } from './erc-20';
 import {
 	ERC20Permit as ERC20PermitContractInterface,
 	ERC20Permit__factory,
 } from '../types';
+import { Erc20 } from './erc-20';
 
 /** ### Standard permit arguments */
 export interface StandardPermitArguments extends Signature {

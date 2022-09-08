@@ -1,15 +1,15 @@
-import {Address, ContractFactory,} from '@phuture/types';
+import { Address, ContractFactory } from '@phuture/types';
 import { Account } from '@phuture/account';
+import { Erc20Permit } from '@phuture/erc-20';
 import {
 	ERC4626Upgradeable__factory as ERC4626__factory,
-	ERC4626WithPermit as ERC4626WithPermitContractInterface
+	ERC4626WithPermit as ERC4626WithPermitContractInterface,
 } from '../types';
-import {Erc20Permit} from "@phuture/erc-20";
 
 /** ### ERC4626 Token Contract */
 export class Erc4626<
 	C extends ERC4626WithPermitContractInterface = ERC4626WithPermitContractInterface
-> extends Erc20Permit<C>{
+> extends Erc20Permit<C> {
 	/**
 	 * ### Creates a new ERC4626 instance
 	 *

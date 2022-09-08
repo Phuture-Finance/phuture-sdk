@@ -1,18 +1,21 @@
+import { Network, Networkish } from '@phuture/types';
+import { Account } from '@phuture/account';
 import {
-	DefaultPhuturePriceOracleAddress,
+	defaultPhuturePriceOracleAddress,
 	PhuturePriceOracle,
 } from './phuture-price-oracle';
-import { Network } from '@phuture/types';
-import { Account } from '@phuture/account';
 
-const defaultPriceOracles: Record<Network, PhuturePriceOracle | undefined> = {
-	[Network.Mainnet]: undefined,
-};
+const defaultPriceOracles: Record<Networkish, PhuturePriceOracle | undefined> =
+	{
+		[Network.Mainnet]: undefined,
+		[Network.CChain]: undefined,
+	};
 
-export const getDefaultPriceOracle = (
-	account: Account,
-	network: Network = Network.Mainnet
-): PhuturePriceOracle => {
+export const getDefaultPriceOracle = async (
+	account: Account
+): Promise<PhuturePriceOracle> => {
+	const network = await account.chainId();
+
 	const priceOracle = defaultPriceOracles[network];
 	if (priceOracle) {
 		return priceOracle;
@@ -20,7 +23,7 @@ export const getDefaultPriceOracle = (
 
 	const newPriceOracle = new PhuturePriceOracle(
 		account,
-		DefaultPhuturePriceOracleAddress[network]
+		defaultPhuturePriceOracleAddress[network]
 	);
 	defaultPriceOracles[network] = newPriceOracle;
 

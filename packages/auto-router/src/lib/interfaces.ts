@@ -1,13 +1,12 @@
 import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
-import {Erc20, Erc20Permit, StandardPermitArguments} from '@phuture/erc-20';
+import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
 
 import { Address } from '@phuture/types';
-import {BigNumber, BigNumberish} from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 
 /** ### Router Interface */
 export interface Router {
-
 	/**
 	 * ### Select Buy
 	 *
@@ -50,8 +49,8 @@ export interface Router {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>,
-			zeroExOptions: Partial<Zero0xQuoteOptions>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+			zeroExOptions: Partial<Zero0xQuoteOptions>;
 		}>
 	): Promise<TransactionResponse>;
 
@@ -70,8 +69,8 @@ export interface Router {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>,
-			zeroExOptions: Partial<Zero0xQuoteOptions>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+			zeroExOptions: Partial<Zero0xQuoteOptions>;
 		}>
 	): Promise<TransactionResponse>;
 
@@ -124,7 +123,7 @@ export interface Router {
 	 * @param erc20PermitToken Contract which implements the ERC20Permit interface
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
-	 * @param permitOptions permit options for transaction
+	 * @param options permit options for transaction
 	 * @param options 0x request options
 	 *
 	 * @returns burn or swap transaction
@@ -134,8 +133,10 @@ export interface Router {
 		erc20PermitToken: Erc20Permit,
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<{
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+			zeroExOptions: Partial<Zero0xQuoteOptions>;
+		}>
 	): Promise<TransactionResponse>;
 
 	/**
@@ -144,7 +145,7 @@ export interface Router {
 	 * @param erc20PermitToken Contract which implements the ERC20Permit interface
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
-	 * @param permitOptions permit options for transaction
+	 * @param options permit options for transaction
 	 * @param options 0x request options
 	 *
 	 * @returns burn transaction
@@ -153,8 +154,10 @@ export interface Router {
 		erc20PermitToken: Erc20Permit,
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
-		permitOptions?: Omit<StandardPermitArguments, 'amount'>,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<{
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+			zeroExOptions: Partial<Zero0xQuoteOptions>;
+		}>
 	): Promise<TransactionResponse>;
 
 	/**

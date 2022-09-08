@@ -1,10 +1,16 @@
 import type { Address, ContractFactory } from '@phuture/types';
 import { Account } from '@phuture/account';
-import {SavingsVault as SavingsVaultContractInterface, SavingsVault__factory} from '../types';
-import {Erc4626} from "@phuture/erc-4626";
+import { Erc4626 } from '@phuture/erc-4626';
 import { formatUnits } from 'ethers/lib/utils';
-import {DefaultSavingsVaultViewsAddress, SavingsVaultViews} from "./savings-vault-views";
-import {isAddress, Network} from "@phuture/types";
+import { isAddress, Network } from '@phuture/types';
+import {
+	SavingsVault as SavingsVaultContractInterface,
+	SavingsVault__factory,
+} from '../types';
+import {
+	DefaultSavingsVaultViewsAddress,
+	SavingsVaultViews,
+} from './savings-vault-views';
 
 /**
  * ### SavingsVault Contract
@@ -26,14 +32,20 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		account: Account,
 		contract: Address | SavingsVaultContractInterface,
 		factory: ContractFactory = SavingsVault__factory,
-		savingsVaultViews: Address | SavingsVaultViews = DefaultSavingsVaultViewsAddress[Network.Mainnet]
+		savingsVaultViews:
+			| Address
+			| SavingsVaultViews = DefaultSavingsVaultViewsAddress[Network.Mainnet]
 	) {
 		super(account, contract, factory);
-		this._savingsVaultViews = isAddress(savingsVaultViews) ? new SavingsVaultViews(account, savingsVaultViews) : savingsVaultViews;
+		this._savingsVaultViews = isAddress(savingsVaultViews)
+			? new SavingsVaultViews(account, savingsVaultViews)
+			: savingsVaultViews;
 	}
 
 	public async getAPY(): Promise<string> {
-		const apy = await this._savingsVaultViews.contract.getAPY(this.contract.address)
+		const apy = await this._savingsVaultViews.contract.getAPY(
+			this.contract.address
+		);
 		return formatUnits(apy, 9);
 	}
 }

@@ -1,12 +1,15 @@
-import {Account} from "@phuture/account";
-import {Address, ContractFactory, Network} from "@phuture/types";
-import {SavingsVaultViews as SavingsVaultViewsContractInterface, SavingsVaultViews__factory} from '../types';
-import {Contract} from "@phuture/contract";
+import { Account } from '@phuture/account';
+import { Address, ContractFactory, Network } from '@phuture/types';
+import { Contract } from '@phuture/contract';
+import {
+	SavingsVaultViews as SavingsVaultViewsContractInterface,
+	SavingsVaultViews__factory,
+} from '../types';
 
 /** ### SavingsVaultViews Contract */
 export class SavingsVaultViews<
 	C extends SavingsVaultViewsContractInterface = SavingsVaultViewsContractInterface
-> extends Contract<C>  {
+> extends Contract<C> {
 	/**
 	 * ### Creates a new SavingsVaultViews instance
 	 *
@@ -28,4 +31,5 @@ export class SavingsVaultViews<
 export const DefaultSavingsVaultViewsAddress: Record<Network, Address> = {
 	/** ### Default SavingsVaultViews address on mainnet. */
 	[Network.Mainnet]: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369', // TODO deploy an instance of the SavingsVaultViews
+	[Network.CChain]: '0x00',
 };

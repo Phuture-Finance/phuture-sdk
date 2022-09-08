@@ -1,10 +1,12 @@
 import { BigNumber } from 'ethers';
-import { account, autoRouter, index } from './common';
 import { Erc20Permit } from '@phuture/erc-20';
 import * as yesno from 'yesno';
+import prepare from './prepare';
 
 // Auto selling Index amount
 export default async function autoSell(amountToSellDesired: BigNumber) {
+	const { account, index, autoRouter } = await prepare();
+
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
 	if (!tokenAddress) {
 		const select = await autoRouter.selectSell(index, amountToSellDesired);
@@ -13,7 +15,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 
 		const ok = await yesno({ question: 'Ready to continue?' });
 		if (ok) {
-			await autoRouter.sell(select.isBurn, index, amountToSellDesired);
+			return autoRouter.sell(select.isBurn, index, amountToSellDesired);
 		}
 
 		return;
@@ -26,7 +28,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 
 	const ok = await yesno({ question: 'Ready to continue?' });
 	if (ok) {
-		await autoRouter.sell(
+		return autoRouter.sell(
 			select.isBurn,
 			index,
 			amountToSellDesired,

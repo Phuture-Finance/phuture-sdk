@@ -3,9 +3,9 @@ import { BigNumber, BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { Contract } from '@phuture/contract';
 import { Account } from '@phuture/account';
+import { InsufficientAllowanceError } from '@phuture/errors';
 import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types';
 import { Addresses } from './addresses';
-import { InsufficientAllowanceError } from '@phuture/errors';
 
 /** ### ERC20 Token Contract */
 export class Erc20<
@@ -43,7 +43,7 @@ export class Erc20<
 	/**
 	 * ### Connect price source to Index
 	 *
-	 * @param {IndexRepo} priceSource Price source to connect to Index
+	 * @param priceSource Price source to connect to Index
 	 *
 	 * @returns {this} Index instance
 	 */
@@ -59,10 +59,7 @@ export class Erc20<
 	 * @returns Decimals of the token
 	 */
 	public async decimals(): Promise<number> {
-		const getDecimals = async () => this.contract.decimals();
-
-		this.on('update', getDecimals);
-		this._decimals ??= await getDecimals();
+		this._decimals ??= await this.contract.decimals();
 
 		return this._decimals;
 	}
@@ -73,10 +70,7 @@ export class Erc20<
 	 * @returns Symbol of the token
 	 */
 	public async symbol(): Promise<string> {
-		const getSymbol = async () => this.contract.symbol();
-
-		this.on('update', getSymbol);
-		this._symbol ??= await getSymbol();
+		this._symbol ??= await this.contract.symbol();
 
 		return this._symbol;
 	}
@@ -87,10 +81,7 @@ export class Erc20<
 	 * @returns Name of the token
 	 */
 	public async name(): Promise<string> {
-		const getName = async () => this.contract.name();
-
-		this.on('update', getName);
-		this._name ??= await getName();
+		this._name ??= await this.contract.name();
 
 		return this._name;
 	}

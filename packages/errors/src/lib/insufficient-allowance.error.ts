@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish } from 'ethers';
-import { canSetPrototype } from './can-set-prototype';
 import { Address } from '@phuture/types';
+import { canSetPrototype } from './can-set-prototype';
 
 /**
  * ### Error thrown on insufficient allowance

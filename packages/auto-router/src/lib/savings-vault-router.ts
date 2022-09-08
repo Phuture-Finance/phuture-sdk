@@ -1,14 +1,13 @@
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {SavingsVault} from '@phuture/savings-vault';
-import {Address} from '@phuture/types';
-import {BigNumber, BigNumberish, constants} from 'ethers';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { SavingsVault } from '@phuture/savings-vault';
+import { Address } from '@phuture/types';
+import { BigNumber, BigNumberish, constants } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
-import {InsufficientAllowanceError, PhutureError} from '@phuture/errors';
-import {Router} from "./interfaces";
+import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
+import { Router } from './interfaces';
 
 /** ### SavingsVaultRouter class */
 export class SavingsVaultRouter implements Router {
-
 	/**
 	 * ### Select Buy
 	 *
@@ -35,12 +34,22 @@ export class SavingsVaultRouter implements Router {
 
 		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
-			if (inputToken.address.toLowerCase() !== (await savingsVault.contract.asset()).toLowerCase()) {
-				throw new PhutureError({status: 400, message: "Input token is not the underlying asset token of the SavingsVault"});
+			if (
+				inputToken.address.toLowerCase() !==
+				(await savingsVault.contract.asset()).toLowerCase()
+			) {
+				throw new PhutureError({
+					status: 400,
+					message:
+						'Input token is not the underlying asset token of the SavingsVault',
+				});
 			}
 			try {
-				await inputToken.checkAllowance(savingsVault.address, amountInInputToken);
-			} catch(error) {
+				await inputToken.checkAllowance(
+					savingsVault.address,
+					amountInInputToken
+				);
+			} catch (error) {
 				if (error instanceof InsufficientAllowanceError) {
 					target = savingsVault.address;
 					expectedAllowance = error.expectedAllowance;
@@ -53,9 +62,11 @@ export class SavingsVaultRouter implements Router {
 		return {
 			isMint: true,
 			target,
-			outputAmount: await savingsVault.contract.previewDeposit(amountInInputToken),
-			expectedAllowance
-		}
+			outputAmount: await savingsVault.contract.previewDeposit(
+				amountInInputToken
+			),
+			expectedAllowance,
+		};
 	}
 
 	/**
@@ -74,9 +85,16 @@ export class SavingsVaultRouter implements Router {
 		savingsVault: SavingsVault,
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
-		options?: Partial<{ permitOptions: Omit<StandardPermitArguments, 'amount'> }>
+		options?: Partial<{
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+		}>
 	): Promise<TransactionResponse> {
-		return this.buyMint(savingsVault, amountInInputToken, inputTokenAddress, options);
+		return this.buyMint(
+			savingsVault,
+			amountInInputToken,
+			inputTokenAddress,
+			options
+		);
 	}
 
 	/**
@@ -93,9 +111,11 @@ export class SavingsVaultRouter implements Router {
 		savingsVault: SavingsVault,
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
-		options?: Partial<{ permitOptions: Omit<StandardPermitArguments, 'amount'> }>
+		options?: Partial<{
+			permitOptions: Omit<StandardPermitArguments, 'amount'>;
+		}>
 	): Promise<TransactionResponse> {
-		if(options?.permitOptions !== undefined) {
+		if (options?.permitOptions !== undefined) {
 			return savingsVault.contract.depositWithPermit(
 				amountInInputToken,
 				await savingsVault.account.address(),
@@ -103,11 +123,17 @@ export class SavingsVaultRouter implements Router {
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s
-			)
+			);
 		}
-		const sellToken = new Erc20(savingsVault.account, await savingsVault.contract.asset());
+		const sellToken = new Erc20(
+			savingsVault.account,
+			await savingsVault.contract.asset()
+		);
 		await sellToken.checkAllowance(savingsVault.address, amountInInputToken);
-		return savingsVault.contract.deposit(amountInInputToken, await savingsVault.account.address());
+		return savingsVault.contract.deposit(
+			amountInInputToken,
+			await savingsVault.account.address()
+		);
 	}
 
 	/**
@@ -125,7 +151,10 @@ export class SavingsVaultRouter implements Router {
 		inputTokenAddress?: Address
 	): Promise<TransactionResponse> {
 		// throw Error if it is address.
-		throw new PhutureError({status: 404, message: "buySwap method is not defined"});
+		throw new PhutureError({
+			status: 404,
+			message: 'buySwap method is not defined',
+		});
 	}
 
 	/**
@@ -141,7 +170,7 @@ export class SavingsVaultRouter implements Router {
 	 */
 	async selectSell(
 		savingsVault: SavingsVault,
-		amount: BigNumberish,
+		amount: BigNumberish
 	): Promise<{
 		isBurn: boolean;
 		outputAmount: BigNumber;
@@ -170,10 +199,7 @@ export class SavingsVaultRouter implements Router {
 		savingsVault: SavingsVault,
 		amount: BigNumberish
 	): Promise<TransactionResponse> {
-		return this.sellBurn(
-			savingsVault,
-				amount
-			);
+		return this.sellBurn(savingsVault, amount);
 	}
 
 	/**
@@ -189,7 +215,7 @@ export class SavingsVaultRouter implements Router {
 		amount: BigNumberish
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
-		return savingsVault.contract.redeem(amount, owner, owner)
+		return savingsVault.contract.redeem(amount, owner, owner);
 	}
 
 	/**
@@ -204,8 +230,11 @@ export class SavingsVaultRouter implements Router {
 	public async sellSwap(
 		savingsVaultAddress: Address,
 		amount: BigNumberish,
-		outputTokenAddress?: Address,
+		outputTokenAddress?: Address
 	): Promise<TransactionResponse> {
-		throw new PhutureError({status: 404, message: "sellSwap method is not defined"});
+		throw new PhutureError({
+			status: 404,
+			message: 'sellSwap method is not defined',
+		});
 	}
 }

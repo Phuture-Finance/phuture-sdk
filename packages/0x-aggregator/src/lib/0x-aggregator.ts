@@ -1,4 +1,5 @@
-import type { Address, TokenSymbol, Url } from '@phuture/types';
+import type { Address, Networkish, TokenSymbol, Url } from '@phuture/types';
+import { Network } from '@phuture/types';
 import axios, { AxiosInstance } from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
@@ -13,16 +14,13 @@ import {
 const debug = newDebug('@phuture:0x-aggregator');
 
 /** ### Addresses of the ZeroX API endpoint */
-export enum ZeroExBaseUrl {
-	Mainnet = 'https://api.0x.org/',
-	GatedMainnet = 'https:///gated.api.0x.org/',
-}
+export const zeroExBaseUrl: Record<Networkish, Url> = {
+	[Network.Mainnet]: 'https://api.0x.org/',
+	[Network.CChain]: 'https://avalanche.api.0x.org/',
+};
 
 /** ### Facilitates swaps for end user */
 export class ZeroExAggregator {
-	/** ### Client instance for doing calls to the ZeroX API */
-	private readonly client: AxiosInstance;
-
 	/** ### Default options for the 0x endpoints */
 	private _defaultQueryParams = {
 		/** ### Slippage protection for the aggregator */
@@ -32,22 +30,40 @@ export class ZeroExAggregator {
 	/**
 	 * ### Constructs an instance of the swap class
 	 *
+	 * @param client The axios client to use for the API calls
+	 *
+	 * @returns {ZeroExAggregator} The 0x Aggregator instance
+	 */
+	constructor(private readonly client: AxiosInstance) {}
+
+	/**
+	 * ### Creates a new client instance for the 0x API for a url
+	 *
 	 * @param baseUrl The base endpoint to query
 	 * @param apiKey The API key to use for the query
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	constructor(baseUrl: Url = ZeroExBaseUrl.Mainnet, apiKey?: string) {
-		this.client = axios.create({
+	static fromUrl(
+		baseUrl: Url,
+		apiKey?: string
+	): [ZeroExAggregator, AbortController] {
+		const abortController = new AbortController();
+
+		const client = axios.create({
+			signal: abortController?.signal,
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			baseURL: baseUrl,
 			headers: {
 				'Content-Type': 'application/json',
 				...(apiKey ? { '0x-api-key': apiKey } : {}),
 			},
+			validateStatus: (status) => status < 500,
 		});
 
 		debug('Created client with base URL: %s', baseUrl);
+
+		return [new ZeroExAggregator(client), abortController];
 	}
 
 	/**
