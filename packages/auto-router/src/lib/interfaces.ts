@@ -80,7 +80,7 @@ export interface Router {
 	 * @param contractAddress Address of the product
 	 * @param amountInInputToken amount in input token
 	 * @param inputTokenAddress Address of input token
-	 * @param zeroExOptions 0x request options and permit options for transaction
+	 * @param zeroExOptions 0x request options for transaction
 	 *
 	 * @returns swap transaction
 	 */
@@ -97,7 +97,7 @@ export interface Router {
 	 * @param erc20PermitToken Contract which implements the ERC20Permit interface
 	 * @param sharesAmount Amount of product shares
 	 * @param outputToken Contract which implements the ERC20 interface
-	 * @param options 0x request options
+	 * @param options 0x request options for transaction
 	 *
 	 * @returns isBurn true if burn is selected
 	 * @returns indexAmount Amount of index
@@ -124,7 +124,7 @@ export interface Router {
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
 	 * @param options permit options for transaction
-	 * @param options 0x request options
+	 * @param options 0x request options and permit options for transaction
 	 *
 	 * @returns burn or swap transaction
 	 */
@@ -145,8 +145,7 @@ export interface Router {
 	 * @param erc20PermitToken Contract which implements the ERC20Permit interface
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
-	 * @param options permit options for transaction
-	 * @param options 0x request options
+	 * @param options 0x request options and permit options for transaction
 	 *
 	 * @returns burn transaction
 	 */
@@ -166,7 +165,7 @@ export interface Router {
 	 * @param contractAddress Address of the product
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
-	 * @param options permit options for transaction
+	 * @param options 0x request options for transaction
 	 *
 	 * @returns burn transaction
 	 */
