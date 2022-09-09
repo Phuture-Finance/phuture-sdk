@@ -5,7 +5,6 @@ import {
 	defaultIndexRouterAddress,
 	Index,
 	IndexRouter,
-	MetaRouter,
 	ProductType,
 	SavingsVault,
 	SavingsVaultRouter,
@@ -15,6 +14,7 @@ import {
 } from '@phuture/sdk';
 import 'dotenv/config';
 import { getEnv } from './utils';
+import {MetaRouter} from "@phuture/meta-router";
 
 const prepare = async () => {
 	const account = new Account(

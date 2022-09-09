@@ -1,4 +1,4 @@
-import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
+import { Zero0xQuoteOptions } from './zero-ex';
 import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
 
 import { Address } from '@phuture/types';

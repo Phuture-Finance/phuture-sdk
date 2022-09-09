@@ -27,9 +27,3 @@ export class SavingsVaultViews<
 		super(account, contract, factory);
 	}
 }
-/** ### Default SavingsVaultViews address for network */
-export const DefaultSavingsVaultViewsAddress: Record<Network, Address> = {
-	/** ### Default SavingsVaultViews address on mainnet. */
-	[Network.Mainnet]: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369', // TODO deploy an instance of the SavingsVaultViews
-	[Network.CChain]: '0x00',
-};

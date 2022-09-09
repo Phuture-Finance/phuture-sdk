@@ -7,10 +7,7 @@ import {
 	SavingsVault as SavingsVaultContractInterface,
 	SavingsVault__factory,
 } from '../types';
-import {
-	DefaultSavingsVaultViewsAddress,
-	SavingsVaultViews,
-} from './savings-vault-views';
+import { SavingsVaultViews } from './savings-vault-views';
 
 /**
  * ### SavingsVault Contract
@@ -34,7 +31,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		factory: ContractFactory = SavingsVault__factory,
 		savingsVaultViews:
 			| Address
-			| SavingsVaultViews = DefaultSavingsVaultViewsAddress[Network.Mainnet]
+			| SavingsVaultViews = '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',  // TODO deploy and set an instance of the SavingsVaultViews
 	) {
 		super(account, contract, factory);
 		this._savingsVaultViews = isAddress(savingsVaultViews)

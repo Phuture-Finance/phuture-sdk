@@ -1,14 +1,12 @@
-import { Address } from '@phuture/types';
+import {Address, ProductType, Router} from '@phuture/types';
 import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
 import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
 import { BigNumber, BigNumberish } from 'ethers';
-import { SavingsVault } from '@phuture/savings-vault';
+import {SavingsVault, SavingsVaultRouter} from '@phuture/savings-vault';
 import { Index } from '@phuture/index';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { PhutureError } from '@phuture/errors';
-import { Router } from './interfaces';
-import { SavingsVaultRouter } from './savings-vault-router';
-import { AutoRouter } from './auto-router';
+import {AutoRouter} from "@phuture/auto-router";
 
 export class MetaRouter implements Router {
 	/**
@@ -254,9 +252,4 @@ export class MetaRouter implements Router {
 	getProductAddresses(productType: ProductType): Address[] {
 		return this.products[productType];
 	}
-}
-
-export enum ProductType {
-	INDEX = 'Index',
-	SAVINGS_VAULT = 'Savings_Vault',
 }

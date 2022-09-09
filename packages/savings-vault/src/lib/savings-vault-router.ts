@@ -1,10 +1,9 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { SavingsVault } from '@phuture/savings-vault';
-import { Address } from '@phuture/types';
+import {Address, Router} from '@phuture/types';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
-import { Router } from './interfaces';
 
 /** ### SavingsVaultRouter class */
 export class SavingsVaultRouter implements Router {
@@ -150,7 +149,6 @@ export class SavingsVaultRouter implements Router {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address
 	): Promise<TransactionResponse> {
-		// throw Error if it is address.
 		throw new PhutureError({
 			status: 404,
 			message: 'buySwap method is not defined',
