@@ -13,8 +13,8 @@ import {
 	zeroExBaseUrl,
 } from '@phuture/sdk';
 import 'dotenv/config';
+import { MetaRouter } from '@phuture/meta-router';
 import { getEnv } from './utils';
-import {MetaRouter} from "@phuture/meta-router";
 
 const prepare = async () => {
 	const account = new Account(

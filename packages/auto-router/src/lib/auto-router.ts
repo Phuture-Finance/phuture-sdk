@@ -2,11 +2,12 @@ import { Zero0xQuoteOptions, ZeroExAggregator } from '@phuture/0x-aggregator';
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
-import {Address, Network, Networkish, Router, TokenSymbol} from '@phuture/types';
+import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
+import { Router } from '@phuture/router';
 
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = (network: Networkish): number => {

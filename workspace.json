@@ -12,6 +12,7 @@
 		"errors": "packages/errors",
 		"example-auto-router": "examples/example-auto-router",
 		"index": "packages/index",
+		"router": "packages/router",
 		"savings-vault": "packages/savings-vault",
 		"index-router": "packages/index-router",
 		"price-oracle": "packages/price-oracle",

@@ -1,12 +1,13 @@
-import {Address, ProductType, Router} from '@phuture/types';
+import { Address, ProductType } from '@phuture/types';
 import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
 import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
 import { BigNumber, BigNumberish } from 'ethers';
-import {SavingsVault, SavingsVaultRouter} from '@phuture/savings-vault';
+import { SavingsVault, SavingsVaultRouter } from '@phuture/savings-vault';
 import { Index } from '@phuture/index';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { PhutureError } from '@phuture/errors';
-import {AutoRouter} from "@phuture/auto-router";
+import { AutoRouter } from '@phuture/auto-router';
+import { Router } from '@phuture/router';
 
 export class MetaRouter implements Router {
 	/**

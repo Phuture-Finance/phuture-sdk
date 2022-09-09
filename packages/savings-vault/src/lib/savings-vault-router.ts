@@ -1,9 +1,10 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { SavingsVault } from '@phuture/savings-vault';
-import {Address, Router} from '@phuture/types';
+import { Address } from '@phuture/types';
+import { Router } from '@phuture/router';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
+import { SavingsVault } from './savings-vault';
 
 /** ### SavingsVaultRouter class */
 export class SavingsVaultRouter implements Router {

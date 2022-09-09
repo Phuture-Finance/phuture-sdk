@@ -1,9 +1,8 @@
-import { Zero0xQuoteOptions } from './zero-ex';
 import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
-
 import { Address } from '@phuture/types';
 import { BigNumber, BigNumberish } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
 
 /** ### Router Interface */
 export interface Router {

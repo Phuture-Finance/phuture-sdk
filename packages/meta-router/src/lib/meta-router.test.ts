@@ -1,12 +1,12 @@
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { IndexRouter } from '@phuture/index-router';
 import { ZeroExAggregator } from '@phuture/0x-aggregator';
-import {Address, ProductType} from '@phuture/types';
-import {SavingsVault, SavingsVaultRouter} from '@phuture/savings-vault';
+import { Address, ProductType } from '@phuture/types';
+import { SavingsVault, SavingsVaultRouter } from '@phuture/savings-vault';
 import { BigNumber, constants } from 'ethers';
 import { expect } from 'chai';
+import { AutoRouter } from '@phuture/auto-router';
 import { MetaRouter } from './meta-router';
-import {AutoRouter} from "@phuture/auto-router";
 
 describe('MetaRouter', () => {
 	let indexRouter: DeepMockProxy<IndexRouter>;

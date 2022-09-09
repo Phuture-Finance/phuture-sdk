@@ -1,12 +1,15 @@
 import type { Address, Networkish, TokenSymbol, Url } from '@phuture/types';
-import { Network, Zero0xPriceOptions,
-	Zero0xPriceResponse,
-	Zero0xQuoteOptions,
-	Zero0xQuoteResponse,
-	Zero0xSourcesResponse, } from '@phuture/types';
+import { Network } from '@phuture/types';
 import axios, { AxiosInstance } from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
+import {
+	Zero0xPriceOptions,
+	Zero0xPriceResponse,
+	Zero0xQuoteOptions,
+	Zero0xQuoteResponse,
+	Zero0xSourcesResponse,
+} from './types';
 
 const debug = newDebug('@phuture:0x-aggregator');
 
