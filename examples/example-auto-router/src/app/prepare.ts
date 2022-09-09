@@ -45,8 +45,8 @@ const prepare = async () => {
 	const autoRouter = new AutoRouter(indexRouter, zeroEx);
 
 	const metaRouter = new MetaRouter(new SavingsVaultRouter(), autoRouter, {
-		[ProductType.INDEX]: [index.address],
-		[ProductType.SAVINGS_VAULT]: [savingsVault.address],
+		[index.address]: ProductType.INDEX,
+		[savingsVault.address]: ProductType.SAVINGS_VAULT,
 	});
 
 	return { account, index, savingsVault, autoRouter, metaRouter };

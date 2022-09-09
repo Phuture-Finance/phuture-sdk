@@ -39,7 +39,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 			: savingsVaultViews;
 	}
 
-	public async getAPY(): Promise<string> {
+	public async apy(): Promise<string> {
 		const apy = await this._savingsVaultViews.contract.getAPY(
 			this.contract.address
 		);

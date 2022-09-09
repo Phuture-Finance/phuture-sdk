@@ -1,7 +1,7 @@
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { IndexRouter } from '@phuture/index-router';
 import { ZeroExAggregator } from '@phuture/0x-aggregator';
-import { Address, ProductType } from '@phuture/types';
+import { ProductType } from '@phuture/types';
 import { SavingsVault, SavingsVaultRouter } from '@phuture/savings-vault';
 import { BigNumber, constants } from 'ethers';
 import { expect } from 'chai';
@@ -9,54 +9,37 @@ import { AutoRouter } from '@phuture/auto-router';
 import { MetaRouter } from './meta-router';
 
 describe('MetaRouter', () => {
+	const indexAddress = '0xf6562d37465dc23d52a8c19d45a9a7afd85fe1ec';
+	const savingsVaultAddress = '0xc365c3315cf926351ccaf13fa7d19c8c4058c8e1';
+
 	let indexRouter: DeepMockProxy<IndexRouter>;
 	let zeroAggregator: DeepMockProxy<ZeroExAggregator>;
 	let savingsVaultInterface: DeepMockProxy<SavingsVault>;
 	let metaRouter: MetaRouter;
-	let savingsVaultAddresses: Address[];
-	let indexAddresses: Address[];
 
 	beforeAll(async () => {
 		indexRouter = mockDeep<IndexRouter>();
 		zeroAggregator = mockDeep<ZeroExAggregator>();
-		savingsVaultAddresses = [
-			'0xc365c3315cf926351ccaf13fa7d19c8c4058c8e1',
-			'0x28c6c06298d514db089934071355e5743bf21d60',
-		];
-		indexAddresses = [
-			'0xf6562d37465dc23d52a8c19d45a9a7afd85fe1ec',
-			'0x8167da7fa6554f2053ee92f77fd3d729323e0aca',
-		];
-		const products: Record<ProductType, Address[]> = {
-			[ProductType.INDEX]: indexAddresses,
-			[ProductType.SAVINGS_VAULT]: savingsVaultAddresses,
-		};
+
 		savingsVaultInterface = mockDeep<SavingsVault>();
 		metaRouter = new MetaRouter(
 			new SavingsVaultRouter(),
 			new AutoRouter(indexRouter, zeroAggregator),
-			products
+			{
+				[indexAddress]: ProductType.INDEX,
+				[savingsVaultAddress]: ProductType.SAVINGS_VAULT,
+			}
 		);
 		Object.defineProperty(savingsVaultInterface, 'address', {
-			get: () => savingsVaultAddresses[0],
+			get: () => savingsVaultAddress,
 		});
 	});
 
-	it('should be able to set product addresses', async () => {
-		expect(metaRouter.getProductAddresses(ProductType.INDEX)).to.deep.eq(
-			indexAddresses
+	it('should be able to get product type', async () => {
+		expect(metaRouter.findProductType(indexAddress)).to.eq(ProductType.INDEX);
+		expect(metaRouter.findProductType(savingsVaultAddress)).to.eq(
+			ProductType.SAVINGS_VAULT
 		);
-		expect(
-			metaRouter.getProductAddresses(ProductType.SAVINGS_VAULT)
-		).to.deep.eq(savingsVaultAddresses);
-		for (const address of indexAddresses) {
-			expect(metaRouter.findProductType(address)).to.eq(ProductType.INDEX);
-		}
-		for (const address of savingsVaultAddresses) {
-			expect(metaRouter.findProductType(address)).to.eq(
-				ProductType.SAVINGS_VAULT
-			);
-		}
 	});
 
 	it('should route selectBuy to SavingsVault', async () => {

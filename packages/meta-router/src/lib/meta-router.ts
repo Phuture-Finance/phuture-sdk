@@ -15,14 +15,14 @@ export class MetaRouter implements Router {
 	 *
 	 * @param savingsVaultRouter Instance of SavingsVaultRouter
 	 * @param autoRouter Instance of AutoRouter
-	 * @param products Record of product type and an array of its corresponding addresses
+	 * @param products Record of address and its corresponding product type
 	 *
 	 * @returns New MetaRouter instance
 	 */
 	constructor(
 		private savingsVaultRouter: SavingsVaultRouter,
 		private autoRouter: AutoRouter,
-		private products: Record<ProductType, Address[]>
+		private products: Record<Address, ProductType>
 	) {}
 
 	async selectBuy(
@@ -233,24 +233,17 @@ export class MetaRouter implements Router {
 	}
 
 	addProduct(productType: ProductType, contractAddress: Address) {
-		this.products[productType].push(contractAddress);
+		this.products[contractAddress] = productType;
 	}
 
 	findProductType(address: Address): ProductType {
-		for (const productType in ProductType) {
-			const contracts: Address[] =
-				this.products[ProductType[productType as keyof typeof ProductType]];
-			if (contracts.includes(address)) {
-				return ProductType[productType as keyof typeof ProductType];
-			}
+		const productType = this.products[address];
+		if (productType === undefined) {
+			throw new PhutureError({
+				status: 400,
+				message: 'Product type not found',
+			});
 		}
-		throw new PhutureError({
-			status: 400,
-			message: 'Contract address not found',
-		});
-	}
-
-	getProductAddresses(productType: ProductType): Address[] {
-		return this.products[productType];
+		return productType;
 	}
 }

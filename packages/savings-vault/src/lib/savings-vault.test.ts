@@ -47,7 +47,7 @@ describe('SavingsVault', () => {
 		});
 
 		it('SavingsVault should return formatted APY', async () => {
-			const string_ = await savingsVault.getAPY();
+			const string_ = await savingsVault.apy();
 			expect(string_).to.be.eq('0.037264168');
 		});
 
