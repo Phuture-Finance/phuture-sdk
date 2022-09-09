@@ -3,6 +3,7 @@ import { Erc20Permit } from '@phuture/erc-20';
 import * as yesno from 'yesno';
 import prepare from './prepare';
 
+// Auto selling Index amount
 export default async function autoSell(amountToSellDesired: BigNumber) {
 	const { account, index, autoRouter } = await prepare();
 

@@ -80,3 +80,35 @@ loop for every amount
     end
 Component->>IndexRouter: mint();
 ```
+
+### [Mint-Various-Products](./src/app/meta-router.ts)
+
+This example shows the process of buying Savings Vault shares through the metaRouter, which allows the user to switch between minting/burning Index and SavingsVault products through a common interface.
+
+The process is as follows:
+
+### Use case: A user wants to deposit 10 USDC into the USDC Savings Vault.
+
+1. First we initialize the Savings Vault and the metaRouter:
+
+```typescript
+// create an instance of the Savings Vault
+const savingsVault = new SavingsVault(wallet, '0xxxx');
+
+// initialize the metaRouter by passing the addresses of the products we want to use
+export const metaRouter = new MetaRouter(indexRouter, zeroEx, {
+	[ProductType.INDEX]: [index.address],
+	[ProductType.SAVINGS_VAULT]: [savingVault.address],
+});
+```
+
+2. Then, we can buy the Savings Vault shares by passing the amount of underlying asset to deposit
+
+```typescript
+// execute a buy through shares minting
+await metaRouter.buy({
+	isMint: true,
+	erc20Permit: savingsVault,
+	amountInInputToken: 10e6,
+});
+```

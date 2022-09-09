@@ -11,3 +11,4 @@ export * from './price-source';
 export * from './signature';
 export * from './token-symbol';
 export * from './url';
+export * from './product-type';

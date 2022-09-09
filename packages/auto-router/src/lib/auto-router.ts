@@ -7,6 +7,7 @@ import { BigNumber, BigNumberish, constants } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
+import { Router } from '@phuture/router';
 
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = (network: Networkish): number => {
@@ -40,7 +41,7 @@ export const nativeTokenSymbol = (network: Networkish): TokenSymbol => {
 };
 
 /** ### AutoRouter class */
-export class AutoRouter {
+export class AutoRouter implements Router {
 	/**
 	 * ### Creates a new AutoRouter instance
 	 *
