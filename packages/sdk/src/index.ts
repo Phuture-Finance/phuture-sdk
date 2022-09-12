@@ -1,6 +1,7 @@
 export * from '@phuture/account';
 export * from '@phuture/auto-router';
 export * from '@phuture/meta-router';
+export * from '@phuture/meta-viewer';
 export * from '@phuture/contract';
 export * from '@phuture/erc-20';
 export * from '@phuture/erc-4626';

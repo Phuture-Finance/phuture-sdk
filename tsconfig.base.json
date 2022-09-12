@@ -19,6 +19,7 @@
 			"@phuture/account": ["packages/account/src/index.ts"],
 			"@phuture/auto-router": ["packages/auto-router/src/index.ts"],
 			"@phuture/meta-router": ["packages/meta-router/src/index.ts"],
+			"@phuture/meta-viewer": ["packages/meta-viewer/src/index.ts"],
 			"@phuture/contract": ["packages/contract/src/index.ts"],
 			"@phuture/erc-20": ["packages/erc-20/src/index.ts"],
 			"@phuture/erc-4626": ["packages/erc-4626/src/index.ts"],
