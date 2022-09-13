@@ -1,8 +1,14 @@
-import type { Address, ContractFactory } from '@phuture/types';
+import type {
+	Address,
+	Anatomy,
+	ContractFactory,
+	PhutureProduct,
+} from '@phuture/types';
 import { Account } from '@phuture/account';
 import { Erc4626 } from '@phuture/erc-4626';
 import { formatUnits } from 'ethers/lib/utils';
-import { isAddress, Network } from '@phuture/types';
+import { isAddress, MAX_WEIGHT } from '@phuture/types';
+import { PhutureError } from '@phuture/errors';
 import {
 	SavingsVault as SavingsVaultContractInterface,
 	SavingsVault__factory,
@@ -12,7 +18,10 @@ import { SavingsVaultViews } from './savings-vault-views';
 /**
  * ### SavingsVault Contract
  */
-export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
+export class SavingsVault
+	extends Erc4626<SavingsVaultContractInterface>
+	implements PhutureProduct
+{
 	/** ### SavingsVaultViews */
 	private _savingsVaultViews: SavingsVaultViews;
 	/**
@@ -44,5 +53,21 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 			this.contract.address
 		);
 		return formatUnits(apy, 9);
+	}
+
+	public async anatomy(): Promise<Anatomy> {
+		const asset = await this.contract.asset();
+		return [{ asset: asset, weight: MAX_WEIGHT }];
+	}
+
+	public async inactiveAnatomy(): Promise<Anatomy> {
+		throw new PhutureError({
+			status: 400,
+			message: 'Savings Vault does not have inactive assets',
+		});
+	}
+
+	public async constituents(): Promise<Anatomy> {
+		return this.anatomy();
 	}
 }

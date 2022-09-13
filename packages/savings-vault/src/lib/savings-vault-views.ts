@@ -1,5 +1,5 @@
 import { Account } from '@phuture/account';
-import { Address, ContractFactory, Network } from '@phuture/types';
+import { Address, ContractFactory } from '@phuture/types';
 import { Contract } from '@phuture/contract';
 import {
 	SavingsVaultViews as SavingsVaultViewsContractInterface,

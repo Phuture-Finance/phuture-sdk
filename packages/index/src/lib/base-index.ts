@@ -1,5 +1,10 @@
 import { Erc20Permit } from '@phuture/erc-20';
-import type { Address, Anatomy, ContractFactory } from '@phuture/types';
+import type {
+	Address,
+	Anatomy,
+	ContractFactory,
+	PhutureProduct,
+} from '@phuture/types';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 import { Account } from '@phuture/account';
 import { BaseIndex, BaseIndex__factory } from '../types';
@@ -9,7 +14,7 @@ import { subgraphIndexRepo } from './subraph.repository';
 /**
  * ### Index Contract
  */
-export class Index extends Erc20Permit<BaseIndex> {
+export class Index extends Erc20Permit<BaseIndex> implements PhutureProduct {
 	/** ### Index repository */
 	private _indexRepo: IndexRepo;
 

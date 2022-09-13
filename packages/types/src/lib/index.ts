@@ -12,3 +12,4 @@ export * from './signature';
 export * from './token-symbol';
 export * from './url';
 export * from './product-type';
+export * from './phuture-product';
