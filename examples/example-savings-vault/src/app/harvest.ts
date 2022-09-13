@@ -9,7 +9,7 @@ export async function harvest() {
 		console.log('Timeout is not exceeded!');
 	}
 	const ok = await yesno({ question: 'Continue with harvesting?' });
-	await harvestingJob.contract.harvest(savingsVault.address);
+	await harvestingJob.contract.harvest(savingsVault.address, {gasLimit: 900000});
 
 	return;
 }
