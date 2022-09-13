@@ -7,10 +7,6 @@ import { Erc20 } from './erc-20';
 
 describe('Erc20', () => {
 	const account = new Mock<Account>().object();
-	const erc20contract = new Mock<ERC20ContractInterface>()
-		.setup((c) => c.address)
-		.returns(constants.AddressZero)
-		.object();
 
 	it('create erc20 instance from address', () => {
 		const erc20 = new Erc20(account, constants.AddressZero);
@@ -18,6 +14,11 @@ describe('Erc20', () => {
 	});
 
 	it('should create erc20 instance from contract', () => {
+		const erc20contract = new Mock<ERC20ContractInterface>()
+			.setup((c) => c.address)
+			.returns(constants.AddressZero)
+			.object();
+
 		const erc20 = new Erc20(account, erc20contract);
 		expect(erc20.contract.address).to.eq(constants.AddressZero);
 	});

@@ -1,8 +1,12 @@
 import { BigNumber, Signer } from 'ethers';
 import { Address } from '@phuture/types';
+import { Types } from '@phuture/subgraph';
+import { AccountRepo } from "./repository";
 
 /** ### Account class for interacting with the blockchain through the Signer */
 export class Account {
+	private _accountRepo?: AccountRepo;
+
 	/**
 	 * ### Constructs an instance of the Account class
 	 *
@@ -11,6 +15,11 @@ export class Account {
 	 * @returns {Account} The account instance
 	 */
 	constructor(private _signer: Signer) {}
+
+	withRepo(accountRepo: AccountRepo): Account {
+		this._accountRepo = accountRepo;
+		return this;
+	}
 
 	/**
 	 * ### Gets the signer used for the account
@@ -64,5 +73,12 @@ export class Account {
 	 */
 	public async chainId(): Promise<number> {
 		return this.signer.getChainId();
+	}
+
+	public async indexes(): Promise<Types.UserIndex[]> {
+		if (!this._accountRepo)
+			throw new Error('Account repository not found, use withRepo() to set it');
+
+		return this._accountRepo.indexes(await this.address());
 	}
 }

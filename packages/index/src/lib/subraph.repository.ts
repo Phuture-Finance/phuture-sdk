@@ -1,10 +1,5 @@
-import {
-	defaultPhutureSubgraphUrl,
-	gql,
-	Subgraph,
-	Types,
-} from '@phuture/subgraph';
-import { Address, Network, Networkish } from '@phuture/types';
+import { gql, Subgraph, Types } from '@phuture/subgraph';
+import { Address } from '@phuture/types';
 import { constants } from 'ethers';
 import { Fees, IndexRepo } from './interfaces';
 
@@ -153,7 +148,3 @@ export class SubgraphIndexRepo implements IndexRepo {
 		return int.concat('.', decimal.substring(0, Math.min(decimal.length, 18)));
 	}
 }
-
-/** ### Subgraph Index Repository Singleton */
-export const subgraphIndexRepo = (network: Networkish = Network.Mainnet) =>
-	new SubgraphIndexRepo(Subgraph.fromUrl(defaultPhutureSubgraphUrl[network]));

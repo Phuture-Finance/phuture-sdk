@@ -71,25 +71,26 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				recipient: options.recipient,
 			};
 
-			const estimatedGas = await this.contract.estimateGas.mintSwapValue(
+			const mintSwapValueGas = await this.contract.estimateGas.mintSwapValue(
 				mintSwapValueOptions,
 				{ value: sellAmount }
 			);
 
 			return this.contract.mintSwapValue(mintSwapValueOptions, {
 				value: sellAmount,
-				gasLimit: estimatedGas.mul(100).div(95),
+				gasLimit: mintSwapValueGas.mul(100).div(95),
 			});
 		}
 
 		if (permitOptions !== undefined) {
-			const estimatedGas = await this.contract.estimateGas.mintSwapWithPermit(
-				options as IIndexRouter.MintSwapParamsStruct,
-				permitOptions.deadline,
-				permitOptions.v,
-				permitOptions.r,
-				permitOptions.s
-			);
+			const mintSwapWithPermitGas =
+				await this.contract.estimateGas.mintSwapWithPermit(
+					options as IIndexRouter.MintSwapParamsStruct,
+					permitOptions.deadline,
+					permitOptions.v,
+					permitOptions.r,
+					permitOptions.s
+				);
 
 			return this.contract.mintSwapWithPermit(
 				options as IIndexRouter.MintSwapParamsStruct,
@@ -97,7 +98,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.v,
 				permitOptions.r,
 				permitOptions.s,
-				{ gasLimit: estimatedGas.mul(100).div(95) }
+				{ gasLimit: mintSwapWithPermitGas.mul(100).div(95) }
 			);
 		}
 
@@ -213,7 +214,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		};
 
 		if (permitOptions !== undefined) {
-			const estimatedGas = await this.contract.estimateGas.burnWithPermit(
+			const burnWithPermitGas = await this.contract.estimateGas.burnWithPermit(
 				burnParameters,
 				permitOptions.deadline,
 				permitOptions.v,
@@ -227,7 +228,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				permitOptions.v,
 				permitOptions.r,
 				permitOptions.s,
-				{ gasLimit: estimatedGas.mul(100).div(95) }
+				{ gasLimit: burnWithPermitGas.mul(100).div(95) }
 			);
 		}
 
@@ -273,13 +274,14 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 
 		if (options.outputAsset === undefined) {
 			if (options.permitOptions !== undefined) {
-				const estimatedGas = await this.contract.estimateGas.burnSwapWithPermit(
-					burnParameters,
-					options.permitOptions.deadline,
-					options.permitOptions.v,
-					options.permitOptions.r,
-					options.permitOptions.s
-				);
+				const burnSwapWithPermitGas =
+					await this.contract.estimateGas.burnSwapWithPermit(
+						burnParameters,
+						options.permitOptions.deadline,
+						options.permitOptions.v,
+						options.permitOptions.r,
+						options.permitOptions.s
+					);
 
 				return this.contract.burnSwapValueWithPermit(
 					burnParameters,
@@ -287,29 +289,30 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 					options.permitOptions.v,
 					options.permitOptions.r,
 					options.permitOptions.s,
-					{ gasLimit: estimatedGas.mul(100).div(95) }
+					{ gasLimit: burnSwapWithPermitGas.mul(100).div(95) }
 				);
 			}
 
 			await indexInstance.checkAllowance(this.address, amount);
 
-			const estimatedGas = await this.contract.estimateGas.burnSwap(
+			const burnSwapValueGas = await this.contract.estimateGas.burnSwapValue(
 				burnParameters
 			);
 
 			return this.contract.burnSwapValue(burnParameters, {
-				gasLimit: estimatedGas.mul(100).div(95),
+				gasLimit: burnSwapValueGas.mul(100).div(95),
 			});
 		}
 
 		if (options.permitOptions !== undefined) {
-			const estimatedGas = await this.contract.estimateGas.burnSwapWithPermit(
-				burnParameters,
-				options.permitOptions.deadline,
-				options.permitOptions.v,
-				options.permitOptions.r,
-				options.permitOptions.s
-			);
+			const burnSwapWithPermitGas =
+				await this.contract.estimateGas.burnSwapWithPermit(
+					burnParameters,
+					options.permitOptions.deadline,
+					options.permitOptions.v,
+					options.permitOptions.r,
+					options.permitOptions.s
+				);
 
 			return this.contract.burnSwapWithPermit(
 				burnParameters,
@@ -317,18 +320,18 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s,
-				{ gasLimit: estimatedGas.mul(100).div(95) }
+				{ gasLimit: burnSwapWithPermitGas.mul(100).div(95) }
 			);
 		}
 
 		await indexInstance.checkAllowance(this.address, amount);
 
-		const estimatedGas = await this.contract.estimateGas.burnSwap(
+		const burnSwapGas = await this.contract.estimateGas.burnSwap(
 			burnParameters
 		);
 
 		return this.contract.burnSwap(burnParameters, {
-			gasLimit: estimatedGas.mul(100).div(95),
+			gasLimit: burnSwapGas.mul(100).div(95),
 		});
 	}
 
@@ -411,8 +414,8 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			this.contract.burnTokensAmount(index.address, amount),
 		]);
 
-		return constituents.map((constituent, index) => ({
-			amount: burnTokensAmounts[index] ?? BigNumber.from(0),
+		return constituents.map((constituent, constituentIndex) => ({
+			amount: burnTokensAmounts[constituentIndex] ?? BigNumber.from(0),
 			...constituent,
 		}));
 	}
@@ -438,8 +441,8 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			}),
 		]);
 
-		return constituents.map((constituent, index) => ({
-			amount: burnTokensAmounts[index] ?? BigNumber.from(0),
+		return constituents.map((constituent, constituentIndex) => ({
+			amount: burnTokensAmounts[constituentIndex] ?? BigNumber.from(0),
 			...constituent,
 		}));
 	}

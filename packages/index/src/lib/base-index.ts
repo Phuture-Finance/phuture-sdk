@@ -4,14 +4,13 @@ import { BigNumber, BigNumberish, utils } from 'ethers';
 import { Account } from '@phuture/account';
 import { BaseIndex, BaseIndex__factory } from '../types';
 import { Fees, IndexRepo } from './interfaces';
-import { subgraphIndexRepo } from './subraph.repository';
 
 /**
  * ### Index Contract
  */
 export class Index extends Erc20Permit<BaseIndex> {
 	/** ### Index repository */
-	private _indexRepo: IndexRepo;
+	private _indexRepo?: IndexRepo;
 
 	/** ### List of assets of the index */
 	private _anatomy?: Anatomy;
@@ -34,8 +33,6 @@ export class Index extends Erc20Permit<BaseIndex> {
 		factory: ContractFactory = BaseIndex__factory
 	) {
 		super(account, contract, factory);
-
-		this._indexRepo = subgraphIndexRepo();
 	}
 
 	/**
@@ -97,6 +94,11 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<Address[]>} Holders of the index
 	 */
 	public async holders(): Promise<Address[]> {
+		if (!this._indexRepo)
+			throw new Error(
+				'No IndexRepo found, please add one using `withRepo` method before calling this method'
+			);
+
 		return this._indexRepo.holders(this.address);
 	}
 
@@ -106,6 +108,11 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<number>} Count of holders of the index
 	 */
 	public async holdersCount(): Promise<number> {
+		if (!this._indexRepo)
+			throw new Error(
+				'No IndexRepo found, please add one using `withRepo` method before calling this method'
+			);
+
 		return this._indexRepo.holdersCount(this.address);
 	}
 
@@ -115,6 +122,11 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns Price of the index in sellToken
 	 */
 	public async priceEth(): Promise<BigNumber> {
+		if (!this._indexRepo)
+			throw new Error(
+				'No IndexRepo found, please add one using `withRepo` method before calling this method'
+			);
+
 		return utils.parseEther(await this._indexRepo.priceEth(this.address));
 	}
 
@@ -143,6 +155,11 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<Fees>} Fees of the index
 	 */
 	public async fees(): Promise<Fees> {
+		if (!this._indexRepo)
+			throw new Error(
+				'No IndexRepo found, please add one using `withRepo` method before calling this method'
+			);
+
 		return this._indexRepo.fees(this.address);
 	}
 
