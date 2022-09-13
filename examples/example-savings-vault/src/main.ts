@@ -1,4 +1,4 @@
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { getEnv } from './app/utils';
 import buySavingsVault from "./app/auto-buy";
 import {sellSavingsVault} from "./app/auto-sell";
