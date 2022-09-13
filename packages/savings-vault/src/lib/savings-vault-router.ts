@@ -132,7 +132,7 @@ export class SavingsVaultRouter implements Router {
 		await sellToken.checkAllowance(savingsVault.address, amountInInputToken);
 		return savingsVault.contract.deposit(
 			amountInInputToken,
-			await savingsVault.account.address()
+			await savingsVault.account.address(), {gasLimit: 300000}
 		);
 	}
 
