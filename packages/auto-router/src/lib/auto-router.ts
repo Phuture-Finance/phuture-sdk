@@ -1,6 +1,6 @@
 import { Zero0xQuoteOptions, ZeroExAggregator } from '@phuture/0x-aggregator';
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { getDefaultIndexPricer, Index } from '@phuture/index';
+import { getDefaultIndexHelper, Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
 import { BigNumber, BigNumberish, constants } from 'ethers';
@@ -76,7 +76,7 @@ export class AutoRouter implements Router {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		const [zeroExSwap, amounts, indexPricer, priceOracle, wethAddress] =
+		const [zeroExSwap, amounts, IndexHelper, priceOracle, wethAddress] =
 			await Promise.all([
 				this.zeroExAggregator.quote(
 					inputToken?.address ||
@@ -86,7 +86,7 @@ export class AutoRouter implements Router {
 					options
 				),
 				index.scaleAmount(amountInInputToken),
-				getDefaultIndexPricer(index.account),
+				getDefaultIndexHelper(index.account),
 				getDefaultPriceOracle(index.account),
 				this.indexRouter.weth(),
 			]);
@@ -122,7 +122,7 @@ export class AutoRouter implements Router {
 			})
 		);
 
-		const [indexRouterMintOutputAmount, indexNav, ethBasePrice] =
+		const [indexRouterMintOutputAmount, totalEvaluation, ethBasePrice] =
 			await Promise.all([
 				this.indexRouter.mintIndexAmount(
 					index.address,
@@ -130,7 +130,7 @@ export class AutoRouter implements Router {
 					quotes,
 					inputToken?.address
 				),
-				indexPricer.contract.getNAV(index.address),
+				IndexHelper.contract.totalEvaluation(index.address),
 				priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
 			]);
 
@@ -150,8 +150,8 @@ export class AutoRouter implements Router {
 			.lte(
 				indexRouterMintOutputAmount
 					.sub(zeroExSwap.buyAmount)
-					.mul(indexNav._nav)
-					.div(indexNav._totalSupply)
+					.mul(totalEvaluation._valueInBase)
+					.div(totalEvaluation._totalSupply)
 					.mul(ethBasePrice)
 					.div(BigNumber.from(2).pow(112))
 			);

@@ -7,11 +7,11 @@
 				"type": "address"
 			}
 		],
-		"name": "getNAV",
+		"name": "totalEvaluation",
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "_nav",
+				"name": "_valueInBase",
 				"type": "uint256"
 			},
 			{
