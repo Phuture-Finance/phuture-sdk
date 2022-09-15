@@ -215,7 +215,8 @@ export class SavingsVaultRouter implements Router {
 		amount: BigNumberish
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
-		return savingsVault.contract.redeem(amount, owner, owner);
+		return savingsVault.contract.redeem(amount, owner, owner, { gasLimit:
+			500000});
 	}
 
 	/**
