@@ -11,12 +11,12 @@
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "_valueInBase",
+				"name": "_totalEvaluation",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_totalSupply",
+				"name": "_indexPriceInBase",
 				"type": "uint256"
 			}
 		],

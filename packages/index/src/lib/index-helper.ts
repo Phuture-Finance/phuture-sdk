@@ -9,9 +9,9 @@ import {
 /** ### Default IndexHelper address for network */
 export const defaultIndexHelperAddress: Record<Networkish, Address> = {
 	/** ### Default IndexHelper address on mainnet. */
-	[Network.Mainnet]: '0xd0F05E1f57f917A92380a1a591E09F05f4671010',
+	[Network.Mainnet]: '0x76Dd4189d73f07e7B11350CfFc9B503627fc7a3b',
 	/** ### Default IndexHelper address on c-chain. */
-	[Network.CChain]: '0x39c5805be41dA004082AcfF52FAf744847fD2EC7',
+	[Network.CChain]: '0xaCef72ef3AFEb044845f0869586445e5C6c2504a',
 };
 
 export class IndexHelper<

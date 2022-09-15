@@ -150,8 +150,8 @@ export class AutoRouter implements Router {
 			.lte(
 				indexRouterMintOutputAmount
 					.sub(zeroExSwap.buyAmount)
-					.mul(totalEvaluation._valueInBase)
-					.div(totalEvaluation._totalSupply)
+					.mul(totalEvaluation._indexPriceInBase)
+					.div(await index.decimals())
 					.mul(ethBasePrice)
 					.div(BigNumber.from(2).pow(112))
 			);
