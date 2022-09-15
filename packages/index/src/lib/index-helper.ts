@@ -11,8 +11,7 @@ export const defaultIndexHelperAddress: Record<Networkish, Address> = {
 	/** ### Default IndexHelper address on mainnet. */
 	[Network.Mainnet]: '0xd0F05E1f57f917A92380a1a591E09F05f4671010',
 	/** ### Default IndexHelper address on c-chain. */
-	[Network.CChain]: '' +
-	'',
+	[Network.CChain]: '0x39c5805be41dA004082AcfF52FAf744847fD2EC7',
 };
 
 export class IndexHelper<
