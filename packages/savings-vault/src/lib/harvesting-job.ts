@@ -1,9 +1,10 @@
 import type { Address, ContractFactory } from '@phuture/types';
 import { Account } from '@phuture/account';
+import { Contract } from '@phuture/contract';
 import {
-	IHarvestingJob as HarvestingJobInterface, IHarvestingJob__factory,
+	IHarvestingJob as HarvestingJobInterface,
+	IHarvestingJob__factory,
 } from '../types';
-import {Contract} from "@phuture/contract";
 
 /**
  * ### HarvestingJob Contract

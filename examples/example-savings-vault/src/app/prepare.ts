@@ -23,7 +23,10 @@ const prepare = async () => {
 
 	const savingsVaultRouter = new SavingsVaultRouter();
 
-	const harvestingJob = new HarvestingJob(account, getEnv('PHUTURE_JOB_ADDRESS'));
+	const harvestingJob = new HarvestingJob(
+		account,
+		getEnv('PHUTURE_JOB_ADDRESS')
+	);
 
 	return { account, savingsVault, savingsVaultRouter, harvestingJob };
 };

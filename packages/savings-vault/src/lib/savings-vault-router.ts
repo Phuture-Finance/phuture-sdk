@@ -30,7 +30,7 @@ export class SavingsVaultRouter implements Router {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		let target = constants.AddressZero;
+		const target = savingsVault.address;
 
 		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
@@ -45,13 +45,9 @@ export class SavingsVaultRouter implements Router {
 				});
 			}
 			try {
-				await inputToken.checkAllowance(
-					savingsVault.address,
-					amountInInputToken
-				);
+				await inputToken.checkAllowance(target, amountInInputToken);
 			} catch (error) {
 				if (error instanceof InsufficientAllowanceError) {
-					target = savingsVault.address;
 					expectedAllowance = error.expectedAllowance;
 				} else {
 					throw error;
@@ -115,14 +111,25 @@ export class SavingsVaultRouter implements Router {
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 		}>
 	): Promise<TransactionResponse> {
+		const accountAddress = await savingsVault.account.address();
 		if (options?.permitOptions !== undefined) {
+			const estimatedGas =
+				await savingsVault.contract.estimateGas.depositWithPermit(
+					amountInInputToken,
+					accountAddress,
+					options.permitOptions.deadline,
+					options.permitOptions.v,
+					options.permitOptions.r,
+					options.permitOptions.s
+				);
 			return savingsVault.contract.depositWithPermit(
 				amountInInputToken,
 				await savingsVault.account.address(),
 				options.permitOptions.deadline,
 				options.permitOptions.v,
 				options.permitOptions.r,
-				options.permitOptions.s
+				options.permitOptions.s,
+				{ gasLimit: estimatedGas.mul(100).div(95) }
 			);
 		}
 		const sellToken = new Erc20(
@@ -130,11 +137,13 @@ export class SavingsVaultRouter implements Router {
 			await savingsVault.contract.asset()
 		);
 		await sellToken.checkAllowance(savingsVault.address, amountInInputToken);
-		return savingsVault.contract.deposit(
+		const estimatedGas = await savingsVault.contract.estimateGas.deposit(
 			amountInInputToken,
-			await savingsVault.account.address(), {gasLimit:
-					480000}
+			accountAddress
 		);
+		return savingsVault.contract.deposit(amountInInputToken, accountAddress, {
+			gasLimit: estimatedGas.mul(100).div(95),
+		});
 	}
 
 	/**
@@ -215,8 +224,14 @@ export class SavingsVaultRouter implements Router {
 		amount: BigNumberish
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
-		return savingsVault.contract.redeem(amount, owner, owner, { gasLimit:
-			500000});
+		const estimatedGas = await savingsVault.contract.estimateGas.redeem(
+			amount,
+			owner,
+			owner
+		);
+		return savingsVault.contract.redeem(amount, owner, owner, {
+			gasLimit: estimatedGas.mul(100).div(95),
+		});
 	}
 
 	/**

@@ -7,13 +7,20 @@ export default async function buySavingsVault(amountToDeposit: BigNumber) {
 	const { account, savingsVault, savingsVaultRouter } = await prepare();
 	const tokenAddress = process.env['TOKEN_ADDRESS'];
 	if (!tokenAddress) {
-		const select = await savingsVaultRouter.selectBuy(savingsVault, amountToDeposit);
+		const select = await savingsVaultRouter.selectBuy(
+			savingsVault,
+			amountToDeposit
+		);
 
 		console.dir(select);
 
 		const ok = await yesno({ question: 'Ready to continue?' });
 		if (ok) {
-			return await savingsVaultRouter.buy(select.isMint, savingsVault, amountToDeposit);
+			return await savingsVaultRouter.buy(
+				select.isMint,
+				savingsVault,
+				amountToDeposit
+			);
 		}
 		return;
 	}

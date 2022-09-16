@@ -1,15 +1,23 @@
-import prepare from "./prepare";
-import * as yesno from "yesno";
+import * as yesno from 'yesno';
+import prepare from './prepare';
 
 export async function harvest() {
 	const { savingsVault, harvestingJob } = await prepare();
 
-	const canHarvest = await harvestingJob.contract.canHarvest(savingsVault.address);
+	const canHarvest = await harvestingJob.contract.canHarvest(
+		savingsVault.address
+	);
 	if (!canHarvest) {
 		console.log('Timeout is not exceeded!');
 	}
 	const ok = await yesno({ question: 'Continue with harvesting?' });
-	await harvestingJob.contract.harvest(savingsVault.address, {gasLimit: 1563690});
-
+	if (ok) {
+		const estimatedGas = await harvestingJob.contract.estimateGas.harvest(
+			savingsVault.address
+		);
+		await harvestingJob.contract.harvest(savingsVault.address, {
+			gasLimit: estimatedGas,
+		});
+	}
 	return;
 }
