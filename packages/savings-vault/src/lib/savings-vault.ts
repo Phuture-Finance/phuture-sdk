@@ -1,11 +1,14 @@
-import type {Address, ContractFactory} from '@phuture/types';
-import {isAddress} from '@phuture/types';
-import {Account} from '@phuture/account';
-import {Erc4626} from '@phuture/erc-4626';
-import {formatUnits} from 'ethers/lib/utils';
-import {SavingsVault as SavingsVaultContractInterface, SavingsVault__factory,} from '../types';
-import {SavingsVaultViews} from './savings-vault-views';
-import {BigNumber, BigNumberish, ContractTransaction} from "ethers";
+import type { Address, ContractFactory } from '@phuture/types';
+import { isAddress } from '@phuture/types';
+import { Account } from '@phuture/account';
+import { Erc4626 } from '@phuture/erc-4626';
+import { formatUnits } from 'ethers/lib/utils';
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
+import {
+	SavingsVault as SavingsVaultContractInterface,
+	SavingsVault__factory,
+} from '../types';
+import { SavingsVaultViews } from './savings-vault-views';
 
 /**
  * ### SavingsVault Contract
@@ -38,7 +41,11 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 			: savingsVaultViews;
 	}
 
-	public async redeem(shares: BigNumberish, receiver: Address, owner: Address): Promise<ContractTransaction> {
+	public async redeem(
+		shares: BigNumberish,
+		receiver: Address,
+		owner: Address
+	): Promise<ContractTransaction> {
 		const estimatedGas = await this.contract.estimateGas.redeem(
 			shares,
 			owner,
@@ -50,7 +57,12 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		});
 	}
 
-	public async redeemWithMaxLoss(shares: BigNumberish, receiver: Address, owner: Address, maxLoss: BigNumber): Promise<ContractTransaction> {
+	public async redeemWithMaxLoss(
+		shares: BigNumberish,
+		receiver: Address,
+		owner: Address,
+		maxLoss: BigNumber
+	): Promise<ContractTransaction> {
 		const estimatedGas = await this.contract.estimateGas.redeemWithMaxLoss(
 			shares,
 			owner,

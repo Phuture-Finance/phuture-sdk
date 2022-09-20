@@ -1,10 +1,10 @@
-import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
-import {Address} from '@phuture/types';
-import {Router} from '@phuture/router';
-import {BigNumber, BigNumberish} from 'ethers';
-import {TransactionResponse} from '@ethersproject/abstract-provider';
-import {InsufficientAllowanceError, PhutureError} from '@phuture/errors';
-import {SavingsVault} from './savings-vault';
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
+import { Address } from '@phuture/types';
+import { Router } from '@phuture/router';
+import { BigNumber, BigNumberish } from 'ethers';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
+import { SavingsVault } from './savings-vault';
 
 /** ### SavingsVaultRouter class */
 export class SavingsVaultRouter implements Router {
@@ -129,7 +129,7 @@ export class SavingsVaultRouter implements Router {
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s,
-				{gasLimit: estimatedGas.mul(100).div(95)}
+				{ gasLimit: estimatedGas.mul(100).div(95) }
 			);
 		}
 		const sellToken = new Erc20(
@@ -238,7 +238,12 @@ export class SavingsVaultRouter implements Router {
 		const owner = await savingsVault.account.address();
 
 		if (options?.maxSlippage) {
-			return savingsVault.redeemWithMaxLoss(amount, owner, owner, options.maxSlippage)
+			return savingsVault.redeemWithMaxLoss(
+				amount,
+				owner,
+				owner,
+				options.maxSlippage
+			);
 		}
 
 		return savingsVault.redeem(amount, owner, owner);
