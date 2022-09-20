@@ -30,7 +30,7 @@ export class SavingsVaultRouter implements Router {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		let target = constants.AddressZero;
+		let target = savingsVault.address;
 
 		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
@@ -46,12 +46,11 @@ export class SavingsVaultRouter implements Router {
 			}
 			try {
 				await inputToken.checkAllowance(
-					savingsVault.address,
+					target,
 					amountInInputToken
 				);
 			} catch (error) {
 				if (error instanceof InsufficientAllowanceError) {
-					target = savingsVault.address;
 					expectedAllowance = error.expectedAllowance;
 				} else {
 					throw error;
