@@ -1,13 +1,11 @@
-import type { Address, ContractFactory } from '@phuture/types';
-import { Account } from '@phuture/account';
-import { Erc4626 } from '@phuture/erc-4626';
-import { formatUnits } from 'ethers/lib/utils';
-import { isAddress, Network } from '@phuture/types';
-import {
-	SavingsVault as SavingsVaultContractInterface,
-	SavingsVault__factory,
-} from '../types';
-import { SavingsVaultViews } from './savings-vault-views';
+import type {Address, ContractFactory} from '@phuture/types';
+import {isAddress} from '@phuture/types';
+import {Account} from '@phuture/account';
+import {Erc4626} from '@phuture/erc-4626';
+import {formatUnits} from 'ethers/lib/utils';
+import {SavingsVault as SavingsVaultContractInterface, SavingsVault__factory,} from '../types';
+import {SavingsVaultViews} from './savings-vault-views';
+import {BigNumber, BigNumberish, ContractTransaction} from "ethers";
 
 /**
  * ### SavingsVault Contract
@@ -15,6 +13,7 @@ import { SavingsVaultViews } from './savings-vault-views';
 export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 	/** ### SavingsVaultViews */
 	private _savingsVaultViews: SavingsVaultViews;
+
 	/**
 	 * ### Creates a new SavingsVault instance
 	 *
@@ -37,6 +36,31 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		this._savingsVaultViews = isAddress(savingsVaultViews)
 			? new SavingsVaultViews(account, savingsVaultViews)
 			: savingsVaultViews;
+	}
+
+	public async redeem(shares: BigNumberish, receiver: Address, owner: Address): Promise<ContractTransaction> {
+		const estimatedGas = await this.contract.estimateGas.redeem(
+			shares,
+			owner,
+			owner
+		);
+
+		return this.contract.redeem(shares, owner, owner, {
+			gasLimit: estimatedGas.mul(100).div(95),
+		});
+	}
+
+	public async redeemWithMaxLoss(shares: BigNumberish, receiver: Address, owner: Address, maxLoss: BigNumber): Promise<ContractTransaction> {
+		const estimatedGas = await this.contract.estimateGas.redeemWithMaxLoss(
+			shares,
+			owner,
+			owner,
+			maxLoss
+		);
+
+		return this.contract.redeemWithMaxLoss(shares, owner, owner, maxLoss, {
+			gasLimit: estimatedGas.mul(100).div(95),
+		});
 	}
 
 	public async apy(): Promise<string> {

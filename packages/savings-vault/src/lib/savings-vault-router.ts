@@ -1,10 +1,10 @@
-import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Address } from '@phuture/types';
-import { Router } from '@phuture/router';
-import { BigNumber, BigNumberish, constants } from 'ethers';
-import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
-import { SavingsVault } from './savings-vault';
+import {Erc20, StandardPermitArguments} from '@phuture/erc-20';
+import {Address} from '@phuture/types';
+import {Router} from '@phuture/router';
+import {BigNumber, BigNumberish} from 'ethers';
+import {TransactionResponse} from '@ethersproject/abstract-provider';
+import {InsufficientAllowanceError, PhutureError} from '@phuture/errors';
+import {SavingsVault} from './savings-vault';
 
 /** ### SavingsVaultRouter class */
 export class SavingsVaultRouter implements Router {
@@ -129,7 +129,7 @@ export class SavingsVaultRouter implements Router {
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s,
-				{ gasLimit: estimatedGas.mul(100).div(95) }
+				{gasLimit: estimatedGas.mul(100).div(95)}
 			);
 		}
 		const sellToken = new Erc20(
@@ -200,15 +200,21 @@ export class SavingsVaultRouter implements Router {
 	 * @param isBurn true if burn, false if swap
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
+	 * @param outputTokenAddress
+	 * @param options
 	 *
 	 * @returns burn or swap transaction
 	 */
 	async sell(
 		isBurn: boolean,
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
+		outputTokenAddress?: Address,
+		options?: Partial<{
+			maxSlippage?: BigNumber;
+		}>
 	): Promise<TransactionResponse> {
-		return this.sellBurn(savingsVault, amount);
+		return this.sellBurn(savingsVault, amount, outputTokenAddress, options);
 	}
 
 	/**
@@ -216,22 +222,26 @@ export class SavingsVaultRouter implements Router {
 	 *
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
+	 * @param outputTokenAddress
+	 * @param options
 	 *
 	 * @returns burn transaction
 	 */
 	public async sellBurn(
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
+		outputTokenAddress?: Address,
+		options?: Partial<{
+			maxSlippage: BigNumber;
+		}>
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
-		const estimatedGas = await savingsVault.contract.estimateGas.redeem(
-			amount,
-			owner,
-			owner
-		);
-		return savingsVault.contract.redeem(amount, owner, owner, {
-			gasLimit: estimatedGas.mul(100).div(95),
-		});
+
+		if (options?.maxSlippage) {
+			return savingsVault.redeemWithMaxLoss(amount, owner, owner, options.maxSlippage)
+		}
+
+		return savingsVault.redeem(amount, owner, owner);
 	}
 
 	/**

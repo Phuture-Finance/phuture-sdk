@@ -135,6 +135,7 @@ export interface Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
+			maxSlippage?: BigNumber;
 		}>
 	): Promise<TransactionResponse>;
 
@@ -155,6 +156,7 @@ export interface Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
+			maxSlippage?: BigNumber;
 		}>
 	): Promise<TransactionResponse>;
 
