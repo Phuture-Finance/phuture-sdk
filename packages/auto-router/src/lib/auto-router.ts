@@ -1,6 +1,6 @@
 import { Zero0xQuoteOptions, ZeroExAggregator } from '@phuture/0x-aggregator';
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Index } from '@phuture/index';
+import { getDefaultIndexHelper, Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
 import { Address, Network, Networkish, TokenSymbol } from '@phuture/types';
 import { BigNumber, BigNumberish, constants } from 'ethers';
@@ -45,8 +45,8 @@ export class AutoRouter implements Router {
 	/**
 	 * ### Creates a new AutoRouter instance
 	 *
-	 * @param indexRouter IndexRouter package
-	 * @param zeroExAggregator ZeroExAggregator package
+	 * @param indexRouter instance of IndexRouter
+	 * @param zeroExAggregator ZeroEx client
 	 *
 	 * @returns New AutoRouter instance
 	 */
@@ -76,20 +76,22 @@ export class AutoRouter implements Router {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		const [zeroExSwap, amounts, indexPriceEth] = await Promise.all([
-			this.zeroExAggregator.quote(
-				inputToken?.address ||
-					nativeTokenSymbol(await this.indexRouter.account.chainId()),
-				index.address,
-				amountInInputToken,
-				options
-			),
-			index.scaleAmount(amountInInputToken),
-			index.priceEth(),
-		]);
+		const [zeroExSwap, amounts, IndexHelper, priceOracle, wethAddress] =
+			await Promise.all([
+				this.zeroExAggregator.quote(
+					inputToken?.address ||
+						nativeTokenSymbol(await index.account.chainId()),
+					index.address,
+					amountInInputToken,
+					options
+				),
+				index.scaleAmount(amountInInputToken),
+				getDefaultIndexHelper(index.account),
+				getDefaultPriceOracle(index.account),
+				this.indexRouter.weth(),
+			]);
 
-		const inputTokenAddress =
-			inputToken?.address ?? (await this.indexRouter.weth());
+		const inputTokenAddress = inputToken?.address ?? wethAddress;
 
 		const quotes = await Promise.all(
 			amounts.map(async ({ amount, asset }) => {
@@ -120,12 +122,17 @@ export class AutoRouter implements Router {
 			})
 		);
 
-		const indexRouterMintOutputAmount = await this.indexRouter.mintIndexAmount(
-			index.address,
-			amountInInputToken,
-			quotes,
-			inputToken?.address
-		);
+		const [indexRouterMintOutputAmount, totalEvaluation, ethBasePrice] =
+			await Promise.all([
+				this.indexRouter.mintIndexAmount(
+					index.address,
+					amountInInputToken,
+					quotes,
+					inputToken?.address
+				),
+				IndexHelper.contract.totalEvaluation(index.address),
+				priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
+			]);
 
 		const totalMintGas = BigNumber.from(
 			quotes
@@ -133,9 +140,7 @@ export class AutoRouter implements Router {
 				.add(
 					baseMintGas +
 						quotes.length *
-							additionalMintGasPerAsset(
-								await this.indexRouter.account.chainId()
-							)
+							additionalMintGasPerAsset(await index.account.chainId())
 				)
 		);
 
@@ -145,8 +150,10 @@ export class AutoRouter implements Router {
 			.lte(
 				indexRouterMintOutputAmount
 					.sub(zeroExSwap.buyAmount)
-					.mul(indexPriceEth)
-					.div(BigNumber.from(10).pow(18))
+					.mul(totalEvaluation._indexPriceInBase)
+					.div(await index.decimals())
+					.mul(ethBasePrice)
+					.div(BigNumber.from(2).pow(112))
 			);
 
 		const target = isMint ? this.indexRouter.address : zeroExSwap.to;
