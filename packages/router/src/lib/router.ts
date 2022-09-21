@@ -123,7 +123,7 @@ export interface Router {
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
 	 * @param options permit options for transaction
-	 * @param options 0x request options and permit options for transaction
+	 * @param options maxLoss option, 0x request options and permit options for transaction
 	 *
 	 * @returns burn or swap transaction
 	 */
@@ -135,6 +135,7 @@ export interface Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
+			maxLoss?: BigNumber;
 		}>
 	): Promise<TransactionResponse>;
 
@@ -144,7 +145,7 @@ export interface Router {
 	 * @param erc20PermitToken Contract which implements the ERC20Permit interface
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
-	 * @param options 0x request options and permit options for transaction
+	 * @param options maxLoss option, 0x request options and permit options for transaction
 	 *
 	 * @returns burn transaction
 	 */
@@ -155,6 +156,7 @@ export interface Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
+			maxLoss?: BigNumber;
 		}>
 	): Promise<TransactionResponse>;
 

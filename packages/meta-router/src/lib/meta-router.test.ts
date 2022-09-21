@@ -53,7 +53,7 @@ describe('MetaRouter', () => {
 		);
 		expect(result).to.deep.equal({
 			isMint: true,
-			target: constants.AddressZero,
+			target: '0xc365c3315cf926351ccaf13fa7d19c8c4058c8e1',
 			outputAmount: sharesAmount,
 			expectedAllowance: undefined,
 		});

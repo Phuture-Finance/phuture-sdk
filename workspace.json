@@ -11,6 +11,7 @@
 		"erc-4626": "packages/erc-4626",
 		"errors": "packages/errors",
 		"example-auto-router": "examples/example-auto-router",
+		"example-savings-vault": "examples/example-savings-vault",
 		"index": "packages/index",
 		"router": "packages/router",
 		"savings-vault": "packages/savings-vault",

@@ -1,7 +1,7 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { Address } from '@phuture/types';
 import { Router } from '@phuture/router';
-import { BigNumber, BigNumberish, constants } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
 import { SavingsVault } from './savings-vault';
@@ -30,7 +30,7 @@ export class SavingsVaultRouter implements Router {
 		outputAmount: BigNumber;
 		expectedAllowance?: BigNumber;
 	}> {
-		let target = savingsVault.address;
+		const target = savingsVault.address;
 
 		let expectedAllowance: BigNumber | undefined;
 		if (inputToken) {
@@ -45,10 +45,7 @@ export class SavingsVaultRouter implements Router {
 				});
 			}
 			try {
-				await inputToken.checkAllowance(
-					target,
-					amountInInputToken
-				);
+				await inputToken.checkAllowance(target, amountInInputToken);
 			} catch (error) {
 				if (error instanceof InsufficientAllowanceError) {
 					expectedAllowance = error.expectedAllowance;
@@ -114,14 +111,25 @@ export class SavingsVaultRouter implements Router {
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 		}>
 	): Promise<TransactionResponse> {
+		const accountAddress = await savingsVault.account.address();
 		if (options?.permitOptions !== undefined) {
+			const depositWithPermitEstimatedGas =
+				await savingsVault.contract.estimateGas.depositWithPermit(
+					amountInInputToken,
+					accountAddress,
+					options.permitOptions.deadline,
+					options.permitOptions.v,
+					options.permitOptions.r,
+					options.permitOptions.s
+				);
 			return savingsVault.contract.depositWithPermit(
 				amountInInputToken,
 				await savingsVault.account.address(),
 				options.permitOptions.deadline,
 				options.permitOptions.v,
 				options.permitOptions.r,
-				options.permitOptions.s
+				options.permitOptions.s,
+				{ gasLimit: depositWithPermitEstimatedGas.mul(100).div(95) }
 			);
 		}
 		const sellToken = new Erc20(
@@ -129,10 +137,13 @@ export class SavingsVaultRouter implements Router {
 			await savingsVault.contract.asset()
 		);
 		await sellToken.checkAllowance(savingsVault.address, amountInInputToken);
-		return savingsVault.contract.deposit(
+		const estimatedGas = await savingsVault.contract.estimateGas.deposit(
 			amountInInputToken,
-			await savingsVault.account.address()
+			accountAddress
 		);
+		return savingsVault.contract.deposit(amountInInputToken, accountAddress, {
+			gasLimit: estimatedGas.mul(100).div(95),
+		});
 	}
 
 	/**
@@ -189,15 +200,21 @@ export class SavingsVaultRouter implements Router {
 	 * @param isBurn true if burn, false if swap
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
+	 * @param outputTokenAddress Address of output token
+	 * @param options maxLoss option
 	 *
 	 * @returns burn or swap transaction
 	 */
 	async sell(
 		isBurn: boolean,
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
+		outputTokenAddress?: Address,
+		options?: Partial<{
+			maxLoss?: BigNumber;
+		}>
 	): Promise<TransactionResponse> {
-		return this.sellBurn(savingsVault, amount);
+		return this.sellBurn(savingsVault, amount, outputTokenAddress, options);
 	}
 
 	/**
@@ -205,15 +222,31 @@ export class SavingsVaultRouter implements Router {
 	 *
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
+	 * @param outputTokenAddress Address of output token
+	 * @param options maxLoss option
 	 *
 	 * @returns burn transaction
 	 */
 	public async sellBurn(
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
+		outputTokenAddress?: Address,
+		options?: Partial<{
+			maxLoss: BigNumber;
+		}>
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
-		return savingsVault.contract.redeem(amount, owner, owner);
+
+		if (options?.maxLoss) {
+			return savingsVault.redeemWithMaxLoss(
+				amount,
+				owner,
+				owner,
+				options.maxLoss
+			);
+		}
+
+		return savingsVault.redeem(amount, owner, owner);
 	}
 
 	/**
