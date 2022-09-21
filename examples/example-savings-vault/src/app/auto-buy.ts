@@ -14,8 +14,7 @@ export default async function buySavingsVault(amountToDeposit: BigNumber) {
 
 		console.dir(select);
 
-		const ok = await yesno({ question: 'Ready to continue?' });
-		if (ok) {
+		if (await yesno({ question: 'Ready to continue?' })) {
 			return await savingsVaultRouter.buy(
 				select.isMint,
 				savingsVault,
@@ -24,22 +23,24 @@ export default async function buySavingsVault(amountToDeposit: BigNumber) {
 		}
 		return;
 	}
+
 	const token = new Erc20Permit(account, tokenAddress);
-	const select = await savingsVaultRouter.selectBuy(
+	const selectWithToken = await savingsVaultRouter.selectBuy(
 		savingsVault,
 		amountToDeposit,
 		token
 	);
-	console.dir(select);
+	console.dir(selectWithToken);
 	const ok = await yesno({ question: 'Ready to continue?' });
 
 	if (ok) {
 		return await savingsVaultRouter.buy(
-			select.isMint,
+			selectWithToken.isMint,
 			savingsVault,
 			amountToDeposit,
 			tokenAddress
 		);
 	}
+
 	return;
 }

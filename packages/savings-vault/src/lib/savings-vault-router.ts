@@ -113,7 +113,7 @@ export class SavingsVaultRouter implements Router {
 	): Promise<TransactionResponse> {
 		const accountAddress = await savingsVault.account.address();
 		if (options?.permitOptions !== undefined) {
-			const estimatedGas =
+			const depositWithPermitEstimatedGas =
 				await savingsVault.contract.estimateGas.depositWithPermit(
 					amountInInputToken,
 					accountAddress,
@@ -129,7 +129,7 @@ export class SavingsVaultRouter implements Router {
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s,
-				{ gasLimit: estimatedGas.mul(100).div(95) }
+				{ gasLimit: depositWithPermitEstimatedGas.mul(100).div(95) }
 			);
 		}
 		const sellToken = new Erc20(

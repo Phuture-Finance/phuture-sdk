@@ -11,7 +11,7 @@ const main = async () => {
 		console.dir(await buySavingsVault(amount));
 	} else if (process.env['TYPE'] === 'sell') {
 		console.dir(await sellSavingsVault(amount));
-	} else if (process.env['TYPE'] == 'harvest') {
+	} else if (process.env['TYPE'] === 'harvest') {
 		await harvest();
 	}
 };
