@@ -1,7 +1,7 @@
 import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
 import { Address } from '@phuture/types';
 import { Router } from '@phuture/router';
-import { BigNumber, BigNumberish, constants } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
 import { SavingsVault } from './savings-vault';
@@ -200,15 +200,21 @@ export class SavingsVaultRouter implements Router {
 	 * @param isBurn true if burn, false if swap
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
+	 * @param outputTokenAddress Address of output token
+	 * @param options maxLoss option
 	 *
 	 * @returns burn or swap transaction
 	 */
 	async sell(
 		isBurn: boolean,
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
+		outputTokenAddress?: Address,
+		options?: Partial<{
+			maxLoss?: BigNumber;
+		}>
 	): Promise<TransactionResponse> {
-		return this.sellBurn(savingsVault, amount);
+		return this.sellBurn(savingsVault, amount, outputTokenAddress, options);
 	}
 
 	/**
@@ -216,22 +222,31 @@ export class SavingsVaultRouter implements Router {
 	 *
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
+	 * @param outputTokenAddress Address of output token
+	 * @param options maxLoss option
 	 *
 	 * @returns burn transaction
 	 */
 	public async sellBurn(
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
+		outputTokenAddress?: Address,
+		options?: Partial<{
+			maxLoss: BigNumber;
+		}>
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
-		const estimatedGas = await savingsVault.contract.estimateGas.redeem(
-			amount,
-			owner,
-			owner
-		);
-		return savingsVault.contract.redeem(amount, owner, owner, {
-			gasLimit: estimatedGas.mul(100).div(95),
-		});
+
+		if (options?.maxLoss) {
+			return savingsVault.redeemWithMaxLoss(
+				amount,
+				owner,
+				owner,
+				options.maxLoss
+			);
+		}
+
+		return savingsVault.redeem(amount, owner, owner);
 	}
 
 	/**

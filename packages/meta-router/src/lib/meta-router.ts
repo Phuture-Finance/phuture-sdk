@@ -168,6 +168,7 @@ export class MetaRouter implements Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
+			maxLoss: BigNumber;
 		}>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
@@ -183,7 +184,9 @@ export class MetaRouter implements Router {
 				return this.savingsVaultRouter.sell(
 					isBurn,
 					erc20Permit as SavingsVault,
-					sharesAmount
+					sharesAmount,
+					outputTokenAddress,
+					options
 				);
 		}
 	}
@@ -195,6 +198,7 @@ export class MetaRouter implements Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
+			maxLoss: BigNumber;
 		}>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
@@ -208,7 +212,9 @@ export class MetaRouter implements Router {
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.sellBurn(
 					erc20Permit as SavingsVault,
-					sharesAmount
+					sharesAmount,
+					outputTokenAddress,
+					options
 				);
 		}
 	}
