@@ -168,7 +168,7 @@ export class MetaRouter implements Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxSlippage: BigNumber;
+			maxLoss: BigNumber;
 		}>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
@@ -198,7 +198,7 @@ export class MetaRouter implements Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxSlippage: BigNumber;
+			maxLoss: BigNumber;
 		}>
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
