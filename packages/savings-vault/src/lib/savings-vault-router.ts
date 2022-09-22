@@ -242,13 +242,13 @@ export class SavingsVaultRouter implements Router {
 				throw new RangeError('Parameter maxLoss must be between 0 and 9999.');
 
 			const redeemed = await savingsVault.contract.previewRedeem(amount);
-			const maxOutputAmount = redeemed.mul(10000 - options.maxLoss).div(10000);
+			const minOutputAmount = redeemed.mul(10000 - options.maxLoss).div(10000);
 
 			return savingsVault.redeemWithMinOutputAmount(
 				amount,
 				owner,
 				owner,
-				maxOutputAmount
+				minOutputAmount
 			);
 		}
 
