@@ -14,8 +14,8 @@
 		"generate": "nx run-many --all --target=generate",
 		"build": "nx run-many --all --target=build",
 		"format": "prettier --write '**/*.{json,md,yml}'",
-		"lint": "nx run-many --all --target=lint --parallel",
-		"test": "nx affected --target=test --parallel",
+		"lint": "nx run-many --target=lint --all",
+		"test": "nx affected --target=test --all",
 		"docs": "ts-node -P tools/tsconfig.tools.json ./tools/docs/docs.ts"
 	},
 	"devDependencies": {
@@ -51,7 +51,6 @@
 		"husky": "8.0.1",
 		"jest": "27.5.1",
 		"jest-mock-extended": "^2.0.7",
-		"lint-staged": "13.0.3",
 		"moq.ts": "^9.0.2",
 		"nx": "14.4.3",
 		"prettier": "2.7.1",
@@ -67,16 +66,6 @@
 	"engines": {
 		"node": ">=14.0.0",
 		"pnpm": "7"
-	},
-	"lint-staged": {
-		"*.{js,jsx,ts,tsx}": [
-			"pnpm lint --fix",
-			"git add"
-		],
-		"*.{md,json,yml}": [
-			"pnpm format",
-			"git add"
-		]
 	},
 	"packageManager": "pnpm@7.1.0",
 	"dependencies": {

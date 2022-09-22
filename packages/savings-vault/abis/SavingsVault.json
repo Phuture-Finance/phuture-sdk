@@ -1104,11 +1104,11 @@
 			},
 			{
 				"internalType": "uint16",
-				"name": "_maxLoss",
-				"type": "uint16"
+				"name": "_minOutputAmount",
+				"type": "uint256"
 			}
 		],
-		"name": "redeemWithMaxLoss",
+		"name": "redeemWithMinOutputAmount",
 		"outputs": [
 			{
 				"internalType": "uint256",
