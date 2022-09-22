@@ -4,9 +4,10 @@
 	"npmScope": "phuture",
 	"tasksRunnerOptions": {
 		"default": {
-			"runner": "nx/tasks-runners/default",
+			"runner": "@nrwl/nx-cloud",
 			"options": {
-				"cacheableOperations": ["prepublishOnly", "build", "test", "generate"]
+				"cacheableOperations": ["prepublishOnly", "build", "test", "generate"],
+				"accessToken": "YjBmZDY0NDItN2Y0Yi00Y2NiLTk5MjktYzFjYzYxMzdiMDM2fHJlYWQtd3JpdGU="
 			}
 		}
 	},
