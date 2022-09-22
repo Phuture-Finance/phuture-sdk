@@ -57,22 +57,29 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		});
 	}
 
-	public async redeemWithMaxLoss(
+	public async redeemWithMinOutputAmount(
 		shares: BigNumberish,
 		receiver: Address,
 		owner: Address,
-		maxLoss: BigNumber
+		minOutputAmount: BigNumber
 	): Promise<ContractTransaction> {
-		const estimatedGas = await this.contract.estimateGas.redeemWithMaxLoss(
-			shares,
-			owner,
-			owner,
-			maxLoss
-		);
+		const estimatedGas =
+			await this.contract.estimateGas.redeemWithMinOutputAmount(
+				shares,
+				receiver,
+				owner,
+				minOutputAmount
+			);
 
-		return this.contract.redeemWithMaxLoss(shares, owner, owner, maxLoss, {
-			gasLimit: estimatedGas.mul(100).div(95),
-		});
+		return this.contract.redeemWithMinOutputAmount(
+			shares,
+			receiver,
+			owner,
+			minOutputAmount,
+			{
+				gasLimit: estimatedGas.mul(100).div(95),
+			}
+		);
 	}
 
 	public async apy(): Promise<string> {

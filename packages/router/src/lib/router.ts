@@ -118,7 +118,7 @@ export interface Router {
 	/**
 	 * ### Auto Sell
 	 *
-	 * @param isBurn true if burn, false if swap
+	 * @param isBurn true if the tx is burn, false if swap
 	 * @param erc20PermitToken Contract which implements the ERC20Permit interface
 	 * @param sharesAmount Amount of product shares
 	 * @param outputTokenAddress Address of output token
@@ -135,7 +135,7 @@ export interface Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxLoss?: BigNumber;
+			maxLoss?: number;
 		}>
 	): Promise<TransactionResponse>;
 
@@ -156,7 +156,7 @@ export interface Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>;
 			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxLoss?: BigNumber;
+			maxLoss?: number;
 		}>
 	): Promise<TransactionResponse>;
 

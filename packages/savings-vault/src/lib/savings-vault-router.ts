@@ -197,7 +197,7 @@ export class SavingsVaultRouter implements Router {
 	/**
 	 * ### Auto Sell
 	 *
-	 * @param isBurn true if burn, false if swap
+	 * @param isBurn true if tx is burn, false if swap
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
 	 * @param outputTokenAddress Address of output token
@@ -211,7 +211,7 @@ export class SavingsVaultRouter implements Router {
 		amount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			maxLoss?: BigNumber;
+			maxLoss?: number;
 		}>
 	): Promise<TransactionResponse> {
 		return this.sellBurn(savingsVault, amount, outputTokenAddress, options);
@@ -232,17 +232,23 @@ export class SavingsVaultRouter implements Router {
 		amount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			maxLoss: BigNumber;
+			maxLoss: number;
 		}>
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address();
 
 		if (options?.maxLoss) {
-			return savingsVault.redeemWithMaxLoss(
+			if (options.maxLoss < 0 || options.maxLoss >= 10000)
+				throw new RangeError('Parameter maxLoss must be between 0 and 10000.');
+
+			const redeemed = await savingsVault.contract.previewRedeem(amount);
+			const minOutputAmount = redeemed.mul(10000 - options.maxLoss).div(10000);
+
+			return savingsVault.redeemWithMinOutputAmount(
 				amount,
 				owner,
 				owner,
-				options.maxLoss
+				minOutputAmount
 			);
 		}
 
