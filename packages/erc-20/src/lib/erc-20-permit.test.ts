@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { Mock } from 'moq.ts';
 import { Account } from '@phuture/account';
+import { ERC20Permit as ERC20PermitContractInterface } from '../types';
 import {
 	AllowedPermitArguments,
 	Erc20Permit,
 	StandardPermitArguments,
-} from '../src';
-import { ERC20Permit as ERC20PermitContractInterface } from '../src/types';
+} from './erc-20-permit';
 
 const erc20contract = new Mock<ERC20PermitContractInterface>()
 	.setup((c) => c.address)

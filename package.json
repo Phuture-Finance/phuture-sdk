@@ -11,11 +11,11 @@
 		"release": "pnpm publish --access=public",
 		"prepare": "husky install",
 		"start": "nx exec",
-		"generate": "nx run-many --target=generate --all",
-		"build": "nx run-many --target=build --all",
+		"generate": "nx run-many --all --target=generate",
+		"build": "nx run-many --all --target=build",
 		"format": "prettier --write '**/*.{json,md,yml}'",
-		"lint": "nx run-many --target=lint --all",
-		"test": "nx run-many --target=test --all",
+		"lint": "nx run-many --all --target=lint --parallel",
+		"test": "nx affected --target=test --parallel",
 		"docs": "ts-node -P tools/tsconfig.tools.json ./tools/docs/docs.ts"
 	},
 	"devDependencies": {

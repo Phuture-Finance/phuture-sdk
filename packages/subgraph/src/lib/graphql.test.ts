@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { gql } from '@apollo/client/core';
-import { Subgraph } from '../src';
+import { Subgraph } from './subgraph';
 
 const userId = '0x000000000000000000000000000000000000dead';
 
