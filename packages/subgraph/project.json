@@ -40,7 +40,8 @@
 			"executor": "@nrwl/linter:eslint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["packages/subgraph/**/*.ts"]
+				"lintFilePatterns": ["packages/subgraph/**/*.ts"],
+				"ignorePath": ["packages/subgraph/.eslintignore"]
 			}
 		},
 		"test": {

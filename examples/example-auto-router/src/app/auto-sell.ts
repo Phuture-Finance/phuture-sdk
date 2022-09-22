@@ -13,8 +13,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 
 		console.dir(select);
 
-		const ok = await yesno({ question: 'Ready to continue?' });
-		if (ok) {
+		if (await yesno({ question: 'Ready to continue?' })) {
 			return autoRouter.sell(select.isBurn, index, amountToSellDesired);
 		}
 
@@ -22,14 +21,17 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 	}
 
 	const token = new Erc20Permit(account, tokenAddress);
-	const select = await autoRouter.selectSell(index, amountToSellDesired, token);
+	const selectWithToken = await autoRouter.selectSell(
+		index,
+		amountToSellDesired,
+		token
+	);
 
-	console.dir(select);
+	console.dir(selectWithToken);
 
-	const ok = await yesno({ question: 'Ready to continue?' });
-	if (ok) {
+	if (await yesno({ question: 'Ready to continue?' })) {
 		return autoRouter.sell(
-			select.isBurn,
+			selectWithToken.isBurn,
 			index,
 			amountToSellDesired,
 			token.address

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { ZeroExAggregator } from './0x-aggregator';
+import { ZeroExAggregator, zeroExBaseUrl } from './0x-aggregator';
 
 const payload = {
 	buyToken: 'PDI',
@@ -15,7 +15,7 @@ const mock = new MockAdapter(axios);
 
 describe('Error boundaries', () => {
 	it('should compile at runtime', () => {
-		expect(() => new ZeroExAggregator()).not.toThrow();
+		expect(() => ZeroExAggregator.fromUrl(zeroExBaseUrl['1'])).not.toThrow();
 	});
 });
 
@@ -29,7 +29,7 @@ describe('Price, quote and source execution', () => {
 		});
 
 		// Execute
-		await new ZeroExAggregator().price(
+		await ZeroExAggregator.fromUrl(zeroExBaseUrl['1'])[0].price(
 			sellToken,
 			buyToken,
 			sellAmount,
@@ -43,7 +43,7 @@ describe('Price, quote and source execution', () => {
 		});
 
 		const { buyToken, sellToken, sellAmount, options } = payload;
-		await new ZeroExAggregator().quote(
+		await ZeroExAggregator.fromUrl(zeroExBaseUrl['1'])[0].quote(
 			sellToken,
 			buyToken,
 			sellAmount,
@@ -56,6 +56,6 @@ describe('Price, quote and source execution', () => {
 			records: [],
 		});
 
-		await new ZeroExAggregator().sources();
+		await ZeroExAggregator.fromUrl(zeroExBaseUrl['1'])[0].sources();
 	});
 });
