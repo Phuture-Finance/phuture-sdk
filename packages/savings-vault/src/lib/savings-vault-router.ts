@@ -238,8 +238,8 @@ export class SavingsVaultRouter implements Router {
 		const owner = await savingsVault.account.address();
 
 		if (options?.maxLoss) {
-			if (options.maxLoss < 0 || options.maxLoss > 9999)
-				throw new RangeError('Parameter maxLoss must be between 0 and 9999.');
+			if (options.maxLoss < 0 || options.maxLoss >= 10000)
+				throw new RangeError('Parameter maxLoss must be between 0 and 10000.');
 
 			const redeemed = await savingsVault.contract.previewRedeem(amount);
 			const minOutputAmount = redeemed.mul(10000 - options.maxLoss).div(10000);
