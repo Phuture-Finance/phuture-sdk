@@ -5,3 +5,8 @@
 /docs
 
 pnpm-lock.json
+
+/tmp
+
+/**/generated
+/**/src/types
