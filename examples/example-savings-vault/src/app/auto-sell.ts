@@ -3,6 +3,8 @@ import * as yesno from 'yesno';
 import prepare from './prepare';
 
 export async function sellSavingsVault(amountToSell: BigNumber) {
+	const maxLoss = parseInt(process.env['MAX_LOSS'], 10);
+	console.log('maxLoss', maxLoss);
 	const { savingsVault, savingsVaultRouter } = await prepare();
 
 	const select = await savingsVaultRouter.selectSell(
@@ -17,7 +19,9 @@ export async function sellSavingsVault(amountToSell: BigNumber) {
 		return await savingsVaultRouter.sell(
 			select.isBurn,
 			savingsVault,
-			amountToSell
+			amountToSell,
+			undefined,
+			{ maxLoss: maxLoss }
 		);
 	}
 
