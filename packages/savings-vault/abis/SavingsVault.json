@@ -1103,7 +1103,7 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint16",
+				"internalType": "uint256",
 				"name": "_minOutputAmount",
 				"type": "uint256"
 			}
