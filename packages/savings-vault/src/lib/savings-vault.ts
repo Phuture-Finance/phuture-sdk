@@ -33,7 +33,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		factory: ContractFactory = SavingsVault__factory,
 		savingsVaultViews:
 			| Address
-			| SavingsVaultViews = '0x4c665f3cdE9084ce49Febd48aED4296d42F781bf'
+			| SavingsVaultViews = '0xE574beBdDB460e3E0588F1001D24441102339429'
 	) {
 		super(account, contract, factory);
 		this._savingsVaultViews = isAddress(savingsVaultViews)
