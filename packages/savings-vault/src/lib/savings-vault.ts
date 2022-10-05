@@ -53,7 +53,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		);
 
 		return this.contract.redeem(shares, owner, owner, {
-			gasLimit: estimatedGas.mul(100).div(95),
+			gasLimit: estimatedGas.mul(100).div(80),
 		});
 	}
 
@@ -77,7 +77,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 			owner,
 			minOutputAmount,
 			{
-				gasLimit: estimatedGas.mul(100).div(95),
+				gasLimit: estimatedGas.mul(100).div(80),
 			}
 		);
 	}
