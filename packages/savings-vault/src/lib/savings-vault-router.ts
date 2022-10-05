@@ -142,7 +142,7 @@ export class SavingsVaultRouter implements Router {
 			accountAddress
 		);
 		return savingsVault.contract.deposit(amountInInputToken, accountAddress, {
-			gasLimit: estimatedGas.mul(100).div(95),
+			gasLimit: estimatedGas.mul(100).div(80),
 		});
 	}
 
