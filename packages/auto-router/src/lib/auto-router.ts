@@ -12,8 +12,8 @@ import { Router } from '@phuture/router';
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = (network: Networkish): number => {
 	const gas = {
-		[Network.Mainnet]: 135_000,
-		[Network.CChain]: 100_000,
+		[Network.Mainnet]: 148_000,
+		[Network.CChain]: 105_000,
 	}[network];
 
 	return gas ?? 135_000;
@@ -22,8 +22,8 @@ const additionalMintGasPerAsset = (network: Networkish): number => {
 const baseBurnGas = 100_000;
 const additionalBurnGasPerAsset = (network: Networkish) => {
 	const gas = {
-		[Network.Mainnet]: 300_000,
-		[Network.CChain]: 200_000,
+		[Network.Mainnet]: 234_000,
+		[Network.CChain]: 192_000,
 	}[network];
 
 	return gas ?? 300_000;
