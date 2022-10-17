@@ -144,7 +144,7 @@ export class AutoRouter implements Router {
 				)
 		);
 
-		console.log(totalMintGas);
+		console.log(totalMintGas.toString());
 
 		const isMint = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
@@ -471,7 +471,7 @@ export class AutoRouter implements Router {
 				)
 		);
 
-		console.log(totalBurnGas);
+		console.log(totalBurnGas.toString());
 
 		const isBurn = totalBurnGas
 			.sub(zeroExSwap.estimatedGas)
