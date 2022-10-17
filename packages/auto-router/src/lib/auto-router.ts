@@ -135,13 +135,14 @@ export class AutoRouter implements Router {
 			]);
 
 		const totalMintGas = BigNumber.from(
-			quotes
-				.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
-				.add(
-					baseMintGas +
-						quotes.length *
-							additionalMintGasPerAsset(await index.account.chainId())
-				)
+			// quotes
+			// 	.reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
+			// 	.add(
+			// 		baseMintGas +
+			// 			quotes.length *
+			// 				additionalMintGasPerAsset(await index.account.chainId())
+			// 	)
+			2873575
 		);
 
 		console.log(totalMintGas.toString());
