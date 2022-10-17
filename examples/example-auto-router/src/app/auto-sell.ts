@@ -14,7 +14,7 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 		console.dir(select);
 
 		if (await yesno({ question: 'Ready to continue?' })) {
-			return autoRouter.sell(true, index, amountToSellDesired);
+			return autoRouter.sell(select.isBurn, index, amountToSellDesired);
 		}
 
 		return;
@@ -30,7 +30,12 @@ export default async function autoSell(amountToSellDesired: BigNumber) {
 	console.dir(selectWithToken);
 
 	if (await yesno({ question: 'Ready to continue?' })) {
-		return autoRouter.sell(true, index, amountToSellDesired, token.address);
+		return autoRouter.sell(
+			selectWithToken.isBurn,
+			index,
+			amountToSellDesired,
+			token.address
+		);
 	}
 
 	return;

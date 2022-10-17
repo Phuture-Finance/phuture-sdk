@@ -273,8 +273,6 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 			outputAsset: options.outputAsset ?? (await this.weth()),
 		};
 
-		console.dir(burnParameters);
-
 		if (options.outputAsset === undefined) {
 			if (options.permitOptions !== undefined) {
 				const burnSwapWithPermitEstimatedGas =
