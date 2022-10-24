@@ -25,6 +25,7 @@ export class ZeroExAggregator {
 	private _defaultQueryParams = {
 		/** ### Slippage protection for the aggregator */
 		enableSlippageProtection: true,
+		affiliateAddress: '0x6575A93aBdFf85e5A6b97c2DB2b83bCEbc3574eC',
 	};
 
 	/**
