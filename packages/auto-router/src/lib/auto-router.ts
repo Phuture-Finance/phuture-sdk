@@ -144,18 +144,18 @@ export class AutoRouter implements Router {
 				)
 		);
 
-		const isMint = totalMintGas
+		const gasDiffInEth = totalMintGas
 			.sub(zeroExSwap.estimatedGas)
-			.mul(zeroExSwap.gasPrice)
-			.lte(
-				indexRouterMintOutputAmount
-					.sub(zeroExSwap.buyAmount)
-					.mul(totalEvaluation._indexPriceInBase)
-					.div(await index.decimals())
-					.mul(ethBasePrice)
-					.div(BigNumber.from(2).pow(112))
-			);
+			.mul(zeroExSwap.gasPrice);
 
+		const outputAmountDiffInEth = indexRouterMintOutputAmount
+			.sub(zeroExSwap.buyAmount)
+			.mul(totalEvaluation._indexPriceInBase)
+			.div(BigNumber.from(10).pow(await index.decimals()))
+			.mul(ethBasePrice)
+			.div(BigNumber.from(2).pow(112));
+
+		const isMint = gasDiffInEth.lte(outputAmountDiffInEth);
 		const target = isMint ? this.indexRouter.address : zeroExSwap.to;
 
 		let expectedAllowance: BigNumber | undefined;
