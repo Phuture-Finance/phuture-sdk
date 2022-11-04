@@ -24,6 +24,7 @@
 			"@phuture/erc-4626": ["packages/erc-4626/src/index.ts"],
 			"@phuture/errors": ["packages/errors/src/index.ts"],
 			"@phuture/index": ["packages/index/src/index.ts"],
+			"@phuture/index-betting": ["packages/index-betting/src/index.ts"],
 			"@phuture/router": ["packages/router/src/index.ts"],
 			"@phuture/savings-vault": ["packages/savings-vault/src/index.ts"],
 			"@phuture/index-router": ["packages/index-router/src/index.ts"],

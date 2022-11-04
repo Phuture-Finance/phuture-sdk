@@ -7,6 +7,7 @@ export * from '@phuture/erc-4626';
 export * from '@phuture/savings-vault';
 export * from '@phuture/errors';
 export * from '@phuture/index';
+export * from '@phuture/index-betting';
 export * from '@phuture/router';
 export * from '@phuture/index-router';
 export * from '@phuture/price-oracle';
