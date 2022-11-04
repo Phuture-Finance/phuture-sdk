@@ -1,8 +1,7 @@
-import { BigNumber, BigNumberish, constants } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { Erc20 } from '@phuture/erc-20';
-import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
-import { Address, Network, Networkish } from '@phuture/types';
+import { Network, Networkish } from '@phuture/types';
 import { Zero0xQuoteOptions, ZeroExAggregator } from '@phuture/0x-aggregator';
 import { getDefaultIndexHelper, Index } from '@phuture/index';
 import { IndexRouter } from '@phuture/index-router';
