@@ -1,27 +1,29 @@
-import { Address, ContractFactory, isAddress, Signature } from '@phuture/types';
-import { BigNumber, BigNumberish } from 'ethers';
-import { Interface } from '@ethersproject/abi';
-import { Account } from '@phuture/account';
+import { Interface } from '@ethersproject/abi'
+import { Account } from '@phuture/account'
+import { Address, ContractFactory, isAddress, Signature } from '@phuture/types'
+import { BigNumber, BigNumberish } from 'ethers'
+
 import {
 	ERC20Permit as ERC20PermitContractInterface,
 	ERC20Permit__factory,
-} from '../types';
-import { Erc20 } from './erc-20';
+} from '../types'
+
+import { Erc20 } from './erc-20'
 
 /** ### Standard permit arguments */
 export interface StandardPermitArguments extends Signature {
-	amount: BigNumberish;
-	deadline: BigNumberish;
+	amount: BigNumberish
+	deadline: BigNumberish
 }
 
 /** ### Allowed permit arguments */
 export interface AllowedPermitArguments extends Signature {
-	nonce: BigNumberish;
-	expiry: BigNumberish;
+	nonce: BigNumberish
+	expiry: BigNumberish
 }
 
 /** ### Erc20Permit options type */
-export type PermitOptions = StandardPermitArguments | AllowedPermitArguments;
+export type PermitOptions = StandardPermitArguments | AllowedPermitArguments
 
 /**
  * ### Function to check if permit parameters are type of allowed
@@ -29,8 +31,8 @@ export type PermitOptions = StandardPermitArguments | AllowedPermitArguments;
  * @returns True if options are allowed, false otherwise
  */
 const isAllowedPermit = (
-	options: PermitOptions
-): options is AllowedPermitArguments => 'nonce' in options;
+	options: PermitOptions,
+): options is AllowedPermitArguments => 'nonce' in options
 
 /** ### Erc20Permit Contract Interface */
 const permitInterface = new Interface([
@@ -186,7 +188,7 @@ const permitInterface = new Interface([
 		stateMutability: 'payable',
 		type: 'function',
 	},
-]);
+])
 
 /**
  * ### Encodes permit data for given erc20 contract and options
@@ -197,7 +199,7 @@ export const encodePermit =
 	(options: PermitOptions): string => {
 		const [functionName, amount, deadline] = isAllowedPermit(options)
 			? ['selfPermitAllowed', options.nonce, options.expiry]
-			: ['selfPermit', options.amount, options.deadline];
+			: ['selfPermit', options.amount, options.deadline]
 
 		return permitInterface.encodeFunctionData(functionName, [
 			isAddress(erc20) ? erc20 : erc20.address,
@@ -206,15 +208,15 @@ export const encodePermit =
 			options.v,
 			options.r,
 			options.s,
-		]);
-	};
+		])
+	}
 
 /** ### Erc20Permit Token Contract */
 export class Erc20Permit<
-	C extends ERC20PermitContractInterface = ERC20PermitContractInterface
+	C extends ERC20PermitContractInterface = ERC20PermitContractInterface,
 > extends Erc20<C> {
 	/** Encodes permit data for the given options */
-	public encodePermit = encodePermit(this);
+	public encodePermit = encodePermit(this)
 
 	/**
 	 * ### Creates a new Erc20Permit instance
@@ -228,8 +230,8 @@ export class Erc20Permit<
 	constructor(
 		account: Account,
 		contract: Address | C,
-		factory: ContractFactory = ERC20Permit__factory
+		factory: ContractFactory = ERC20Permit__factory,
 	) {
-		super(account, contract, factory);
+		super(account, contract, factory)
 	}
 }

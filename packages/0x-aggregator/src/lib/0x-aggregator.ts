@@ -1,23 +1,27 @@
-import type { Address, Networkish, TokenSymbol, Url } from '@phuture/types';
-import { Network } from '@phuture/types';
-import axios, { AxiosInstance } from 'axios';
-import { BigNumber, BigNumberish } from 'ethers';
-import newDebug from 'debug';
+import type { Address, TokenSymbol, Url } from '@phuture/types'
+import { Network } from '@phuture/types'
+import axios, { AxiosInstance } from 'axios'
+import axiosRetry from 'axios-retry'
+import newDebug from 'debug'
+import { BigNumber, BigNumberish } from 'ethers'
+
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
 	Zero0xQuoteOptions,
 	Zero0xQuoteResponse,
 	Zero0xSourcesResponse,
-} from './types';
+} from './types'
 
-const debug = newDebug('@phuture:0x-aggregator');
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay })
+
+const debug = newDebug('@phuture:0x-aggregator')
 
 /** ### Addresses of the ZeroX API endpoint */
-export const zeroExBaseUrl: Record<Networkish, Url> = {
+export const zeroExBaseUrl: Record<Network, Url> = {
 	[Network.Mainnet]: 'https://api.0x.org/',
 	[Network.CChain]: 'https://avalanche.api.0x.org/',
-};
+}
 
 /** ### Facilitates swaps for end user */
 export class ZeroExAggregator {
@@ -25,8 +29,8 @@ export class ZeroExAggregator {
 	private _defaultQueryParams = {
 		/** ### Slippage protection for the aggregator */
 		enableSlippageProtection: true,
-		affiliateAddress: '0x6575A93aBdFf85e5A6b97c2DB2b83bCEbc3574eC',
-	};
+		affiliateAddress: '0x6575a93abdff85e5a6b97c2db2b83bcebc3574ec',
+	}
 
 	/**
 	 * ### Constructs an instance of the swap class
@@ -47,9 +51,9 @@ export class ZeroExAggregator {
 	 */
 	static fromUrl(
 		baseUrl: Url,
-		apiKey?: string
+		apiKey?: string,
 	): [ZeroExAggregator, AbortController] {
-		const abortController = new AbortController();
+		const abortController = new AbortController()
 
 		const client = axios.create({
 			signal: abortController?.signal,
@@ -60,11 +64,11 @@ export class ZeroExAggregator {
 				...(apiKey ? { '0x-api-key': apiKey } : {}),
 			},
 			validateStatus: (status) => status < 500,
-		});
+		})
 
-		debug('Created client with base URL: %s', baseUrl);
+		debug('Created client with base URL: %s', baseUrl)
 
-		return [new ZeroExAggregator(client), abortController];
+		return [new ZeroExAggregator(client), abortController]
 	}
 
 	/**
@@ -73,7 +77,7 @@ export class ZeroExAggregator {
 	 * @returns True if slippage protection is enabled
 	 */
 	get slippageProtection(): boolean {
-		return this._defaultQueryParams.enableSlippageProtection;
+		return this._defaultQueryParams.enableSlippageProtection
 	}
 
 	/**
@@ -82,7 +86,7 @@ export class ZeroExAggregator {
 	 * @param slippageProtection Whether to enable slippage protection
 	 */
 	set slippageProtection(slippageProtection: boolean) {
-		this._defaultQueryParams.enableSlippageProtection = slippageProtection;
+		this._defaultQueryParams.enableSlippageProtection = slippageProtection
 	}
 
 	/**
@@ -100,14 +104,14 @@ export class ZeroExAggregator {
 		sellToken: Address,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
 		debug(
 			'Making quote call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount
-		);
+			sellAmount,
+		)
 		const { data } = await this.client.get<Zero0xQuoteResponse>(
 			'/swap/v1/quote',
 			{
@@ -118,18 +122,18 @@ export class ZeroExAggregator {
 					sellAmount: BigNumber.from(sellAmount).toString(),
 					...options,
 				},
-			}
-		);
+			},
+		)
 
 		// TODO: cover error codes and add retry logic
 
 		debug(
 			'Received quote buyAmount: %s for buyToken: %s',
 			data.buyAmount,
-			buyToken
-		);
+			buyToken,
+		)
 
-		return data;
+		return data
 	}
 
 	/**
@@ -147,14 +151,14 @@ export class ZeroExAggregator {
 		sellToken: Address | TokenSymbol,
 		buyToken: Address,
 		sellAmount: BigNumberish,
-		options?: Partial<Zero0xPriceOptions>
+		options?: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
 		debug(
 			'Making price call for sellToken: %s, buyToken: %s, sellAmount: %s',
 			sellToken,
 			buyToken,
-			sellAmount
-		);
+			sellAmount,
+		)
 		const { data } = await this.client.get<Zero0xPriceResponse>(
 			'/swap/v1/price',
 			{
@@ -165,18 +169,18 @@ export class ZeroExAggregator {
 					sellAmount: BigNumber.from(sellAmount).toString(),
 					...options,
 				},
-			}
-		);
+			},
+		)
 
 		// TODO: cover error codes and add retry logic
 
 		debug(
 			'Received price buyAmount: %s for buyToken: %s',
 			data.buyAmount,
-			buyToken
-		);
+			buyToken,
+		)
 
-		return data;
+		return data
 	}
 
 	/**
@@ -185,15 +189,15 @@ export class ZeroExAggregator {
 	 * @returns Promise transaction response
 	 */
 	async sources(): Promise<Zero0xSourcesResponse> {
-		debug('Making sources call');
+		debug('Making sources call')
 		const { data } = await this.client.get<Zero0xSourcesResponse>(
-			'/swap/v1/sources'
-		);
+			'/swap/v1/sources',
+		)
 
 		// TODO: cover error codes and add retry logic
 
-		debug('Received %d sources', data.records.length);
+		debug('Received %d sources', data.records.length)
 
-		return data;
+		return data
 	}
 }

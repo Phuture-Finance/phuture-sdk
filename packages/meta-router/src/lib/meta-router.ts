@@ -1,13 +1,13 @@
-import { Address, ProductType } from '@phuture/types';
-import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
-import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
-import { BigNumber, BigNumberish } from 'ethers';
-import { SavingsVault, SavingsVaultRouter } from '@phuture/savings-vault';
-import { Index } from '@phuture/index';
-import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { PhutureError } from '@phuture/errors';
-import { AutoRouter } from '@phuture/auto-router';
-import { Router } from '@phuture/router';
+import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Zero0xQuoteOptions } from '@phuture/0x-aggregator'
+import { AutoRouter } from '@phuture/auto-router'
+import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20'
+import { PhutureError } from '@phuture/errors'
+import { Index } from '@phuture/index'
+import { Router } from '@phuture/router'
+import { SavingsVault, SavingsVaultRouter } from '@phuture/savings-vault'
+import { Address, ProductType } from '@phuture/types'
+import { BigNumber, BigNumberish } from 'ethers'
 
 export class MetaRouter implements Router {
 	/**
@@ -22,19 +22,19 @@ export class MetaRouter implements Router {
 	constructor(
 		private savingsVaultRouter: SavingsVaultRouter,
 		private autoRouter: AutoRouter,
-		private products: Record<Address, ProductType>
+		private products: Record<Address, ProductType>,
 	) {}
 
 	async selectBuy(
 		erc20Permit: Erc20Permit,
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<{
-		isMint: boolean;
-		target: Address;
-		outputAmount: BigNumber;
-		expectedAllowance?: BigNumber;
+		isMint: boolean
+		target: Address
+		outputAmount: BigNumber
+		expectedAllowance?: BigNumber
 	}> {
 		switch (this.findProductType(erc20Permit.address)) {
 			case ProductType.INDEX:
@@ -42,14 +42,14 @@ export class MetaRouter implements Router {
 					erc20Permit as Index,
 					amountInInputToken,
 					inputToken,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.selectBuy(
 					erc20Permit as SavingsVault,
 					amountInInputToken,
-					inputToken
-				);
+					inputToken,
+				)
 		}
 	}
 
@@ -59,9 +59,9 @@ export class MetaRouter implements Router {
 		amountInInputToken: BigNumberish,
 		inputToken?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-		}>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
 			case ProductType.INDEX:
@@ -70,16 +70,16 @@ export class MetaRouter implements Router {
 					erc20Permit as Index,
 					amountInInputToken,
 					inputToken,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.buy(
 					isMint,
 					erc20Permit as SavingsVault,
 					amountInInputToken,
 					inputToken,
-					options
-				);
+					options,
+				)
 		}
 	}
 
@@ -88,9 +88,9 @@ export class MetaRouter implements Router {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-		}>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
 			case ProductType.INDEX:
@@ -98,15 +98,15 @@ export class MetaRouter implements Router {
 					erc20Permit as Index,
 					amountInInputToken,
 					inputTokenAddress,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.buyMint(
 					erc20Permit as SavingsVault,
 					amountInInputToken,
 					inputTokenAddress,
-					options
-				);
+					options,
+				)
 		}
 	}
 
@@ -114,7 +114,7 @@ export class MetaRouter implements Router {
 		contractAddress: Address,
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
-		zeroExOptions?: Partial<Zero0xQuoteOptions>
+		zeroExOptions?: Partial<Zero0xQuoteOptions>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(contractAddress)) {
 			case ProductType.INDEX:
@@ -122,14 +122,14 @@ export class MetaRouter implements Router {
 					contractAddress,
 					amountInInputToken,
 					inputTokenAddress,
-					zeroExOptions
-				);
+					zeroExOptions,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.buySwap(
 					contractAddress,
 					amountInInputToken,
-					inputTokenAddress
-				);
+					inputTokenAddress,
+				)
 		}
 	}
 
@@ -137,12 +137,12 @@ export class MetaRouter implements Router {
 		erc20Permit: Erc20Permit,
 		sharesAmount: BigNumberish,
 		outputToken?: Erc20,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<{
-		isBurn: boolean;
-		outputAmount: BigNumber;
-		target: Address;
-		expectedAllowance?: BigNumber;
+		isBurn: boolean
+		outputAmount: BigNumber
+		target: Address
+		expectedAllowance?: BigNumber
 	}> {
 		switch (this.findProductType(erc20Permit.address)) {
 			case ProductType.INDEX:
@@ -150,13 +150,13 @@ export class MetaRouter implements Router {
 					erc20Permit as Index,
 					sharesAmount,
 					outputToken,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.selectSell(
 					erc20Permit as SavingsVault,
-					sharesAmount
-				);
+					sharesAmount,
+				)
 		}
 	}
 
@@ -166,10 +166,10 @@ export class MetaRouter implements Router {
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxLoss: number;
-		}>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+			maxLoss: number
+		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
 			case ProductType.INDEX:
@@ -178,16 +178,16 @@ export class MetaRouter implements Router {
 					erc20Permit as Index,
 					sharesAmount,
 					outputTokenAddress,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.sell(
 					isBurn,
 					erc20Permit as SavingsVault,
 					sharesAmount,
 					outputTokenAddress,
-					options
-				);
+					options,
+				)
 		}
 	}
 
@@ -196,10 +196,10 @@ export class MetaRouter implements Router {
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxLoss: number;
-		}>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+			maxLoss: number
+		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
 			case ProductType.INDEX:
@@ -207,15 +207,15 @@ export class MetaRouter implements Router {
 					erc20Permit as Index,
 					sharesAmount,
 					outputTokenAddress,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
 				return this.savingsVaultRouter.sellBurn(
 					erc20Permit as SavingsVault,
 					sharesAmount,
 					outputTokenAddress,
-					options
-				);
+					options,
+				)
 		}
 	}
 
@@ -223,7 +223,7 @@ export class MetaRouter implements Router {
 		contractAddress: Address,
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(contractAddress)) {
 			case ProductType.INDEX:
@@ -231,25 +231,25 @@ export class MetaRouter implements Router {
 					contractAddress,
 					sharesAmount,
 					outputTokenAddress,
-					options
-				);
+					options,
+				)
 			case ProductType.SAVINGS_VAULT:
-				return this.savingsVaultRouter.sellSwap(contractAddress, sharesAmount);
+				return this.savingsVaultRouter.sellSwap(contractAddress, sharesAmount)
 		}
 	}
 
 	addProduct(productType: ProductType, contractAddress: Address) {
-		this.products[contractAddress] = productType;
+		this.products[contractAddress] = productType
 	}
 
 	findProductType(address: Address): ProductType {
-		const productType = this.products[address];
+		const productType = this.products[address]
 		if (productType === undefined) {
 			throw new PhutureError({
 				status: 400,
 				message: 'Product type not found',
-			});
+			})
 		}
-		return productType;
+		return productType
 	}
 }

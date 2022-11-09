@@ -42,4 +42,4 @@ export enum HttpMethod {
  * @return {method is HttpMethod} True if the method is a valid HTTP method
  */
 export const isHttpMethod = (method: unknown): method is HttpMethod =>
-	typeof method === 'string' && method in HttpMethod;
+	typeof method === 'string' && method in HttpMethod

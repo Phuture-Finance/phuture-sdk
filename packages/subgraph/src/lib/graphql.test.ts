@@ -1,13 +1,14 @@
-import { expect } from 'chai';
-import { gql } from '@apollo/client/core';
-import { Subgraph } from './subgraph';
+import { gql } from '@apollo/client/core'
+import { expect } from 'chai'
 
-const userId = '0x000000000000000000000000000000000000dead';
+import { Subgraph } from './subgraph'
+
+const userId = '0x000000000000000000000000000000000000dead'
 
 describe('get graphql client', () => {
 	const phutureGraphQlEndpoint =
-		'https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp';
-	const client = Subgraph.fromUrl(phutureGraphQlEndpoint);
+		'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-v1'
+	const client = Subgraph.fromUrl(phutureGraphQlEndpoint)
 
 	it('should get user', async () => {
 		const { data } = await client.query({
@@ -19,11 +20,11 @@ describe('get graphql client', () => {
 				}
 			`,
 			variables: { userId },
-		});
+		})
 
-		expect(data.user.id).to.equal(userId);
-	});
-});
+		expect(data.user.id).to.equal(userId)
+	})
+})
 
 // test("fetch user indices", async () => {
 // 	// Setup

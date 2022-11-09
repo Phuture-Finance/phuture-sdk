@@ -1,15 +1,16 @@
-import { BigNumberish } from 'ethers';
-import { Address } from './address';
+import { BigNumberish } from 'ethers'
+
+import { Address } from './address'
 
 /**
  * Pair of tokens represented by their addresses
  */
 export interface TokensPair {
 	/** Address of token0 */
-	token0: Address;
+	token0: Address
 
 	/** Address of token1 */
-	token1: Address;
+	token1: Address
 }
 
 /**
@@ -17,8 +18,8 @@ export interface TokensPair {
  */
 export type PairInfo = {
 	/** Liquidity of {@link TokensPair.token0} in pair */
-	reserve0: BigNumberish;
+	reserve0: BigNumberish
 
 	/** Liquidity of {@link TokensPair.token1} in pair */
-	reserve1: BigNumberish;
-} & TokensPair;
+	reserve1: BigNumberish
+} & TokensPair

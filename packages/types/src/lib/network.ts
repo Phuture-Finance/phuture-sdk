@@ -1,4 +1,4 @@
-import { ChainId } from './chain-id';
+import { ChainId } from './chain-id'
 
 /** ### Collection of ChainIds mapped to their network name */
 export enum Network {
@@ -9,4 +9,4 @@ export enum Network {
 }
 
 /** ### Network enum value of the chainId */
-export type Networkish = Network | ChainId;
+export type Networkish = Network | ChainId

@@ -1,5 +1,39 @@
 {
 	"name": "@phuture/index",
 	"version": "0.4.6",
-	"type": "commonjs"
+	"type": "commonjs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Phuture-Finance/phuture-sdk",
+		"directory": "packages/index"
+	},
+	"main": "dist/phuture-index.cjs.js",
+	"module": "dist/phuture-index.esm.js",
+	"types": "dist/phuture-index.cjs.d.ts",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"module": "./dist/phuture-index.esm.js",
+			"default": "./dist/phuture-index.cjs.js"
+		}
+	},
+	"sideEffects": false,
+	"files": [
+		"/dist"
+	],
+	"preconstruct": {
+		"entrypoints": [
+			"index.ts"
+		]
+	},
+	"dependencies": {
+		"@ethersproject/abi": "^5.7.0",
+		"@ethersproject/providers": "^5.7.2",
+		"@phuture/account": "0.4.6",
+		"@phuture/contract": "0.4.6",
+		"@phuture/erc-20": "0.4.6",
+		"@phuture/subgraph": "0.4.6",
+		"@phuture/types": "0.4.6",
+		"ethers": "5.7.2"
+	}
 }

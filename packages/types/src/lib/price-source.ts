@@ -1,5 +1,6 @@
-import { BigNumber, BigNumberish } from 'ethers';
-import { Address } from './address';
+import { BigNumber, BigNumberish } from 'ethers'
+
+import { Address } from './address'
 
 /** ### Price Source interface */
 export interface PriceSource {
@@ -15,6 +16,6 @@ export interface PriceSource {
 	price(
 		buyToken: Address,
 		sellToken: Address,
-		sellAmount: BigNumberish
-	): Promise<BigNumber>;
+		sellAmount: BigNumberish,
+	): Promise<BigNumber>
 }

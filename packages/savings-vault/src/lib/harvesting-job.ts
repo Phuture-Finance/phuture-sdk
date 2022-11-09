@@ -1,10 +1,11 @@
-import type { Address, ContractFactory } from '@phuture/types';
-import { Account } from '@phuture/account';
-import { Contract } from '@phuture/contract';
+import { Account } from '@phuture/account'
+import { Contract } from '@phuture/contract'
+import type { Address, ContractFactory } from '@phuture/types'
+
 import {
 	IHarvestingJob as HarvestingJobInterface,
 	IHarvestingJob__factory,
-} from '../types';
+} from '../types'
 
 /**
  * ### HarvestingJob Contract
@@ -22,8 +23,8 @@ export class HarvestingJob extends Contract<HarvestingJobInterface> {
 	constructor(
 		account: Account,
 		contract: Address | HarvestingJobInterface,
-		factory: ContractFactory = IHarvestingJob__factory
+		factory: ContractFactory = IHarvestingJob__factory,
 	) {
-		super(account, contract, factory);
+		super(account, contract, factory)
 	}
 }

@@ -1,5 +1,33 @@
 {
-	"name": "@phuture/account",
-	"version": "0.4.6",
-	"type": "commonjs"
+  "name": "@phuture/account",
+  "version": "0.4.6",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Phuture-Finance/phuture-sdk",
+    "directory": "packages/account"
+  },
+  "main": "dist/phuture-account.cjs.js",
+  "module": "dist/phuture-account.esm.js",
+  "types": "dist/phuture-account.cjs.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/phuture-account.esm.js",
+      "default": "./dist/phuture-account.cjs.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "/dist"
+  ],
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts"
+    ]
+  },
+  "dependencies": {
+    "@phuture/types": "0.4.6",
+    "ethers": "5.7.2"
+  }
 }

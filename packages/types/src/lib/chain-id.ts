@@ -11,7 +11,7 @@
  * @example
  * const avalancheChainId: ChainId = 43114
  */
-export type ChainId = number;
+export type ChainId = number
 
 /**
  * ### Is the given chain id valid
@@ -21,4 +21,4 @@ export type ChainId = number;
  * @returns **true** if the chain id is valid, **false** otherwise
  */
 export const isChainId = (chainId: unknown): chainId is ChainId =>
-	typeof chainId === 'number' && chainId > 0;
+	typeof chainId === 'number' && chainId > 0

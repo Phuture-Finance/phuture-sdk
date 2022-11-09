@@ -1,4 +1,4 @@
-import type { Address } from '@phuture/types';
+import type { Address } from '@phuture/types'
 
 /** ### Index Repository Interface */
 export interface IndexRepo {
@@ -9,7 +9,7 @@ export interface IndexRepo {
 	 *
 	 * @returns {Promise<Address[]>} Addresses of the holders
 	 */
-	holders(indexAddress: Address): Promise<Address[]>;
+	holders(indexAddress: Address): Promise<Address[]>
 
 	/**
 	 * ### Get the count of holders of the index
@@ -18,7 +18,7 @@ export interface IndexRepo {
 	 *
 	 * @returns {Promise<number>} The count of holders
 	 */
-	holdersCount(indexAddress: Address): Promise<number>;
+	holdersCount(indexAddress: Address): Promise<number>
 
 	/**
 	 * ### Get fees of the index
@@ -27,7 +27,7 @@ export interface IndexRepo {
 	 *
 	 * @returns {Promise<Fees>} Fees of the index
 	 */
-	fees(indexAddress: Address): Promise<Fees>;
+	fees(indexAddress: Address): Promise<Fees>
 
 	/**
 	 * ### Get price of the index in ETH
@@ -36,17 +36,17 @@ export interface IndexRepo {
 	 *
 	 * @returns Price of the index in ETH
 	 */
-	priceEth(indexAddress: Address): Promise<string>;
+	priceEth(indexAddress: Address): Promise<string>
 }
 
 /** ### Fees Interface */
 export interface Fees {
 	/** The fee for the creation of a new index */
-	minting: number;
+	minting: number
 
 	/** The fee for managing the index */
-	management: number;
+	management: number
 
 	/** The fee for the burning of an index */
-	redemption: number;
+	redemption: number
 }

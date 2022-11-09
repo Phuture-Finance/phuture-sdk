@@ -6,20 +6,19 @@ import {
 	NormalizedCacheObject,
 	OperationVariables,
 	QueryOptions,
-} from '@apollo/client/core';
-import { Network, Networkish, Url } from '@phuture/types';
-import fetch from 'cross-fetch';
-import { typePolicies } from './type-policies';
+} from '@apollo/client/core'
+import { Network, Url } from '@phuture/types'
+import fetch from 'cross-fetch'
 
-export { gql } from '@apollo/client/core';
+export { gql } from '@apollo/client/core'
 
 /** ### Defaults Phuture Subgraph address */
-export const defaultPhutureSubgraphUrl: Record<Networkish, Url> = {
+export const defaultPhutureSubgraphUrl: Record<Network, Url> = {
 	[Network.Mainnet]:
 		'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-v1',
 	[Network.CChain]:
 		'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-avax-core',
-};
+}
 
 /** Subgraph client */
 export class Subgraph<CacheShape = NormalizedCacheObject> {
@@ -40,14 +39,14 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	 * @returns {Subgraph} The new Subgraph client
 	 */
 	public static fromUrl(
-		uri: Url = defaultPhutureSubgraphUrl[Network.Mainnet]
+		uri: Url = defaultPhutureSubgraphUrl[Network.Mainnet],
 	): Subgraph {
 		const client = new ApolloClient({
 			link: new HttpLink({ uri, fetch }),
 			cache: new InMemoryCache(),
-		});
+		})
 
-		return new Subgraph(client);
+		return new Subgraph(client)
 	}
 
 	/**
@@ -58,8 +57,8 @@ export class Subgraph<CacheShape = NormalizedCacheObject> {
 	 * @returns {Promise<ApolloQueryResult>} The query result
 	 */
 	public async query<T = any, Variables = OperationVariables>(
-		options: QueryOptions<Variables, T>
+		options: QueryOptions<Variables, T>,
 	): Promise<ApolloQueryResult<T>> {
-		return this.client.query(options);
+		return this.client.query(options)
 	}
 }

@@ -1,45 +1,45 @@
-import type { Address } from '@phuture/types';
-import { BigNumberish, BytesLike } from 'ethers';
+import type { Address } from '@phuture/types'
+import { BigNumberish, BytesLike } from 'ethers'
 
 /** ### Options for 0x price endpoint */
 export interface Zero0xPriceOptions {
 	/** ### Address of account to use for the quote */
-	takerAddress: Address;
+	takerAddress: Address
 	/** ### Sources to exclude from the quote endpoint call */
-	excludedSources: string[];
+	excludedSources: string[]
 	/** ### Slippage percentage to use for the quote */
-	slippagePercentage: number;
+	slippagePercentage: number
 	/** ### Skip validation of the quote */
-	skipValidation: boolean;
+	skipValidation: boolean
 	/** ### Gas price to use for the quote */
-	gasFee: number;
+	gasFee: number
 }
 
 /** ### Response from the 0x price endpoint */
 export interface Zero0xPriceResponse {
 	/** ### Amount of tokens to buy */
-	buyAmount: BigNumberish;
+	buyAmount: BigNumberish
 	/** ### Amount of tokens to sell */
-	sellAmount: BigNumberish;
+	sellAmount: BigNumberish
 	/** ### Estimated Gas */
-	estimatedGas: BigNumberish;
+	estimatedGas: BigNumberish
 	/** ### Gas price */
-	gasPrice: BigNumberish;
+	gasPrice: BigNumberish
 }
 
 /** ### Options for 0x quote endpoint */
-export type Zero0xQuoteOptions = Zero0xPriceOptions;
+export type Zero0xQuoteOptions = Zero0xPriceOptions
 
 /** ### Response from the 0x quote endpoint */
 export interface Zero0xQuoteResponse extends Zero0xPriceResponse {
 	/** ### Address of the contract to call with data */
-	to: Address;
+	to: Address
 	/** ### Raw call data */
-	data: BytesLike;
+	data: BytesLike
 }
 
 /** ### Response from the 0x sources endpoint */
 export interface Zero0xSourcesResponse {
 	/** ### Array of sources */
-	records: string[];
+	records: string[]
 }

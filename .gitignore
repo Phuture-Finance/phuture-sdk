@@ -40,10 +40,8 @@ Thumbs.db
 
 .env
 
+packages/**/dist/
 packages/**/src/types
 packages/**/src/generated
-!/packages/comparators/
-!/packages/errors/dist/
-!/packages/pair-reserves/
-!/packages/path-finding/
-!/packages/transformers/
+
+.eslintcache

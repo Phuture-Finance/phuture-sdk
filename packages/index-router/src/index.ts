@@ -1,1 +1,1 @@
-export * from './lib/index-router';
+export * from './lib/index-router'

@@ -3,7 +3,7 @@
  *
  * @see https://url.spec.whatwg.org/#url-interface
  */
-export type Url = AbsoluteUrl | RelativeUrl;
+export type Url = AbsoluteUrl | RelativeUrl
 
 /**
  * ### Absolute URL
@@ -11,7 +11,7 @@ export type Url = AbsoluteUrl | RelativeUrl;
  * @example
  * const url: AbsoluteUrl = "https://phuture.finance"
  */
-export type AbsoluteUrl = string;
+export type AbsoluteUrl = string
 
 /**
  * ### Relative URL
@@ -19,4 +19,4 @@ export type AbsoluteUrl = string;
  * @example
  * const url: RelativeUrl = "/some/path"
  */
-export type RelativeUrl = string;
+export type RelativeUrl = string
