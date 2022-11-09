@@ -6,7 +6,7 @@ const userId = '0x000000000000000000000000000000000000dead';
 
 describe('get graphql client', () => {
 	const phutureGraphQlEndpoint =
-		'https://graph.dev.phuture.finance/subgraphs/name/phuture/mvp';
+		'https://api.thegraph.com/subgraphs/name/phuture-finance/phuture-v1';
 	const client = Subgraph.fromUrl(phutureGraphQlEndpoint);
 
 	it('should get user', async () => {

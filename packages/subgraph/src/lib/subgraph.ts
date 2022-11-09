@@ -9,7 +9,6 @@ import {
 } from '@apollo/client/core';
 import { Network, Networkish, Url } from '@phuture/types';
 import fetch from 'cross-fetch';
-import { typePolicies } from './type-policies';
 
 export { gql } from '@apollo/client/core';
 

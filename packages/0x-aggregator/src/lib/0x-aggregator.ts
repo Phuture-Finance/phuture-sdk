@@ -3,6 +3,7 @@ import { Network } from '@phuture/types';
 import axios, { AxiosInstance } from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import newDebug from 'debug';
+import axiosRetry from 'axios-retry';
 import {
 	Zero0xPriceOptions,
 	Zero0xPriceResponse,
@@ -10,6 +11,8 @@ import {
 	Zero0xQuoteResponse,
 	Zero0xSourcesResponse,
 } from './types';
+
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
 
 const debug = newDebug('@phuture:0x-aggregator');
 
