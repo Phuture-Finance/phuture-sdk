@@ -3,30 +3,33 @@
   "version": "0.4.6",
   "type": "commonjs",
   "repository": {
-	"type": "git",
-	"url": "https://github.com/Phuture-Finance/phuture-sdk",
-	"directory": "packages/subgraph"
+    "type": "git",
+    "url": "https://github.com/Phuture-Finance/phuture-sdk",
+    "directory": "packages/subgraph"
   },
   "main": "dist/phuture-subgraph.cjs.js",
   "module": "dist/phuture-subgraph.esm.js",
   "types": "dist/phuture-subgraph.cjs.d.ts",
   "exports": {
-	"./package.json": "./package.json",
-	".": {
-	  "module": "./dist/phuture-subgraph.esm.js",
-	  "default": "./dist/phuture-subgraph.cjs.js"
-	}
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/phuture-subgraph.esm.js",
+      "default": "./dist/phuture-subgraph.cjs.js"
+    }
   },
   "sideEffects": false,
   "files": [
-	"/dist"
+    "/dist"
   ],
   "preconstruct": {
-	"entrypoints": [
-	  "index.ts"
-	]
+    "entrypoints": [
+      "index.ts"
+    ]
   },
   "dependencies": {
-	"@phuture/types": "0.4.6"
+    "@apollo/client": "^3.7.1",
+    "@phuture/types": "0.4.6",
+    "cross-fetch": "^3.1.5",
+    "graphql": "^16.6.0"
   }
 }

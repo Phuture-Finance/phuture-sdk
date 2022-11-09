@@ -3,27 +3,30 @@
   "version": "0.4.6",
   "type": "commonjs",
   "repository": {
-	"type": "git",
-	"url": "https://github.com/Phuture-Finance/phuture-sdk",
-	"directory": "packages/types"
+    "type": "git",
+    "url": "https://github.com/Phuture-Finance/phuture-sdk",
+    "directory": "packages/types"
   },
   "main": "dist/phuture-types.cjs.js",
   "module": "dist/phuture-types.esm.js",
   "types": "dist/phuture-types.cjs.d.ts",
   "exports": {
-	"./package.json": "./package.json",
-	".": {
-	  "module": "./dist/phuture-types.esm.js",
-	  "default": "./dist/phuture-types.cjs.js"
-	}
+    "./package.json": "./package.json",
+    ".": {
+      "module": "./dist/phuture-types.esm.js",
+      "default": "./dist/phuture-types.cjs.js"
+    }
   },
   "sideEffects": false,
   "files": [
-	"/dist"
+    "/dist"
   ],
   "preconstruct": {
-	"entrypoints": [
-	  "index.ts"
-	]
+    "entrypoints": [
+      "index.ts"
+    ]
+  },
+  "dependencies": {
+    "ethers": "5.7.2"
   }
 }

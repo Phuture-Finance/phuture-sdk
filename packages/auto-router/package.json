@@ -1,39 +1,41 @@
 {
-  "name": "@phuture/auto-router",
-  "version": "0.4.9",
-  "type": "commonjs",
-  "repository": {
-	"type": "git",
-	"url": "https://github.com/Phuture-Finance/phuture-sdk",
-	"directory": "packages/auto-router"
-  },
-  "main": "dist/phuture-auto-router.cjs.js",
-  "module": "dist/phuture-auto-router.esm.js",
-  "types": "dist/phuture-auto-router.cjs.d.ts",
-  "exports": {
-	"./package.json": "./package.json",
-	".": {
-	  "module": "./dist/phuture-auto-router.esm.js",
-	  "default": "./dist/phuture-auto-router.cjs.js"
+	"name": "@phuture/auto-router",
+	"version": "0.4.9",
+	"type": "commonjs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Phuture-Finance/phuture-sdk",
+		"directory": "packages/auto-router"
+	},
+	"main": "dist/phuture-auto-router.cjs.js",
+	"module": "dist/phuture-auto-router.esm.js",
+	"types": "dist/phuture-auto-router.cjs.d.ts",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"module": "./dist/phuture-auto-router.esm.js",
+			"default": "./dist/phuture-auto-router.cjs.js"
+		}
+	},
+	"sideEffects": false,
+	"files": [
+		"/dist"
+	],
+	"preconstruct": {
+		"entrypoints": [
+			"index.ts"
+		]
+	},
+	"dependencies": {
+		"@ethersproject/abstract-provider": "^5.7.0",
+		"@phuture/0x-aggregator": "0.4.7",
+		"@phuture/erc-20": "0.4.6",
+		"@phuture/errors": "0.4.6",
+		"@phuture/index": "0.4.6",
+		"@phuture/index-router": "0.4.6",
+		"@phuture/price-oracle": "0.4.6",
+		"@phuture/router": "0.4.7",
+		"@phuture/types": "0.4.6",
+		"ethers": "5.7.2"
 	}
-  },
-  "sideEffects": false,
-  "files": [
-	"/dist"
-  ],
-  "preconstruct": {
-	"entrypoints": [
-	  "index.ts"
-	]
-  },
-  "dependencies": {
-	"@phuture/0x-aggregator": "0.4.7",
-	"@phuture/erc-20": "0.4.6",
-	"@phuture/errors": "0.4.6",
-	"@phuture/index": "0.4.6",
-	"@phuture/index-router": "0.4.6",
-	"@phuture/price-oracle": "0.4.6",
-	"@phuture/router": "0.4.7",
-	"@phuture/types": "0.4.6"
-  }
 }
