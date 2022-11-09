@@ -40,6 +40,7 @@ Thumbs.db
 
 .env
 
+packages/**/dist
 packages/**/src/types
 packages/**/src/generated
 !/packages/comparators/

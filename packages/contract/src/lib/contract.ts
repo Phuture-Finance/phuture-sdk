@@ -1,12 +1,12 @@
-import { Contract as EthersContract } from 'ethers';
-import type { Address, ContractFactory } from '@phuture/types';
-import { isAddress } from '@phuture/types';
-import { Account } from '@phuture/account';
+import { Account } from '@phuture/account'
+import type { Address, ContractFactory } from '@phuture/types'
+import { isAddress } from '@phuture/types'
+import { Contract as EthersContract } from 'ethers'
 
 /** ### Contract Instance */
 export class Contract<C extends EthersContract> {
 	/** ### Contract instance */
-	public contract: C;
+	public contract: C
 
 	/**
 	 * ### Constructs an instance of the contract class
@@ -20,11 +20,11 @@ export class Contract<C extends EthersContract> {
 	constructor(
 		private _account: Account,
 		contract: C | Address,
-		protected readonly contractFactory: ContractFactory
+		protected readonly contractFactory: ContractFactory,
 	) {
 		this.contract = isAddress(contract)
 			? (contractFactory.connect(contract, _account.signer) as C)
-			: contract;
+			: contract
 	}
 
 	/**
@@ -33,7 +33,7 @@ export class Contract<C extends EthersContract> {
 	 * @returns Address of the contract
 	 */
 	get address(): Address {
-		return this.contract.address;
+		return this.contract.address
 	}
 
 	/**
@@ -44,8 +44,8 @@ export class Contract<C extends EthersContract> {
 	set address(address: Address) {
 		this.contract = this.contractFactory.connect(
 			address,
-			this._account.signer
-		) as C;
+			this._account.signer,
+		) as C
 	}
 
 	/**
@@ -54,7 +54,7 @@ export class Contract<C extends EthersContract> {
 	 * @returns Signer used for interacting with the contract
 	 */
 	get account(): Account {
-		return this._account;
+		return this._account
 	}
 
 	/**
@@ -63,10 +63,10 @@ export class Contract<C extends EthersContract> {
 	 * @param account Account used for interacting with the contract
 	 */
 	set account(account: Account) {
-		this._account = account;
+		this._account = account
 		this.contract = this.contractFactory.connect(
 			this.address,
-			account.signer
-		) as C;
+			account.signer,
+		) as C
 	}
 }

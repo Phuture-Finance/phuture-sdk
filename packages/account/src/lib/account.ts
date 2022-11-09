@@ -1,5 +1,5 @@
-import { BigNumber, Signer } from 'ethers';
-import { Address } from '@phuture/types';
+import { Address } from '@phuture/types'
+import { BigNumber, Signer } from 'ethers'
 
 /** ### Account class for interacting with the blockchain through the Signer */
 export class Account {
@@ -18,7 +18,7 @@ export class Account {
 	 * @returns The signer used for the account
 	 */
 	get signer(): Signer {
-		return this._signer;
+		return this._signer
 	}
 
 	/**
@@ -27,7 +27,7 @@ export class Account {
 	 * @param _signer The signer to use for the account
 	 */
 	set signer(_signer: Signer) {
-		this._signer = _signer;
+		this._signer = _signer
 	}
 
 	/**
@@ -36,7 +36,7 @@ export class Account {
 	 * @returns The address of the current signer
 	 */
 	public async address(): Promise<Address> {
-		return this.signer.getAddress();
+		return this.signer.getAddress()
 	}
 
 	/**
@@ -45,7 +45,7 @@ export class Account {
 	 * @returns The balance of the current signer
 	 */
 	public async balance(): Promise<BigNumber> {
-		return this.signer.getBalance();
+		return this.signer.getBalance()
 	}
 
 	/**
@@ -54,7 +54,7 @@ export class Account {
 	 * @returns The gas price
 	 */
 	public async gasPrice(): Promise<BigNumber> {
-		return this.signer.getGasPrice();
+		return this.signer.getGasPrice()
 	}
 
 	/**
@@ -63,6 +63,6 @@ export class Account {
 	 * @returns The chain id
 	 */
 	public async chainId(): Promise<number> {
-		return this.signer.getChainId();
+		return this.signer.getChainId()
 	}
 }

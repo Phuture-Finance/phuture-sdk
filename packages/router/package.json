@@ -1,5 +1,34 @@
 {
-	"name": "@phuture/router",
-	"version": "0.4.7",
-	"type": "commonjs"
+  "name": "@phuture/router",
+  "version": "0.4.7",
+  "type": "commonjs",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Phuture-Finance/phuture-sdk",
+	"directory": "packages/router"
+  },
+  "main": "dist/phuture-router.cjs.js",
+  "module": "dist/phuture-router.esm.js",
+  "types": "dist/phuture-router.cjs.d.ts",
+  "exports": {
+	"./package.json": "./package.json",
+	".": {
+	  "module": "./dist/phuture-router.esm.js",
+	  "default": "./dist/phuture-router.cjs.js"
+	}
+  },
+  "sideEffects": false,
+  "files": [
+	"/dist"
+  ],
+  "preconstruct": {
+	"entrypoints": [
+	  "index.ts"
+	]
+  },
+  "dependencies": {
+	"@phuture/0x-aggregator": "0.4.7",
+	"@phuture/erc-20": "0.4.6",
+	"@phuture/types": "0.4.6"
+  }
 }

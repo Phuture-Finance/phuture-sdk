@@ -3,15 +3,16 @@ import {
 	gql,
 	Subgraph,
 	Types,
-} from '@phuture/subgraph';
-import { Address, Network, Networkish } from '@phuture/types';
-import { constants } from 'ethers';
-import { Fees, IndexRepo } from './interfaces';
+} from '@phuture/subgraph'
+import { Address, Network } from '@phuture/types'
+import { constants } from 'ethers'
+
+import { Fees, IndexRepo } from './interfaces'
 
 /** ### Subgraph Index Repository */
 export class SubgraphIndexRepo implements IndexRepo {
 	/** ### Subgraph client instance */
-	private readonly _subgraph: Subgraph;
+	private readonly _subgraph: Subgraph
 
 	/**
 	 * ### Creates a new Subgraph Index Repository instance
@@ -21,7 +22,7 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 * @returns {SubgraphIndexRepo} Subgraph Index Repository instance
 	 */
 	constructor(_subgraph: Subgraph) {
-		this._subgraph = _subgraph;
+		this._subgraph = _subgraph
 	}
 
 	/**
@@ -33,7 +34,7 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 */
 	async holders(indexAddress: Address): Promise<Address[]> {
 		interface IndexHoldersData {
-			index: Types.Index;
+			index: Types.Index
 		}
 
 		// TODO: fix pagination for large array of holders
@@ -53,7 +54,7 @@ export class SubgraphIndexRepo implements IndexRepo {
 			variables: {
 				indexAddress,
 			},
-		});
+		})
 
 		// TODO: move dead address to global constants
 		return data.index.users
@@ -61,8 +62,8 @@ export class SubgraphIndexRepo implements IndexRepo {
 			.filter(
 				(address) =>
 					address !== '0x000000000000000000000000000000000000dead' &&
-					address !== constants.AddressZero
-			);
+					address !== constants.AddressZero,
+			)
 	}
 
 	/**
@@ -74,7 +75,7 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 */
 	public async holdersCount(indexAddress: Address): Promise<number> {
 		interface IndexUniqueHoldersData {
-			index: Types.Index;
+			index: Types.Index
 		}
 
 		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
@@ -89,9 +90,9 @@ export class SubgraphIndexRepo implements IndexRepo {
 			variables: {
 				indexAddress,
 			},
-		});
+		})
 
-		return data.index.uniqueHolders;
+		return data.index.uniqueHolders
 	}
 
 	/**
@@ -103,7 +104,7 @@ export class SubgraphIndexRepo implements IndexRepo {
 	 */
 	public async fees(indexAddress: Address): Promise<Fees> {
 		interface IndexUniqueHoldersData {
-			index: Types.Index;
+			index: Types.Index
 		}
 
 		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
@@ -120,18 +121,18 @@ export class SubgraphIndexRepo implements IndexRepo {
 			variables: {
 				indexAddress,
 			},
-		});
+		})
 
 		return {
 			minting: data.index.feeMint,
 			management: data.index.feeBurn,
 			redemption: data.index.feeAUMPercent,
-		};
+		}
 	}
 
 	async priceEth(indexAddress: Address): Promise<string> {
 		interface IndexUniqueHoldersData {
-			index: Types.Index;
+			index: Types.Index
 		}
 
 		const { data } = await this._subgraph.query<IndexUniqueHoldersData>({
@@ -146,14 +147,17 @@ export class SubgraphIndexRepo implements IndexRepo {
 			variables: {
 				indexAddress,
 			},
-		});
+		})
 
-		const [int, decimal] = String(data.index.basePriceETH).split('.');
+		const [int, decimal] = String(data.index.basePriceETH).split('.')
 
-		return int.concat('.', decimal.substring(0, Math.min(decimal.length, 18)));
+		return `${int}.${String(decimal).slice(
+			0,
+			Math.min(String(decimal).length, 18),
+		)}`
 	}
 }
 
 /** ### Subgraph Index Repository Singleton */
-export const subgraphIndexRepo = (network: Networkish = Network.Mainnet) =>
-	new SubgraphIndexRepo(Subgraph.fromUrl(defaultPhutureSubgraphUrl[network]));
+export const subgraphIndexRepo = (network: Network = Network.Mainnet) =>
+	new SubgraphIndexRepo(Subgraph.fromUrl(defaultPhutureSubgraphUrl[network]))

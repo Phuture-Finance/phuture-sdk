@@ -1,1 +1,1 @@
-export * from './lib/meta-router';
+export * from './lib/meta-router'

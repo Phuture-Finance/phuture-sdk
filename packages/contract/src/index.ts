@@ -1,1 +1,1 @@
-export * from './lib/contract';
+export * from './lib/contract'

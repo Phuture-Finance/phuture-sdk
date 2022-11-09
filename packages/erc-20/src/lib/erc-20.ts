@@ -1,27 +1,27 @@
-import { Address, ContractFactory, Network, PriceSource } from '@phuture/types';
-import { BigNumber, BigNumberish } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
-import { Contract } from '@phuture/contract';
-import { Account } from '@phuture/account';
-import { InsufficientAllowanceError } from '@phuture/errors';
-import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types';
-import { Addresses } from './addresses';
+import { Account } from '@phuture/account'
+import { Contract } from '@phuture/contract'
+import { InsufficientAllowanceError } from '@phuture/errors'
+import { Address, ContractFactory, PriceSource } from '@phuture/types'
+import { BigNumber, BigNumberish } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
+
+import { ERC20 as ERC20ContractInterface, ERC20__factory } from '../types'
 
 /** ### ERC20 Token Contract */
 export class Erc20<
-	C extends ERC20ContractInterface = ERC20ContractInterface
+	C extends ERC20ContractInterface = ERC20ContractInterface,
 > extends Contract<C> {
 	/** ### Price source */
-	protected _priceSource?: PriceSource;
+	protected _priceSource?: PriceSource
 
 	/** ### Decimals of the token */
-	private _decimals?: number;
+	private _decimals?: number
 
 	/** ### Symbol of the token */
-	private _symbol?: string;
+	private _symbol?: string
 
 	/** ### Name of the token */
-	private _name?: string;
+	private _name?: string
 
 	/**
 	 * ### Creates a new ERC20 instance
@@ -35,9 +35,9 @@ export class Erc20<
 	constructor(
 		account: Account,
 		contract: Address | C,
-		factory: ContractFactory = ERC20__factory
+		factory: ContractFactory = ERC20__factory,
 	) {
-		super(account, contract, factory);
+		super(account, contract, factory)
 	}
 
 	/**
@@ -48,9 +48,9 @@ export class Erc20<
 	 * @returns {this} Index instance
 	 */
 	public withPriceSource(priceSource: PriceSource): this {
-		this._priceSource = priceSource;
+		this._priceSource = priceSource
 
-		return this;
+		return this
 	}
 
 	/**
@@ -59,9 +59,9 @@ export class Erc20<
 	 * @returns Decimals of the token
 	 */
 	public async decimals(): Promise<number> {
-		this._decimals ??= await this.contract.decimals();
+		this._decimals ??= await this.contract.decimals()
 
-		return this._decimals;
+		return this._decimals
 	}
 
 	/**
@@ -70,9 +70,9 @@ export class Erc20<
 	 * @returns Symbol of the token
 	 */
 	public async symbol(): Promise<string> {
-		this._symbol ??= await this.contract.symbol();
+		this._symbol ??= await this.contract.symbol()
 
-		return this._symbol;
+		return this._symbol
 	}
 
 	/**
@@ -81,9 +81,9 @@ export class Erc20<
 	 * @returns Name of the token
 	 */
 	public async name(): Promise<string> {
-		this._name ??= await this.contract.name();
+		this._name ??= await this.contract.name()
 
-		return this._name;
+		return this._name
 	}
 
 	/**
@@ -92,10 +92,10 @@ export class Erc20<
 	 * @returns Formatted total supply of the token
 	 */
 	public async formattedTotalSupply(): Promise<string> {
-		const totalSupply = await this.contract.totalSupply();
-		const decimals = await this.decimals();
+		const totalSupply = await this.contract.totalSupply()
+		const decimals = await this.decimals()
 
-		return formatUnits(totalSupply, decimals);
+		return formatUnits(totalSupply, decimals)
 	}
 
 	/**
@@ -106,10 +106,10 @@ export class Erc20<
 	 * @returns Formatted balance of the account
 	 */
 	public async formattedBalanceOf(account: Address): Promise<string> {
-		const balance = await this.contract.balanceOf(account);
-		const decimals = await this.decimals();
+		const balance = await this.contract.balanceOf(account)
+		const decimals = await this.decimals()
 
-		return formatUnits(balance, decimals);
+		return formatUnits(balance, decimals)
 	}
 
 	/**
@@ -122,17 +122,17 @@ export class Erc20<
 	 */
 	public async checkAllowance(
 		account: Address,
-		expectedAmount: BigNumberish
+		expectedAmount: BigNumberish,
 	): Promise<true> {
 		const allowance = await this.contract.allowance(
 			await this.account.address(),
-			account
-		);
+			account,
+		)
 
 		if (allowance.lt(expectedAmount))
-			throw new InsufficientAllowanceError(account, expectedAmount, allowance);
+			throw new InsufficientAllowanceError(account, expectedAmount, allowance)
 
-		return true;
+		return true
 	}
 
 	/**
@@ -144,11 +144,11 @@ export class Erc20<
 	 * @returns {Promise<BigNumber>} Price of the index in sellToken
 	 */
 	public async price(
-		sellToken: Address = Addresses[Network.Mainnet]['usdc'],
-		sellAmount: BigNumberish
+		sellToken: Address,
+		sellAmount: BigNumberish,
 	): Promise<BigNumber> {
-		if (!this._priceSource) throw new Error('No price source');
+		if (!this._priceSource) throw new Error('No price source')
 
-		return this._priceSource.price(this.address, sellToken, sellAmount);
+		return this._priceSource.price(this.address, sellToken, sellAmount)
 	}
 }

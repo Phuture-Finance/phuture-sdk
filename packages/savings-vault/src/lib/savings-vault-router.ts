@@ -1,10 +1,11 @@
-import { Erc20, StandardPermitArguments } from '@phuture/erc-20';
-import { Address } from '@phuture/types';
-import { Router } from '@phuture/router';
-import { BigNumber, BigNumberish } from 'ethers';
-import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { InsufficientAllowanceError, PhutureError } from '@phuture/errors';
-import { SavingsVault } from './savings-vault';
+import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Erc20, StandardPermitArguments } from '@phuture/erc-20'
+import { InsufficientAllowanceError, PhutureError } from '@phuture/errors'
+import { Router } from '@phuture/router'
+import { Address } from '@phuture/types'
+import { BigNumber, BigNumberish } from 'ethers'
+
+import { SavingsVault } from './savings-vault'
 
 /** ### SavingsVaultRouter class */
 export class SavingsVaultRouter implements Router {
@@ -23,16 +24,16 @@ export class SavingsVaultRouter implements Router {
 	async selectBuy(
 		savingsVault: SavingsVault,
 		amountInInputToken: BigNumberish,
-		inputToken?: Erc20
+		inputToken?: Erc20,
 	): Promise<{
-		isMint: boolean;
-		target: Address;
-		outputAmount: BigNumber;
-		expectedAllowance?: BigNumber;
+		isMint: boolean
+		target: Address
+		outputAmount: BigNumber
+		expectedAllowance?: BigNumber
 	}> {
-		const target = savingsVault.address;
+		const target = savingsVault.address
 
-		let expectedAllowance: BigNumber | undefined;
+		let expectedAllowance: BigNumber | undefined
 		if (inputToken) {
 			if (
 				inputToken.address.toLowerCase() !==
@@ -42,15 +43,15 @@ export class SavingsVaultRouter implements Router {
 					status: 400,
 					message:
 						'Input token is not the underlying asset token of the SavingsVault',
-				});
+				})
 			}
 			try {
-				await inputToken.checkAllowance(target, amountInInputToken);
+				await inputToken.checkAllowance(target, amountInInputToken)
 			} catch (error) {
 				if (error instanceof InsufficientAllowanceError) {
-					expectedAllowance = error.expectedAllowance;
+					expectedAllowance = error.expectedAllowance
 				} else {
-					throw error;
+					throw error
 				}
 			}
 		}
@@ -59,16 +60,16 @@ export class SavingsVaultRouter implements Router {
 			isMint: true,
 			target,
 			outputAmount: await savingsVault.contract.previewDeposit(
-				amountInInputToken
+				amountInInputToken,
 			),
 			expectedAllowance,
-		};
+		}
 	}
 
 	/**
 	 * ### Auto Buy
 	 *
-	 * @param isMint True if minting, false if swapping
+	 * @param _isMint True if minting, false if swapping
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amountInInputToken Amount in input token
 	 * @param inputTokenAddress Address of input token
@@ -77,20 +78,20 @@ export class SavingsVaultRouter implements Router {
 	 * @returns mint or swap transaction
 	 */
 	async buy(
-		isMint: boolean,
+		_isMint: boolean,
 		savingsVault: SavingsVault,
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-		}>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+		}>,
 	): Promise<TransactionResponse> {
 		return this.buyMint(
 			savingsVault,
 			amountInInputToken,
 			inputTokenAddress,
-			options
-		);
+			options,
+		)
 	}
 
 	/**
@@ -98,7 +99,7 @@ export class SavingsVaultRouter implements Router {
 	 *
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amountInInputToken Amount in input token
-	 * @param inputTokenAddress Address of input token
+	 * @param _inputTokenAddress Address of input token
 	 * @param options 0x request options and permit options for transaction
 	 *
 	 * @returns mint transaction
@@ -106,12 +107,12 @@ export class SavingsVaultRouter implements Router {
 	public async buyMint(
 		savingsVault: SavingsVault,
 		amountInInputToken: BigNumberish,
-		inputTokenAddress?: Address,
+		_inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-		}>
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+		}>,
 	): Promise<TransactionResponse> {
-		const accountAddress = await savingsVault.account.address();
+		const accountAddress = await savingsVault.account.address()
 		if (options?.permitOptions !== undefined) {
 			const depositWithPermitEstimatedGas =
 				await savingsVault.contract.estimateGas.depositWithPermit(
@@ -120,8 +121,8 @@ export class SavingsVaultRouter implements Router {
 					options.permitOptions.deadline,
 					options.permitOptions.v,
 					options.permitOptions.r,
-					options.permitOptions.s
-				);
+					options.permitOptions.s,
+				)
 			return savingsVault.contract.depositWithPermit(
 				amountInInputToken,
 				await savingsVault.account.address(),
@@ -129,41 +130,41 @@ export class SavingsVaultRouter implements Router {
 				options.permitOptions.v,
 				options.permitOptions.r,
 				options.permitOptions.s,
-				{ gasLimit: depositWithPermitEstimatedGas.mul(100).div(95) }
-			);
+				{ gasLimit: depositWithPermitEstimatedGas.mul(100).div(95) },
+			)
 		}
 		const sellToken = new Erc20(
 			savingsVault.account,
-			await savingsVault.contract.asset()
-		);
-		await sellToken.checkAllowance(savingsVault.address, amountInInputToken);
+			await savingsVault.contract.asset(),
+		)
+		await sellToken.checkAllowance(savingsVault.address, amountInInputToken)
 		const estimatedGas = await savingsVault.contract.estimateGas.deposit(
 			amountInInputToken,
-			accountAddress
-		);
+			accountAddress,
+		)
 		return savingsVault.contract.deposit(amountInInputToken, accountAddress, {
 			gasLimit: estimatedGas.mul(100).div(80),
-		});
+		})
 	}
 
 	/**
 	 * ### Buy swap
 	 *
-	 * @param savingsVaultAddress Address of the Savings Vault
-	 * @param amountInInputToken amount in input token
-	 * @param inputTokenAddress Address of input token
+	 * @param _savingsVaultAddress Address of the Savings Vault
+	 * @param _amountInInputToken amount in input token
+	 * @param _inputTokenAddress Address of input token
 	 *
 	 * @returns swap transaction
 	 */
 	public async buySwap(
-		savingsVaultAddress: Address,
-		amountInInputToken: BigNumberish,
-		inputTokenAddress?: Address
+		_savingsVaultAddress: Address,
+		_amountInInputToken: BigNumberish,
+		_inputTokenAddress?: Address,
 	): Promise<TransactionResponse> {
 		throw new PhutureError({
 			status: 404,
 			message: 'buySwap method is not defined',
-		});
+		})
 	}
 
 	/**
@@ -179,25 +180,25 @@ export class SavingsVaultRouter implements Router {
 	 */
 	async selectSell(
 		savingsVault: SavingsVault,
-		amount: BigNumberish
+		amount: BigNumberish,
 	): Promise<{
-		isBurn: boolean;
-		outputAmount: BigNumber;
-		target: Address;
-		expectedAllowance?: BigNumber;
+		isBurn: boolean
+		outputAmount: BigNumber
+		target: Address
+		expectedAllowance?: BigNumber
 	}> {
 		return {
 			isBurn: true,
 			target: savingsVault.address,
 			outputAmount: await savingsVault.contract.previewRedeem(amount),
 			expectedAllowance: undefined,
-		};
+		}
 	}
 
 	/**
 	 * ### Auto Sell
 	 *
-	 * @param isBurn true if tx is burn, false if swap
+	 * @param _isBurn true if tx is burn, false if swap
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
 	 * @param outputTokenAddress Address of output token
@@ -206,15 +207,15 @@ export class SavingsVaultRouter implements Router {
 	 * @returns burn or swap transaction
 	 */
 	async sell(
-		isBurn: boolean,
+		_isBurn: boolean,
 		savingsVault: SavingsVault,
 		amount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			maxLoss?: number;
-		}>
+			maxLoss?: number
+		}>,
 	): Promise<TransactionResponse> {
-		return this.sellBurn(savingsVault, amount, outputTokenAddress, options);
+		return this.sellBurn(savingsVault, amount, outputTokenAddress, options)
 	}
 
 	/**
@@ -222,7 +223,7 @@ export class SavingsVaultRouter implements Router {
 	 *
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
-	 * @param outputTokenAddress Address of output token
+	 * @param _outputTokenAddress Address of output token
 	 * @param options maxLoss option
 	 *
 	 * @returns burn transaction
@@ -230,48 +231,48 @@ export class SavingsVaultRouter implements Router {
 	public async sellBurn(
 		savingsVault: SavingsVault,
 		amount: BigNumberish,
-		outputTokenAddress?: Address,
+		_outputTokenAddress?: Address,
 		options?: Partial<{
-			maxLoss: number;
-		}>
+			maxLoss: number
+		}>,
 	): Promise<TransactionResponse> {
-		const owner = await savingsVault.account.address();
+		const owner = await savingsVault.account.address()
 
 		if (options?.maxLoss) {
 			if (options.maxLoss < 0 || options.maxLoss >= 10000)
-				throw new RangeError('Parameter maxLoss must be between 0 and 10000.');
+				throw new RangeError('Parameter maxLoss must be between 0 and 10000.')
 
-			const redeemed = await savingsVault.contract.previewRedeem(amount);
-			const minOutputAmount = redeemed.mul(10000 - options.maxLoss).div(10000);
+			const redeemed = await savingsVault.contract.previewRedeem(amount)
+			const minOutputAmount = redeemed.mul(10000 - options.maxLoss).div(10000)
 
 			return savingsVault.redeemWithMinOutputAmount(
 				amount,
 				owner,
 				owner,
-				minOutputAmount
-			);
+				minOutputAmount,
+			)
 		}
 
-		return savingsVault.redeem(amount, owner, owner);
+		return savingsVault.redeem(amount, owner, owner)
 	}
 
 	/**
 	 * ### Sell Swap
 	 *
-	 * @param savingsVaultAddress Address of the Savings Vault
-	 * @param amount Amount of Savings Vault shares
-	 * @param outputTokenAddress Address of output token
+	 * @param _savingsVaultAddress Address of the Savings Vault
+	 * @param _amount Amount of Savings Vault shares
+	 * @param _outputTokenAddress Address of output token
 	 *
 	 * @returns burn transaction
 	 */
 	public async sellSwap(
-		savingsVaultAddress: Address,
-		amount: BigNumberish,
-		outputTokenAddress?: Address
+		_savingsVaultAddress: Address,
+		_amount: BigNumberish,
+		_outputTokenAddress?: Address,
 	): Promise<TransactionResponse> {
 		throw new PhutureError({
 			status: 404,
 			message: 'sellSwap method is not defined',
-		});
+		})
 	}
 }

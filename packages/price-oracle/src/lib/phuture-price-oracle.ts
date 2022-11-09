@@ -1,29 +1,23 @@
-import {
-	Address,
-	ContractFactory,
-	Network,
-	Networkish,
-	PriceSource,
-} from '@phuture/types';
-import { Contract } from '@phuture/contract';
-import { Account } from '@phuture/account';
+import { Account } from '@phuture/account'
+import { Contract } from '@phuture/contract'
+import { Address, ContractFactory, Network } from '@phuture/types'
 
 import {
 	PhuturePriceOracle as PhuturePriceOracleContractInterface,
 	PhuturePriceOracle__factory,
-} from '../types';
+} from '../types'
 
 /** ### Default PhuturePriceOracle address for network */
-export const defaultPhuturePriceOracleAddress: Record<Networkish, Address> = {
+export const defaultPhuturePriceOracleAddress: Record<Network, Address> = {
 	/** ### Default PhuturePriceOracle address on mainnet. */
-	[Network.Mainnet]: '0x384ac33558821383fF4fC73D1DEe3539a74bf540',
+	[Network.Mainnet]: '0x384ac33558821383ff4fc73d1dee3539a74bf540',
 	/** ### Default PhuturePriceOracle address on c-chain. */
-	[Network.CChain]: '0x69E848b2F41019340CeC3e6696D5c937e74Da96b',
-};
+	[Network.CChain]: '0x69e848b2f41019340cec3e6696d5c937e74da96b',
+}
 
 /** ### ERC20 Token Contract */
 export class PhuturePriceOracle<
-	C extends PhuturePriceOracleContractInterface = PhuturePriceOracleContractInterface
+	C extends PhuturePriceOracleContractInterface = PhuturePriceOracleContractInterface,
 > extends Contract<C> {
 	/**
 	 * ### Creates a new PhuturePriceOracle instance
@@ -37,8 +31,8 @@ export class PhuturePriceOracle<
 	constructor(
 		account: Account,
 		contract: Address | C = defaultPhuturePriceOracleAddress[Network.Mainnet],
-		factory: ContractFactory = PhuturePriceOracle__factory
+		factory: ContractFactory = PhuturePriceOracle__factory,
 	) {
-		super(account, contract, factory);
+		super(account, contract, factory)
 	}
 }

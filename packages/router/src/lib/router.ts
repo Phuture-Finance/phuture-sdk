@@ -1,8 +1,8 @@
-import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20';
-import { Address } from '@phuture/types';
-import { BigNumber, BigNumberish } from 'ethers';
-import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { Zero0xQuoteOptions } from '@phuture/0x-aggregator';
+import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Zero0xQuoteOptions } from '@phuture/0x-aggregator'
+import { Erc20, Erc20Permit, StandardPermitArguments } from '@phuture/erc-20'
+import { Address } from '@phuture/types'
+import { BigNumber, BigNumberish } from 'ethers'
 
 /** ### Router Interface */
 export interface Router {
@@ -23,13 +23,13 @@ export interface Router {
 		erc20PermitToken: Erc20Permit,
 		amountInInputToken: BigNumberish,
 		inputToken?: Erc20,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<{
-		isMint: boolean;
-		target: Address;
-		outputAmount: BigNumber;
-		expectedAllowance?: BigNumber;
-	}>;
+		isMint: boolean
+		target: Address
+		outputAmount: BigNumber
+		expectedAllowance?: BigNumber
+	}>
 
 	/**
 	 * ### Auto Buy
@@ -48,10 +48,10 @@ export interface Router {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-		}>
-	): Promise<TransactionResponse>;
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+		}>,
+	): Promise<TransactionResponse>
 
 	/**
 	 * ### Buy mint
@@ -68,10 +68,10 @@ export interface Router {
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-		}>
-	): Promise<TransactionResponse>;
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+		}>,
+	): Promise<TransactionResponse>
 
 	/**
 	 * ### Buy swap
@@ -87,8 +87,8 @@ export interface Router {
 		contractAddress: Address,
 		amountInInputToken: BigNumberish,
 		inputTokenAddress?: Address,
-		zeroExOptions?: Partial<Zero0xQuoteOptions>
-	): Promise<TransactionResponse>;
+		zeroExOptions?: Partial<Zero0xQuoteOptions>,
+	): Promise<TransactionResponse>
 
 	/**
 	 * ### Select sell
@@ -107,13 +107,13 @@ export interface Router {
 		erc20PermitToken: Erc20Permit,
 		sharesAmount: BigNumberish,
 		outputToken?: Erc20,
-		options?: Partial<Zero0xQuoteOptions>
+		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<{
-		isBurn: boolean;
-		outputAmount: BigNumber;
-		target: Address;
-		expectedAllowance?: BigNumber;
-	}>;
+		isBurn: boolean
+		outputAmount: BigNumber
+		target: Address
+		expectedAllowance?: BigNumber
+	}>
 
 	/**
 	 * ### Auto Sell
@@ -133,11 +133,11 @@ export interface Router {
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxLoss?: number;
-		}>
-	): Promise<TransactionResponse>;
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+			maxLoss?: number
+		}>,
+	): Promise<TransactionResponse>
 
 	/**
 	 * ### Sell Burn
@@ -154,11 +154,11 @@ export interface Router {
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
 		options?: Partial<{
-			permitOptions: Omit<StandardPermitArguments, 'amount'>;
-			zeroExOptions: Partial<Zero0xQuoteOptions>;
-			maxLoss?: number;
-		}>
-	): Promise<TransactionResponse>;
+			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			zeroExOptions: Partial<Zero0xQuoteOptions>
+			maxLoss?: number
+		}>,
+	): Promise<TransactionResponse>
 
 	/**
 	 * ### Sell Swap
@@ -174,6 +174,6 @@ export interface Router {
 		contractAddress: Address, //change it here to address of Contract
 		sharesAmount: BigNumberish,
 		outputTokenAddress?: Address,
-		options?: Partial<Zero0xQuoteOptions>
-	): Promise<TransactionResponse>;
+		options?: Partial<Zero0xQuoteOptions>,
+	): Promise<TransactionResponse>
 }

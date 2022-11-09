@@ -1,5 +1,32 @@
 {
-	"name": "@phuture/errors",
-	"version": "0.4.6",
-	"type": "commonjs"
+  "name": "@phuture/errors",
+  "version": "0.4.6",
+  "type": "commonjs",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Phuture-Finance/phuture-sdk",
+	"directory": "packages/errors"
+  },
+  "main": "dist/phuture-errors.cjs.js",
+  "module": "dist/phuture-errors.esm.js",
+  "types": "dist/phuture-errors.cjs.d.ts",
+  "exports": {
+	"./package.json": "./package.json",
+	".": {
+	  "module": "./dist/phuture-errors.esm.js",
+	  "default": "./dist/phuture-errors.cjs.js"
+	}
+  },
+  "sideEffects": false,
+  "files": [
+	"/dist"
+  ],
+  "preconstruct": {
+	"entrypoints": [
+	  "index.ts"
+	]
+  },
+  "dependencies": {
+	"@phuture/types": "0.4.6"
+  }
 }

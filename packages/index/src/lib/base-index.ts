@@ -1,23 +1,25 @@
-import { Erc20Permit } from '@phuture/erc-20';
-import type { Address, Anatomy, ContractFactory } from '@phuture/types';
-import { BigNumber, BigNumberish, utils } from 'ethers';
-import { Account } from '@phuture/account';
-import { BaseIndex, BaseIndex__factory } from '../types';
-import { Fees, IndexRepo } from './interfaces';
-import { subgraphIndexRepo } from './subraph.repository';
+import { Account } from '@phuture/account'
+import { Erc20Permit } from '@phuture/erc-20'
+import type { Address, Anatomy, ContractFactory } from '@phuture/types'
+import { BigNumber, BigNumberish, utils } from 'ethers'
+
+import { BaseIndex, BaseIndex__factory } from '../types'
+
+import { Fees, IndexRepo } from './interfaces'
+import { subgraphIndexRepo } from './subraph.repository'
 
 /**
  * ### Index Contract
  */
 export class Index extends Erc20Permit<BaseIndex> {
 	/** ### Index repository */
-	private _indexRepo: IndexRepo;
+	private _indexRepo: IndexRepo
 
 	/** ### List of assets of the index */
-	private _anatomy?: Anatomy;
+	private _anatomy?: Anatomy
 
 	/** ### List of inactive (with 0 weight) assets of the index */
-	private _inactiveAnatomy?: Anatomy;
+	private _inactiveAnatomy?: Anatomy
 
 	/**
 	 * ### Creates a new Index instance
@@ -31,11 +33,11 @@ export class Index extends Erc20Permit<BaseIndex> {
 	constructor(
 		account: Account,
 		contract: Address | BaseIndex,
-		factory: ContractFactory = BaseIndex__factory
+		factory: ContractFactory = BaseIndex__factory,
 	) {
-		super(account, contract, factory);
+		super(account, contract, factory)
 
-		this._indexRepo = subgraphIndexRepo();
+		this._indexRepo = subgraphIndexRepo()
 	}
 
 	/**
@@ -46,9 +48,9 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {this} Index instance
 	 */
 	public withRepo(indexRepo: IndexRepo): this {
-		this._indexRepo = indexRepo;
+		this._indexRepo = indexRepo
 
-		return this;
+		return this
 	}
 
 	/**
@@ -59,36 +61,36 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns Scaled amounts of underlying tokens and total amount in baseToken
 	 */
 	public async scaleAmount(
-		amountDesired: BigNumberish
+		amountDesired: BigNumberish,
 	): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
-		const anatomy = await this.anatomy();
+		const anatomy = await this.anatomy()
 
 		return anatomy.map(({ asset, weight }) => ({
 			asset,
 			amount: BigNumber.from(amountDesired).mul(weight).div(255),
 			weight,
-		}));
+		}))
 	}
 
 	public async anatomy(): Promise<Anatomy> {
-		this._anatomy ??= await this.getAnatomy();
+		this._anatomy ??= await this.getAnatomy()
 
-		return this._anatomy;
+		return this._anatomy
 	}
 
 	public async inactiveAnatomy(): Promise<Anatomy> {
-		this._inactiveAnatomy ??= await this.getInactiveAnatomy();
+		this._inactiveAnatomy ??= await this.getInactiveAnatomy()
 
-		return this._inactiveAnatomy;
+		return this._inactiveAnatomy
 	}
 
 	public async constituents(): Promise<Anatomy> {
 		const [anatomy, inactiveAnatomy] = await Promise.all([
 			this.anatomy(),
 			this.inactiveAnatomy(),
-		]);
+		])
 
-		return [...anatomy, ...inactiveAnatomy];
+		return [...anatomy, ...inactiveAnatomy]
 	}
 
 	/**
@@ -97,7 +99,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<Address[]>} Holders of the index
 	 */
 	public async holders(): Promise<Address[]> {
-		return this._indexRepo.holders(this.address);
+		return this._indexRepo.holders(this.address)
 	}
 
 	/**
@@ -106,7 +108,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<number>} Count of holders of the index
 	 */
 	public async holdersCount(): Promise<number> {
-		return this._indexRepo.holdersCount(this.address);
+		return this._indexRepo.holdersCount(this.address)
 	}
 
 	/**
@@ -115,7 +117,7 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns Price of the index in sellToken
 	 */
 	public async priceEth(): Promise<BigNumber> {
-		return utils.parseEther(await this._indexRepo.priceEth(this.address));
+		return utils.parseEther(await this._indexRepo.priceEth(this.address))
 	}
 
 	/**
@@ -126,15 +128,15 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<BigNumber>} Market cap of the index in sellToken
 	 */
 	public async marketCap(sellToken: Address): Promise<BigNumber> {
-		if (!this._priceSource) throw new Error('No price source');
+		if (!this._priceSource) throw new Error('No price source')
 
 		const price = await this._priceSource.price(
 			this.address,
 			sellToken,
-			BigNumber.from(10).mul(await this.decimals())
-		);
+			BigNumber.from(10).mul(await this.decimals()),
+		)
 
-		return price.mul(await this.contract.totalSupply());
+		return price.mul(await this.contract.totalSupply())
 	}
 
 	/**
@@ -143,16 +145,19 @@ export class Index extends Erc20Permit<BaseIndex> {
 	 * @returns {Promise<Fees>} Fees of the index
 	 */
 	public async fees(): Promise<Fees> {
-		return this._indexRepo.fees(this.address);
+		return this._indexRepo.fees(this.address)
 	}
 
 	private async getAnatomy(): Promise<Anatomy> {
-		const { _assets, _weights } = await this.contract.anatomy();
-		return _assets.map((asset, index) => ({ asset, weight: _weights[index] }));
+		const { _assets, _weights } = await this.contract.anatomy()
+		if (_assets.length !== _weights.length)
+			throw new Error('Anatomy assets and weights length mismatch')
+
+		return _assets.map((asset, i) => ({ asset, weight: Number(_weights[i]) }))
 	}
 
 	private async getInactiveAnatomy(): Promise<Anatomy> {
-		const _assets = await this.contract.inactiveAnatomy();
-		return _assets.map((asset) => ({ asset, weight: 0 }));
+		const _assets = await this.contract.inactiveAnatomy()
+		return _assets.map((asset) => ({ asset, weight: 0 }))
 	}
 }

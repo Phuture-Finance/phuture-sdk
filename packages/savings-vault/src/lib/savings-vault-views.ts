@@ -1,14 +1,15 @@
-import { Account } from '@phuture/account';
-import { Address, ContractFactory } from '@phuture/types';
-import { Contract } from '@phuture/contract';
+import { Account } from '@phuture/account'
+import { Contract } from '@phuture/contract'
+import { Address, ContractFactory } from '@phuture/types'
+
 import {
 	SavingsVaultViews as SavingsVaultViewsContractInterface,
 	SavingsVaultViews__factory,
-} from '../types';
+} from '../types'
 
 /** ### SavingsVaultViews Contract */
 export class SavingsVaultViews<
-	C extends SavingsVaultViewsContractInterface = SavingsVaultViewsContractInterface
+	C extends SavingsVaultViewsContractInterface = SavingsVaultViewsContractInterface,
 > extends Contract<C> {
 	/**
 	 * ### Creates a new SavingsVaultViews instance
@@ -22,8 +23,8 @@ export class SavingsVaultViews<
 	constructor(
 		account: Account,
 		contract: Address | C,
-		factory: ContractFactory = SavingsVaultViews__factory
+		factory: ContractFactory = SavingsVaultViews__factory,
 	) {
-		super(account, contract, factory);
+		super(account, contract, factory)
 	}
 }

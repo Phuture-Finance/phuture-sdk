@@ -1,1 +1,1 @@
-export * from './lib/erc-4626';
+export * from './lib/erc-4626'

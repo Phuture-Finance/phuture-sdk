@@ -1,5 +1,34 @@
 {
-	"name": "@phuture/contract",
-	"version": "0.4.6",
-	"type": "commonjs"
+  "name": "@phuture/contract",
+  "version": "0.4.6",
+  "type": "commonjs",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Phuture-Finance/phuture-sdk",
+	"directory": "packages/contract"
+  },
+  "main": "dist/phuture-contract.cjs.js",
+  "module": "dist/phuture-contract.esm.js",
+  "types": "dist/phuture-contract.cjs.d.ts",
+  "exports": {
+	"./package.json": "./package.json",
+	".": {
+	  "module": "./dist/phuture-contract.esm.js",
+	  "default": "./dist/phuture-contract.cjs.js"
+	}
+  },
+  "sideEffects": false,
+  "files": [
+	"/dist"
+  ],
+  "preconstruct": {
+	"entrypoints": [
+	  "index.ts"
+	]
+  },
+  "dependencies": {
+	"@phuture/account": "0.4.6",
+	"@phuture/types": "0.4.6"
+  }
 }
+

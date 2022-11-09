@@ -1,5 +1,38 @@
 {
-	"name": "@phuture/savings-vault",
-	"version": "0.4.6",
-	"type": "commonjs"
+  "name": "@phuture/savings-vault",
+  "version": "0.4.6",
+  "type": "commonjs",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Phuture-Finance/phuture-sdk",
+	"directory": "packages/savings-vault"
+  },
+  "main": "dist/phuture-savings-vault.cjs.js",
+  "module": "dist/phuture-savings-vault.esm.js",
+  "types": "dist/phuture-savings-vault.cjs.d.ts",
+  "exports": {
+	"./package.json": "./package.json",
+	".": {
+	  "module": "./dist/phuture-savings-vault.esm.js",
+	  "default": "./dist/phuture-savings-vault.cjs.js"
+	}
+  },
+  "sideEffects": false,
+  "files": [
+	"/dist"
+  ],
+  "preconstruct": {
+	"entrypoints": [
+	  "index.ts"
+	]
+  },
+  "dependencies": {
+	"@phuture/account": "0.4.6",
+	"@phuture/contract": "0.4.6",
+	"@phuture/erc-20": "0.4.6",
+	"@phuture/erc-4626": "0.4.6",
+	"@phuture/errors": "0.4.6",
+	"@phuture/router": "0.4.7",
+	"@phuture/types": "0.4.6"
+  }
 }

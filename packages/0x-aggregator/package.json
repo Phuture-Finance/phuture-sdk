@@ -1,5 +1,33 @@
 {
-	"name": "@phuture/0x-aggregator",
-	"version": "0.4.7",
-	"type": "commonjs"
+  "name": "@phuture/0x-aggregator",
+  "version": "0.4.7",
+  "type": "commonjs",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Phuture-Finance/phuture-sdk",
+	"directory": "packages/0x-aggregator"
+  },
+  "main": "dist/phuture-0x-aggregator.cjs.js",
+  "module": "dist/phuture-0x-aggregator.esm.js",
+  "types": "dist/phuture-0x-aggregator.cjs.d.ts",
+  "exports": {
+	"./package.json": "./package.json",
+	".": {
+	  "module": "./dist/phuture-0x-aggregator.esm.js",
+	  "default": "./dist/phuture-0x-aggregator.cjs.js"
+	}
+  },
+  "sideEffects": false,
+  "files": [
+	"/dist"
+  ],
+  "preconstruct": {
+	"entrypoints": [
+	  "index.ts"
+	]
+  },
+  "dependencies": {
+	"@phuture/account": "0.4.6",
+	"@phuture/types": "0.4.6"
+  }
 }
