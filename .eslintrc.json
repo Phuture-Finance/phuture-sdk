@@ -155,5 +155,5 @@
 	  "plugins": ["eslint-plugin-import", "@typescript-eslint"]
 	}
   ],
-  "ignorePatterns": ["CHANGELOG.md", "build", "dist", "node_modules", "generated", "examples"]
+  "ignorePatterns": ["CHANGELOG.md", "build", "dist", "node_modules", "generated", "examples", "babel.config.js"]
 }
