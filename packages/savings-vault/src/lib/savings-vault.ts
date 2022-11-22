@@ -46,13 +46,14 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 
 	public async deposit(
 		amountInInputToken: BigNumberish,
+		receiver: Address,
 		gasPercentage?: number,
 	): Promise<ContractTransaction> {
 		const estimatedGas = await this.contract.estimateGas.deposit(
 			amountInInputToken,
-			this.account.address(),
+			receiver,
 		)
-		return this.contract.deposit(amountInInputToken, this.account.address(), {
+		return this.contract.deposit(amountInInputToken, receiver, {
 			gasLimit: estimatedGas
 				.mul(100 + (gasPercentage ? gasPercentage : 15))
 				.div(100),
@@ -61,12 +62,13 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 
 	public async depositWithPermit(
 		amountInInputToken: BigNumberish,
+		receiver: Address,
 		permitOptions: Omit<StandardPermitArguments, 'amount'>,
 		gasPercentage?: number,
 	): Promise<ContractTransaction> {
 		const estimatedGas = await this.contract.estimateGas.depositWithPermit(
 			amountInInputToken,
-			this.account.address(),
+			receiver,
 			permitOptions.deadline,
 			permitOptions.v,
 			permitOptions.r,
@@ -74,7 +76,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		)
 		return this.contract.depositWithPermit(
 			amountInInputToken,
-			this.account.address(),
+			receiver,
 			permitOptions.deadline,
 			permitOptions.v,
 			permitOptions.r,

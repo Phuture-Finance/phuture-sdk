@@ -114,9 +114,11 @@ export class SavingsVaultRouter implements Router {
 			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
+		const receiver = await savingsVault.account.address()
 		if (options?.permitOptions !== undefined) {
 			return savingsVault.depositWithPermit(
 				amountInInputToken,
+				receiver,
 				options.permitOptions,
 				options.gasPercentage,
 			)
@@ -127,7 +129,11 @@ export class SavingsVaultRouter implements Router {
 			await savingsVault.contract.asset(),
 		)
 		await sellToken.checkAllowance(savingsVault.address, amountInInputToken)
-		return savingsVault.deposit(amountInInputToken, options?.gasPercentage)
+		return savingsVault.deposit(
+			amountInInputToken,
+			receiver,
+			options?.gasPercentage,
+		)
 	}
 
 	/**
