@@ -1,4 +1,5 @@
 import { Account } from '@phuture/account'
+import { StandardPermitArguments } from '@phuture/erc-20'
 import { Erc4626 } from '@phuture/erc-4626'
 import type { Address, ContractFactory } from '@phuture/types'
 import { isAddress } from '@phuture/types'
@@ -43,10 +44,56 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 			: savingsVaultViews
 	}
 
+	public async deposit(
+		amountInInputToken: BigNumberish,
+		receiver: Address,
+		gasPercentage?: number,
+	): Promise<ContractTransaction> {
+		const estimatedGas = await this.contract.estimateGas.deposit(
+			amountInInputToken,
+			receiver,
+		)
+		return this.contract.deposit(amountInInputToken, receiver, {
+			gasLimit: estimatedGas
+				.mul(100 + (gasPercentage ? gasPercentage : 15))
+				.div(100),
+		})
+	}
+
+	public async depositWithPermit(
+		amountInInputToken: BigNumberish,
+		receiver: Address,
+		permitOptions: Omit<StandardPermitArguments, 'amount'>,
+		gasPercentage?: number,
+	): Promise<ContractTransaction> {
+		const estimatedGas = await this.contract.estimateGas.depositWithPermit(
+			amountInInputToken,
+			receiver,
+			permitOptions.deadline,
+			permitOptions.v,
+			permitOptions.r,
+			permitOptions.s,
+		)
+		return this.contract.depositWithPermit(
+			amountInInputToken,
+			receiver,
+			permitOptions.deadline,
+			permitOptions.v,
+			permitOptions.r,
+			permitOptions.s,
+			{
+				gasLimit: estimatedGas
+					.mul(100 + (gasPercentage ? gasPercentage : 15))
+					.div(100),
+			},
+		)
+	}
+
 	public async redeem(
 		shares: BigNumberish,
 		_receiver: Address,
 		owner: Address,
+		gasPercentage?: number,
 	): Promise<ContractTransaction> {
 		const estimatedGas = await this.contract.estimateGas.redeem(
 			shares,
@@ -55,7 +102,9 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		)
 
 		return this.contract.redeem(shares, owner, owner, {
-			gasLimit: estimatedGas.mul(100).div(80),
+			gasLimit: estimatedGas
+				.mul(100 + (gasPercentage ? gasPercentage : 20))
+				.div(100),
 		})
 	}
 
@@ -64,6 +113,7 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 		receiver: Address,
 		owner: Address,
 		minOutputAmount: BigNumber,
+		gasPercentage?: number,
 	): Promise<ContractTransaction> {
 		const estimatedGas =
 			await this.contract.estimateGas.redeemWithMinOutputAmount(
@@ -79,7 +129,9 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
 			owner,
 			minOutputAmount,
 			{
-				gasLimit: estimatedGas.mul(100).div(80),
+				gasLimit: estimatedGas
+					.mul(100 + (gasPercentage ? gasPercentage : 20))
+					.div(100),
 			},
 		)
 	}
