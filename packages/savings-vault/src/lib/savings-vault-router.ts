@@ -84,6 +84,7 @@ export class SavingsVaultRouter implements Router {
 		inputTokenAddress?: Address,
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		return this.buyMint(
@@ -100,7 +101,7 @@ export class SavingsVaultRouter implements Router {
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amountInInputToken Amount in input token
 	 * @param _inputTokenAddress Address of input token
-	 * @param options 0x request options and permit options for transaction
+	 * @param options 0x request, permit and other options for transaction
 	 *
 	 * @returns mint transaction
 	 */
@@ -110,41 +111,23 @@ export class SavingsVaultRouter implements Router {
 		_inputTokenAddress?: Address,
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
-		const accountAddress = await savingsVault.account.address()
 		if (options?.permitOptions !== undefined) {
-			const depositWithPermitEstimatedGas =
-				await savingsVault.contract.estimateGas.depositWithPermit(
-					amountInInputToken,
-					accountAddress,
-					options.permitOptions.deadline,
-					options.permitOptions.v,
-					options.permitOptions.r,
-					options.permitOptions.s,
-				)
-			return savingsVault.contract.depositWithPermit(
+			return savingsVault.depositWithPermit(
 				amountInInputToken,
-				await savingsVault.account.address(),
-				options.permitOptions.deadline,
-				options.permitOptions.v,
-				options.permitOptions.r,
-				options.permitOptions.s,
-				{ gasLimit: depositWithPermitEstimatedGas.mul(100).div(95) },
+				options.permitOptions,
+				options.gasPercentage,
 			)
 		}
+
 		const sellToken = new Erc20(
 			savingsVault.account,
 			await savingsVault.contract.asset(),
 		)
 		await sellToken.checkAllowance(savingsVault.address, amountInInputToken)
-		const estimatedGas = await savingsVault.contract.estimateGas.deposit(
-			amountInInputToken,
-			accountAddress,
-		)
-		return savingsVault.contract.deposit(amountInInputToken, accountAddress, {
-			gasLimit: estimatedGas.mul(100).div(80),
-		})
+		return savingsVault.deposit(amountInInputToken, options?.gasPercentage)
 	}
 
 	/**
@@ -202,7 +185,7 @@ export class SavingsVaultRouter implements Router {
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
 	 * @param outputTokenAddress Address of output token
-	 * @param options maxLoss option
+	 * @param options maxLoss and gasPercentage options
 	 *
 	 * @returns burn or swap transaction
 	 */
@@ -213,6 +196,7 @@ export class SavingsVaultRouter implements Router {
 		outputTokenAddress?: Address,
 		options?: Partial<{
 			maxLoss?: number
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		return this.sellBurn(savingsVault, amount, outputTokenAddress, options)
@@ -224,7 +208,7 @@ export class SavingsVaultRouter implements Router {
 	 * @param savingsVault Contract which implements the SavingsVault interface
 	 * @param amount Amount of Savings Vault shares
 	 * @param _outputTokenAddress Address of output token
-	 * @param options maxLoss option
+	 * @param options maxLoss and gasPercentage options
 	 *
 	 * @returns burn transaction
 	 */
@@ -234,6 +218,7 @@ export class SavingsVaultRouter implements Router {
 		_outputTokenAddress?: Address,
 		options?: Partial<{
 			maxLoss: number
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		const owner = await savingsVault.account.address()
@@ -250,10 +235,11 @@ export class SavingsVaultRouter implements Router {
 				owner,
 				owner,
 				minOutputAmount,
+				options?.gasPercentage,
 			)
 		}
 
-		return savingsVault.redeem(amount, owner, owner)
+		return savingsVault.redeem(amount, owner, owner, options?.gasPercentage)
 	}
 
 	/**

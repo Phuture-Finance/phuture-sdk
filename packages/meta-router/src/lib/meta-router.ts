@@ -61,6 +61,7 @@ export class MetaRouter implements Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>
 			zeroExOptions: Partial<Zero0xQuoteOptions>
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
@@ -90,6 +91,7 @@ export class MetaRouter implements Router {
 		options?: Partial<{
 			permitOptions: Omit<StandardPermitArguments, 'amount'>
 			zeroExOptions: Partial<Zero0xQuoteOptions>
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
@@ -169,6 +171,7 @@ export class MetaRouter implements Router {
 			permitOptions: Omit<StandardPermitArguments, 'amount'>
 			zeroExOptions: Partial<Zero0xQuoteOptions>
 			maxLoss: number
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
@@ -199,6 +202,7 @@ export class MetaRouter implements Router {
 			permitOptions: Omit<StandardPermitArguments, 'amount'>
 			zeroExOptions: Partial<Zero0xQuoteOptions>
 			maxLoss: number
+			gasPercentage: number
 		}>,
 	): Promise<TransactionResponse> {
 		switch (this.findProductType(erc20Permit.address)) {
