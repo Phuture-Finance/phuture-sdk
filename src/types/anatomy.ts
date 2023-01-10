@@ -1,6 +1,6 @@
 import { Address } from './address'
 
 export type Anatomy = {
-	asset: Address
-	weight: number
+  asset: Address
+  weight: number
 }[]

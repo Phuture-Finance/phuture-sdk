@@ -1,121 +1,121 @@
 [
-	{
-		"inputs": [],
-		"name": "BP",
-		"outputs": [
-			{
-				"internalType": "uint16",
-				"name": "",
-				"type": "uint16"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "contract ISavingsVaultViewer",
-				"name": "_savingsVault",
-				"type": "address"
-			}
-		],
-		"name": "getAPY",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_savingsVault",
-				"type": "address"
-			}
-		],
-		"name": "getHighestYieldMarketParameters",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "maturity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint32",
-				"name": "minImpliedRate",
-				"type": "uint32"
-			},
-			{
-				"internalType": "uint16",
-				"name": "currencyId",
-				"type": "uint16"
-			},
-			{
-				"internalType": "contract INotionalV2",
-				"name": "calculationViews",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_savingsVault",
-				"type": "address"
-			}
-		],
-		"name": "getMaxDepositedAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "maxDepositedAmount",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_savingsVault",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_percentage",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_steps",
-				"type": "uint256"
-			}
-		],
-		"name": "scaleAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+  {
+    "inputs": [],
+    "name": "BP",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ISavingsVaultViewer",
+        "name": "_savingsVault",
+        "type": "address"
+      }
+    ],
+    "name": "getAPY",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_savingsVault",
+        "type": "address"
+      }
+    ],
+    "name": "getHighestYieldMarketParameters",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "maturity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "minImpliedRate",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint16",
+        "name": "currencyId",
+        "type": "uint16"
+      },
+      {
+        "internalType": "contract INotionalV2",
+        "name": "calculationViews",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_savingsVault",
+        "type": "address"
+      }
+    ],
+    "name": "getMaxDepositedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "maxDepositedAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_savingsVault",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_percentage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_steps",
+        "type": "uint256"
+      }
+    ],
+    "name": "scaleAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
 ]

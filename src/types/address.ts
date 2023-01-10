@@ -15,4 +15,4 @@ import { utils } from 'ethers'
 export type Address = string // `0x${string}`
 
 export const isAddress = (address: unknown): address is Address =>
-	typeof address === 'string' && utils.isAddress(address)
+  typeof address === 'string' && utils.isAddress(address)

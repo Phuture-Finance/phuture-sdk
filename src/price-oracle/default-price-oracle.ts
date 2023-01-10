@@ -1,28 +1,28 @@
-import { Account } from "@phuture/account";
-import { Address, ChainId } from "@phuture/types";
+import { Account } from '../account'
+import { Address, ChainId } from '../types'
 
 import {
-	defaultPhuturePriceOracleAddress,
-	PhuturePriceOracle
-} from "./phuture-price-oracle";
+  defaultPhuturePriceOracleAddress,
+  PhuturePriceOracle,
+} from './phuture-price-oracle'
 
-const defaultPriceOracles: Record<ChainId, PhuturePriceOracle | undefined> = {};
+const defaultPriceOracles: Record<ChainId, PhuturePriceOracle | undefined> = {}
 
 export const getDefaultPriceOracle = async (
-	account: Account
+  account: Account,
 ): Promise<PhuturePriceOracle> => {
-	const network = await account.chainId();
+  const network = await account.chainId()
 
-	const priceOracle = defaultPriceOracles[network];
-	if (priceOracle) {
-		return priceOracle;
-	}
+  const priceOracle = defaultPriceOracles[network]
+  if (priceOracle) {
+    return priceOracle
+  }
 
-	const newPriceOracle = new PhuturePriceOracle(
-		account,
-		defaultPhuturePriceOracleAddress[network] as Address
-	);
-	defaultPriceOracles[network] = newPriceOracle;
+  const newPriceOracle = new PhuturePriceOracle(
+    account,
+    defaultPhuturePriceOracleAddress[network] as Address,
+  )
+  defaultPriceOracles[network] = newPriceOracle
 
-	return newPriceOracle;
-};
+  return newPriceOracle
+}

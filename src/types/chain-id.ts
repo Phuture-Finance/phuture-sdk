@@ -14,12 +14,12 @@
 export type ChainId = number
 
 /** ### Collection of ChainIds mapped to their network name */
-export const ChainIds: Record<"Mainnet" | "CChain", ChainId> = {
-	/** ### Ethereum Mainnet */
-	Mainnet: 1,
-	/** ### Avalanche C-Chain */
-	CChain: 43114
-} as const;
+export const ChainIds: Record<'Mainnet' | 'CChain', ChainId> = {
+  /** ### Ethereum Mainnet */
+  Mainnet: 1,
+  /** ### Avalanche C-Chain */
+  CChain: 43114,
+} as const
 
 /**
  * ### Is the given chain id valid
@@ -29,4 +29,4 @@ export const ChainIds: Record<"Mainnet" | "CChain", ChainId> = {
  * @returns **true** if the chain id is valid, **false** otherwise
  */
 export const isChainId = (chainId: unknown): chainId is ChainId =>
-	typeof chainId === "number" && chainId > 0;
+  typeof chainId === 'number' && chainId > 0

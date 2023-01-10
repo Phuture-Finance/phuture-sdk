@@ -5,38 +5,38 @@ import prepare from './prepare'
 
 // Auto buying Index amount
 export default async function autoBuy(amountToSellDesired: BigNumber) {
-	const { account, index, autoRouter } = await prepare()
+  const { account, index, autoRouter } = await prepare()
 
-	const tokenAddress = process.env['TOKEN_ADDRESS']
-	if (!tokenAddress) {
-		const select = await autoRouter.selectBuy(index, amountToSellDesired)
+  const tokenAddress = process.env['TOKEN_ADDRESS']
+  if (!tokenAddress) {
+    const select = await autoRouter.selectBuy(index, amountToSellDesired)
 
-		console.dir(select)
+    console.dir(select)
 
-		if (await yesno({ question: 'Ready to continue?' })) {
-			return autoRouter.buy(select.isMint, index, amountToSellDesired)
-		}
+    if (await yesno({ question: 'Ready to continue?' })) {
+      return autoRouter.buy(select.isMint, index, amountToSellDesired)
+    }
 
-		return
-	}
+    return
+  }
 
-	const token = new Erc20Permit(account, tokenAddress)
-	const selectWithToken = await autoRouter.selectBuy(
-		index,
-		amountToSellDesired,
-		token,
-	)
+  const token = new Erc20Permit(account, tokenAddress)
+  const selectWithToken = await autoRouter.selectBuy(
+    index,
+    amountToSellDesired,
+    token,
+  )
 
-	console.dir(selectWithToken)
+  console.dir(selectWithToken)
 
-	if (await yesno({ question: 'Ready to continue?' })) {
-		return autoRouter.buy(
-			selectWithToken.isMint,
-			index,
-			amountToSellDesired,
-			token.address,
-		)
-	}
+  if (await yesno({ question: 'Ready to continue?' })) {
+    return autoRouter.buy(
+      selectWithToken.isMint,
+      index,
+      amountToSellDesired,
+      token.address,
+    )
+  }
 
-	return
+  return
 }

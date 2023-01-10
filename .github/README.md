@@ -18,17 +18,17 @@ AutoRouter package has been created to find the best deal to buy or sell an inde
 
 ```typescript
 import {
-	Account,
-	AutoRouter,
-	Erc20,
-	IndexRouter,
-	ZeroExAggregator,
+  Account,
+  AutoRouter,
+  Erc20,
+  IndexRouter,
+  ZeroExAggregator,
 } from '@phuture/sdk'
 import { ethers } from 'ethers'
 
 const amount = '1000'
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
 )
 
 const indexRouter = new IndexRouter(account)
@@ -53,7 +53,7 @@ import { Erc20 } from '@phuture/sdk'
 import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
 )
 
 const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS')
@@ -74,7 +74,7 @@ import { Index } from '@phuture/sdk'
 import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
 )
 
 const indexPDI = new Index(account, 'INDEX_CONTRACT')
@@ -92,15 +92,15 @@ import { IndexRouter } from '@phuture/sdk'
 import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
 )
 const mintOptions = {
-	index: 'INDEX_ADDRESS',
-	amountInBase: 100000,
-	recipient: 'RECIPIENT_ADDRESS',
+  index: 'INDEX_ADDRESS',
+  amountInBase: 100000,
+  recipient: 'RECIPIENT_ADDRESS',
 }
 const burnOptions = {
-	quotes: [], // can get it from 0x aggregator
+  quotes: [], // can get it from 0x aggregator
 }
 
 const indexRouter = new IndexRouter(account)
@@ -110,10 +110,10 @@ const mintTx = await indexRouter.mintSwap(mintOptions, 'AMOUNT_IN_INPUT_TOKEN')
 
 // run burn transaction
 const burnTx = await indexRouter.burnSwap(
-	'INDEX_ADDRESS',
-	'AMOUNT_IN_INDEX',
-	'RECIPIENT_ADDRESS',
-	burnOptions,
+  'INDEX_ADDRESS',
+  'AMOUNT_IN_INDEX',
+  'RECIPIENT_ADDRESS',
+  burnOptions,
 )
 ```
 
@@ -126,7 +126,7 @@ import { Index, ZeroExAggregator } from '@phuture/sdk'
 import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
 )
 const indexPDI = new Index(account, 'INDEX_CONTRACT')
 
@@ -134,13 +134,13 @@ const zeroAggregator = new ZeroExAggregator()
 
 // get WETH/PDI swap params
 const {
-	buyAmount: buyAssetMinAmount,
-	to: swapTarget,
-	data: assetQuote,
+  buyAmount: buyAssetMinAmount,
+  to: swapTarget,
+  data: assetQuote,
 } = await zeroEx.quote(
-	'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
-	indexPDI,
-	amount,
+  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+  indexPDI,
+  amount,
 )
 ```
 
@@ -155,13 +155,13 @@ const client = Subgraph.fromUrl()
 
 // get user data
 const { data } = await client.query({
-	query: gql`
-		query User($userId: ID!) {
-			user(id: $userId) {
-				id
-			}
-		}
-	`,
-	variables: { userId },
+  query: gql`
+    query User($userId: ID!) {
+      user(id: $userId) {
+        id
+      }
+    }
+  `,
+  variables: { userId },
 })
 ```
