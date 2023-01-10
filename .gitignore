@@ -33,15 +33,12 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+typechain/*
 
 # System Files
 .DS_Store
 Thumbs.db
 
 .env
-
-packages/**/dist/
-packages/**/src/types
-packages/**/src/generated
 
 .eslintcache
