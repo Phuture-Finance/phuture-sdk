@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
 	"allowJs": true,
+	"baseUrl": ".",
+	"declaration": true,
 	"downlevelIteration": true,
 	"esModuleInterop": true,
-	"incremental": true,
 	"isolatedModules": true,
-	"lib": ["es2019", "es2017", "dom"],
+	"jsx": "react-jsx",
+	"lib": [
+	  "es2019",
+	  "es2017",
+	  "dom"
+	],
 	"module": "commonjs",
 	"moduleResolution": "node",
 	"noEmit": true,
@@ -21,8 +27,64 @@
 	"types": [
 	  "node",
 	  "@ethersproject/providers"
-	]
+	],
+	"rootDir": "./src",
+	"paths": {
+	  "@phuture/0x-aggregator": [
+		"src/0x-aggregator/index.ts"
+	  ],
+	  "@phuture/account": [
+		"src/account/index.ts"
+	  ],
+	  "@phuture/auto-router": [
+		"src/auto-router/index.ts"
+	  ],
+	  "@phuture/meta-router": [
+		"src/meta-router/index.ts"
+	  ],
+	  "@phuture/contract": [
+		"src/contract/index.ts"
+	  ],
+	  "@phuture/erc-20": [
+		"src/erc-20/index.ts"
+	  ],
+	  "@phuture/erc-4626": [
+		"src/erc-4626/index.ts"
+	  ],
+	  "@phuture/errors": [
+		"src/errors/index.ts"
+	  ],
+	  "@phuture/index": [
+		"src/index/index.ts"
+	  ],
+	  "@phuture/router": [
+		"src/router/index.ts"
+	  ],
+	  "@phuture/savings-vault": [
+		"src/savings-vault/index.ts"
+	  ],
+	  "@phuture/index-router": [
+		"src/index-router/index.ts"
+	  ],
+	  "@phuture/price-oracle": [
+		"src/price-oracle/index.ts"
+	  ],
+	  "@phuture/sdk": [
+		"src/sdk/index.ts"
+	  ],
+	  "@phuture/subgraph": [
+		"src/subgraph/index.ts"
+	  ],
+	  "@phuture/types": [
+		"src/types/index.ts"
+	  ]
+	}
   },
-  "exclude": ["node_modules", "**/dist/**"],
-  "include": ["packages/**/*"]
+  "exclude": [
+	"node_modules",
+	"**/dist/**"
+  ],
+  "include": [
+	"src/**/*"
+  ]
 }

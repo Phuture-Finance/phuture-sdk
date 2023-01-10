@@ -1,73 +1,73 @@
-import { BigNumber } from 'ethers';
-import * as yesno from 'yesno';
-import { Erc20Permit } from '@phuture/erc-20';
-import prepare from './prepare';
+import { BigNumber } from 'ethers'
+import * as yesno from 'yesno'
+import { Erc20Permit } from '@phuture/erc-20'
+import prepare from './prepare'
 
 export default async function buySavingsVault(amountToDeposit: BigNumber) {
-	const { account, savingsVault, metaRouter } = await prepare();
-	const tokenAddress = process.env['TOKEN_ADDRESS'];
+	const { account, savingsVault, metaRouter } = await prepare()
+	const tokenAddress = process.env['TOKEN_ADDRESS']
 	if (!tokenAddress) {
-		const select = await metaRouter.selectBuy(savingsVault, amountToDeposit);
+		const select = await metaRouter.selectBuy(savingsVault, amountToDeposit)
 
-		console.dir(select);
+		console.dir(select)
 
 		if (await yesno({ question: 'Ready to continue?' })) {
-			await metaRouter.buy(select.isMint, savingsVault, amountToDeposit);
+			await metaRouter.buy(select.isMint, savingsVault, amountToDeposit)
 		}
-		return;
+		return
 	}
 
-	const token = new Erc20Permit(account, tokenAddress);
+	const token = new Erc20Permit(account, tokenAddress)
 	const selectWithToken = await metaRouter.selectBuy(
 		savingsVault,
 		amountToDeposit,
-		token
-	);
+		token,
+	)
 
-	console.dir(selectWithToken);
+	console.dir(selectWithToken)
 
 	if (await yesno({ question: 'Ready to continue?' })) {
 		await metaRouter.buy(
 			selectWithToken.isMint,
 			savingsVault,
 			amountToDeposit,
-			tokenAddress
-		);
+			tokenAddress,
+		)
 	}
-	return;
+	return
 }
 
 export async function sellSavingsVault(amountToSell: BigNumber) {
-	const { account, savingsVault, metaRouter } = await prepare();
-	const tokenAddress = process.env['TOKEN_ADDRESS'];
+	const { account, savingsVault, metaRouter } = await prepare()
+	const tokenAddress = process.env['TOKEN_ADDRESS']
 	if (!tokenAddress) {
-		const select = await metaRouter.selectSell(savingsVault, amountToSell);
+		const select = await metaRouter.selectSell(savingsVault, amountToSell)
 
-		console.dir(select);
+		console.dir(select)
 
 		if (await yesno({ question: 'Ready to continue?' })) {
-			await metaRouter.sell(select.isBurn, savingsVault, amountToSell);
+			await metaRouter.sell(select.isBurn, savingsVault, amountToSell)
 		}
 
-		return;
+		return
 	}
 
-	const token = new Erc20Permit(account, tokenAddress);
+	const token = new Erc20Permit(account, tokenAddress)
 	const selectWithToken = await metaRouter.selectSell(
 		savingsVault,
 		amountToSell,
-		token
-	);
+		token,
+	)
 
-	console.dir(selectWithToken);
+	console.dir(selectWithToken)
 
 	if (await yesno({ question: 'Ready to continue?' })) {
 		await metaRouter.sell(
 			selectWithToken.isBurn,
 			savingsVault,
 			amountToSell,
-			tokenAddress
-		);
+			tokenAddress,
+		)
 	}
-	return;
+	return
 }

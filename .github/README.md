@@ -32,25 +32,25 @@ import {
 	Erc20,
 	IndexRouter,
 	ZeroExAggregator,
-} from '@phuture/sdk';
-import { ethers } from 'ethers';
+} from '@phuture/sdk'
+import { ethers } from 'ethers'
 
-const amount = '1000';
+const amount = '1000'
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider())
-);
+	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+)
 
-const indexRouter = new IndexRouter(account);
-const zeroAggregator = new ZeroExAggregator();
-const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS');
+const indexRouter = new IndexRouter(account)
+const zeroAggregator = new ZeroExAggregator()
+const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS')
 
-const autoRouter = new AutoRouter(indexRouter, zeroAggregator);
+const autoRouter = new AutoRouter(indexRouter, zeroAggregator)
 
 // handle buy
-autoRouter.autoBuy(indexTokenInterface, amount, erc20);
+autoRouter.autoBuy(indexTokenInterface, amount, erc20)
 
 // handle sell
-autoRouter.autoBuy(indexTokenInterface, amount, erc20);
+autoRouter.autoBuy(indexTokenInterface, amount, erc20)
 ```
 
 ### Erc20
@@ -58,20 +58,20 @@ autoRouter.autoBuy(indexTokenInterface, amount, erc20);
 Erc20 package has been created to wrap the usual erc20 interface to use it
 
 ```typescript
-import { Erc20 } from '@phuture/sdk';
-import { ethers } from 'ethers';
+import { Erc20 } from '@phuture/sdk'
+import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider())
-);
+	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+)
 
-const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS');
+const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS')
 
 // get token's decimals
-erc20.decimals();
+erc20.decimals()
 
 // get token's symbol
-erc20.symbol();
+erc20.symbol()
 ```
 
 ### Index
@@ -79,17 +79,17 @@ erc20.symbol();
 Index package has been created to wrap the Phuture's Index interface to use it
 
 ```typescript
-import { Index } from '@phuture/sdk';
-import { ethers } from 'ethers';
+import { Index } from '@phuture/sdk'
+import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider())
-);
+	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+)
 
-const indexPDI = new Index(account, 'INDEX_CONTRACT');
+const indexPDI = new Index(account, 'INDEX_CONTRACT')
 
 // get amount of input tokens to set underlying tokens amount
-const { amounts, amountToSell } = indexPDI.scaleAmount(10000000000);
+const { amounts, amountToSell } = indexPDI.scaleAmount(10000000000)
 ```
 
 ### Index Router
@@ -97,33 +97,33 @@ const { amounts, amountToSell } = indexPDI.scaleAmount(10000000000);
 Index Router package has been created to use methods from Phuture's IndexRouter contract such as mint, burn and others.
 
 ```typescript
-import { IndexRouter } from '@phuture/sdk';
-import { ethers } from 'ethers';
+import { IndexRouter } from '@phuture/sdk'
+import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider())
-);
+	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+)
 const mintOptions = {
 	index: 'INDEX_ADDRESS',
 	amountInBase: 100000,
 	recipient: 'RECIPIENT_ADDRESS',
-};
+}
 const burnOptions = {
 	quotes: [], // can get it from 0x aggregator
-};
+}
 
-const indexRouter = new IndexRouter(account);
+const indexRouter = new IndexRouter(account)
 
 // run mint transaction
-const mintTx = await indexRouter.mintSwap(mintOptions, 'AMOUNT_IN_INPUT_TOKEN');
+const mintTx = await indexRouter.mintSwap(mintOptions, 'AMOUNT_IN_INPUT_TOKEN')
 
 // run burn transaction
 const burnTx = await indexRouter.burnSwap(
 	'INDEX_ADDRESS',
 	'AMOUNT_IN_INDEX',
 	'RECIPIENT_ADDRESS',
-	burnOptions
-);
+	burnOptions,
+)
 ```
 
 ### 0x Aggregator
@@ -131,15 +131,15 @@ const burnTx = await indexRouter.burnSwap(
 ZeroEx Aggregator package has been created to use methods related for managing Phuture's Index on most compatible defi exchanges
 
 ```typescript
-import { Index, ZeroExAggregator } from '@phuture/sdk';
-import { ethers } from 'ethers';
+import { Index, ZeroExAggregator } from '@phuture/sdk'
+import { ethers } from 'ethers'
 
 const account = new Account(
-	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider())
-);
-const indexPDI = new Index(account, 'INDEX_CONTRACT');
+	new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
+)
+const indexPDI = new Index(account, 'INDEX_CONTRACT')
 
-const zeroAggregator = new ZeroExAggregator();
+const zeroAggregator = new ZeroExAggregator()
 
 // get WETH/PDI swap params
 const {
@@ -149,8 +149,8 @@ const {
 } = await zeroEx.quote(
 	'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
 	indexPDI,
-	amount
-);
+	amount,
+)
 ```
 
 ### Subgraph
@@ -158,9 +158,9 @@ const {
 Subgraph package has been created to get data related to index and users that hold the index
 
 ```typescript
-import { Subgraph } from '@phuture/sdk';
+import { Subgraph } from '@phuture/sdk'
 
-const client = Subgraph.fromUrl();
+const client = Subgraph.fromUrl()
 
 // get user data
 const { data } = await client.query({
@@ -172,5 +172,5 @@ const { data } = await client.query({
 		}
 	`,
 	variables: { userId },
-});
+})
 ```
