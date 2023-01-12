@@ -20,7 +20,6 @@
     "fix": "pnpm lint --fix",
     "format": "prettier . -w",
     "postinstall": "pnpm build",
-    "preinstall": "npx only-allow pnpm",
     "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads",
     "types": "tsc --noEmit"
   },

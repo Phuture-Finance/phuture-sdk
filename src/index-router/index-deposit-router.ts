@@ -1,5 +1,5 @@
 import { Account } from '../account'
-import { BigNumberish, ContractTransaction } from 'ethers'
+import { BigNumberish, BigNumber, ContractTransaction } from 'ethers'
 import { Contract } from '../contract'
 import {
   IndexDepositRouter as IndexDepositRouterInterface,
@@ -72,7 +72,7 @@ export class IndexDepositRouter extends Contract<IndexDepositRouterInterface> {
     buyToken: PromiseOrValue<string>,
     sellAmount: BigNumberish,
     quotes?: IIndexRouter.MintQuoteParamsStructOutput[],
-  ): Promise<BigNumberish> {
+  ): Promise<BigNumber> {
     if (quotes !== undefined) {
       return this.contract.callStatic.deposit(
         buyToken,

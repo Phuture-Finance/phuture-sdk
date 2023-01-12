@@ -119,7 +119,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
     permitOptions?: Omit<StandardPermitArguments, 'amount'>,
   ): Promise<BigNumber> {
     if (!sellToken) {
-      new IndexDepositRouter(
+      return new IndexDepositRouter(
         this.account,
         defaultIndexRouterAddress[await this.account.chainId()],
       ).depositStatic(options.index, sellAmount)
