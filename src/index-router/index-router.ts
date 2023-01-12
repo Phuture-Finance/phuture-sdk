@@ -11,7 +11,6 @@ import {
 import { IIndexRouter } from '../typechain/IndexRouter'
 import { Address, ChainId, ChainIds, isAddress } from '../types'
 import { IndexDepositRouter } from './index-deposit-router'
-import { IndexDepositRouter as IndexDepositRouterInterface } from '../typechain'
 
 /** ### Default IndexRouter address for network */
 export const defaultIndexRouterAddress: Record<ChainId, Address> = {
@@ -120,15 +119,10 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
     permitOptions?: Omit<StandardPermitArguments, 'amount'>,
   ): Promise<BigNumber> {
     if (!sellToken) {
-      const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
-        index: options.index,
-        quotes: options.quotes,
-        recipient: options.recipient,
-      }
-
-      return this.contract.callStatic.mintSwapValue(mintSwapValueOptions, {
-        value: sellAmount,
-      })
+      new IndexDepositRouter(
+        this.account,
+        defaultIndexRouterAddress[await this.account.chainId()],
+      ).depositStatic(options.index, sellAmount)
     }
 
     if (permitOptions !== undefined) {
