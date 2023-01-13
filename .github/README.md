@@ -6,7 +6,7 @@ Phuture SDK is a JS library for using functionality related to defi indices made
 
 Use the package manager [pnpm](https://pnpm.io/) to install SDK's dependencies.
 
-```bash
+```sh
 pnpm i @phuture/sdk
 ```
 
