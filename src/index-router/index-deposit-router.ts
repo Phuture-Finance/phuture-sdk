@@ -14,7 +14,7 @@ export const defaultIndexDepositRouterAddress: Record<ChainId, Address> = {
   /** ### Default IndexDepositRouter address on mainnet. */
   [ChainIds.Mainnet]: '0x0',
   /** ### Default IndexDepositRouter address on c-chain. */
-  [ChainIds.CChain]: '0xa04df6ec0138b9366c28d018d16acffd76531855',
+  [ChainIds.CChain]: '0xa04df6ec0138b9366c28d018d16acffd76531855', //INFO: CChain staging
 }
 
 /** ### IndexDepositRouter Contract */
@@ -48,7 +48,7 @@ export class IndexDepositRouter extends Contract<IndexDepositRouterInterface> {
     sellAmount: BigNumberish,
     params?: IReserveRouter.QuoteParamsStruct,
   ): Promise<ContractTransaction> {
-    if (params === undefined) {
+    if (!params) {
       const estimatedNativeGas = await this.contract.estimateGas[
         'deposit(address,address)'
       ](index, this.account.address(), {
@@ -88,15 +88,16 @@ export class IndexDepositRouter extends Contract<IndexDepositRouterInterface> {
     sellAmount: BigNumberish,
     params?: IReserveRouter.QuoteParamsStruct,
   ): Promise<BigNumber> {
-    if (params === undefined) {
+    if (!params) {
       return await this.contract.callStatic['deposit(address,address)'](
         buyToken,
-        await this.account.address(),
+        this.account.address(),
         {
           value: sellAmount,
         },
       )
     }
+
     return this.contract.callStatic[
       'deposit(address,address,(address,uint256,uint256,address,bytes))'
     ](buyToken, this.account.address(), params)

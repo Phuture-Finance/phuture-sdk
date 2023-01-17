@@ -10,7 +10,7 @@ import { SavingsVault, SavingsVaultRouter } from '../products/savings-vault'
 import { Router } from '../router'
 import { Address, ProductType } from '../types'
 
-export class MetaRouter implements Router {
+export class MetaRouter implements Omit<Router, 'buyMint'> {
   /**
    * ### Creates a new MetaRouter instance
    *
@@ -79,32 +79,6 @@ export class MetaRouter implements Router {
           erc20Permit as SavingsVault,
           amountInInputToken,
           inputToken,
-          options,
-        )
-    }
-  }
-
-  async buyMint(
-    erc20Permit: Erc20Permit,
-    amountInInputToken: BigNumberish,
-    inputTokenAddress?: Address,
-    options?: Partial<{
-      permitOptions: Omit<StandardPermitArguments, 'amount'>
-      zeroExOptions: Partial<Zero0xQuoteOptions>
-    }>,
-  ): Promise<TransactionResponse> {
-    switch (this.findProductType(erc20Permit.address)) {
-      case ProductType.INDEX:
-        return this.autoRouter.buyMint(
-          erc20Permit as Index,
-          amountInInputToken,
-          inputTokenAddress,
-        )
-      case ProductType.SAVINGS_VAULT:
-        return this.savingsVaultRouter.buyMint(
-          erc20Permit as SavingsVault,
-          amountInInputToken,
-          inputTokenAddress,
           options,
         )
     }

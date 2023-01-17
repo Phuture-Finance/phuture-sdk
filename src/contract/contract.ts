@@ -3,7 +3,7 @@ import type { Address, ContractFactory } from '../types'
 import { isAddress } from '../types'
 
 /** ### Contract Instance */
-export class Contract<C extends { address: Address }> {
+export class Contract<C> {
   /** ### Contract instance */
   public contract: C
 
@@ -22,7 +22,7 @@ export class Contract<C extends { address: Address }> {
     protected readonly contractFactory: ContractFactory,
   ) {
     this.contract = isAddress(contract)
-      ? (contractFactory.connect(contract, _account.signer) as unknown as C)
+      ? (contractFactory.connect(contract, _account.signer) as C)
       : contract
   }
 
@@ -32,7 +32,7 @@ export class Contract<C extends { address: Address }> {
    * @returns Address of the contract
    */
   get address(): Address {
-    return this.contract.address
+    return (this.contract as unknown as { address: Address }).address
   }
 
   /**
@@ -44,7 +44,7 @@ export class Contract<C extends { address: Address }> {
     this.contract = this.contractFactory.connect(
       address,
       this._account.signer,
-    ) as unknown as C
+    ) as C
   }
 
   /**
@@ -66,6 +66,6 @@ export class Contract<C extends { address: Address }> {
     this.contract = this.contractFactory.connect(
       this.address,
       account.signer,
-    ) as unknown as C
+    ) as C
   }
 }

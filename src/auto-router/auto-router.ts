@@ -225,7 +225,8 @@ export class AutoRouter implements Router {
       zeroExOptions: Partial<Zero0xQuoteOptions>
     }>,
   ): Promise<TransactionResponse> {
-    if (isMint) return this.buyMint(index, amountInInputToken, inputToken)
+    if (isMint)
+      return this.buyMint(index, amountInInputToken, inputToken, options)
 
     return this.buySwap(
       index.address,
@@ -239,6 +240,10 @@ export class AutoRouter implements Router {
     index: Index,
     amountInInputToken: BigNumberish,
     inputTokenAddress?: Address,
+    options?: Partial<{
+      permitOptions: Omit<StandardPermitArguments, 'amount'>
+      zeroExOptions: Partial<Zero0xQuoteOptions>
+    }>,
   ): Promise<TransactionResponse> {
     if (!inputTokenAddress) {
       return this.indexRouter.mintSwap(index.address, amountInInputToken)
@@ -248,13 +253,14 @@ export class AutoRouter implements Router {
       inputTokenAddress,
       await this.indexRouter.weth(),
       amountInInputToken,
+      options?.zeroExOptions,
     )
     const params: IReserveRouter.QuoteParamsStruct = {
-      input: inputTokenAddress, //USDC address
-      inputAmount: amountInInputToken, //amount in USDC
-      minOutputAmount: buyAmount, //min amount in weth
-      swapTarget: to, //0x router contract(0xdefi..)
-      assetQuote: data, //qoute(token to WETH)
+      input: inputTokenAddress,
+      inputAmount: amountInInputToken,
+      minOutputAmount: buyAmount,
+      swapTarget: to,
+      assetQuote: data,
     }
     return this.indexRouter.mintSwap(index.address, amountInInputToken, params)
   }
