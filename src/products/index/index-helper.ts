@@ -11,7 +11,7 @@ export const defaultIndexHelperAddress: Record<ChainId, Address> = {
   /** ### Default IndexHelper address on mainnet. */
   [ChainIds.Mainnet]: '0x76dd4189d73f07e7b11350cffc9b503627fc7a3b',
   /** ### Default IndexHelper address on c-chain. */
-  [ChainIds.CChain]: '0xacef72ef3afeb044845f0869586445e5c6c2504a',
+  [ChainIds.CChain]: '0x564b7462b0befbc0296b1230cb5ca8753d633f9a',
 }
 
 export class IndexHelper<

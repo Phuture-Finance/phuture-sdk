@@ -99,7 +99,6 @@ export class MetaRouter implements Router {
           erc20Permit as Index,
           amountInInputToken,
           inputTokenAddress,
-          options,
         )
       case ProductType.SAVINGS_VAULT:
         return this.savingsVaultRouter.buyMint(

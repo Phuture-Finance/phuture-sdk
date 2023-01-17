@@ -4,9 +4,11 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
+  Overrides,
   PayableOverrides,
   PopulatedTransaction,
   Signer,
@@ -22,25 +24,59 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export declare namespace IReserveRouter {
+  export type QuoteParamsStruct = {
+    input: PromiseOrValue<string>;
+    inputAmount: PromiseOrValue<BigNumberish>;
+    minOutputAmount: PromiseOrValue<BigNumberish>;
+    swapTarget: PromiseOrValue<string>;
+    assetQuote: PromiseOrValue<BytesLike>;
+  };
+
+  export type QuoteParamsStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    string,
+    string
+  ] & {
+    input: string;
+    inputAmount: BigNumber;
+    minOutputAmount: BigNumber;
+    swapTarget: string;
+    assetQuote: string;
+  };
+}
+
 export interface IndexDepositRouterInterface extends utils.Interface {
   functions: {
+    "deposit(address,address,(address,uint256,uint256,address,bytes))": FunctionFragment;
     "deposit(address,address)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "deposit" | "deposit(address,address)"
+    nameOrSignatureOrTopic:
+      | "deposit(address,address,(address,uint256,uint256,address,bytes))"
+      | "deposit(address,address)"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "deposit",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    functionFragment: "deposit(address,address,(address,uint256,uint256,address,bytes))",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      IReserveRouter.QuoteParamsStruct
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit(address,address)",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "deposit(address,address,(address,uint256,uint256,address,bytes))",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "deposit(address,address)",
     data: BytesLike
@@ -76,10 +112,11 @@ export interface IndexDepositRouter extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    deposit(
+    "deposit(address,address,(address,uint256,uint256,address,bytes))"(
       index: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      params: IReserveRouter.QuoteParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     "deposit(address,address)"(
@@ -89,10 +126,11 @@ export interface IndexDepositRouter extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  deposit(
+  "deposit(address,address,(address,uint256,uint256,address,bytes))"(
     index: PromiseOrValue<string>,
     recipient: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    params: IReserveRouter.QuoteParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   "deposit(address,address)"(
@@ -102,9 +140,10 @@ export interface IndexDepositRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    deposit(
+    "deposit(address,address,(address,uint256,uint256,address,bytes))"(
       index: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
+      params: IReserveRouter.QuoteParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -118,10 +157,11 @@ export interface IndexDepositRouter extends BaseContract {
   filters: {};
 
   estimateGas: {
-    deposit(
+    "deposit(address,address,(address,uint256,uint256,address,bytes))"(
       index: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      params: IReserveRouter.QuoteParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     "deposit(address,address)"(
@@ -132,10 +172,11 @@ export interface IndexDepositRouter extends BaseContract {
   };
 
   populateTransaction: {
-    deposit(
+    "deposit(address,address,(address,uint256,uint256,address,bytes))"(
       index: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      params: IReserveRouter.QuoteParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     "deposit(address,address)"(

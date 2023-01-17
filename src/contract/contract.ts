@@ -1,11 +1,9 @@
-import { Contract as EthersContract } from 'ethers'
-
 import { Account } from '../account'
 import type { Address, ContractFactory } from '../types'
 import { isAddress } from '../types'
 
 /** ### Contract Instance */
-export class Contract<C extends EthersContract> {
+export class Contract<C extends { address: Address }> {
   /** ### Contract instance */
   public contract: C
 
@@ -24,7 +22,7 @@ export class Contract<C extends EthersContract> {
     protected readonly contractFactory: ContractFactory,
   ) {
     this.contract = isAddress(contract)
-      ? (contractFactory.connect(contract, _account.signer) as C)
+      ? (contractFactory.connect(contract, _account.signer) as unknown as C)
       : contract
   }
 
@@ -46,7 +44,7 @@ export class Contract<C extends EthersContract> {
     this.contract = this.contractFactory.connect(
       address,
       this._account.signer,
-    ) as C
+    ) as unknown as C
   }
 
   /**
@@ -68,6 +66,6 @@ export class Contract<C extends EthersContract> {
     this.contract = this.contractFactory.connect(
       this.address,
       account.signer,
-    ) as C
+    ) as unknown as C
   }
 }

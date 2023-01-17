@@ -14,17 +14,57 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "registry",
+        name: "index",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_WETH",
+        name: "recipient",
         type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "input",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "inputAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minOutputAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "swapTarget",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "assetQuote",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct IReserveRouter.QuoteParams",
+        name: "params",
+        type: "tuple",
+      },
+    ],
+    name: "deposit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
-    type: "constructor",
+    type: "function",
   },
   {
     inputs: [

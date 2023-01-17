@@ -8,9 +8,13 @@ import {
   IndexRouter as IndexRouterContractInterface,
   IndexRouter__factory,
 } from '../typechain'
+import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { IIndexRouter } from '../typechain/IndexRouter'
 import { Address, ChainId, ChainIds, isAddress } from '../types'
-import { IndexDepositRouter } from './index-deposit-router'
+import {
+  defaultIndexDepositRouterAddress,
+  IndexDepositRouter,
+} from './index-deposit-router'
 
 /** ### Default IndexRouter address for network */
 export const defaultIndexRouterAddress: Record<ChainId, Address> = {
@@ -48,98 +52,60 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
   /**
    * ### Mint
    *
-   * @param options mint options
+   * @param index index address
    * @param sellAmount token's  amount
-   * @param sellToken (optional) erc20 token
-   * @param permitOptions (optional) permit options for transaction
+   * @param params (optional) quotes for erc20 token deposit
+
    *
    * @returns mint transaction
    */
   async mintSwap(
-    options: IIndexRouter.MintSwapParamsStruct,
+    index: Address,
     sellAmount: BigNumberish,
-    sellToken?: Erc20 | Address,
-    permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+    params?: IReserveRouter.QuoteParamsStruct,
   ): Promise<ContractTransaction> {
-    if (!sellToken) {
+    if (!params) {
       return new IndexDepositRouter(
         this.account,
-        defaultIndexRouterAddress[await this.account.chainId()],
-      ).deposit(await this.weth(), sellAmount)
+        defaultIndexDepositRouterAddress[await this.account.chainId()],
+      ).deposit(index, sellAmount)
     }
 
-    if (permitOptions !== undefined) {
-      const mintSwapWithPermitEstimatedGas =
-        await this.contract.estimateGas.mintSwapWithPermit(
-          options as IIndexRouter.MintSwapParamsStruct,
-          permitOptions.deadline,
-          permitOptions.v,
-          permitOptions.r,
-          permitOptions.s,
-        )
-
-      return this.contract.mintSwapWithPermit(
-        options as IIndexRouter.MintSwapParamsStruct,
-        permitOptions.deadline,
-        permitOptions.v,
-        permitOptions.r,
-        permitOptions.s,
-        { gasLimit: mintSwapWithPermitEstimatedGas.mul(100).div(95) },
-      )
-    }
-
-    if (isAddress(sellToken)) sellToken = new Erc20(this.account, sellToken)
-
-    await sellToken.checkAllowance(this.address, sellAmount)
-
-    const estimatedGas = await this.contract.estimateGas.mintSwap(
-      options as IIndexRouter.MintSwapParamsStruct,
+    await new Erc20(this.account, params.input as Address).checkAllowance(
+      defaultIndexDepositRouterAddress[await this.account.chainId()],
+      sellAmount,
     )
 
-    return this.contract.mintSwap(
-      options as IIndexRouter.MintSwapParamsStruct,
-      { gasLimit: estimatedGas.mul(100).div(95) },
-    )
+    return new IndexDepositRouter(
+      this.account,
+      defaultIndexDepositRouterAddress[await this.account.chainId()],
+    ).deposit(index, sellAmount, params)
   }
 
   /**
    * ### Mint Static
    *
-   * @param options mint options
-   * @param sellAmount token's  amount
-   * @param sellToken (optional) erc20 token
-   * @param permitOptions (optional) permit options for transaction
+   * @param index index address
+   * @param sellAmount token's amount
+   * @param params (optional) quotes for erc20 token deposit
    *
    * @returns mint amount
    */
   async mintSwapStatic(
-    options: IIndexRouter.MintSwapParamsStruct,
+    index: Address,
     sellAmount: BigNumberish,
-    sellToken?: Erc20,
-    permitOptions?: Omit<StandardPermitArguments, 'amount'>,
+    params?: IReserveRouter.QuoteParamsStruct,
   ): Promise<BigNumber> {
-    if (!sellToken) {
+    if (!params) {
       return new IndexDepositRouter(
         this.account,
-        defaultIndexRouterAddress[await this.account.chainId()],
-      ).depositStatic(options.index, sellAmount)
+        defaultIndexDepositRouterAddress[await this.account.chainId()],
+      ).depositStatic(index, sellAmount)
     }
-
-    if (permitOptions !== undefined) {
-      return this.contract.callStatic.mintSwapWithPermit(
-        options as IIndexRouter.MintSwapParamsStruct,
-        permitOptions.deadline,
-        permitOptions.v,
-        permitOptions.r,
-        permitOptions.s,
-      )
-    }
-
-    await sellToken.checkAllowance(this.address, sellAmount)
-
-    return this.contract.callStatic.mintSwap(
-      options as IIndexRouter.MintSwapParamsStruct,
-    )
+    return new IndexDepositRouter(
+      this.account,
+      defaultIndexDepositRouterAddress[await this.account.chainId()],
+    ).depositStatic(index, sellAmount, params)
   }
 
   /**

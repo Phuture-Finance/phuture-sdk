@@ -5,9 +5,11 @@ import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
 import { Erc20, StandardPermitArguments } from '../erc-20'
 import { InsufficientAllowanceError } from '../errors'
 import { IndexRouter } from '../index-router'
+import { defaultIndexDepositRouterAddress } from '../index-router/index-deposit-router'
 import { getDefaultPriceOracle } from '../price-oracle'
 import { getDefaultIndexHelper, Index } from '../products/index'
 import { Router } from '../router'
+import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { Address, ChainId, ChainIds, TokenSymbol } from '../types'
 
 const baseMintGas = 260_000
@@ -123,17 +125,32 @@ export class AutoRouter implements Router {
       }),
     )
 
-    const [indexRouterMintOutputAmount, totalEvaluation, ethBasePrice] =
-      await Promise.all([
-        this.indexRouter.mintIndexAmount(
-          index.address,
-          amountInInputToken,
-          quotes,
-          inputToken?.address,
-        ),
-        IndexHelper.contract.totalEvaluation(index.address),
-        priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
-      ])
+    const [totalEvaluation, ethBasePrice] = await Promise.all([
+      IndexHelper.contract.totalEvaluation(index.address),
+      priceOracle.contract.callStatic['lastAssetPerBaseInUQ(address)'](
+        wethAddress,
+      ),
+    ])
+    let outputAmountUsingErc20Token = BigNumber.from(0)
+    if (inputToken) {
+      const { buyAmount } = await this.zeroExAggregator.quote(
+        inputTokenAddress,
+        await this.indexRouter.weth(),
+        amountInInputToken,
+      )
+
+      outputAmountUsingErc20Token = BigNumber.from(buyAmount)
+        .mul(BigNumber.from(2).pow(112))
+        .div(ethBasePrice)
+        .mul(await index.contract.totalSupply())
+        .div(totalEvaluation._totalEvaluation)
+    }
+
+    const outputAmountUsingNativeToken = BigNumber.from(amountInInputToken)
+      .mul(BigNumber.from(2).pow(112))
+      .div(ethBasePrice)
+      .mul(await index.contract.totalSupply())
+      .div(totalEvaluation._totalEvaluation)
 
     const totalMintGas = BigNumber.from(
       quotes
@@ -149,7 +166,11 @@ export class AutoRouter implements Router {
       .sub(zeroExSwap.estimatedGas)
       .mul(zeroExSwap.gasPrice)
 
-    const outputAmountDiffInEth = indexRouterMintOutputAmount
+    const outputDepositAmount = inputToken
+      ? outputAmountUsingErc20Token
+      : outputAmountUsingNativeToken
+
+    const outputAmountDiffInEth = outputDepositAmount
       .sub(zeroExSwap.buyAmount)
       .mul(totalEvaluation._indexPriceInBase)
       .div(BigNumber.from(10).pow(await index.decimals()))
@@ -157,8 +178,9 @@ export class AutoRouter implements Router {
       .div(BigNumber.from(2).pow(112))
 
     const isMint = gasDiffInEth.lte(outputAmountDiffInEth)
-    const target = isMint ? this.indexRouter.address : zeroExSwap.to
-
+    const target = isMint
+      ? defaultIndexDepositRouterAddress[await index.account.chainId()]
+      : zeroExSwap.to
     let expectedAllowance: BigNumber | undefined
     if (inputToken) {
       try {
@@ -176,7 +198,7 @@ export class AutoRouter implements Router {
       isMint,
       target,
       outputAmount: isMint
-        ? indexRouterMintOutputAmount
+        ? outputDepositAmount
         : BigNumber.from(zeroExSwap.buyAmount),
       expectedAllowance,
     }
@@ -203,8 +225,7 @@ export class AutoRouter implements Router {
       zeroExOptions: Partial<Zero0xQuoteOptions>
     }>,
   ): Promise<TransactionResponse> {
-    if (isMint)
-      return this.buyMint(index, amountInInputToken, inputToken, options)
+    if (isMint) return this.buyMint(index, amountInInputToken, inputToken)
 
     return this.buySwap(
       index.address,
@@ -218,127 +239,24 @@ export class AutoRouter implements Router {
     index: Index,
     amountInInputToken: BigNumberish,
     inputTokenAddress?: Address,
-    options?: Partial<{
-      permitOptions: Omit<StandardPermitArguments, 'amount'>
-      zeroExOptions: Partial<Zero0xQuoteOptions>
-    }>,
   ): Promise<TransactionResponse> {
-    const amounts = await index.scaleAmount(amountInInputToken)
-
-    const routerInputTokenAddress =
-      inputTokenAddress || (await this.indexRouter.weth())
-    const buyAmounts = await Promise.all(
-      amounts.map(async ({ asset, amount }) => {
-        if (asset === routerInputTokenAddress || amount.isZero())
-          return {
-            asset,
-            swapTarget: constants.AddressZero,
-            buyAssetMinAmount: amount,
-            assetQuote: [],
-            estimatedGas: 0,
-          }
-
-        const { to, buyAmount, data, estimatedGas } =
-          await this.zeroExAggregator.quote(
-            routerInputTokenAddress,
-            asset,
-            amount,
-            options?.zeroExOptions,
-          )
-
-        return {
-          asset,
-          swapTarget: to,
-          buyAssetMinAmount: buyAmount,
-          assetQuote: data,
-          estimatedGas,
-        }
-      }),
-    )
-
-    const priceOracle = await getDefaultPriceOracle(this.indexRouter.account)
-    const buyAmountsInBase = await Promise.all(
-      buyAmounts.map(async ({ asset, buyAssetMinAmount }, amountIndex) => {
-        const price =
-          await priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(asset)
-        return {
-          asset,
-          buyAmount: BigNumber.from(buyAssetMinAmount)
-            .mul(BigNumber.from(2).pow(112))
-            .mul(255)
-            .div(price.mul(amounts[amountIndex]!.weight)),
-        }
-      }),
-    )
-
-    const minAmount = buyAmountsInBase.reduce((min, curr) =>
-      min.buyAmount.lte(curr.buyAmount) ? min : curr,
-    )
-
-    const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
-      amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i]!.buyAmount),
-    )
-
-    const quotes = await Promise.all(
-      amounts.map(async ({ asset }, i) => {
-        const scaledSellAmount = scaledSellAmounts[i] as BigNumber
-        if (asset === routerInputTokenAddress || scaledSellAmount.isZero())
-          return {
-            asset,
-            swapTarget: constants.AddressZero,
-            buyAssetMinAmount: scaledSellAmounts[i]!,
-            assetQuote: [],
-            estimatedGas: 0,
-          }
-
-        const {
-          buyAmount,
-          to: swapTarget,
-          data: assetQuote,
-          estimatedGas,
-        } = await this.zeroExAggregator.quote(
-          routerInputTokenAddress,
-          asset,
-          scaledSellAmount,
-          options?.zeroExOptions,
-        )
-
-        let buyAssetMinAmount = BigNumber.from(buyAmount)
-        if (options?.zeroExOptions?.slippagePercentage) {
-          buyAssetMinAmount = buyAssetMinAmount
-            .mul(1000 - options?.zeroExOptions?.slippagePercentage * 1000)
-            .div(1000)
-        }
-
-        return {
-          asset,
-          buyAssetMinAmount,
-          swapTarget,
-          assetQuote,
-          estimatedGas,
-        }
-      }),
-    )
-
-    amountInInputToken = scaledSellAmounts.reduce(
-      (sum, curr) => sum.add(curr),
-      BigNumber.from(0),
-    )
-
-    const mintOptions = {
-      index: index.address,
-      recipient: await this.indexRouter.account.address(),
-      quotes,
-      amountInInputToken,
-      inputToken: routerInputTokenAddress,
+    if (!inputTokenAddress) {
+      return this.indexRouter.mintSwap(index.address, amountInInputToken)
     }
 
-    return this.indexRouter.mintSwap(
-      mintOptions,
-      amountInInputToken,
+    const { to, buyAmount, data } = await this.zeroExAggregator.quote(
       inputTokenAddress,
-      options?.permitOptions,
+      await this.indexRouter.weth(),
+      amountInInputToken,
     )
+    const params: IReserveRouter.QuoteParamsStruct = {
+      input: inputTokenAddress, //USDC address
+      inputAmount: amountInInputToken, //amount in USDC
+      minOutputAmount: buyAmount, //min amount in weth
+      swapTarget: to, //0x router contract(0xdefi..)
+      assetQuote: data, //qoute(token to WETH)
+    }
+    return this.indexRouter.mintSwap(index.address, amountInInputToken, params)
   }
 
   public async buySwap(

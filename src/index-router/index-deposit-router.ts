@@ -1,12 +1,12 @@
-import { Account } from '../account'
 import { BigNumberish, BigNumber, ContractTransaction } from 'ethers'
+import { Account } from '../account'
 import { Contract } from '../contract'
 import {
   IndexDepositRouter as IndexDepositRouterInterface,
   IndexDepositRouter__factory,
 } from '../typechain'
 import { PromiseOrValue } from '../typechain/common'
-import { IIndexRouter } from '../typechain/IndexRouter'
+import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { Address, ChainId, ChainIds } from '../types'
 
 /** ### Default IndexDepositRouter address for network */
@@ -14,7 +14,7 @@ export const defaultIndexDepositRouterAddress: Record<ChainId, Address> = {
   /** ### Default IndexDepositRouter address on mainnet. */
   [ChainIds.Mainnet]: '0x0',
   /** ### Default IndexDepositRouter address on c-chain. */
-  [ChainIds.CChain]: '0x9579368aC05e16DBC2791aB25A219b369B8f4C66',
+  [ChainIds.CChain]: '0xa04df6ec0138b9366c28d018d16acffd76531855',
 }
 
 /** ### IndexDepositRouter Contract */
@@ -44,18 +44,33 @@ export class IndexDepositRouter extends Contract<IndexDepositRouterInterface> {
    * @returns deposit transaction
    */
   async deposit(
-    buyToken: PromiseOrValue<string>,
+    index: PromiseOrValue<string>,
     sellAmount: BigNumberish,
-    quotes?: IIndexRouter.MintQuoteParamsStructOutput[],
+    params?: IReserveRouter.QuoteParamsStruct,
   ): Promise<ContractTransaction> {
-    if (quotes !== undefined) {
-      return this.contract.deposit(buyToken, this.account.address(), {
+    if (params === undefined) {
+      const estimatedNativeGas = await this.contract.estimateGas[
+        'deposit(address,address)'
+      ](index, this.account.address(), {
         value: sellAmount,
       })
+      return this.contract['deposit(address,address)'](
+        index,
+        this.account.address(),
+        {
+          value: sellAmount,
+          gasLimit: estimatedNativeGas.mul(100).div(95),
+        },
+      )
     }
-    //INFO: here will be USDC deposit
-    return this.contract.deposit(buyToken, this.account.address(), {
-      value: sellAmount,
+    const estimatedTokenGas = await this.contract.estimateGas[
+      'deposit(address,address,(address,uint256,uint256,address,bytes))'
+    ](index, this.account.address(), params)
+
+    return this.contract[
+      'deposit(address,address,(address,uint256,uint256,address,bytes))'
+    ](index, this.account.address(), params, {
+      gasLimit: estimatedTokenGas.mul(100).div(95),
     })
   }
 
@@ -71,20 +86,19 @@ export class IndexDepositRouter extends Contract<IndexDepositRouterInterface> {
   async depositStatic(
     buyToken: PromiseOrValue<string>,
     sellAmount: BigNumberish,
-    quotes?: IIndexRouter.MintQuoteParamsStructOutput[],
+    params?: IReserveRouter.QuoteParamsStruct,
   ): Promise<BigNumber> {
-    if (quotes !== undefined) {
-      return this.contract.callStatic.deposit(
+    if (params === undefined) {
+      return await this.contract.callStatic['deposit(address,address)'](
         buyToken,
-        this.account.address(),
+        await this.account.address(),
         {
           value: sellAmount,
         },
       )
     }
-    //INFO: here will be USDC deposit
-    return this.contract.callStatic.deposit(buyToken, this.account.address(), {
-      value: sellAmount,
-    })
+    return this.contract.callStatic[
+      'deposit(address,address,(address,uint256,uint256,address,bytes))'
+    ](buyToken, this.account.address(), params)
   }
 }

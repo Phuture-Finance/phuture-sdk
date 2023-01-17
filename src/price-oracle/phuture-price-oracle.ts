@@ -11,7 +11,7 @@ export const defaultPhuturePriceOracleAddress: Record<ChainId, Address> = {
   /** ### Default PhuturePriceOracle address on mainnet. */
   [ChainIds.Mainnet]: '0x384ac33558821383ff4fc73d1dee3539a74bf540',
   /** ### Default PhuturePriceOracle address on c-chain. */
-  [ChainIds.CChain]: '0x69e848b2f41019340cec3e6696d5c937e74da96b',
+  [ChainIds.CChain]: '0xee53039d099fc73171ee94386d59f24b05ceb68a',
 }
 
 /** ### ERC20 Token Contract */

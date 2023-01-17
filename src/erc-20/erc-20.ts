@@ -11,7 +11,6 @@ import { Address, ContractFactory } from '../types'
 export class Erc20<
   C extends ERC20ContractInterface = ERC20ContractInterface,
 > extends Contract<C> {
-
   /** ### Decimals of the token */
   private _decimals?: number
 
