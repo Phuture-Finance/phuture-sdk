@@ -250,33 +250,31 @@ export class AutoRouter implements Router {
       zeroExOptions: Partial<Zero0xQuoteOptions>
     }>,
   ): Promise<TransactionResponse> {
-    if (!inputTokenAddress) {
-      return this.indexDepositRouter.deposit(index.address, amountInInputToken)
+    let params: IReserveRouter.QuoteParamsStruct | undefined
+    if (inputTokenAddress) {
+      const { to, buyAmount, data } = await this.zeroExAggregator.quote(
+        inputTokenAddress,
+        await this.indexWithdrawRouter.weth(),
+        amountInInputToken,
+        options?.zeroExOptions,
+      )
+      params = {
+        input: inputTokenAddress, //USDC address
+        inputAmount: amountInInputToken, //amount in USDC
+        minOutputAmount: buyAmount, //min amount in weth
+        swapTarget: to, //0x router contract(0xdefi..)
+        assetQuote: data, //qoute(token to WETH)
+      }
+      await new Erc20(
+        this.indexWithdrawRouter.account,
+        inputTokenAddress as Address,
+      ).checkAllowance(
+        defaultIndexDepositRouterAddress[
+          await this.indexWithdrawRouter.account.chainId()
+        ],
+        amountInInputToken,
+      )
     }
-
-    const { to, buyAmount, data } = await this.zeroExAggregator.quote(
-      inputTokenAddress,
-      await this.indexWithdrawRouter.weth(),
-      amountInInputToken,
-      options?.zeroExOptions,
-    )
-    const params: IReserveRouter.QuoteParamsStruct = {
-      input: inputTokenAddress,
-      inputAmount: amountInInputToken,
-      minOutputAmount: buyAmount,
-      swapTarget: to,
-      assetQuote: data,
-    }
-
-    await new Erc20(
-      this.indexWithdrawRouter.account,
-      params.input as Address,
-    ).checkAllowance(
-      defaultIndexDepositRouterAddress[
-        await this.indexWithdrawRouter.account.chainId()
-      ],
-      amountInInputToken,
-    )
 
     return this.indexDepositRouter.deposit(
       index.address,
