@@ -20,7 +20,9 @@ export const defaultIndexRouterAddress: Record<ChainId, Address> = {
 }
 
 /** ### IndexRouter Contract */
-export class IndexWithdrawRouter extends Contract<IndexRouterContractInterface> {
+export class IndexWithdrawRouter extends Contract<
+  IndexRouterContractInterface
+> {
   private _weth?: Address
 
   /**
@@ -70,14 +72,13 @@ export class IndexWithdrawRouter extends Contract<IndexRouterContractInterface> 
     }
 
     if (permitOptions !== undefined) {
-      const burnWithPermitEstimatedGas =
-        await this.contract.estimateGas.burnWithPermit(
-          burnParameters,
-          permitOptions.deadline,
-          permitOptions.v,
-          permitOptions.r,
-          permitOptions.s,
-        )
+      const burnWithPermitEstimatedGas = await this.contract.estimateGas.burnWithPermit(
+        burnParameters,
+        permitOptions.deadline,
+        permitOptions.v,
+        permitOptions.r,
+        permitOptions.s,
+      )
 
       return this.contract.burnWithPermit(
         burnParameters,
@@ -131,14 +132,13 @@ export class IndexWithdrawRouter extends Contract<IndexRouterContractInterface> 
 
     if (options.outputAsset === undefined) {
       if (options.permitOptions !== undefined) {
-        const burnSwapWithPermitEstimatedGas =
-          await this.contract.estimateGas.burnSwapWithPermit(
-            burnParameters,
-            options.permitOptions.deadline,
-            options.permitOptions.v,
-            options.permitOptions.r,
-            options.permitOptions.s,
-          )
+        const burnSwapWithPermitEstimatedGas = await this.contract.estimateGas.burnSwapWithPermit(
+          burnParameters,
+          options.permitOptions.deadline,
+          options.permitOptions.v,
+          options.permitOptions.r,
+          options.permitOptions.s,
+        )
 
         return this.contract.burnSwapValueWithPermit(
           burnParameters,
@@ -162,14 +162,13 @@ export class IndexWithdrawRouter extends Contract<IndexRouterContractInterface> 
     }
 
     if (options.permitOptions !== undefined) {
-      const burnSwapWithPermitEstimatedGas =
-        await this.contract.estimateGas.burnSwapWithPermit(
-          burnParameters,
-          options.permitOptions.deadline,
-          options.permitOptions.v,
-          options.permitOptions.r,
-          options.permitOptions.s,
-        )
+      const burnSwapWithPermitEstimatedGas = await this.contract.estimateGas.burnSwapWithPermit(
+        burnParameters,
+        options.permitOptions.deadline,
+        options.permitOptions.v,
+        options.permitOptions.r,
+        options.permitOptions.s,
+      )
 
       return this.contract.burnSwapWithPermit(
         burnParameters,

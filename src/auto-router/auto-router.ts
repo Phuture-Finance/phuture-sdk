@@ -84,20 +84,24 @@ export class AutoRouter implements Router {
     outputAmount: BigNumber
     expectedAllowance?: BigNumber
   }> {
-    const [zeroExSwap, amounts, IndexHelper, priceOracle, wethAddress] =
-      await Promise.all([
-        this.zeroExAggregator.quote(
-          inputToken?.address ||
-            nativeTokenSymbol(await index.account.chainId()),
-          index.address,
-          amountInInputToken,
-          options,
-        ),
-        index.scaleAmount(amountInInputToken),
-        getDefaultIndexHelper(index.account),
-        getDefaultPriceOracle(index.account),
-        this.indexWithdrawRouter.weth(),
-      ])
+    const [
+      zeroExSwap,
+      amounts,
+      IndexHelper,
+      priceOracle,
+      wethAddress,
+    ] = await Promise.all([
+      this.zeroExAggregator.quote(
+        inputToken?.address || nativeTokenSymbol(await index.account.chainId()),
+        index.address,
+        amountInInputToken,
+        options,
+      ),
+      index.scaleAmount(amountInInputToken),
+      getDefaultIndexHelper(index.account),
+      getDefaultPriceOracle(index.account),
+      this.indexWithdrawRouter.weth(),
+    ])
 
     const inputTokenAddress = inputToken?.address || wethAddress
 
@@ -112,13 +116,17 @@ export class AutoRouter implements Router {
             estimatedGas: 0,
           }
 
-        const { to, buyAmount, data, estimatedGas } =
-          await this.zeroExAggregator.quote(
-            inputTokenAddress,
-            asset,
-            amount,
-            options,
-          )
+        const {
+          to,
+          buyAmount,
+          data,
+          estimatedGas,
+        } = await this.zeroExAggregator.quote(
+          inputTokenAddress,
+          asset,
+          amount,
+          options,
+        )
 
         return {
           asset,
@@ -289,17 +297,21 @@ export class AutoRouter implements Router {
     inputTokenAddress?: Address,
     zeroExOptions?: Partial<Zero0xQuoteOptions>,
   ): Promise<TransactionResponse> {
-    const { to, sellAmount, data, estimatedGas } =
-      await this.zeroExAggregator.quote(
-        inputTokenAddress ||
-          nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
-        indexAddress,
-        amountInInputToken,
-        {
-          ...zeroExOptions,
-          takerAddress: await this.indexWithdrawRouter.account.address(),
-        },
-      )
+    const {
+      to,
+      sellAmount,
+      data,
+      estimatedGas,
+    } = await this.zeroExAggregator.quote(
+      inputTokenAddress ||
+        nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
+      indexAddress,
+      amountInInputToken,
+      {
+        ...zeroExOptions,
+        takerAddress: await this.indexWithdrawRouter.account.address(),
+      },
+    )
 
     // TODO: catch InsufficientAllowanceError from ZeroExAggregator instead
     // if (inputToken)

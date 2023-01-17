@@ -16,7 +16,7 @@ export const defaultIndexHelperAddress: Record<ChainId, Address> = {
 }
 
 export class IndexHelper<
-  C extends IndexHelperContractInterface = IndexHelperContractInterface,
+  C extends IndexHelperContractInterface = IndexHelperContractInterface
 > extends Contract<C> {
   constructor(
     account: Account,

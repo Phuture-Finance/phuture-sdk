@@ -17,7 +17,7 @@ export const defaultPhuturePriceOracleAddress: Record<ChainId, Address> = {
 
 /** ### ERC20 Token Contract */
 export class PhuturePriceOracle<
-  C extends PhuturePriceOracleContractInterface = PhuturePriceOracleContractInterface,
+  C extends PhuturePriceOracleContractInterface = PhuturePriceOracleContractInterface
 > extends Contract<C> {
   /**
    * ### Creates a new PhuturePriceOracle instance

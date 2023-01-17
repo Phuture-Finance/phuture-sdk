@@ -194,26 +194,26 @@ const permitInterface = new Interface([
  * ### Encodes permit data for given erc20 contract and options
  * @param erc20 Erc20 contract instance of contract address
  */
-export const encodePermit =
-  (erc20: Erc20 | Address) =>
-  (options: PermitOptions): string => {
-    const [functionName, amount, deadline] = isAllowedPermit(options)
-      ? ['selfPermitAllowed', options.nonce, options.expiry]
-      : ['selfPermit', options.amount, options.deadline]
+export const encodePermit = (erc20: Erc20 | Address) => (
+  options: PermitOptions,
+): string => {
+  const [functionName, amount, deadline] = isAllowedPermit(options)
+    ? ['selfPermitAllowed', options.nonce, options.expiry]
+    : ['selfPermit', options.amount, options.deadline]
 
-    return permitInterface.encodeFunctionData(functionName, [
-      isAddress(erc20) ? erc20 : erc20.address,
-      BigNumber.from(amount).toHexString(),
-      BigNumber.from(deadline).toHexString(),
-      options.v,
-      options.r,
-      options.s,
-    ])
-  }
+  return permitInterface.encodeFunctionData(functionName, [
+    isAddress(erc20) ? erc20 : erc20.address,
+    BigNumber.from(amount).toHexString(),
+    BigNumber.from(deadline).toHexString(),
+    options.v,
+    options.r,
+    options.s,
+  ])
+}
 
 /** ### Erc20Permit Token Contract */
 export class Erc20Permit<
-  C extends ERC20PermitContractInterface = ERC20PermitContractInterface,
+  C extends ERC20PermitContractInterface = ERC20PermitContractInterface
 > extends Erc20<C> {
   /** Encodes permit data for the given options */
   public encodePermit = encodePermit(this)

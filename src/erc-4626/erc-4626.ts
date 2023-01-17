@@ -8,7 +8,7 @@ import { Address, ContractFactory } from '../types'
 
 /** ### ERC4626 Token Contract */
 export class Erc4626<
-  C extends ERC4626WithPermitContractInterface = ERC4626WithPermitContractInterface,
+  C extends ERC4626WithPermitContractInterface = ERC4626WithPermitContractInterface
 > extends Erc20Permit<C> {
   /**
    * ### Creates a new ERC4626 instance
