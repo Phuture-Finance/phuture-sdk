@@ -3,18 +3,13 @@ import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { Account } from '../account'
 import { Contract } from '../contract'
 import { Erc20, StandardPermitArguments } from '../erc-20'
-import { Index } from '../products/index'
+import { Index } from '../products/index/index'
 import {
   IndexRouter as IndexRouterContractInterface,
   IndexRouter__factory,
 } from '../typechain'
-import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { IIndexRouter } from '../typechain/IndexRouter'
 import { Address, ChainId, ChainIds, isAddress } from '../types'
-import {
-  defaultIndexDepositRouterAddress,
-  IndexDepositRouter,
-} from './index-deposit-router'
 
 /** ### Default IndexRouter address for network */
 export const defaultIndexRouterAddress: Record<ChainId, Address> = {
@@ -25,7 +20,7 @@ export const defaultIndexRouterAddress: Record<ChainId, Address> = {
 }
 
 /** ### IndexRouter Contract */
-export class IndexRouter extends Contract<IndexRouterContractInterface> {
+export class IndexWithdrawRouter extends Contract<IndexRouterContractInterface> {
   private _weth?: Address
 
   /**
@@ -47,96 +42,6 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
     if (!this._weth) this._weth = await this.contract.WETH()
 
     return this._weth
-  }
-
-  /**
-   * ### Mint
-   *
-   * @param index index address
-   * @param sellAmount token's  amount
-   * @param params (optional) quotes for erc20 token deposit
-
-   *
-   * @returns mint transaction
-   */
-  async mintSwap(
-    index: Address,
-    sellAmount: BigNumberish,
-    params?: IReserveRouter.QuoteParamsStruct,
-  ): Promise<ContractTransaction> {
-    if (!params) {
-      return new IndexDepositRouter(
-        this.account,
-        defaultIndexDepositRouterAddress[await this.account.chainId()],
-      ).deposit(index, sellAmount)
-    }
-
-    await new Erc20(this.account, params.input as Address).checkAllowance(
-      defaultIndexDepositRouterAddress[await this.account.chainId()],
-      sellAmount,
-    )
-
-    return new IndexDepositRouter(
-      this.account,
-      defaultIndexDepositRouterAddress[await this.account.chainId()],
-    ).deposit(index, sellAmount, params)
-  }
-
-  /**
-   * ### Mint Static
-   *
-   * @param index index address
-   * @param sellAmount token's amount
-   * @param params (optional) quotes for erc20 token deposit
-   *
-   * @returns mint amount
-   */
-  async mintSwapStatic(
-    index: Address,
-    sellAmount: BigNumberish,
-    params?: IReserveRouter.QuoteParamsStruct,
-  ): Promise<BigNumber> {
-    if (!params) {
-      return new IndexDepositRouter(
-        this.account,
-        defaultIndexDepositRouterAddress[await this.account.chainId()],
-      ).depositStatic(index, sellAmount)
-    }
-    return new IndexDepositRouter(
-      this.account,
-      defaultIndexDepositRouterAddress[await this.account.chainId()],
-    ).depositStatic(index, sellAmount, params)
-  }
-
-  /**
-   * ### Mint Index Amount
-   *
-   * @param index index address
-   * @param amountInInputToken token's  amount
-   * @param quotes quotes for swaps
-   * @param inputToken (optional) token's address
-   *
-   * @returns mint amount in single token
-   */
-  async mintIndexAmount(
-    index: Address,
-    amountInInputToken: BigNumberish,
-    quotes: IIndexRouter.MintQuoteParamsStruct[],
-    inputToken?: Address,
-  ): Promise<BigNumber> {
-    if (!inputToken) {
-      inputToken = await this.weth()
-    }
-
-    const option: IIndexRouter.MintSwapParamsStruct = {
-      inputToken,
-      amountInInputToken,
-      quotes,
-      index,
-      recipient: await this.account.address(),
-    }
-
-    return this.contract.mintSwapIndexAmount(option)
   }
 
   /**

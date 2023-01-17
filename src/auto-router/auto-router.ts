@@ -4,8 +4,11 @@ import { BigNumber, BigNumberish, constants } from 'ethers'
 import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
 import { Erc20, StandardPermitArguments } from '../erc-20'
 import { InsufficientAllowanceError } from '../errors'
-import { IndexRouter } from '../index-router'
-import { defaultIndexDepositRouterAddress } from '../index-router/index-deposit-router'
+import { IndexWithdrawRouter } from '../index-router'
+import {
+  defaultIndexDepositRouterAddress,
+  IndexDepositRouter,
+} from '../index-router/index-deposit-router'
 import { getDefaultPriceOracle } from '../price-oracle'
 import { getDefaultIndexHelper, Index } from '../products/index'
 import { Router } from '../router'
@@ -48,13 +51,15 @@ export class AutoRouter implements Router {
   /**
    * ### Creates a new AutoRouter instance
    *
-   * @param indexRouter instance of IndexRouter
+   * @param indexWithdrawRouter instance of IndexWithdrawRouter
+   * @param indexDepositRouter instance of indexDepositRouter
    * @param zeroExAggregator ZeroEx client
    *
    * @returns New AutoRouter instance
    */
   constructor(
-    public readonly indexRouter: IndexRouter,
+    public readonly indexWithdrawRouter: IndexWithdrawRouter,
+    public readonly indexDepositRouter: IndexDepositRouter,
     public readonly zeroExAggregator: ZeroExAggregator,
   ) {}
 
@@ -91,7 +96,7 @@ export class AutoRouter implements Router {
         index.scaleAmount(amountInInputToken),
         getDefaultIndexHelper(index.account),
         getDefaultPriceOracle(index.account),
-        this.indexRouter.weth(),
+        this.indexWithdrawRouter.weth(),
       ])
 
     const inputTokenAddress = inputToken?.address || wethAddress
@@ -135,7 +140,7 @@ export class AutoRouter implements Router {
     if (inputToken) {
       const { buyAmount } = await this.zeroExAggregator.quote(
         inputTokenAddress,
-        await this.indexRouter.weth(),
+        await this.indexWithdrawRouter.weth(),
         amountInInputToken,
       )
 
@@ -246,12 +251,12 @@ export class AutoRouter implements Router {
     }>,
   ): Promise<TransactionResponse> {
     if (!inputTokenAddress) {
-      return this.indexRouter.mintSwap(index.address, amountInInputToken)
+      return this.indexDepositRouter.deposit(index.address, amountInInputToken)
     }
 
     const { to, buyAmount, data } = await this.zeroExAggregator.quote(
       inputTokenAddress,
-      await this.indexRouter.weth(),
+      await this.indexWithdrawRouter.weth(),
       amountInInputToken,
       options?.zeroExOptions,
     )
@@ -262,7 +267,22 @@ export class AutoRouter implements Router {
       swapTarget: to,
       assetQuote: data,
     }
-    return this.indexRouter.mintSwap(index.address, amountInInputToken, params)
+
+    await new Erc20(
+      this.indexWithdrawRouter.account,
+      params.input as Address,
+    ).checkAllowance(
+      defaultIndexDepositRouterAddress[
+        await this.indexWithdrawRouter.account.chainId()
+      ],
+      amountInInputToken,
+    )
+
+    return this.indexDepositRouter.deposit(
+      index.address,
+      amountInInputToken,
+      params,
+    )
   }
 
   public async buySwap(
@@ -274,12 +294,12 @@ export class AutoRouter implements Router {
     const { to, sellAmount, data, estimatedGas } =
       await this.zeroExAggregator.quote(
         inputTokenAddress ||
-          nativeTokenSymbol(await this.indexRouter.account.chainId()),
+          nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
         indexAddress,
         amountInInputToken,
         {
           ...zeroExOptions,
-          takerAddress: await this.indexRouter.account.address(),
+          takerAddress: await this.indexWithdrawRouter.account.address(),
         },
       )
 
@@ -287,7 +307,7 @@ export class AutoRouter implements Router {
     // if (inputToken)
     // 	await inputToken.checkAllowance(to, sellAmount);
 
-    return this.indexRouter.account.signer.sendTransaction({
+    return this.indexWithdrawRouter.account.signer.sendTransaction({
       to,
       data,
       gasLimit: BigNumber.from(estimatedGas).toHexString(),
@@ -325,17 +345,17 @@ export class AutoRouter implements Router {
       outputTokenAddress = outputToken.address
       const { buyAmount } = await this.zeroExAggregator.price(
         outputToken.address,
-        await this.indexRouter.weth(),
+        await this.indexWithdrawRouter.weth(),
         BigNumber.from(10).pow(await outputToken.decimals()),
         options,
       )
 
       outputTokenPriceEth = BigNumber.from(buyAmount)
     } else {
-      outputTokenAddress = await this.indexRouter.weth()
+      outputTokenAddress = await this.indexWithdrawRouter.weth()
       outputToken = new Erc20(
-        this.indexRouter.account,
-        await this.indexRouter.weth(),
+        this.indexWithdrawRouter.account,
+        await this.indexWithdrawRouter.weth(),
       )
     }
 
@@ -343,11 +363,11 @@ export class AutoRouter implements Router {
       this.zeroExAggregator.quote(
         index.address,
         outputTokenAddress ||
-          nativeTokenSymbol(await this.indexRouter.account.chainId()),
+          nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
         indexAmount,
         options,
       ),
-      this.indexRouter.burnTokensAmount(index, indexAmount),
+      this.indexWithdrawRouter.burnTokensAmount(index, indexAmount),
     ])
 
     const prices = await Promise.all(
@@ -390,7 +410,7 @@ export class AutoRouter implements Router {
           baseBurnGas +
             prices.length *
               additionalBurnGasPerAsset(
-                await this.indexRouter.account.chainId(),
+                await this.indexWithdrawRouter.account.chainId(),
               ),
         ),
     )
@@ -409,7 +429,7 @@ export class AutoRouter implements Router {
           ),
       )
 
-    const target = isBurn ? this.indexRouter.address : zeroExSwap.to
+    const target = isBurn ? this.indexWithdrawRouter.address : zeroExSwap.to
     let expectedAllowance: BigNumber | undefined
     try {
       await index.checkAllowance(target, indexAmount)
@@ -472,10 +492,13 @@ export class AutoRouter implements Router {
       zeroExOptions: Partial<Zero0xQuoteOptions>
     }>,
   ): Promise<TransactionResponse> {
-    const amounts = await this.indexRouter.burnAmount(index, indexAmount)
+    const amounts = await this.indexWithdrawRouter.burnAmount(
+      index,
+      indexAmount,
+    )
 
     const routerOutputTokenAddress =
-      outputTokenAddress || (await this.indexRouter.weth())
+      outputTokenAddress || (await this.indexWithdrawRouter.weth())
     const quotes = await Promise.all(
       amounts.map(async ({ amount, asset }) => {
         if (!amount || amount.isZero() || asset === routerOutputTokenAddress) {
@@ -513,10 +536,10 @@ export class AutoRouter implements Router {
       }),
     )
 
-    return this.indexRouter.burnSwap(
+    return this.indexWithdrawRouter.burnSwap(
       index.address,
       indexAmount,
-      await this.indexRouter.account.address(),
+      await this.indexWithdrawRouter.account.address(),
       {
         outputAsset: outputTokenAddress,
         quotes,
@@ -534,15 +557,18 @@ export class AutoRouter implements Router {
     const { to, data, estimatedGas } = await this.zeroExAggregator.quote(
       indexAddress,
       outputTokenAddress ||
-        nativeTokenSymbol(await this.indexRouter.account.chainId()),
+        nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
       indexAmount,
-      { ...options, takerAddress: await this.indexRouter.account.address() },
+      {
+        ...options,
+        takerAddress: await this.indexWithdrawRouter.account.address(),
+      },
     )
 
     // TODO: catch InsufficientAllowanceError from ZeroExAggregator instead
     // await index.checkAllowance(zeroExSwap.to, zeroExSwap.sellAmount);
 
-    return this.indexRouter.account.signer.sendTransaction({
+    return this.indexWithdrawRouter.account.signer.sendTransaction({
       to,
       data,
       gasLimit: BigNumber.from(estimatedGas).toHexString(),
