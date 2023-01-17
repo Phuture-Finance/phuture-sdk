@@ -15,16 +15,6 @@ import { Router } from '../router'
 import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { Address, ChainId, ChainIds, TokenSymbol } from '../types'
 
-const baseMintGas = 260_000
-const additionalMintGasPerAsset = (network: ChainId): number => {
-  const gas = {
-    [ChainIds.Mainnet]: 148_000,
-    [ChainIds.CChain]: 105_000,
-  }[network]
-
-  return gas || 135_000
-}
-
 const baseBurnGas = 100_000
 const additionalBurnGasPerAsset = (network: ChainId) => {
   const gas = {
@@ -86,7 +76,6 @@ export class AutoRouter implements Router {
   }> {
     const [
       zeroExSwap,
-      amounts,
       IndexHelper,
       priceOracle,
       wethAddress,
@@ -97,46 +86,12 @@ export class AutoRouter implements Router {
         amountInInputToken,
         options,
       ),
-      index.scaleAmount(amountInInputToken),
       getDefaultIndexHelper(index.account),
       getDefaultPriceOracle(index.account),
       this.indexWithdrawRouter.weth(),
     ])
 
     const inputTokenAddress = inputToken?.address || wethAddress
-
-    const quotes = await Promise.all(
-      amounts.map(async ({ amount, asset }) => {
-        if (asset === inputTokenAddress)
-          return {
-            asset,
-            swapTarget: constants.AddressZero,
-            buyAssetMinAmount: amount,
-            assetQuote: [],
-            estimatedGas: 0,
-          }
-
-        const {
-          to,
-          buyAmount,
-          data,
-          estimatedGas,
-        } = await this.zeroExAggregator.quote(
-          inputTokenAddress,
-          asset,
-          amount,
-          options,
-        )
-
-        return {
-          asset,
-          swapTarget: to,
-          buyAssetMinAmount: buyAmount,
-          assetQuote: data,
-          estimatedGas,
-        }
-      }),
-    )
 
     const [totalEvaluation, ethBasePrice] = await Promise.all([
       IndexHelper.contract.totalEvaluation(index.address),
@@ -165,15 +120,8 @@ export class AutoRouter implements Router {
       .mul(await index.contract.totalSupply())
       .div(totalEvaluation._totalEvaluation)
 
-    const totalMintGas = BigNumber.from(
-      quotes
-        .reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
-        .add(
-          baseMintGas +
-            quotes.length *
-              additionalMintGasPerAsset(await index.account.chainId()),
-        ),
-    )
+    const totalMintGas = BigNumber.from(0)
+    //TODO: calculate total mint gas
 
     const gasDiffInEth = totalMintGas
       .sub(zeroExSwap.estimatedGas)
