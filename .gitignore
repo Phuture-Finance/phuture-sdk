@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+/src/typechain
 
 # dependencies
 node_modules
@@ -32,7 +33,6 @@ node_modules
 npm-debug.log
 yarn-error.log
 testem.log
-src/typechain
 
 # System Files
 .DS_Store
