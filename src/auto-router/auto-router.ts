@@ -259,11 +259,11 @@ export class AutoRouter implements Router {
         options?.zeroExOptions,
       )
       params = {
-        input: inputTokenAddress, //USDC address
-        inputAmount: amountInInputToken, //amount in USDC
-        minOutputAmount: buyAmount, //min amount in weth
-        swapTarget: to, //0x router contract(0xdefi..)
-        assetQuote: data, //qoute(token to WETH)
+        input: inputTokenAddress,
+        inputAmount: amountInInputToken,
+        minOutputAmount: buyAmount,
+        swapTarget: to,
+        assetQuote: data,
       }
       await new Erc20(
         this.indexWithdrawRouter.account,
