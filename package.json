@@ -10,7 +10,7 @@
     "src"
   ],
   "scripts": {
-    "start": "tsdx watch",
+    "start": "pnpm typechain && tsdx watch",
     "build": "pnpm typechain && tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
