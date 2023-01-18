@@ -109,14 +109,14 @@ export class AutoRouter implements Router {
       priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
     ])
 
-    let totalMintGas = BigNumber.from(baseDepositGas)
+    let totalDepositGas = BigNumber.from(baseDepositGas)
     if (inputToken) {
       const { buyAmount, estimatedGas } = await this.zeroExAggregator.quote(
         inputTokenAddress,
         await this.indexWithdrawRouter.weth(),
         amountInInputToken,
       )
-      totalMintGas = totalMintGas
+      totalDepositGas = totalDepositGas
         .add(estimatedGas)
         .add(
           additionalSwapDepositGas(
@@ -133,7 +133,7 @@ export class AutoRouter implements Router {
       .mul(await index.contract.totalSupply())
       .div(totalEvaluation._totalEvaluation)
 
-    const gasDiffInEth = totalMintGas
+    const gasDiffInEth = totalDepositGas
       .sub(zeroExSwap.estimatedGas)
       .mul(zeroExSwap.gasPrice)
 
@@ -144,8 +144,8 @@ export class AutoRouter implements Router {
       .mul(ethBasePrice)
       .div(UQ112)
 
-    const isMint = gasDiffInEth.lte(outputAmountDiffInEth)
-    const target = isMint
+    const isDeposit = gasDiffInEth.lte(outputAmountDiffInEth)
+    const target = isDeposit
       ? defaultIndexDepositRouterAddress[await index.account.chainId()]
       : zeroExSwap.to
 
@@ -163,9 +163,9 @@ export class AutoRouter implements Router {
     }
 
     return {
-      isMint,
+      isMint: isDeposit,
       target,
-      outputAmount: isMint
+      outputAmount: isDeposit
         ? indexOutputAmount
         : BigNumber.from(zeroExSwap.buyAmount),
       expectedAllowance,
