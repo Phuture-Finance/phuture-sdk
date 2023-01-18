@@ -4,7 +4,7 @@ import {
   IHarvestingJob as HarvestingJobInterface,
   IHarvestingJob__factory,
 } from '../../typechain'
-import type { Address, ContractFactory } from '../../types'
+import { Address, ContractFactory } from '../../types'
 
 /**
  * ### HarvestingJob Contract

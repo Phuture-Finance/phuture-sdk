@@ -6,7 +6,7 @@ import {
   SavingsVault as SavingsVaultContractInterface,
   SavingsVault__factory,
 } from '../../typechain'
-import type { Address, ContractFactory } from '../../types'
+import { Address, ContractFactory } from '../../types'
 
 /**
  * ### SavingsVault Contract
@@ -51,13 +51,12 @@ export class SavingsVault extends Erc4626<SavingsVaultContractInterface> {
     owner: Address,
     minOutputAmount: BigNumber,
   ): Promise<ContractTransaction> {
-    const estimatedGas =
-      await this.contract.estimateGas.redeemWithMinOutputAmount(
-        shares,
-        receiver,
-        owner,
-        minOutputAmount,
-      )
+    const estimatedGas = await this.contract.estimateGas.redeemWithMinOutputAmount(
+      shares,
+      receiver,
+      owner,
+      minOutputAmount,
+    )
 
     return this.contract.redeemWithMinOutputAmount(
       shares,

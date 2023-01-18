@@ -1,5 +1,5 @@
 import { Account } from '../account'
-import type { Address, ContractFactory } from '../types'
+import { Address, ContractFactory } from '../types'
 import { isAddress } from '../types'
 
 /** ### Contract Instance */
@@ -32,7 +32,7 @@ export class Contract<C> {
    * @returns Address of the contract
    */
   get address(): Address {
-    return (this.contract as unknown as { address: Address }).address
+    return ((this.contract as unknown) as { address: Address }).address
   }
 
   /**

@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish } from 'ethers'
 import { Account } from '../../account'
 import { Erc20Permit } from '../../erc-20'
 import { BaseIndex, BaseIndex__factory } from '../../typechain'
-import type { Address, Anatomy, ContractFactory } from '../../types'
+import { Address, Anatomy, ContractFactory } from '../../types'
 
 /**
  * ### Index Contract
@@ -46,7 +46,9 @@ export class Index extends Erc20Permit<BaseIndex> {
 
     return anatomy.map(({ asset, weight }) => ({
       asset,
-      amount: BigNumber.from(amountDesired).mul(weight).div(255),
+      amount: BigNumber.from(amountDesired)
+        .mul(weight)
+        .div(255),
       weight,
     }))
   }

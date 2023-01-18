@@ -4,7 +4,7 @@ import newDebug from 'debug'
 import { BigNumber, BigNumberish } from 'ethers'
 
 import { ChainIds } from '../types'
-import type { Address, ChainId, TokenSymbol, Url } from '../types'
+import { Address, ChainId, TokenSymbol, Url } from '../types'
 
 import {
   Zero0xPriceOptions,

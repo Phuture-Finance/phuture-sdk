@@ -15,6 +15,17 @@ import { Router } from '../router'
 import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { Address, ChainId, ChainIds, TokenSymbol } from '../types'
 
+const UQ112 = BigNumber.from(2).pow(112)
+const baseDepositGas = 95_000
+const additionalSwapDepositGas = (network: ChainId) => {
+  const gas = {
+    [ChainIds.Mainnet]: 115_000,
+    [ChainIds.CChain]: 100_000,
+  }[network]
+
+  return gas || 125_000
+}
+
 const baseBurnGas = 100_000
 const additionalBurnGasPerAsset = (network: ChainId) => {
   const gas = {
@@ -95,63 +106,59 @@ export class AutoRouter implements Router {
 
     const [totalEvaluation, ethBasePrice] = await Promise.all([
       IndexHelper.contract.totalEvaluation(index.address),
-      priceOracle.contract.callStatic['lastAssetPerBaseInUQ(address)'](
-        wethAddress,
-      ),
+      priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
     ])
-    let outputAmountUsingErc20Token = BigNumber.from(0)
+
+    let totalMintGas = BigNumber.from(baseDepositGas)
     if (inputToken) {
-      const { buyAmount } = await this.zeroExAggregator.quote(
+      const { buyAmount, estimatedGas } = await this.zeroExAggregator.quote(
         inputTokenAddress,
         await this.indexWithdrawRouter.weth(),
         amountInInputToken,
       )
+      totalMintGas = totalMintGas
+        .add(estimatedGas)
+        .add(
+          additionalSwapDepositGas(
+            await this.indexWithdrawRouter.account.chainId(),
+          ),
+        )
 
-      outputAmountUsingErc20Token = BigNumber.from(buyAmount)
-        .mul(BigNumber.from(2).pow(112))
-        .div(ethBasePrice)
-        .mul(await index.contract.totalSupply())
-        .div(totalEvaluation._totalEvaluation)
+      amountInInputToken = BigNumber.from(buyAmount)
     }
 
-    const outputAmountUsingNativeToken = BigNumber.from(amountInInputToken)
-      .mul(BigNumber.from(2).pow(112))
+    const indexOutputAmount = BigNumber.from(amountInInputToken)
+      .mul(UQ112)
       .div(ethBasePrice)
       .mul(await index.contract.totalSupply())
       .div(totalEvaluation._totalEvaluation)
-
-    const totalMintGas = BigNumber.from(0)
-    //TODO: calculate total mint gas
 
     const gasDiffInEth = totalMintGas
       .sub(zeroExSwap.estimatedGas)
       .mul(zeroExSwap.gasPrice)
 
-    const outputDepositAmount = inputToken
-      ? outputAmountUsingErc20Token
-      : outputAmountUsingNativeToken
-
-    const outputAmountDiffInEth = outputDepositAmount
+    const outputAmountDiffInEth = indexOutputAmount
       .sub(zeroExSwap.buyAmount)
       .mul(totalEvaluation._indexPriceInBase)
       .div(BigNumber.from(10).pow(await index.decimals()))
       .mul(ethBasePrice)
-      .div(BigNumber.from(2).pow(112))
+      .div(UQ112)
 
     const isMint = gasDiffInEth.lte(outputAmountDiffInEth)
     const target = isMint
       ? defaultIndexDepositRouterAddress[await index.account.chainId()]
       : zeroExSwap.to
+
     let expectedAllowance: BigNumber | undefined
     if (inputToken) {
       try {
         await inputToken.checkAllowance(target, amountInInputToken)
       } catch (error) {
-        if (error instanceof InsufficientAllowanceError) {
-          expectedAllowance = error.expectedAllowance
-        } else {
+        if (!(error instanceof InsufficientAllowanceError)) {
           throw error
         }
+
+        expectedAllowance = error.expectedAllowance
       }
     }
 
@@ -159,7 +166,7 @@ export class AutoRouter implements Router {
       isMint,
       target,
       outputAmount: isMint
-        ? outputDepositAmount
+        ? indexOutputAmount
         : BigNumber.from(zeroExSwap.buyAmount),
       expectedAllowance,
     }
