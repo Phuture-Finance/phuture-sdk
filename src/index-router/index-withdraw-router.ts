@@ -47,6 +47,37 @@ export class IndexWithdrawRouter extends Contract<
   }
 
   /**
+   * ### Mint Index Amount
+   *
+   * @param index index address
+   * @param amountInInputToken token's  amount
+   * @param quotes quotes for swaps
+   * @param inputToken (optional) token's address
+   *
+   * @returns mint amount in single token
+   */
+  async mintIndexAmount(
+    index: Address,
+    amountInInputToken: BigNumberish,
+    quotes: IIndexRouter.MintQuoteParamsStruct[],
+    inputToken?: Address,
+  ): Promise<BigNumber> {
+    if (!inputToken) {
+      inputToken = await this.weth()
+    }
+
+    const option: IIndexRouter.MintSwapParamsStruct = {
+      inputToken,
+      amountInInputToken,
+      quotes,
+      index,
+      recipient: await this.account.address(),
+    }
+
+    return this.contract.mintSwapIndexAmount(option)
+  }
+
+  /**
    * ### Burn
    *
    * @param index index address or it's erc20 interface
