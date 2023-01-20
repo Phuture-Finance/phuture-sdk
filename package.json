@@ -47,30 +47,30 @@
       "limit": "10 KB"
     }
   ],
-  "peerDependencies": {},
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/bytes": "5.7.0",
     "@ethersproject/providers": "5.7.2",
+    "@size-limit/preset-small-lib": "8.1.0",
     "@typechain/ethers-v5": "10.1.1",
     "@types/debug": "4.1.7",
     "@types/fs-extra": "9.0.13",
     "@types/node": "16.11.7",
     "@typescript-eslint/eslint-plugin": "5.42.1",
     "@typescript-eslint/parser": "5.42.1",
-    "@size-limit/preset-small-lib": "8.1.0",
     "@zapper-fi/eslint-plugin": "1.4.0",
     "eslint": "8.27.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-unused-imports": "2.0.0",
+    "husky": "8.0.3",
     "prettier": "2.7.1",
+    "size-limit": "8.1.0",
     "ts-node": "10.8.2",
+    "tsdx": "0.14.1",
+    "tslib": "2.4.1",
     "typechain": "8.1.1",
     "typescript": "4.9.4",
-    "husky": "8.0.3",
-    "size-limit": "8.1.0",
-    "tsdx": "0.14.1",
-    "tslib": "2.4.1"
+    "yesno": "^0.4.0"
   },
   "engines": {
     "pnpm": ">=7"

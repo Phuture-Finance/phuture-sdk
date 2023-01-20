@@ -12,7 +12,7 @@ import { IIndexRouter } from '../typechain/IndexRouter'
 import { Address, ChainId, ChainIds, isAddress } from '../types'
 
 /** ### Default IndexRouter address for network */
-export const defaultIndexRouterAddress: Record<ChainId, Address> = {
+export const defaultIndexWithdrawRouterAddress: Record<ChainId, Address> = {
   /** ### Default IndexRouter address on mainnet. */
   [ChainIds.Mainnet]: '0x1985426d77c431fc95e5ca51547bcb9b793e8482',
   /** ### Default IndexRouter address on c-chain. */

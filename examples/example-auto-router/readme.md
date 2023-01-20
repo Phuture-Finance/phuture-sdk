@@ -81,7 +81,7 @@ loop for every amount
 Component->>IndexRouter: mint();
 ```
 
-### [Mint-Various-Products](./src/app/meta-router.ts)
+### [Mint-Various-Products](src/meta-router.ts)
 
 This example shows the process of buying Savings Vault shares through the metaRouter, which allows the user to switch between minting/burning Index and SavingsVault products through a common interface.
 

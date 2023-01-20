@@ -1,18 +1,47 @@
-import { BigNumber, utils } from 'ethers'
-import { getEnv } from './app/utils'
-import autoBuy from './app/auto-buy'
-import autoSell from './app/auto-sell'
+import 'dotenv/config'
 
-/**
- * This example looks at burning 1 PDI
- */
-const amountToSellDesired = BigNumber.from(utils.parseEther(getEnv('AMOUNT')))
+import { utils } from 'ethers'
+import autoBuy from './auto-buy'
+import debug from 'debug'
+import prepare from './prepare'
+import * as yesno from 'yesno'
+
+const autoRouterExampleDebug = debug('Auto Router Example')
 
 const main = async () => {
-  const isSell = process.env['IS_SELL'] === 'true'
-  console.dir(await (isSell ? autoSell : autoBuy)(amountToSellDesired), {
-    depth: null,
-  })
+  const { isSell, desiredAmount, index, autoRouter, account, token } =
+    await prepare()
+
+  if (isSell) {
+    autoRouterExampleDebug('Selling %s', utils.formatEther(desiredAmount))
+
+    const selectSellResult = await autoRouter.selectSell(
+      index,
+      desiredAmount,
+      token,
+    )
+
+    console.table(selectSellResult)
+
+    if (
+      await yesno({
+        question: 'Do you want to sell?',
+      })
+    ) {
+      const sellResult = await autoRouter.sell(
+        selectSellResult.isBurn,
+        index,
+        desiredAmount,
+        token.address,
+      )
+
+      console.table(sellResult)
+    }
+  } else {
+    autoRouterExampleDebug('Buying %s', utils.formatEther(desiredAmount))
+    const buyResult = await autoBuy(desiredAmount)
+    autoRouterExampleDebug('Buy result: %O', buyResult)
+  }
 }
 
 main().catch(console.error)

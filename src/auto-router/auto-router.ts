@@ -52,15 +52,15 @@ export class AutoRouter implements Router {
   /**
    * ### Creates a new AutoRouter instance
    *
-   * @param indexWithdrawRouter instance of IndexWithdrawRouter
    * @param indexDepositRouter instance of indexDepositRouter
+   * @param indexWithdrawRouter instance of IndexWithdrawRouter
    * @param zeroExAggregator ZeroEx client
    *
    * @returns New AutoRouter instance
    */
   constructor(
-    public readonly indexWithdrawRouter: IndexWithdrawRouter,
     public readonly indexDepositRouter: IndexDepositRouter,
+    public readonly indexWithdrawRouter: IndexWithdrawRouter,
     public readonly zeroExAggregator: ZeroExAggregator,
   ) {}
 
