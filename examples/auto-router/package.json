@@ -1,5 +1,5 @@
 {
-  "name": "example-auto-router",
+  "name": "auto-router",
   "version": "1.0.0",
   "main": "src/index.ts",
   "dependencies": {

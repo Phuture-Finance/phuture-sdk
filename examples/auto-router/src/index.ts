@@ -8,8 +8,7 @@ import yesno from 'yesno'
 const autoRouterExampleDebug = debug('Auto Router Example')
 
 const main = async () => {
-  const { isSell, desiredAmount, index, autoRouter, token } =
-    await prepare()
+  const { isSell, desiredAmount, index, autoRouter, token } = await prepare()
 
   if (isSell) {
     autoRouterExampleDebug('Selling %s', utils.formatEther(desiredAmount))
@@ -40,6 +39,28 @@ const main = async () => {
     autoRouterExampleDebug('Buying %s', utils.formatEther(desiredAmount))
     // const buyResult = await autoBuy(desiredAmount)
     // autoRouterExampleDebug('Buy result: %O', buyResult)
+    const selectBuyResult = await autoRouter.selectBuy(
+      index,
+      desiredAmount,
+      token,
+    )
+
+    console.table(selectBuyResult)
+
+    if (
+      await yesno({
+        question: 'Do you want to buy?',
+      })
+    ) {
+      const buyResult = await autoRouter.buy(
+        selectBuyResult.isMint,
+        index,
+        desiredAmount,
+        token?.address,
+      )
+
+      console.table(buyResult)
+    }
   }
 }
 

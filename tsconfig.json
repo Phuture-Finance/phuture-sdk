@@ -36,11 +36,7 @@
     // incremental builds
     "incremental": true,
     // base url for imports
-    "baseUrl": "."
-  },
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true
+    "baseUrl": "./src"
   },
   "exclude": ["./**/dist"]
 }
