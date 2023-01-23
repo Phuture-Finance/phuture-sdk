@@ -48,11 +48,8 @@
     }
   ],
   "devDependencies": {
-    "@ethersproject/abi": "5.7.0",
-    "@ethersproject/bytes": "5.7.0",
-    "@ethersproject/providers": "5.7.2",
     "@size-limit/preset-small-lib": "8.1.0",
-    "@typechain/ethers-v5": "10.1.1",
+    "@typechain/ethers-v5": "10.2.0",
     "@types/debug": "4.1.7",
     "@types/fs-extra": "9.0.13",
     "@types/node": "16.11.7",
@@ -77,6 +74,9 @@
   },
   "packageManager": "pnpm@7.14.0",
   "dependencies": {
+    "@ethersproject/abi": "5.7.0",
+    "@ethersproject/bytes": "5.7.0",
+    "@ethersproject/providers": "5.7.2",
     "@ethersproject/abstract-provider": "5.7.0",
     "axios": "1.2.1",
     "axios-retry": "3.3.1",

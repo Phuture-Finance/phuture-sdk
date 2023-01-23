@@ -1,9 +1,11 @@
+import ethers from 'ethers'
+
 import { Account } from '../account'
 import { Address, ContractFactory } from '../types'
 import { isAddress } from '../types'
 
 /** ### Contract Instance */
-export class Contract<C> {
+export class Contract<C extends ethers.Contract> {
   /** ### Contract instance */
   public contract: C
 

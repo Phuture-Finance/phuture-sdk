@@ -16,14 +16,15 @@ import { IReserveRouter } from '../typechain/IndexDepositRouter'
 import { Address, ChainId, ChainIds, TokenSymbol } from '../types'
 
 const UQ112 = BigNumber.from(2).pow(112)
-const baseDepositGas = 95_000
+const baseDepositGas = BigNumber.from(277_000)
+const gasPerConstituent = BigNumber.from(43_000)
 const additionalSwapDepositGas = (network: ChainId) => {
   const gas = {
-    [ChainIds.Mainnet]: 115_000,
-    [ChainIds.CChain]: 100_000,
+    [ChainIds.Mainnet]: BigNumber.from(70_000),
+    [ChainIds.CChain]: BigNumber.from(68_000),
   }[network]
 
-  return gas || 125_000
+  return gas || BigNumber.from(69_000)
 }
 
 const baseBurnGas = 100_000
@@ -90,6 +91,7 @@ export class AutoRouter implements Router {
       IndexHelper,
       priceOracle,
       wethAddress,
+      constituents,
     ] = await Promise.all([
       this.zeroExAggregator.quote(
         inputToken?.address || nativeTokenSymbol(await index.account.chainId()),
@@ -100,6 +102,7 @@ export class AutoRouter implements Router {
       getDefaultIndexHelper(index.account),
       getDefaultPriceOracle(index.account),
       this.indexWithdrawRouter.weth(),
+      index.constituents(),
     ])
 
     const inputTokenAddress = inputToken?.address || wethAddress
@@ -109,7 +112,9 @@ export class AutoRouter implements Router {
       priceOracle.contract.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
     ])
 
-    let totalDepositGas = BigNumber.from(baseDepositGas)
+    let totalDepositGas = BigNumber.from(baseDepositGas).add(
+      gasPerConstituent.mul(constituents.length),
+    )
     if (inputToken) {
       const { buyAmount, estimatedGas } = await this.zeroExAggregator.quote(
         inputTokenAddress,

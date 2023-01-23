@@ -6,7 +6,7 @@ specifiers:
   '@ethersproject/bytes': 5.7.0
   '@ethersproject/providers': 5.7.2
   '@size-limit/preset-small-lib': 8.1.0
-  '@typechain/ethers-v5': 10.1.1
+  '@typechain/ethers-v5': 10.2.0
   '@types/debug': 4.1.7
   '@types/fs-extra': 9.0.13
   '@types/node': 16.11.7
@@ -33,7 +33,10 @@ specifiers:
   yesno: ^0.4.0
 
 dependencies:
+  '@ethersproject/abi': 5.7.0
   '@ethersproject/abstract-provider': 5.7.0
+  '@ethersproject/bytes': 5.7.0
+  '@ethersproject/providers': 5.7.2
   axios: 1.2.1_debug@4.3.4
   axios-retry: 3.3.1
   cross-fetch: 3.1.5
@@ -42,11 +45,8 @@ dependencies:
   graphql: 16.6.0
 
 devDependencies:
-  '@ethersproject/abi': 5.7.0
-  '@ethersproject/bytes': 5.7.0
-  '@ethersproject/providers': 5.7.2
   '@size-limit/preset-small-lib': 8.1.0_size-limit@8.1.0
-  '@typechain/ethers-v5': 10.1.1_uvzrz6if4akbrktgtw2vfdalai
+  '@typechain/ethers-v5': 10.2.0_uvzrz6if4akbrktgtw2vfdalai
   '@types/debug': 4.1.7
   '@types/fs-extra': 9.0.13
   '@types/node': 16.11.7
@@ -2120,8 +2120,8 @@ packages:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
     dev: true
 
-  /@typechain/ethers-v5/10.1.1_uvzrz6if4akbrktgtw2vfdalai:
-    resolution: {integrity: sha512-o6nffJBxwmeX1ZiZpdnP/tqGd/7M7iYvQC88ZXaFFoyAGh7eYncynzVjOJV0XmaKzAc6puqyqZrnva+gJbk4sw==}
+  /@typechain/ethers-v5/10.2.0_uvzrz6if4akbrktgtw2vfdalai:
+    resolution: {integrity: sha512-ikaq0N/w9fABM+G01OFmU3U3dNnyRwEahkdvi9mqy1a3XwKiPZaF/lu54OcNaEWnpvEYyhhS0N7buCtLQqC92w==}
     peerDependencies:
       '@ethersproject/abi': ^5.0.0
       '@ethersproject/bytes': ^5.0.0
