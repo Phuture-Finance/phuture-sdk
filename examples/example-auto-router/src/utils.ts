@@ -1,4 +1,4 @@
-import { Address } from '../../../src'
+import { Address } from '../../../dist'
 import { BigNumberish } from 'ethers'
 
 interface ProcessEnv {

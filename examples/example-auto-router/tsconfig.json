@@ -38,9 +38,5 @@
     // base url for imports
     "baseUrl": "."
   },
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true
-  },
   "exclude": ["./**/dist"]
 }

@@ -10,7 +10,7 @@ import {
   zeroExBaseUrl,
   defaultIndexDepositRouterAddress,
   Erc20,
-} from '../../../src'
+} from '@phuture/sdk'
 import { getEnv } from './utils'
 
 const prepare = async () => {

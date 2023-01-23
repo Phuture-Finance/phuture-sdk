@@ -1,15 +1,14 @@
 import 'dotenv/config'
 
 import { utils } from 'ethers'
-import autoBuy from './auto-buy'
 import debug from 'debug'
 import prepare from './prepare'
-import * as yesno from 'yesno'
+import yesno from 'yesno'
 
 const autoRouterExampleDebug = debug('Auto Router Example')
 
 const main = async () => {
-  const { isSell, desiredAmount, index, autoRouter, account, token } =
+  const { isSell, desiredAmount, index, autoRouter, token } =
     await prepare()
 
   if (isSell) {
@@ -32,15 +31,15 @@ const main = async () => {
         selectSellResult.isBurn,
         index,
         desiredAmount,
-        token.address,
+        token?.address,
       )
 
       console.table(sellResult)
     }
   } else {
     autoRouterExampleDebug('Buying %s', utils.formatEther(desiredAmount))
-    const buyResult = await autoBuy(desiredAmount)
-    autoRouterExampleDebug('Buy result: %O', buyResult)
+    // const buyResult = await autoBuy(desiredAmount)
+    // autoRouterExampleDebug('Buy result: %O', buyResult)
   }
 }
 

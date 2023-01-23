@@ -1,70 +1,79 @@
 lockfileVersion: 5.4
 
-specifiers:
-  '@ethersproject/abi': 5.7.0
-  '@ethersproject/abstract-provider': 5.7.0
-  '@ethersproject/bytes': 5.7.0
-  '@ethersproject/providers': 5.7.2
-  '@size-limit/preset-small-lib': 8.1.0
-  '@typechain/ethers-v5': 10.2.0
-  '@types/debug': 4.1.7
-  '@types/fs-extra': 9.0.13
-  '@types/node': 16.11.7
-  '@typescript-eslint/eslint-plugin': 5.42.1
-  '@typescript-eslint/parser': 5.42.1
-  '@zapper-fi/eslint-plugin': 1.4.0
-  axios: 1.2.1
-  axios-retry: 3.3.1
-  cross-fetch: 3.1.5
-  debug: 4.3.4
-  eslint: 8.27.0
-  eslint-plugin-import: 2.26.0
-  eslint-plugin-unused-imports: 2.0.0
-  ethers: 5.7.2
-  graphql: 16.6.0
-  husky: 8.0.3
-  prettier: 2.7.1
-  size-limit: 8.1.0
-  ts-node: 10.8.2
-  tsdx: 0.14.1
-  tslib: 2.4.1
-  typechain: 8.1.1
-  typescript: 4.9.4
-  yesno: ^0.4.0
+importers:
 
-dependencies:
-  '@ethersproject/abi': 5.7.0
-  '@ethersproject/abstract-provider': 5.7.0
-  '@ethersproject/bytes': 5.7.0
-  '@ethersproject/providers': 5.7.2
-  axios: 1.2.1_debug@4.3.4
-  axios-retry: 3.3.1
-  cross-fetch: 3.1.5
-  debug: 4.3.4
-  ethers: 5.7.2
-  graphql: 16.6.0
+  .:
+    specifiers:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@size-limit/preset-small-lib': 8.1.0
+      '@typechain/ethers-v5': 10.2.0
+      '@types/debug': 4.1.7
+      '@types/fs-extra': 9.0.13
+      '@types/node': 16.11.7
+      '@typescript-eslint/eslint-plugin': 5.42.1
+      '@typescript-eslint/parser': 5.42.1
+      '@zapper-fi/eslint-plugin': 1.4.0
+      axios: 1.2.1
+      axios-retry: 3.3.1
+      cross-fetch: 3.1.5
+      debug: 4.3.4
+      eslint: 8.27.0
+      eslint-plugin-import: 2.26.0
+      eslint-plugin-unused-imports: 2.0.0
+      ethers: 5.7.2
+      graphql: 16.6.0
+      husky: 8.0.3
+      prettier: 2.7.1
+      size-limit: 8.1.0
+      ts-node: 10.8.2
+      tsdx: 0.14.1
+      tslib: 2.4.1
+      typechain: 8.1.1
+      typescript: 4.9.4
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      axios: 1.2.1_debug@4.3.4
+      axios-retry: 3.3.1
+      cross-fetch: 3.1.5
+      debug: 4.3.4
+      ethers: 5.7.2
+      graphql: 16.6.0
+    devDependencies:
+      '@size-limit/preset-small-lib': 8.1.0_size-limit@8.1.0
+      '@typechain/ethers-v5': 10.2.0_uvzrz6if4akbrktgtw2vfdalai
+      '@types/debug': 4.1.7
+      '@types/fs-extra': 9.0.13
+      '@types/node': 16.11.7
+      '@typescript-eslint/eslint-plugin': 5.42.1_nbcwnlsvv54otropltfa2t6hou
+      '@typescript-eslint/parser': 5.42.1_fqmqyeinda7panflsqpj5zauc4
+      '@zapper-fi/eslint-plugin': 1.4.0_eslint@8.27.0
+      eslint: 8.27.0
+      eslint-plugin-import: 2.26.0_jnohwm7eexgw7uduhweedcbnpe
+      eslint-plugin-unused-imports: 2.0.0_nlzgfrebny3tjssyl6pxqc4kfq
+      husky: 8.0.3
+      prettier: 2.7.1
+      size-limit: 8.1.0
+      ts-node: 10.8.2_se4tgu6ol2ab7f2ewussgqf4v4
+      tsdx: 0.14.1_@types+node@16.11.7
+      tslib: 2.4.1
+      typechain: 8.1.1_typescript@4.9.4
+      typescript: 4.9.4
 
-devDependencies:
-  '@size-limit/preset-small-lib': 8.1.0_size-limit@8.1.0
-  '@typechain/ethers-v5': 10.2.0_uvzrz6if4akbrktgtw2vfdalai
-  '@types/debug': 4.1.7
-  '@types/fs-extra': 9.0.13
-  '@types/node': 16.11.7
-  '@typescript-eslint/eslint-plugin': 5.42.1_nbcwnlsvv54otropltfa2t6hou
-  '@typescript-eslint/parser': 5.42.1_fqmqyeinda7panflsqpj5zauc4
-  '@zapper-fi/eslint-plugin': 1.4.0_eslint@8.27.0
-  eslint: 8.27.0
-  eslint-plugin-import: 2.26.0_jnohwm7eexgw7uduhweedcbnpe
-  eslint-plugin-unused-imports: 2.0.0_nlzgfrebny3tjssyl6pxqc4kfq
-  husky: 8.0.3
-  prettier: 2.7.1
-  size-limit: 8.1.0
-  ts-node: 10.8.2_se4tgu6ol2ab7f2ewussgqf4v4
-  tsdx: 0.14.1_@types+node@16.11.7
-  tslib: 2.4.1
-  typechain: 8.1.1_typescript@4.9.4
-  typescript: 4.9.4
-  yesno: 0.4.0
+  examples/example-auto-router:
+    specifiers:
+      '@phuture/sdk': workspace:*
+      dotenv: 16.0.3
+      yesno: 0.4.0
+    dependencies:
+      '@phuture/sdk': link:../..
+      dotenv: 16.0.3
+      yesno: 0.4.0
 
 packages:
 
@@ -3592,6 +3601,11 @@ packages:
     dependencies:
       webidl-conversions: 4.0.2
     dev: true
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /ecc-jsbn/0.1.2:
     resolution: {integrity: sha512-eh9O+hwRHNbG4BLTjEl3nw044CkGm5X6LoaCf7LPp7UU8Qrt47JYNi6nPX8xjW97TKGKm1ouctg0QSpZe9qrnw==}
@@ -8659,7 +8673,7 @@ packages:
 
   /yesno/0.4.0:
     resolution: {integrity: sha512-tdBxmHvbXPBKYIg81bMCB7bVeDmHkRzk5rVJyYYXurwKkHq/MCd8rz4HSJUP7hW0H2NlXiq8IFiWvYKEHhlotA==}
-    dev: true
+    dev: false
 
   /yn/3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
