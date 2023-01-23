@@ -10,7 +10,7 @@ const autoRouterExampleDebug = debug('Auto Router Example')
 const main = async () => {
   const { isSell, desiredAmount, index, autoRouter, token } = await prepare()
 
-  if (isSell) {
+  if (isSell === 'true') {
     autoRouterExampleDebug('Selling %s', utils.formatEther(desiredAmount))
 
     const selectSellResult = await autoRouter.selectSell(
@@ -37,8 +37,6 @@ const main = async () => {
     }
   } else {
     autoRouterExampleDebug('Buying %s', utils.formatEther(desiredAmount))
-    // const buyResult = await autoBuy(desiredAmount)
-    // autoRouterExampleDebug('Buy result: %O', buyResult)
     const selectBuyResult = await autoRouter.selectBuy(
       index,
       desiredAmount,

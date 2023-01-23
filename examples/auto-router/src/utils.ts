@@ -6,7 +6,7 @@ interface ProcessEnv {
   PRIVATE_KEY: Address
   NODE_URL: string
   ZERO_EX_AGGREGATOR_URL: URL
-  IS_SELL: boolean
+  IS_SELL: 'true' | 'false'
   INDEX_ADDRESS: Address
   INDEX_DEPOSIT_ROUTER_ADDRESS: Address
   INDEX_WITHDRAW_ROUTER_ADDRESS: Address
@@ -14,9 +14,12 @@ interface ProcessEnv {
   TOKEN_ADDRESS?: Address
 }
 
-export function getEnv<K extends keyof ProcessEnv>(key: K): ProcessEnv[K] {
+export function getEnv<K extends keyof ProcessEnv>(
+  key: K,
+  required = true,
+): ProcessEnv[K] {
   const value = process.env[key]
-  if (!value) {
+  if (!value && required) {
     throw new Error(`Missing environment variable ${key}`)
   }
 

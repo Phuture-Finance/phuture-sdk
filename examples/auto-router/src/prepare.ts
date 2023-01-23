@@ -35,7 +35,7 @@ const prepare = async () => {
     defaultIndexWithdrawRouterAddress[await account.chainId()],
   )
 
-  const tokenAddress = getEnv('TOKEN_ADDRESS')
+  const tokenAddress = getEnv('TOKEN_ADDRESS', false)
 
   return {
     account,
