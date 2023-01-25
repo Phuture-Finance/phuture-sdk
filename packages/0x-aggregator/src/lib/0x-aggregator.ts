@@ -35,36 +35,36 @@ export class ZeroExAggregator {
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	constructor(private readonly client: AxiosInstance) {}
+	constructor(
+		private readonly defaultClient: AxiosInstance,
+		private readonly client: AxiosInstance
+	) {}
 
 	/**
 	 * ### Creates a new client instance for the 0x API for a url
 	 *
 	 * @param baseUrl The base endpoint to query
+	 * @param chainId: chain indicator
 	 * @param apiKey The API key to use for the query
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
 	static fromUrl(
 		baseUrl: Url,
+		chain: number,
 		apiKey?: string
 	): [ZeroExAggregator, AbortController] {
-		const abortController = new AbortController();
-
-		const client = axios.create({
-			signal: abortController?.signal,
-			// eslint-disable-next-line @typescript-eslint/naming-convention
-			baseURL: baseUrl,
-			headers: {
-				'Content-Type': 'application/json',
-				...(apiKey ? { '0x-api-key': apiKey } : {}),
-			},
-			validateStatus: (status) => status < 500,
-		});
+		const controller = new AbortController();
 
 		debug('Created client with base URL: %s', baseUrl);
 
-		return [new ZeroExAggregator(client), abortController];
+		return [
+			new ZeroExAggregator(
+				this.createClient(zeroExBaseUrl[chain], controller?.signal, apiKey),
+				this.createClient(baseUrl, controller?.signal, apiKey)
+			),
+			controller,
+		];
 	}
 
 	/**
@@ -108,6 +108,8 @@ export class ZeroExAggregator {
 			buyToken,
 			sellAmount
 		);
+		console.log('here');
+
 		const { data } = await this.client.get<Zero0xQuoteResponse>(
 			'/swap/v1/quote',
 			{
@@ -195,5 +197,31 @@ export class ZeroExAggregator {
 		debug('Received %d sources', data.records.length);
 
 		return data;
+	}
+
+	/**
+	 * ### Creates a new Axios instance
+	 *
+	 * @param url The base endpoint to query
+	 * @param signal: abort signal
+	 * @param apiKey The API key to use for the query
+	 *
+	 * @returns {AxiosInstance} The Axios instance
+	 */
+	static createClient(
+		url: string,
+		signal?: AbortSignal,
+		apiKey?: string
+	): AxiosInstance {
+		return axios.create({
+			signal: signal,
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			baseURL: url,
+			headers: {
+				'Content-Type': 'application/json',
+				...(apiKey ? { '0x-api-key': apiKey } : {}),
+			},
+			validateStatus: (status) => status < 500,
+		});
 	}
 }
