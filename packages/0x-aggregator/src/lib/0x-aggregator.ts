@@ -108,22 +108,29 @@ export class ZeroExAggregator {
 			buyToken,
 			sellAmount
 		);
-		console.log('here');
 
-		const { data } = await this.client.get<Zero0xQuoteResponse>(
-			'/swap/v1/quote',
-			{
-				params: {
-					...this._defaultQueryParams,
-					sellToken,
-					buyToken,
-					sellAmount: BigNumber.from(sellAmount).toString(),
-					...options,
-				},
-			}
-		);
+		let data: Zero0xQuoteResponse;
+		const params = {
+			...this._defaultQueryParams,
+			sellToken,
+			buyToken,
+			sellAmount: BigNumber.from(sellAmount).toString(),
+			...options,
+		};
 
-		// TODO: cover error codes and add retry logic
+		try {
+			data = await (
+				await this.client.get<Zero0xQuoteResponse>('/swap/v1/quote', {
+					params,
+				})
+			).data;
+		} catch {
+			data = await (
+				await this.defaultClient.get<Zero0xQuoteResponse>('/swap/v1/quote', {
+					params,
+				})
+			).data;
+		}
 
 		debug(
 			'Received quote buyAmount: %s for buyToken: %s',
