@@ -25,7 +25,8 @@ const prepare = async () => {
 	);
 
 	const [zeroEx] = ZeroExAggregator.fromUrl(
-		zeroExBaseUrl[await account.chainId()]
+		zeroExBaseUrl[await account.chainId()],
+		await account.chainId()
 	);
 
 	const indexRouter = new IndexRouter(
