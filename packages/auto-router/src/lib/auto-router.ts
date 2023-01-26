@@ -9,6 +9,8 @@ import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
 import { Router } from '@phuture/router';
 
+const sleepDuration = 0.2;
+
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = (network: Networkish): number => {
 	const gas = {
@@ -94,7 +96,7 @@ export class AutoRouter implements Router {
 		const inputTokenAddress = inputToken?.address ?? wethAddress;
 
 		const quotes = await Promise.all(
-			amounts.map(async ({ amount, asset }) => {
+			amounts.map(async ({ amount, asset }, i) => {
 				if (asset === inputTokenAddress)
 					return {
 						asset,
@@ -103,6 +105,8 @@ export class AutoRouter implements Router {
 						assetQuote: [],
 						estimatedGas: 0,
 					};
+
+				await this.sleep(sleepDuration * i);
 
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
@@ -227,7 +231,7 @@ export class AutoRouter implements Router {
 		const routerInputTokenAddress =
 			inputTokenAddress ?? (await this.indexRouter.weth());
 		const buyAmounts = await Promise.all(
-			amounts.map(async ({ asset, amount }) => {
+			amounts.map(async ({ asset, amount }, i) => {
 				if (asset === routerInputTokenAddress || amount.isZero())
 					return {
 						asset,
@@ -236,6 +240,8 @@ export class AutoRouter implements Router {
 						assetQuote: [],
 						estimatedGas: 0,
 					};
+
+				await this.sleep(sleepDuration * i);
 
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
@@ -290,6 +296,8 @@ export class AutoRouter implements Router {
 						assetQuote: [],
 						estimatedGas: 0,
 					};
+
+				await this.sleep(sleepDuration * i);
 
 				const {
 					buyAmount,
@@ -425,7 +433,7 @@ export class AutoRouter implements Router {
 		]);
 
 		const prices = await Promise.all(
-			amounts.map(async ({ amount, asset }) => {
+			amounts.map(async ({ amount, asset }, i) => {
 				if (asset === outputTokenAddress) {
 					return {
 						buyAmount: amount,
@@ -439,6 +447,8 @@ export class AutoRouter implements Router {
 						estimatedGas: 0,
 					};
 				}
+
+				await this.sleep(sleepDuration * i);
 
 				return this.zeroExAggregator.price(
 					asset,
@@ -551,7 +561,7 @@ export class AutoRouter implements Router {
 		const routerOutputTokenAddress =
 			outputTokenAddress ?? (await this.indexRouter.weth());
 		const quotes = await Promise.all(
-			amounts.map(async ({ amount, asset }) => {
+			amounts.map(async ({ amount, asset }, i) => {
 				if (!amount || amount.isZero() || asset === routerOutputTokenAddress) {
 					return {
 						swapTarget: constants.AddressZero,
@@ -560,6 +570,8 @@ export class AutoRouter implements Router {
 						estimatedGas: 0,
 					};
 				}
+
+				await this.sleep(sleepDuration * i);
 
 				const {
 					buyAmount,
@@ -621,5 +633,9 @@ export class AutoRouter implements Router {
 			data,
 			gasLimit: BigNumber.from(estimatedGas).toHexString(),
 		});
+	}
+
+	async sleep(seconds: number) {
+		return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 	}
 }

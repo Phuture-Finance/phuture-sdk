@@ -119,17 +119,16 @@ export class ZeroExAggregator {
 		};
 
 		try {
-			data = await (
-				await this.client.get<Zero0xQuoteResponse>('/swap/v1/quote', {
-					params,
-				})
-			).data;
+			({ data } = await this.client.get<Zero0xQuoteResponse>('/swap/v1/quote', {
+				params,
+			}));
 		} catch {
-			data = await (
-				await this.defaultClient.get<Zero0xQuoteResponse>('/swap/v1/quote', {
+			({ data } = await this.defaultClient.get<Zero0xQuoteResponse>(
+				'/swap/v1/quote',
+				{
 					params,
-				})
-			).data;
+				}
+			));
 		}
 
 		debug(
@@ -164,18 +163,28 @@ export class ZeroExAggregator {
 			buyToken,
 			sellAmount
 		);
-		const { data } = await this.client.get<Zero0xPriceResponse>(
-			'/swap/v1/price',
-			{
-				params: {
-					...this._defaultQueryParams,
-					sellToken,
-					buyToken,
-					sellAmount: BigNumber.from(sellAmount).toString(),
-					...options,
-				},
-			}
-		);
+
+		let data: Zero0xPriceResponse;
+		const params = {
+			...this._defaultQueryParams,
+			sellToken,
+			buyToken,
+			sellAmount: BigNumber.from(sellAmount).toString(),
+			...options,
+		};
+
+		try {
+			({ data } = await this.client.get<Zero0xPriceResponse>('/swap/v1/price', {
+				params,
+			}));
+		} catch {
+			({ data } = await this.defaultClient.get<Zero0xPriceResponse>(
+				'/swap/v1/price',
+				{
+					params,
+				}
+			));
+		}
 
 		// TODO: cover error codes and add retry logic
 
