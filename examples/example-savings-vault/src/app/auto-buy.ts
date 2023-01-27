@@ -1,46 +1,46 @@
-import { BigNumber } from 'ethers';
-import * as yesno from 'yesno';
-import { Erc20Permit } from '@phuture/erc-20';
-import prepare from './prepare';
+import { BigNumber } from 'ethers'
+import * as yesno from 'yesno'
+import { Erc20Permit } from '@phuture/erc-20'
+import prepare from './prepare'
 
 export default async function buySavingsVault(amountToDeposit: BigNumber) {
-	const { account, savingsVault, savingsVaultRouter } = await prepare();
-	const tokenAddress = process.env['TOKEN_ADDRESS'];
-	if (!tokenAddress) {
-		const select = await savingsVaultRouter.selectBuy(
-			savingsVault,
-			amountToDeposit
-		);
+  const { account, savingsVault, savingsVaultRouter } = await prepare()
+  const tokenAddress = process.env['TOKEN_ADDRESS']
+  if (!tokenAddress) {
+    const select = await savingsVaultRouter.selectBuy(
+      savingsVault,
+      amountToDeposit,
+    )
 
-		console.dir(select);
+    console.dir(select)
 
-		if (await yesno({ question: 'Ready to continue?' })) {
-			return await savingsVaultRouter.buy(
-				select.isMint,
-				savingsVault,
-				amountToDeposit
-			);
-		}
-		return;
-	}
+    if (await yesno({ question: 'Ready to continue?' })) {
+      return await savingsVaultRouter.buy(
+        select.isMint,
+        savingsVault,
+        amountToDeposit,
+      )
+    }
+    return
+  }
 
-	const token = new Erc20Permit(account, tokenAddress);
-	const selectWithToken = await savingsVaultRouter.selectBuy(
-		savingsVault,
-		amountToDeposit,
-		token
-	);
-	console.dir(selectWithToken);
-	const ok = await yesno({ question: 'Ready to continue?' });
+  const token = new Erc20Permit(account, tokenAddress)
+  const selectWithToken = await savingsVaultRouter.selectBuy(
+    savingsVault,
+    amountToDeposit,
+    token,
+  )
+  console.dir(selectWithToken)
+  const ok = await yesno({ question: 'Ready to continue?' })
 
-	if (ok) {
-		return await savingsVaultRouter.buy(
-			selectWithToken.isMint,
-			savingsVault,
-			amountToDeposit,
-			tokenAddress
-		);
-	}
+  if (ok) {
+    return await savingsVaultRouter.buy(
+      selectWithToken.isMint,
+      savingsVault,
+      amountToDeposit,
+      tokenAddress,
+    )
+  }
 
-	return;
+  return
 }

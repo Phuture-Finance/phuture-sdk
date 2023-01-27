@@ -33,6 +33,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+typechain/*
 
 # System Files
 .DS_Store
@@ -40,10 +41,4 @@ Thumbs.db
 
 .env
 
-packages/**/src/types
-packages/**/src/generated
-!/packages/comparators/
-!/packages/errors/dist/
-!/packages/pair-reserves/
-!/packages/path-finding/
-!/packages/transformers/
+.eslintcache
