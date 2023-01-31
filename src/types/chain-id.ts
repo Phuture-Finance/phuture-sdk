@@ -14,11 +14,14 @@
 export type ChainId = number
 
 /** ### Collection of ChainIds mapped to their network name */
-export const ChainIds: Record<'Mainnet' | 'CChain', ChainId> = {
+export const ChainIds: Record<'Mainnet' | 'CChain' | 'Arbitrum', ChainId> = {
   /** ### Ethereum Mainnet */
   Mainnet: 1,
   /** ### Avalanche C-Chain */
   CChain: 43114,
+
+  /** ### Arbitrum  */
+  Arbitrum: 42161,
 } as const
 
 /**
