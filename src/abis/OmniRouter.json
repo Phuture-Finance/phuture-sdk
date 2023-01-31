@@ -10,38 +10,6 @@
         "internalType": "address",
         "name": "receiver",
         "type": "address"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "input",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "inputAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minOutputAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "swapTarget",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes",
-            "name": "assetQuote",
-            "type": "bytes"
-          }
-        ],
-        "internalType": "struct IReserveRouter.QuoteParams",
-        "name": "params",
-        "type": "tuple"
       }
     ],
     "name": "deposit",
@@ -52,7 +20,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   }
 ]
