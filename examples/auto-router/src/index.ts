@@ -8,16 +8,67 @@ import yesno from 'yesno'
 const autoRouterExampleDebug = debug('Auto Router Example')
 
 const main = async () => {
-  const { isSell, desiredAmount, index, autoRouter, token } = await prepare()
+  const {
+    reserveToken,
+    isSell,
+    amount,
+    index,
+    autoRouter,
+    token,
+    provider,
+    reserveDepositRouter,
+  } = await prepare()
+  const reserveBefore = await reserveDepositRouter.reserve()
+
+  const indexBalanceBefore = await index.contract.balanceOf(
+    await index.account.address(),
+  )
+  const tokenBalanceBefore = token
+    ? await token.contract.balanceOf(await index.account.address())
+    : 0
+  const nativeBalanceBefore = await provider.getBalance(index.account.address())
 
   if (isSell === 'true') {
-    autoRouterExampleDebug('Selling %s', utils.formatEther(desiredAmount))
+    const indexAmount = utils.parseUnits(amount, await index.decimals())
+    autoRouterExampleDebug('Selling %s', utils.formatEther(indexAmount))
 
     const selectSellResult = await autoRouter.selectSell(
       index,
-      desiredAmount,
+      indexAmount,
       token,
     )
+    console.log('Sell start:')
+    console.dir(
+      `Selling ${utils.formatUnits(
+        indexAmount.toString(),
+        await index.decimals(),
+      )} ${await index.symbol()} to ${
+        token
+          ? await token.symbol()
+          : `NATIVE (chain: ${provider.network.chainId})`
+      }`,
+    )
+    console.dir(
+      `Current reserve:  ${utils.formatEther(
+        reserveBefore,
+      )} ${await reserveToken.symbol()}`,
+    )
+    console.log('Balances:')
+    console.dir(
+      `${utils.formatEther(indexBalanceBefore)} ${await index.symbol()}`,
+    )
+    console.dir(
+      `${utils.formatEther(nativeBalanceBefore)} NATIVE (chain: ${
+        provider.network.chainId
+      })`,
+    )
+    token &&
+      console.dir(
+        `${utils.formatUnits(
+          tokenBalanceBefore,
+          await token.decimals(),
+        )} ${await token.symbol()} `,
+      )
 
     console.table(selectSellResult)
 
@@ -29,19 +80,87 @@ const main = async () => {
       const sellResult = await autoRouter.sell(
         selectSellResult.isBurn,
         index,
-        desiredAmount,
+        indexAmount,
         token?.address,
       )
 
-      console.table(sellResult)
+      console.dir(sellResult, { depth: 0 }) //INFO: Sell Result
+      const reserveAfter = await reserveDepositRouter.reserve()
+      const indexBalanceAfter = await index.contract.balanceOf(
+        await index.account.address(),
+      )
+      const tokenBalanceAfter = token
+        ? await token.contract.balanceOf(await index.account.address())
+        : 0
+      const nativeBalanceAfter = await provider.getBalance(
+        index.account.address(),
+      )
+      console.log('Sell finish:')
+      console.dir(
+        `Current reserve:  ${utils.formatEther(
+          reserveAfter,
+        )} ${await reserveToken.symbol()}`,
+      )
+
+      console.log('Balances:')
+      console.dir(
+        `${utils.formatEther(indexBalanceAfter)} ${await index.symbol()}`,
+      )
+      console.dir(
+        `${utils.formatEther(nativeBalanceAfter)} NATIVE (chain: ${
+          provider.network.chainId
+        })`,
+      )
+      token &&
+        console.dir(
+          `${utils.formatUnits(
+            tokenBalanceAfter,
+            await token.decimals(),
+          )} ${await token.symbol()} `,
+        )
     }
   } else {
-    autoRouterExampleDebug('Buying %s', utils.formatEther(desiredAmount))
+    const assetAmount = utils.parseUnits(
+      amount,
+      token ? await token.decimals() : 18,
+    )
     const selectBuyResult = await autoRouter.selectBuy(
       index,
-      desiredAmount,
+      assetAmount,
       token,
     )
+    console.log('Buy start:')
+    console.dir(
+      `Buying for:  ${utils.formatUnits(
+        assetAmount.toString(),
+        token ? await token.decimals() : 18,
+      )} ${
+        token
+          ? await token.symbol()
+          : `NATIVE (chain: ${provider.network.chainId})`
+      }`,
+    )
+    console.dir(
+      `Current reserve:  ${utils.formatEther(
+        reserveBefore,
+      )} ${await reserveToken.symbol()}`,
+    )
+    console.log('Balances:')
+    console.dir(
+      `${utils.formatEther(indexBalanceBefore)} ${await index.symbol()}`,
+    )
+    console.dir(
+      `${utils.formatEther(nativeBalanceBefore)} NATIVE (chain: ${
+        provider.network.chainId
+      })`,
+    )
+    token &&
+      console.dir(
+        `${utils.formatUnits(
+          tokenBalanceBefore,
+          await token.decimals(),
+        )} ${await token.symbol()} `,
+      )
 
     console.table(selectBuyResult)
 
@@ -53,11 +172,43 @@ const main = async () => {
       const buyResult = await autoRouter.buy(
         selectBuyResult.isMint,
         index,
-        desiredAmount,
+        assetAmount,
         token?.address,
       )
+      console.dir(buyResult, { depth: null }) //INFO: Buy Result
+      const reserveAfter = await reserveDepositRouter.reserve()
+      const indexBalanceAfter = await index.contract.balanceOf(
+        await index.account.address(),
+      )
+      const tokenBalanceAfter = token
+        ? await token.contract.balanceOf(await index.account.address())
+        : 0
+      const nativeBalanceAfter = await provider.getBalance(
+        index.account.address(),
+      )
+      console.log('Buy finish:')
+      console.dir(
+        `Current reserve:  ${utils.formatEther(
+          reserveAfter,
+        )} ${await reserveToken.symbol()}`,
+      )
 
-      console.table(buyResult)
+      console.log('Balances:')
+      console.dir(
+        `${utils.formatEther(indexBalanceAfter)} ${await index.symbol()}`,
+      )
+      console.dir(
+        `${utils.formatEther(nativeBalanceAfter)} NATIVE (chain: ${
+          provider.network.chainId
+        })`,
+      )
+      token &&
+        console.dir(
+          `${utils.formatUnits(
+            tokenBalanceAfter,
+            await token.decimals(),
+          )} ${await token.symbol()} `,
+        )
     }
   }
 }

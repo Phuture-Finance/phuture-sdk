@@ -1,5 +1,5 @@
 {
-  "name": "auto-router",
+  "name": "approval",
   "version": "1.0.0",
   "main": "src/index.ts",
   "dependencies": {

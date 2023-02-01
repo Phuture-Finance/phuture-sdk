@@ -16,7 +16,8 @@ export const defaultIndexWithdrawRouterAddress: Record<ChainId, Address> = {
   /** ### Default IndexRouter address on mainnet. */
   [ChainIds.Mainnet]: '0x1985426d77c431fc95e5ca51547bcb9b793e8482',
   /** ### Default IndexRouter address on c-chain. */
-  [ChainIds.CChain]: '0xd6dd95610fc3a3579a2c32fe06158d8bfb8f4ee9',
+  // [ChainIds.CChain]: '0xd6dd95610fc3a3579a2c32fe06158d8bfb8f4ee9',//INFO: main
+  [ChainIds.CChain]: '0x848c8b8b1490e9799dbe4fe227545f33c0456e08', //INFO: staging
 }
 
 /** ### IndexRouter Contract */
