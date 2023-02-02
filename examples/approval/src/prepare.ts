@@ -19,7 +19,6 @@ const prepare = async (): Promise<PrepareProps> => {
 
   const token = new Erc20(account, getEnv('ASSET_APPROVAL_ADDRESS'))
   const approvalAddress = getEnv('CONTRACT_APPROVAL_ADDRESS')
-  console.log('!!! !!!!', approvalAddress)
 
   return {
     account,
