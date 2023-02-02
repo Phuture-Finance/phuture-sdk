@@ -12,6 +12,7 @@ interface ProcessEnv {
   AMOUNT: string
   CHAIN_ID: number
   RESERVE_ROUTER_DEPOSIT_ADDRESS: Address
+  SLIPPAGE_PERCENTAGE: number
   TOKEN_ADDRESS?: Address
 }
 

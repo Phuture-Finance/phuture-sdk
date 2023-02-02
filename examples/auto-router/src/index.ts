@@ -17,6 +17,7 @@ const main = async () => {
     token,
     provider,
     reserveDepositRouter,
+    slippagePercentage,
   } = await prepare()
   const reserveBefore = await reserveDepositRouter.reserve()
 
@@ -84,7 +85,7 @@ const main = async () => {
         token?.address,
         {
           zeroExOptions: {
-            slippagePercentage: 0.05,
+            slippagePercentage,
           },
         },
       )
@@ -181,7 +182,7 @@ const main = async () => {
         token?.address,
         {
           zeroExOptions: {
-            slippagePercentage: 0.05,
+            slippagePercentage,
           },
         },
       )

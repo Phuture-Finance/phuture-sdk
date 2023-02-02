@@ -26,6 +26,7 @@ interface PrepareProps {
   isSell: 'true' | 'false'
   reserveDepositRouter: ReserveDepositRouter
   reserveToken: Erc20
+  slippagePercentage: number
   token?: Erc20
 }
 
@@ -62,6 +63,8 @@ const prepare = async (): Promise<PrepareProps> => {
 
   const amount = getEnv('AMOUNT')
 
+  const slippagePercentage = getEnv('SLIPPAGE_PERCENTAGE')
+
   return {
     account,
     provider,
@@ -69,6 +72,7 @@ const prepare = async (): Promise<PrepareProps> => {
     token,
     reserveDepositRouter,
     reserveToken,
+    slippagePercentage,
     index: new Index(account, getEnv('INDEX_ADDRESS')),
     autoRouter: new AutoRouter(indexDepositRouter, indexWithdrawRouter, zeroEx),
     isSell: getEnv('IS_SELL'),
