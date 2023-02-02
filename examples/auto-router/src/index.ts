@@ -82,6 +82,11 @@ const main = async () => {
         index,
         indexAmount,
         token?.address,
+        {
+          zeroExOptions: {
+            slippagePercentage: 0.05,
+          },
+        },
       )
 
       console.dir(sellResult, { depth: 0 }) //INFO: Sell Result
@@ -174,6 +179,11 @@ const main = async () => {
         index,
         assetAmount,
         token?.address,
+        {
+          zeroExOptions: {
+            slippagePercentage: 0.05,
+          },
+        },
       )
       console.dir(buyResult, { depth: null }) //INFO: Buy Result
       const reserveAfter = await reserveDepositRouter.reserve()
