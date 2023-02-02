@@ -6,7 +6,7 @@ Guide below demonstrates the usage of the different packages available through t
 
 1. Download anvil cli app
 
-```curl -L https://foundry.paradigm.xyz | bash```
+`curl -L https://foundry.paradigm.xyz | bash`
 
 2. Install anvil cli app
 
@@ -18,11 +18,11 @@ Guide below demonstrates the usage of the different packages available through t
 
 ## Start the local node
 
-```anvil cli anvil -f <RPC Server Address>```
+`anvil -f <RPC Server Address>`
 
 Or if you want to fork from the special block number
 
-```anvil cli anvil -f <RPC Server Address> --fork-block-number <blockNumber>```
+`anvil -f <RPC Server Address> --fork-block-number <blockNumber>`
 
 ## Run the scripts
 
@@ -32,12 +32,12 @@ Or if you want to fork from the special block number
 
 1. Install all global dependencies
 
-```pnpm i```
+`pnpm i`
 
 2. Get to the folder
 
-```cd examples/auto-router```
+`cd examples/auto-router`
 
 3. Run the script
 
-```pnpm start```
+`pnpm start`
