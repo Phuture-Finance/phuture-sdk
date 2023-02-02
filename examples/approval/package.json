@@ -8,9 +8,8 @@
     "@phuture/sdk": "workspace:*"
   },
   "scripts": {
-    "start": "pnpm typechain && pnpm build && node dist",
+    "start": "pnpm build && node dist",
     "dev": "tsdx watch",
-    "build": "tsdx build",
-    "typechain": "typechain --target ethers-v5 --out-dir src/abis/typings 'src/abis/*.json' --always-generate-overloads"
+    "build": "tsdx build"
   }
 }
