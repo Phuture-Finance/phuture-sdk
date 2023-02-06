@@ -9,9 +9,9 @@ import { PromiseOrValue } from 'typechain/common'
 
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 
-export class OmniDepositRouter extends Contract<OmniRouterInterface> {
+export class OmniRouter extends Contract<OmniRouterInterface> {
   /**
-   * ### Creates a new OmniDepositRouter instance
+   * ### Creates a new OmniRouter instance
    *
    * @param account Account to use for signing
    * @param contract Contract instance or address of the OmniRouterInterface contract
