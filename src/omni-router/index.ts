@@ -1,1 +1,1 @@
-export * from './omni-deposit-router'
+export * from './omni-router'
