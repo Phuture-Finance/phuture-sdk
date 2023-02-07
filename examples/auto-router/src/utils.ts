@@ -14,6 +14,7 @@ interface ProcessEnv {
   RESERVE_ROUTER_DEPOSIT_ADDRESS: Address
   SLIPPAGE_PERCENTAGE: number
   TOKEN_ADDRESS?: Address
+  IS_MULTI_BURN?: 'true' | 'false'
 }
 
 export function getEnv<K extends keyof ProcessEnv>(

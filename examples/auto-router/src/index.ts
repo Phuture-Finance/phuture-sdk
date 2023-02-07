@@ -1,9 +1,10 @@
 import 'dotenv/config'
 
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import debug from 'debug'
 import prepare from './prepare'
 import yesno from 'yesno'
+import { Address } from '../../../dist'
 
 const autoRouterExampleDebug = debug('Auto Router Example')
 
@@ -11,6 +12,7 @@ const main = async () => {
   const {
     reserveToken,
     isSell,
+    isMultiBurn,
     amount,
     index,
     autoRouter,
@@ -18,6 +20,8 @@ const main = async () => {
     provider,
     reserveDepositRouter,
     slippagePercentage,
+    indexWithdrawRouter,
+    createErc20,
   } = await prepare()
   const reserveBefore = await reserveDepositRouter.reserve()
 
@@ -29,16 +33,15 @@ const main = async () => {
     : 0
   const nativeBalanceBefore = await provider.getBalance(index.account.address())
 
-  if (isSell === 'true') {
+  if (isSell === 'true' || isMultiBurn === 'true') {
     const indexAmount = utils.parseUnits(amount, await index.decimals())
     autoRouterExampleDebug('Selling %s', utils.formatEther(indexAmount))
+    const [constituents, burnAmounts] = await Promise.all([
+      index.constituents(),
+      indexWithdrawRouter.burnTokensAmount(index, indexAmount),
+    ])
 
-    const selectSellResult = await autoRouter.selectSell(
-      index,
-      indexAmount,
-      token,
-    )
-    console.log('Sell start:')
+    console.log(`Sell start(${isMultiBurn === 'true' ? 'MULTI' : 'COMMON'}) :`)
     console.dir(
       `Selling ${utils.formatUnits(
         indexAmount.toString(),
@@ -63,6 +66,11 @@ const main = async () => {
         provider.network.chainId
       })`,
     )
+    const selectSellResult = await autoRouter.selectSell(
+      index,
+      indexAmount,
+      token,
+    )
     token &&
       console.dir(
         `${utils.formatUnits(
@@ -70,27 +78,97 @@ const main = async () => {
           await token.decimals(),
         )} ${await token.symbol()} `,
       )
-
-    console.table(selectSellResult)
+    if (isMultiBurn === 'true') {
+      await Promise.all([
+        constituents.map(async (el: { asset: string; weight: number }) => {
+          const erc20Asset = await createErc20(el.asset)
+          console.dir(
+            `User has ${utils.formatUnits(
+              await erc20Asset.contract.balanceOf(
+                await index.account.address(),
+              ),
+              await erc20Asset.decimals(),
+            )}  ${await erc20Asset.symbol()} on balance`,
+          )
+        }),
+        (
+          burnAmounts as { asset: Address; amount: BigNumber; weight: number }[]
+        ).map(async ({ asset, amount, weight }) => {
+          const erc20 = await createErc20(asset)
+          console.table({
+            amount: await utils.formatUnits(
+              amount.toString(),
+              await erc20.decimals(),
+            ),
+            symbol: await erc20.symbol(),
+            address: asset,
+            weight,
+          })
+        }),
+      ])
+    } else {
+      console.table(selectSellResult)
+    }
 
     if (
       await yesno({
         question: 'Do you want to sell?',
       })
     ) {
-      const sellResult = await autoRouter.sell(
-        selectSellResult.isBurn,
-        index,
-        indexAmount,
-        token?.address,
-        {
-          zeroExOptions: {
-            slippagePercentage,
+      if (isMultiBurn === 'true') {
+        const result = await indexWithdrawRouter.burn(
+          await index.address,
+          indexAmount,
+          await index.account.address(),
+        )
+        console.dir(result, { depth: 0 }) //INFO: Sell Result
+        await Promise.all([
+          constituents.map(async (el: { asset: string; weight: number }) => {
+            const erc20Asset = await createErc20(el.asset)
+            console.dir(
+              `User has ${utils.formatUnits(
+                await erc20Asset.contract.balanceOf(
+                  await index.account.address(),
+                ),
+                await erc20Asset.decimals(),
+              )}  ${await erc20Asset.symbol()} on balance`,
+            )
+          }),
+          (
+            burnAmounts as {
+              asset: Address
+              amount: BigNumber
+              weight: number
+            }[]
+          ).map(async ({ asset, amount, weight }) => {
+            const erc20 = await createErc20(asset)
+            console.table({
+              amount: await utils.formatUnits(
+                amount.toString(),
+                await erc20.decimals(),
+              ),
+              symbol: await erc20.symbol(),
+              address: asset,
+              weight,
+            })
+          }),
+        ])
+      } else {
+        const sellResult = await autoRouter.sell(
+          selectSellResult.isBurn,
+          index,
+          indexAmount,
+          token?.address,
+          {
+            zeroExOptions: {
+              slippagePercentage,
+            },
           },
-        },
-      )
+        )
 
-      console.dir(sellResult, { depth: 0 }) //INFO: Sell Result
+        console.dir(sellResult, { depth: 0 }) //INFO: Sell Result
+      }
+
       const reserveAfter = await reserveDepositRouter.reserve()
       const indexBalanceAfter = await index.contract.balanceOf(
         await index.account.address(),

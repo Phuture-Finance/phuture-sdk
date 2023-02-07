@@ -11,6 +11,7 @@ import {
   zeroExBaseUrl,
 } from '@phuture/sdk'
 import { ethers, providers } from 'ethers'
+import { Address } from '../../../dist'
 import {
   ReserveDepositRouter,
   ReserveDepositRouter__factory,
@@ -22,12 +23,15 @@ interface PrepareProps {
   provider: providers.JsonRpcProvider
   index: Index
   autoRouter: AutoRouter
+  indexWithdrawRouter: IndexWithdrawRouter
   amount: string
-  isSell: 'true' | 'false'
   reserveDepositRouter: ReserveDepositRouter
   reserveToken: Erc20
   slippagePercentage: number
+  isSell: 'true' | 'false'
+  isMultiBurn?: 'true' | 'false'
   token?: Erc20
+  createErc20: (address: Address) => Promise<Erc20>
 }
 
 const prepare = async (): Promise<PrepareProps> => {
@@ -65,6 +69,11 @@ const prepare = async (): Promise<PrepareProps> => {
 
   const slippagePercentage = getEnv('SLIPPAGE_PERCENTAGE')
 
+  const isMultiBurn = getEnv('IS_MULTI_BURN', false)
+
+  const createErc20 = async (address: Address) =>
+    await new Erc20(account, address)
+
   return {
     account,
     provider,
@@ -73,6 +82,9 @@ const prepare = async (): Promise<PrepareProps> => {
     reserveDepositRouter,
     reserveToken,
     slippagePercentage,
+    indexWithdrawRouter,
+    isMultiBurn,
+    createErc20,
     index: new Index(account, getEnv('INDEX_ADDRESS')),
     autoRouter: new AutoRouter(indexDepositRouter, indexWithdrawRouter, zeroEx),
     isSell: getEnv('IS_SELL'),
