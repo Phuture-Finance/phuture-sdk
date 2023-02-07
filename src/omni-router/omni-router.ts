@@ -23,7 +23,7 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   }
 
   /**
-   * Returns gas limit with 5% buffer
+   * ### Returns gas limit with 5% buffer
    * @param estimatedGas
    * @returns
    */
@@ -51,7 +51,7 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   }
 
   /**
-   *  ## Redeem tokens
+   * ### Redeem tokens
    * @param indexShares
    * @param receiver
    * @param owner
@@ -74,17 +74,25 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   }
 
   /**
-   * ### Transfer tokens
-   * @param to address
-   * @param value amount
+   * ### Preview redeeming tokens
+   * @param indexShares
+   * @returns
    */
-  async transfer(
-    to: PromiseOrValue<string>,
-    value: PromiseOrValue<BigNumberish>,
-  ): Promise<ContractTransaction> {
-    const estimatedGas = await this.contract.estimateGas.transfer(to, value)
-    return this.contract.transfer(to, value, {
-      gasLimit: this._getGasLimit(estimatedGas),
-    })
+
+  async previewRedeem(
+    indexShares: PromiseOrValue<BigNumberish>,
+  ): Promise<BigNumber> {
+    return this.contract.previewRedeem(indexShares)
+  }
+
+  /**
+   * ### Preview depositing tokens
+   * @param reserveTokens
+   * @returns
+   */
+  async previewDeposit(
+    reserveTokens: PromiseOrValue<BigNumberish>,
+  ): Promise<BigNumber> {
+    return this.contract.previewDeposit(reserveTokens)
   }
 }
