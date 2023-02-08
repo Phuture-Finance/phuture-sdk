@@ -1,13 +1,19 @@
-import { Address } from 'types'
+import { Account } from 'account'
+import { Contract } from 'contract'
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+import { PromiseOrValue } from 'typechain/common'
+import { Address, ChainId, ChainIds } from 'types'
+
 import {
   OmniRouter as OmniRouterInterface,
   OmniRouter__factory,
 } from '../typechain'
-import { Contract } from 'contract'
-import { Account } from 'account'
-import { PromiseOrValue } from 'typechain/common'
 
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+/** ### Default OmniRouter address for network */
+export const defaultOmniRouterAddress: Record<ChainId, Address> = {
+  /** ### Default IndexRouter address on c-chain. */
+  [ChainIds.GoerliRollupTestnet]: '0x5888abe26e0b22fede3988f1b463625752245553',
+}
 
 export class OmniRouter extends Contract<OmniRouterInterface> {
   /**
