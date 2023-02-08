@@ -134,24 +134,6 @@ const main = async () => {
               )}  ${await erc20Asset.symbol()} on balance`,
             )
           }),
-          (
-            burnAmounts as {
-              asset: Address
-              amount: BigNumber
-              weight: number
-            }[]
-          ).map(async ({ asset, amount, weight }) => {
-            const erc20 = await createErc20(asset)
-            console.table({
-              amount: await utils.formatUnits(
-                amount.toString(),
-                await erc20.decimals(),
-              ),
-              symbol: await erc20.symbol(),
-              address: asset,
-              weight,
-            })
-          }),
         ])
       } else {
         const sellResult = await autoRouter.sell(
