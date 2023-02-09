@@ -85,6 +85,16 @@ importers:
       dotenv: 16.0.3
       yesno: 0.4.0
 
+  examples/omni-router:
+    specifiers:
+      '@phuture/sdk': workspace:*
+      dotenv: 16.0.3
+      yesno: 0.4.0
+    dependencies:
+      '@phuture/sdk': link:../..
+      dotenv: 16.0.3
+      yesno: 0.4.0
+
 packages:
 
   /@ampproject/remapping/2.2.0:
