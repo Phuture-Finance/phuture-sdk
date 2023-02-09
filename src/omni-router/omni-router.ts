@@ -1,8 +1,8 @@
-import { Account } from 'account'
-import { Contract } from 'contract'
+import { Account } from '../account'
+import { Contract } from '../contract'
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
-import { PromiseOrValue } from 'typechain/common'
-import { Address, ChainId, ChainIds } from 'types'
+import { PromiseOrValue } from '../typechain/common'
+import { Address, ChainId, ChainIds } from '../types'
 
 import {
   OmniRouter as OmniRouterInterface,
