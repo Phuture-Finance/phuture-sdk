@@ -11,7 +11,7 @@ import {
 
 /** ### Default OmniRouter address for network */
 export const defaultOmniRouterAddress: Record<ChainId, Address> = {
-  /** ### Default IndexRouter address on c-chain. */
+  /** ### Default OmniRouter address on goerli rollup testnet. */
   [ChainIds.GoerliRollupTestnet]: '0x5888abe26e0b22fede3988f1b463625752245553',
 }
 
