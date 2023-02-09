@@ -149,6 +149,19 @@ export class AutoRouter implements Router {
       .mul(ethBasePrice)
       .div(UQ112)
 
+    console.log(
+      'Gas Price: ',
+      zeroExSwap.gasPrice.toString(),
+      'estimatedGas: ',
+      zeroExSwap.estimatedGas.toString(),
+      'totalDepositGas: ',
+      totalDepositGas.toString(),
+      'ZeroEx output: ',
+      gasDiffInEth.toString(),
+      'Deposit output:',
+      outputAmountDiffInEth.toString(),
+    )
+
     const isDeposit = gasDiffInEth.lte(outputAmountDiffInEth)
     const target = isDeposit
       ? defaultIndexDepositRouterAddress[await index.account.chainId()]
@@ -383,6 +396,29 @@ export class AutoRouter implements Router {
                 await this.indexWithdrawRouter.account.chainId(),
               ),
         ),
+    )
+    console.log(
+      'Gas Price: ',
+      zeroExSwap.gasPrice.toString(),
+      'estimatedGas: ',
+      zeroExSwap.estimatedGas.toString(),
+      'totalBurnGas: ',
+      totalBurnGas.toString(),
+      'ZeroEx output: ',
+      totalBurnGas
+        .sub(zeroExSwap.estimatedGas)
+        .mul(zeroExSwap.gasPrice)
+        .toString(),
+      'Burn output:',
+      indexRouterBurnOutputAmount
+        .sub(zeroExSwap.buyAmount)
+        .mul(outputTokenPriceEth)
+        .div(
+          BigNumber.from(10).pow(
+            outputToken ? await outputToken.decimals() : 18,
+          ),
+        )
+        .toString(),
     )
 
     const isBurn = totalBurnGas
