@@ -7,6 +7,8 @@ interface ProcessEnv {
   IS_DEPOSIT: 'true' | 'false'
   AMOUNT: string
   CHAIN_ID: number
+  TOKEN_ADDRESS: Address
+  INDEX_ADDRESS: Address
 }
 
 export function getEnv<K extends keyof ProcessEnv>(

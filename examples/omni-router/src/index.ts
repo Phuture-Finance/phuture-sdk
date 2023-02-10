@@ -1,29 +1,66 @@
 import 'dotenv/config'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import yesno from 'yesno'
 
 import prepare from './prepare'
 
 const main = async () => {
-  const { amount, omniRouter, isDeposit } = await prepare()
+  const { account, amount, omniRouter, isDeposit, index, token } =
+    await prepare()
 
   if (isDeposit) {
-    //INFO: deposit functionality here
+    const before = {
+      balance: BigNumber.from(0),
+      tokens: BigNumber.from(0),
+    }
     //TODO: log current balances of index and USDC
+    const preBalance = await omniRouter.contract.balanceOf(
+      await index.account.address(),
+    )
+    before.balance = preBalance
 
+    const preTokens = await token?.contract.balanceOf(
+      await index.account.address(),
+    )
+    before.tokens = preTokens || BigNumber.from(0)
+
+    console.log('current balance is: ', utils.formatEther(before.balance))
+    console.log(
+      'current token amount it is: ',
+      utils.formatEther(before.tokens),
+    )
     const tokenAmount = utils.parseUnits(amount, 6) //TODO
 
     const previewInfo = await omniRouter.previewDeposit(tokenAmount)
-    console.log('previewDepositInfo: ', previewInfo.toString()) //TODO: format amount to normal view
+    console.log('Preview deposit: ', utils.formatEther(previewInfo)) //TODO: format amount to normal view
     if (
       await yesno({
         question: 'Do you want to deposit?',
       })
     ) {
-      //TODO: run deposit function
-      //TODO: log the deposit tx
-      //TODO: log updated balances of index and USDC
-      console.dir('RUN DEPOSIT')
+      const depositResult = await omniRouter.deposit(
+        tokenAmount,
+        account.address(),
+      )
+
+      console.dir(depositResult, { depth: 0 }) //INFO: Deposit Result
+
+      const postBalance = await omniRouter.contract.balanceOf(
+        await index.account.address(),
+      )
+      const postTokens =
+        (await token?.contract.balanceOf(await index.account.address())) ||
+        BigNumber.from(0)
+
+      console.log('Balances: ')
+      console.dir(
+        `Current balance is: ${utils.formatEther(
+          postBalance,
+        )} ${await index.symbol()}`,
+      )
+
+      console.log('Tokens:')
+      console.dir(`${utils.formatEther(postTokens)} ${await index.symbol()}`)
     }
   } else {
     //INFO: redeem functionality here
