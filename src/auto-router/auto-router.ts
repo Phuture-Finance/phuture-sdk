@@ -242,7 +242,13 @@ export class AutoRouter implements Router {
       params = {
         input: inputTokenAddress,
         inputAmount: amountInInputToken,
-        minOutputAmount: buyAmount,
+        minOutputAmount: options?.zeroExOptions?.slippagePercentage
+          ? BigNumber.from(buyAmount).sub(
+              BigNumber.from(options?.zeroExOptions?.slippagePercentage * 10000)
+                .mul(buyAmount)
+                .div(10000),
+            )
+          : buyAmount,
         swapTarget: to,
         assetQuote: data,
       }

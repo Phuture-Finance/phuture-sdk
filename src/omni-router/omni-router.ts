@@ -1,13 +1,13 @@
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+
 import { Account } from '../account'
 import { Contract } from '../contract'
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
-import { PromiseOrValue } from '../typechain/common'
-import { Address, ChainId, ChainIds } from '../types'
-
 import {
   OmniRouter as OmniRouterInterface,
   OmniRouter__factory,
 } from '../typechain'
+import { PromiseOrValue } from '../typechain/common'
+import { Address, ChainId, ChainIds } from '../types'
 
 /** ### Default OmniRouter address for network */
 export const defaultOmniRouterAddress: Record<ChainId, Address> = {
@@ -34,7 +34,9 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
    * @returns
    */
   private _getGasLimit(estimatedGas: BigNumberish): BigNumberish {
-    return BigNumber.from(estimatedGas).mul(100).div(95)
+    return BigNumber.from(estimatedGas)
+      .mul(100)
+      .div(95)
   }
 
   /**
