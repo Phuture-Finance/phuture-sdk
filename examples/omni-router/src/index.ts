@@ -8,7 +8,7 @@ const main = async () => {
   const { account, amount, omniRouter, isDeposit, index, token } =
     await prepare()
 
-  if (isDeposit) {
+  if (isDeposit === 'true') {
     const before = {
       balance: BigNumber.from(0),
       tokens: BigNumber.from(0),
