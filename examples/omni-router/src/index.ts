@@ -72,7 +72,9 @@ const main = async () => {
 
     const previewInfo = await omniRouter.previewRedeem(indexAmount)
     console.log('(Preview) Redeem Amount:')
-    console.dir(`${utils.formatUnits(previewInfo || '0', tokenDecimals)} ${tokenSymbol}`)
+    console.dir(
+      `${utils.formatUnits(previewInfo || '0', tokenDecimals)} ${tokenSymbol}`,
+    )
     if (
       await yesno({
         question: 'Do you want to redeem?',
@@ -86,7 +88,7 @@ const main = async () => {
 
       console.dir(redeemResult, { depth: 0 }) //INFO: Deposit Result
 
-      await redeemResult.wait(),
+      await redeemResult.wait()
       const postRedeemBalance = await omniRouter.contract.balanceOf(
         indexAddress,
       )
@@ -97,7 +99,9 @@ const main = async () => {
       console.dir(`${utils.formatEther(postRedeemBalance)} ${indexSymbol}`)
 
       console.log('Tokens:')
-      console.dir(`${utils.formatUnits(postTokens || '0', tokenDecimals)} ${tokenSymbol}`)
+      console.dir(
+        `${utils.formatUnits(postTokens || '0', tokenDecimals)} ${tokenSymbol}`,
+      )
     }
   }
 }
