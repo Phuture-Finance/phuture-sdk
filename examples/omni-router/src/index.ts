@@ -9,25 +9,17 @@ const main = async () => {
     await prepare()
 
   const getbeforeData = async () => {
-    const before = {
-      balance: BigNumber.from(0),
-      tokens: BigNumber.from(0),
-    }
-    //TODO: log current balances of index and USDC
     const preBalance = await omniRouter.contract.balanceOf(
       await index.account.address(),
     )
-    before.balance = preBalance
-
     const preTokens = await token?.contract.balanceOf(
       await index.account.address(),
     )
-    before.tokens = preTokens || BigNumber.from(0)
 
-    console.log('current balance is: ', utils.formatEther(before.balance))
+    console.log('current balance is: ', utils.formatEther(preBalance))
     console.log(
-      'current token amount it is: ',
-      utils.formatEther(before.tokens),
+      'current token amount is: ',
+      utils.formatUnits(preTokens || '0', 6),
     )
   }
 
@@ -63,11 +55,11 @@ const main = async () => {
       )
 
       console.log('Tokens:')
-      console.dir(`${utils.formatEther(postTokens)} ${await index.symbol()}`)
+      console.dir(`${utils.formatUnits(postTokens, 6)} ${await index.symbol()}`)
     }
   } else {
     await getbeforeData()
-    const indexAmount = utils.parseUnits(amount, 18) //TODO
+    const indexAmount = utils.parseUnits(amount, 6) //TODO
     console.log('indexAmount: ', indexAmount.toString())
 
     const previewInfo = await omniRouter.previewRedeem(indexAmount)
@@ -100,7 +92,11 @@ const main = async () => {
       )
 
       console.log('Tokens:')
-      console.dir(`${utils.formatEther(postTokens)} ${await index.symbol()}`)
+      console.dir(
+        `${utils.formatUnits(postTokens || '0', 6)} ${
+          token ? await token.contract.symbol() : 'USDC'
+        }`,
+      )
     }
   }
 }
