@@ -70,7 +70,7 @@ const main = async () => {
 
     const previewInfo = await omniRouter.previewRedeem(indexAmount)
     console.log('(Preview) Redeem Amount:')
-    console.dir(`${utils.formatUnits(previewInfo || '0', 6)} ${tokenSymbol}}`)
+    console.dir(`${utils.formatUnits(previewInfo || '0', 6)} ${tokenSymbol}`)
     if (
       await yesno({
         question: 'Do you want to redeem?',
