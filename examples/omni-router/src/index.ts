@@ -49,6 +49,8 @@ const main = async () => {
 
       console.dir(depositResult, { depth: 0 }) //INFO: Deposit Result
 
+      await depositResult.wait()
+
       const postBalance = await omniRouter.contract.balanceOf(indexAddress)
       const postTokens =
         (await token?.contract.balanceOf(indexAddress)) || BigNumber.from(0)
@@ -84,6 +86,7 @@ const main = async () => {
 
       console.dir(redeemResult, { depth: 0 }) //INFO: Deposit Result
 
+      await redeemResult.wait()
       const postRedeemBalance = await omniRouter.contract.balanceOf(
         indexAddress,
       )
