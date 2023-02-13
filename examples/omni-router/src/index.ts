@@ -8,27 +8,35 @@ const main = async () => {
   const { account, amount, omniRouter, isDeposit, index, token } =
     await prepare()
 
+  if (!token) {
+    throw new Error('Token not found')
+  }
+
+  const tokenDecimals = await token.contract.decimals()
+  const tokenSymbol = await token.contract.symbol()
+
+  const indexDecimals = await index.contract.decimals()
+  const indexSymbol = await index.contract.symbol()
+  const indexAddress = await index.account.address()
+
   const getBeforeData = async () => {
-    const preBalance = await omniRouter.contract.balanceOf(
-      await index.account.address(),
-    )
-    const preTokens = await token?.contract.balanceOf(
-      await index.account.address(),
-    )
+    const preBalance = await omniRouter.contract.balanceOf(indexAddress)
+    const preTokens = await token?.contract.balanceOf(indexAddress)
 
     console.log('current balance:')
-    console.dir(`${utils.formatEther(preBalance)}`)
+    console.dir(`${utils.formatEther(preBalance)} ${indexSymbol}`)
 
     console.log('current tokens: ')
-    console.dir(`${utils.formatUnits(preTokens || '0', 6)} USDC`)
+    const amount = preTokens || '0'
+    console.dir(`${utils.formatUnits(amount, tokenDecimals)} ${tokenSymbol}`)
   }
 
   if (isDeposit) {
     await getBeforeData()
-    const tokenAmount = utils.parseUnits(amount, 6) //TODO
+    const tokenAmount = utils.parseUnits(amount, tokenDecimals)
     const previewInfo = await omniRouter.previewDeposit(tokenAmount)
     console.log('Preview deposit: ')
-    console.dir(`${utils.formatEther(previewInfo)} ${await index.symbol()}`) //TODO: format amount to normal view
+    console.dir(`${utils.formatEther(previewInfo)} ${indexSymbol}`)
     if (
       await yesno({
         question: 'Do you want to deposit?',
@@ -41,23 +49,22 @@ const main = async () => {
 
       console.dir(depositResult, { depth: 0 }) //INFO: Deposit Result
 
-      const postBalance = await omniRouter.contract.balanceOf(
-        await index.account.address(),
-      )
+      const postBalance = await omniRouter.contract.balanceOf(indexAddress)
       const postTokens =
-        (await token?.contract.balanceOf(await index.account.address())) ||
-        BigNumber.from(0)
+        (await token?.contract.balanceOf(indexAddress)) || BigNumber.from(0)
 
       console.log('Balances: ')
-      console.dir(`${utils.formatEther(postBalance)} ${await index.symbol()}`)
+      console.dir(`${utils.formatEther(postBalance)} ${indexSymbol}`)
 
       console.log('Tokens:')
-      console.dir(`${utils.formatUnits(postTokens, 6)} ${await index.symbol()}`)
+      console.dir(
+        `${utils.formatUnits(postTokens, tokenDecimals)} ${tokenSymbol}`,
+      )
     }
   } else {
     await getBeforeData()
 
-    const indexAmount = utils.parseUnits(amount, 18)
+    const indexAmount = utils.parseUnits(amount, indexDecimals)
     console.log('Redeem amount:')
     console.dir(`${utils.formatEther(indexAmount)} ${await index.symbol()}`)
 
