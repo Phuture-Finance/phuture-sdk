@@ -16,7 +16,7 @@ interface PrepareProps {
   reserveToken: Erc20
   index: Index
   token?: Erc20
-  isDeposit: 'true' | 'false'
+  isDeposit: boolean
   createErc20: (address: Address) => Promise<Erc20>
 }
 
@@ -50,7 +50,7 @@ const prepare = async (): Promise<PrepareProps> => {
     reserveToken,
     token,
     createErc20,
-    isDeposit: getEnv('IS_DEPOSIT'),
+    isDeposit: getEnv('IS_DEPOSIT') === 'true',
     index: new Index(account, getEnv('INDEX_ADDRESS')),
   }
 }
