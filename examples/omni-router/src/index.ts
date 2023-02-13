@@ -66,11 +66,11 @@ const main = async () => {
 
     const indexAmount = utils.parseUnits(amount, indexDecimals)
     console.log('Redeem amount:')
-    console.dir(`${utils.formatEther(indexAmount)} ${await index.symbol()}`)
+    console.dir(`${utils.formatEther(indexAmount)} ${indexSymbol}`)
 
     const previewInfo = await omniRouter.previewRedeem(indexAmount)
     console.log('(Preview) Redeem Amount:')
-    console.dir(`${utils.formatUnits(previewInfo || '0', 6)} USDC`)
+    console.dir(`${utils.formatUnits(previewInfo || '0', 6)} ${tokenSymbol}}`)
     if (
       await yesno({
         question: 'Do you want to redeem?',
@@ -85,23 +85,16 @@ const main = async () => {
       console.dir(redeemResult, { depth: 0 }) //INFO: Deposit Result
 
       const postRedeemBalance = await omniRouter.contract.balanceOf(
-        await index.account.address(),
+        indexAddress,
       )
       const postTokens =
-        (await token?.contract.balanceOf(await index.account.address())) ||
-        BigNumber.from(0)
+        (await token?.contract.balanceOf(indexAddress)) || BigNumber.from(0)
 
       console.log('Balances: ')
-      console.dir(
-        `${utils.formatEther(postRedeemBalance)} ${await index.symbol()}`,
-      )
+      console.dir(`${utils.formatEther(postRedeemBalance)} ${indexSymbol}`)
 
       console.log('Tokens:')
-      console.dir(
-        `${utils.formatUnits(postTokens || '0', 6)} ${
-          token ? await token.contract.symbol() : 'USDC'
-        }`,
-      )
+      console.dir(`${utils.formatUnits(postTokens || '0', 6)} ${tokenSymbol}`)
     }
   }
 }
