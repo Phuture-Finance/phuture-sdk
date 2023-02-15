@@ -9,10 +9,15 @@ import {
 import { PromiseOrValue } from '../typechain/common'
 import { Address, ChainId, ChainIds } from '../types'
 
+import {
+  defaultOmniMessageRouterAddress,
+  OmniMessageRouter,
+} from './omni-message-router'
+
 /** ### Default OmniRouter address for network */
 export const defaultOmniRouterAddress: Record<ChainId, Address> = {
   /** ### Default OmniRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0x5888abe26e0b22fede3988f1b463625752245553',
+  [ChainIds.GoerliRollupTestnet]: '0xbce372299dab3c06287fee4b313a082181ebe96c',
 }
 
 export class OmniRouter extends Contract<OmniRouterInterface> {
@@ -29,17 +34,6 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   }
 
   /**
-   * ### Returns gas limit with 5% buffer
-   * @param estimatedGas
-   * @returns
-   */
-  private _getGasLimit(estimatedGas: BigNumberish): BigNumberish {
-    return BigNumber.from(estimatedGas)
-      .mul(100)
-      .div(95)
-  }
-
-  /**
    * ### Deposit tokens
    * @param reserveTokens Amount of tokens used for minting
    * @param receiver
@@ -49,13 +43,7 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     reserveTokens: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    const estimatedGas = await this.contract.estimateGas.deposit(
-      reserveTokens,
-      this.account.address(),
-    )
-    return this.contract.deposit(reserveTokens, receiver, {
-      gasLimit: this._getGasLimit(estimatedGas),
-    })
+    return this.contract.deposit(reserveTokens, receiver)
   }
 
   /**
@@ -70,14 +58,14 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    const estimatedGas = await this.contract.estimateGas.redeem(
-      indexShares,
-      this.account.address(),
-      owner,
+    const omniMessageRouter = new OmniMessageRouter(
+      this.account,
+      defaultOmniMessageRouterAddress[ChainIds.GoerliRollupTestnet],
     )
+    const feeAmount = await omniMessageRouter.estimateFee()
 
     return this.contract.redeem(indexShares, receiver, owner, {
-      gasLimit: this._getGasLimit(estimatedGas),
+      value: feeAmount.nativeFee,
     })
   }
 
