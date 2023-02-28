@@ -8,6 +8,7 @@ importers:
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/providers': 5.7.2
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@size-limit/preset-small-lib': 8.1.0
       '@typechain/ethers-v5': 10.2.0
       '@types/debug': 4.1.7
@@ -38,6 +39,7 @@ importers:
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/providers': 5.7.2
+      '@layerzerolabs/scan-client': 0.0.0-beta.6_debug@4.3.4
       axios: 1.2.1_debug@4.3.4
       axios-retry: 3.3.1
       cross-fetch: 3.1.5
@@ -1996,6 +1998,14 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
+  /@layerzerolabs/scan-client/0.0.0-beta.6_debug@4.3.4:
+    resolution: {integrity: sha512-TjhEfMcmN5Q8Gtog45lj6in+y8OzGPoLzUzSF45cJO703Lrlwf5tAA85TQnnRWPGBiChw70KG2S6nzgmMRQWJg==}
+    dependencies:
+      axios: 0.27.2_debug@4.3.4
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2823,6 +2833,15 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       is-retry-allowed: 2.2.0
+    dev: false
+
+  /axios/0.27.2_debug@4.3.4:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.2_debug@4.3.4
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /axios/1.2.1_debug@4.3.4:

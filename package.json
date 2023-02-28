@@ -74,9 +74,10 @@
   "packageManager": "pnpm@7.14.0",
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
+    "@ethersproject/abstract-provider": "5.7.0",
     "@ethersproject/bytes": "5.7.0",
     "@ethersproject/providers": "5.7.2",
-    "@ethersproject/abstract-provider": "5.7.0",
+    "@layerzerolabs/scan-client": "0.0.0-beta.6",
     "axios": "1.2.1",
     "axios-retry": "3.3.1",
     "cross-fetch": "3.1.5",
