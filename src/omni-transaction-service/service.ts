@@ -9,7 +9,7 @@ import {
 
 const client = createClient('testnet')
 
-export const getTransactionRemoteStatuses = async (
+export const getRemoteTransactionStatuses = async (
   hash: string,
   apiKey: string,
 ): Promise<TxStatusProps> => {
