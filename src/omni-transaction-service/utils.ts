@@ -30,13 +30,30 @@ export const defaultStatus: MessageProps = {
 
 const getOmniRemoteUrl = (chainId: number, hash: string, key: string) => {
   switch (chainId) {
+    //ETH MAINNET
+    case 1: {
+      return `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${key}`
+    }
+    //MATIC MAINNET(use other key)
+    case 137: {
+      return `https://api.polygonscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${key}`
+    }
+    //ARBITRUM MAINNET
+    case 42161: {
+      return `https://api.arbiscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${key}`
+    }
+    //AVALANCHE MAINNET
+    case 43114: {
+      return `https://api.snowtrace.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${key}`
+    }
+
+    //GOERLI TESTNET
     case 10121: {
       return `https://api-goerli.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${key}`
     }
     default: {
       return `https://api-goerli.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${key}`
     }
-    //TODO: add other network APIs
   }
 }
 
