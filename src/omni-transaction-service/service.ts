@@ -7,19 +7,21 @@ import {
   updateTransactionalStatuses,
 } from './utils'
 
-const client = createClient('testnet')
-
 export const getRemoteTransactionStatuses = async (
   hash: string,
-  apiKey: string,
+  ethApiKey: string,
+  maticApiKey: string,
 ): Promise<TxStatusProps> => {
+  const testnetClient = createClient('testnet')
+  const mainnetClient = createClient('mainnet')
+
   const outputOmniTransactionHashes: string[] = []
   const transactionalStatuses: TxStatusProps = {
     homeToRemote: [],
     remoteToHome: [],
   }
 
-  const inputOmniTransactions: Message[] = await client
+  const inputOmniTransactions: Message[] = await testnetClient
     .getMessagesBySrcTxHash(hash)
     .then((result) => result.messages)
 
@@ -31,7 +33,7 @@ export const getRemoteTransactionStatuses = async (
       await updateTransactionalStatuses(
         tx as RequiredDstMessage,
         transactionalStatuses.homeToRemote,
-        apiKey,
+        tx.dstChainId === 137 ? maticApiKey : ethApiKey,
       )
     } else {
       transactionalStatuses.homeToRemote.push(defaultStatus)
@@ -40,8 +42,12 @@ export const getRemoteTransactionStatuses = async (
 
   //INFO: remote-to-home-transactions
   if (outputOmniTransactionHashes.length > 0) {
-    outputOmniTransactionHashes.map(async (remoteHash) => {
-      const outputTransactions = await client
+    // outputOmniTransactionHashes.map(async (remoteHash) => {
+    const mockTransactions = [
+      '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd',
+    ]
+    mockTransactions.map(async (remoteHash) => {
+      const outputTransactions = await mainnetClient
         .getMessagesBySrcTxHash(remoteHash)
         .then((result) => result.messages)
 
@@ -50,7 +56,7 @@ export const getRemoteTransactionStatuses = async (
           await updateTransactionalStatuses(
             tx as RequiredDstMessage,
             transactionalStatuses.remoteToHome,
-            apiKey,
+            tx.dstChainId === 137 ? maticApiKey : ethApiKey,
           )
         } else {
           transactionalStatuses.remoteToHome.push(defaultStatus)
@@ -63,3 +69,5 @@ export const getRemoteTransactionStatuses = async (
 
   return transactionalStatuses
 }
+
+export const sum = (...a: number[]) => a.reduce((acc, val) => acc + val, 0)

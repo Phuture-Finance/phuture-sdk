@@ -61,9 +61,9 @@ const getRemoteResponse = async (
   tx: RequiredDstMessage,
   key: string,
 ): Promise<RemoteApiResponse> =>
-  await fetch(getOmniRemoteUrl(tx.dstChainId, tx.dstTxHash, key)).then(
-    (response) => response.json(),
-  )
+  await fetch(
+    getOmniRemoteUrl(tx.dstChainId, tx.dstTxHash, key),
+  ).then((response) => response.json())
 
 export const setSuccessHashes = (
   tx: RequiredDstMessage,
