@@ -1,73 +1,78 @@
-import { createClient, Message } from '@layerzerolabs/scan-client'
+import { Message } from '@layerzerolabs/scan-client'
 
 import { RequiredDstMessage, TxStatusProps } from './types'
 import {
   defaultStatus,
-  setSuccessHashes,
+  mockedRemoteTxHash,
   updateTransactionalStatuses,
 } from './utils'
 
-export const getRemoteTransactionStatuses = async (
-  hash: string,
-  ethApiKey: string,
-  maticApiKey: string,
-): Promise<TxStatusProps> => {
-  const testnetClient = createClient('testnet')
-  const mainnetClient = createClient('mainnet')
-
-  const outputOmniTransactionHashes: string[] = []
-  const transactionalStatuses: TxStatusProps = {
-    homeToRemote: [],
-    remoteToHome: [],
-  }
-
-  const inputOmniTransactions: Message[] = await testnetClient
-    .getMessagesBySrcTxHash(hash)
-    .then((result) => result.messages)
-
-  //INFO: home-to-remote-transactions
-  inputOmniTransactions.map(async (tx) => {
-    if (tx.dstTxHash) {
-      setSuccessHashes(tx as RequiredDstMessage, outputOmniTransactionHashes)
-
-      await updateTransactionalStatuses(
-        tx as RequiredDstMessage,
-        transactionalStatuses.homeToRemote,
-        tx.dstChainId === 137 ? maticApiKey : ethApiKey,
-      )
-    } else {
-      transactionalStatuses.homeToRemote.push(defaultStatus)
-    }
-  })
-
-  //INFO: remote-to-home-transactions
-  if (outputOmniTransactionHashes.length > 0) {
-    // outputOmniTransactionHashes.map(async (remoteHash) => {
-    const mockTransactions = [
-      '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd',
-    ]
-    mockTransactions.map(async (remoteHash) => {
-      const outputTransactions = await mainnetClient
-        .getMessagesBySrcTxHash(remoteHash)
-        .then((result) => result.messages)
-
-      outputTransactions.map(async (tx) => {
-        if (tx.dstTxHash) {
-          await updateTransactionalStatuses(
-            tx as RequiredDstMessage,
-            transactionalStatuses.remoteToHome,
-            tx.dstChainId === 137 ? maticApiKey : ethApiKey,
-          )
-        } else {
-          transactionalStatuses.remoteToHome.push(defaultStatus)
-        }
-      })
-    })
-  } else {
-    transactionalStatuses.remoteToHome.push(defaultStatus)
-  }
-
-  return transactionalStatuses
+interface LzScanClient {
+  getMessagesBySrcTxHash(srcTxHash: string): Promise<{
+    messages: Message[]
+  }>
 }
 
-export const sum = (...a: number[]) => a.reduce((acc, val) => acc + val, 0)
+export function createOmniTransactionService({
+  mainClient,
+  testClient,
+  ethApiKey,
+  maticApiKey,
+}: {
+  mainClient: LzScanClient
+  testClient: LzScanClient
+  ethApiKey: string
+  maticApiKey: string
+}) {
+  return {
+    getRemoteTransactionStatuses: async (
+      hash: string,
+    ): Promise<TxStatusProps> => {
+      const inputOmniTransactions: Message[] = await testClient
+        .getMessagesBySrcTxHash(hash)
+        .then((result) => result.messages)
+
+      const outputOmniTransactionHashes = inputOmniTransactions
+        .filter((tx) => tx.dstTxHash && tx.status === 'DELIVERED')
+        .map((tx) => tx.dstTxHash)
+
+      const homeToRemoteStatuses = await Promise.all(
+        inputOmniTransactions.map(async (tx) =>
+          tx.dstTxHash
+            ? await updateTransactionalStatuses(
+                tx as RequiredDstMessage,
+                tx.dstChainId === 137 ? maticApiKey : ethApiKey,
+              )
+            : defaultStatus,
+        ),
+      )
+
+      const outputTransactions: Message[] | null =
+        outputOmniTransactionHashes.length > 0
+          ? await mainClient
+              .getMessagesBySrcTxHash(mockedRemoteTxHash) //TODO
+              .then((result) => result.messages)
+          : null
+
+      const remoteToHomeStatuses = await Promise.all(
+        outputTransactions !== null && outputTransactions.length > 0
+          ? outputTransactions.map(async (tx) =>
+              tx.dstTxHash
+                ? await updateTransactionalStatuses(
+                    tx as RequiredDstMessage,
+                    tx.dstChainId === 137 ? maticApiKey : ethApiKey,
+                  )
+                : defaultStatus,
+            )
+          : [defaultStatus],
+      )
+
+      return {
+        homeToRemote: homeToRemoteStatuses,
+        remoteToHome: remoteToHomeStatuses,
+      }
+    },
+  }
+}
+
+export default createOmniTransactionService
