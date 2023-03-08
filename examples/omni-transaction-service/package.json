@@ -1,0 +1,15 @@
+{
+  "name": "omni-transaction-service",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "dotenv": "16.0.3",
+    "@layerzerolabs/scan-client": "0.0.0-beta.6",
+    "@phuture/sdk": "workspace:*"
+  },
+  "scripts": {
+    "start": "pnpm build && node --experimental-vm-modules dist",
+    "dev": "tsdx watch",
+    "build": "tsdx build"
+  }
+}

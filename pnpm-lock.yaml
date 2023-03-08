@@ -103,6 +103,16 @@ importers:
       dotenv: 16.0.3
       yesno: 0.4.0
 
+  examples/omni-transaction-service:
+    specifiers:
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
+      '@phuture/sdk': workspace:*
+      dotenv: 16.0.3
+    dependencies:
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
+      '@phuture/sdk': link:../..
+      dotenv: 16.0.3
+
 packages:
 
   /@ampproject/remapping/2.2.0:
@@ -2130,6 +2140,14 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
+  /@layerzerolabs/scan-client/0.0.0-beta.6:
+    resolution: {integrity: sha512-TjhEfMcmN5Q8Gtog45lj6in+y8OzGPoLzUzSF45cJO703Lrlwf5tAA85TQnnRWPGBiChw70KG2S6nzgmMRQWJg==}
+    dependencies:
+      axios: 0.27.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@layerzerolabs/scan-client/0.0.0-beta.6_debug@4.3.4:
     resolution: {integrity: sha512-TjhEfMcmN5Q8Gtog45lj6in+y8OzGPoLzUzSF45cJO703Lrlwf5tAA85TQnnRWPGBiChw70KG2S6nzgmMRQWJg==}
     dependencies:
@@ -3029,6 +3047,15 @@ packages:
       is-retry-allowed: 2.2.0
     dev: false
 
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /axios/0.27.2_debug@4.3.4:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
@@ -3041,7 +3068,7 @@ packages:
   /axios/1.2.1_debug@4.3.4:
     resolution: {integrity: sha512-I88cFiGu9ryt/tfVEi4kX2SITsvDddTajXTOFmt2uK1ZVA8LytjtdeyefdQWEf5PU8w+4SSJDoYnggflB5tW4A==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -5123,6 +5150,16 @@ packages:
   /flatted/3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
+
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
 
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}

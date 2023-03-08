@@ -18,11 +18,13 @@ export function createOmniTransactionService({
   testClient,
   ethApiKey,
   maticApiKey,
+  isMocked = true,
 }: {
   mainClient: LzScanClient
   testClient: LzScanClient
   ethApiKey: string
   maticApiKey: string
+  isMocked: boolean
 }) {
   return {
     getRemoteTransactionStatuses: async (
@@ -32,9 +34,16 @@ export function createOmniTransactionService({
         .getMessagesBySrcTxHash(hash)
         .then((result) => result.messages)
 
-      const outputOmniTransactionHashes = inputOmniTransactions
-        .filter((tx) => tx.dstTxHash && tx.status === 'DELIVERED')
-        .map((tx) => tx.dstTxHash)
+      let outputOmniTransactionHashes: string[] = []
+      let outputTransactions: Message[] = []
+
+      const deliveredTransactions = inputOmniTransactions.filter(
+        (tx) => tx.dstTxHash && tx.status === 'DELIVERED',
+      ) as RequiredDstMessage[]
+
+      outputOmniTransactionHashes = [
+        ...deliveredTransactions.map((tx) => tx.dstTxHash),
+      ]
 
       const homeToRemoteStatuses = await Promise.all(
         inputOmniTransactions.map(async (tx) =>
@@ -47,12 +56,23 @@ export function createOmniTransactionService({
         ),
       )
 
-      const outputTransactions: Message[] | null =
+      if (
+        outputOmniTransactionHashes &&
         outputOmniTransactionHashes.length > 0
-          ? await mainClient
-              .getMessagesBySrcTxHash(mockedRemoteTxHash) //TODO
+      ) {
+        const arr = isMocked
+          ? [mockedRemoteTxHash]
+          : outputOmniTransactionHashes
+
+        await Promise.all(
+          arr.map(async (tsHash: string) => {
+            const messages = await mainClient
+              .getMessagesBySrcTxHash(tsHash)
               .then((result) => result.messages)
-          : null
+            outputTransactions = [...messages]
+          }),
+        )
+      }
 
       const remoteToHomeStatuses = await Promise.all(
         outputTransactions !== null && outputTransactions.length > 0
