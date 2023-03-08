@@ -15,17 +15,11 @@ const main = async () => {
     isMocked: isMocked,
   })
   console.dir('START')
-  console.log(
-    'isMocked: ',
-    isMocked,
-    'ethApiKey: ',
-    ethApiKey,
-    'maticApiKey: ',
-    maticApiKey,
-  )
-  // 0x246055f599ff0b682054737d12cefa021c846ec8ecc271bb322160b5207f0899
-  const statuses = await transactionClient.getRemoteTransactionStatuses(hash)
-  console.table(statuses)
+  const result = await transactionClient.getRemoteTransactionStatuses(hash)
+  console.log('HOME_TO_REMOTE: ')
+  result.homeToRemote.map((el) => console.table(el))
+  console.log('REMOTE_TO_HOME: ')
+  result.remoteToHome.map((el) => console.table(el))
   console.dir('FINISH')
 }
 
