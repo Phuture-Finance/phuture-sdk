@@ -18,7 +18,9 @@ export const defaultStatus: MessageProps = {
   status: MessageStatus.INFLIGHT,
 }
 
-const endpointByChainId: Record<number, string> = {
+type AvailableChainId = 1 | 109 | 110 | 106 | 10121
+
+const endpointByChainId: Record<AvailableChainId, string> = {
   1: 'https://api.etherscan.io',
   109: 'https://api.polygonscan.com',
   110: 'https://api.arbiscan.io',
@@ -26,11 +28,11 @@ const endpointByChainId: Record<number, string> = {
   10121: 'https://api-goerli.etherscan.io',
 }
 
-const getOmniRemoteUrl = (chainId: number) =>
+const getOmniRemoteUrl = (chainId: AvailableChainId) =>
   endpointByChainId[chainId] || endpointByChainId[10121]
 
 const getTxReceiptStatus = async (
-  chainId: number,
+  chainId: AvailableChainId,
   txHash: string,
   key: string,
 ): Promise<RemoteApiResponse> => {
@@ -46,7 +48,7 @@ export const updateTransactionalStatuses = async (
   apiKey: string,
 ): Promise<MessageProps> => {
   const transactionResponse = await getTxReceiptStatus(
-    dstChainId,
+    dstChainId as AvailableChainId,
     dstTxHash,
     apiKey,
   )

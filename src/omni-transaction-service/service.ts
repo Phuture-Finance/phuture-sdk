@@ -43,30 +43,27 @@ export function createOmniTransactionService({
           tx.dstTxHash
             ? await updateTransactionalStatuses(
                 tx as RequiredDstMessage,
-                tx.dstChainId === 137 ? maticApiKey : ethApiKey,
+                tx.dstChainId === 109 ? maticApiKey : ethApiKey,
               )
             : defaultStatus,
         ),
       )
 
-      let outputTransactions: Message[] = []
+      const outputTransactions: Message[] = []
 
-      if (
-        outputOmniTransactionHashes &&
-        outputOmniTransactionHashes.length > 0
-      ) {
+      if (outputOmniTransactionHashes.length !== 0) {
         await Promise.all(
           outputOmniTransactionHashes.map(async (tsHash: string) => {
             const messages = await client
               .getMessagesBySrcTxHash(tsHash)
               .then((result) => result.messages)
-            outputTransactions = [...messages]
+            outputTransactions.push(...messages)
           }),
         )
       }
 
       const remoteToHomeStatuses = await Promise.all(
-        outputTransactions !== null && outputTransactions.length > 0
+        outputTransactions.length !== 0
           ? outputTransactions.map(async (tx) =>
               tx.dstTxHash
                 ? await updateTransactionalStatuses(
