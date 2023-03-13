@@ -3,7 +3,7 @@ import { Message } from '@layerzerolabs/scan-client'
 import { RequiredDstMessage, TxStatusProps } from './types'
 import {
   defaultStatus,
-  mockedRemoteTxHash,
+  // mockedRemoteTxHash,
   updateTransactionalStatuses,
 } from './utils'
 
@@ -14,36 +14,29 @@ interface LzScanClient {
 }
 
 export function createOmniTransactionService({
-  mainClient,
-  testClient,
+  client,
   ethApiKey,
   maticApiKey,
-  isMocked = true,
 }: {
-  mainClient: LzScanClient
-  testClient: LzScanClient
+  client: LzScanClient
   ethApiKey: string
   maticApiKey: string
-  isMocked: boolean
 }) {
   return {
     getRemoteTransactionStatuses: async (
       hash: string,
     ): Promise<TxStatusProps> => {
-      const inputOmniTransactions: Message[] = await testClient
+      const inputOmniTransactions: Message[] = await client
         .getMessagesBySrcTxHash(hash)
         .then((result) => result.messages)
-
-      let outputOmniTransactionHashes: string[] = []
-      let outputTransactions: Message[] = []
 
       const deliveredTransactions = inputOmniTransactions.filter(
         (tx) => tx.dstTxHash && tx.status === 'DELIVERED',
       ) as RequiredDstMessage[]
 
-      outputOmniTransactionHashes = [
-        ...deliveredTransactions.map((tx) => tx.dstTxHash),
-      ]
+      const outputOmniTransactionHashes = deliveredTransactions.map(
+        (tx) => tx.dstTxHash,
+      )
 
       const homeToRemoteStatuses = await Promise.all(
         inputOmniTransactions.map(async (tx) =>
@@ -56,17 +49,15 @@ export function createOmniTransactionService({
         ),
       )
 
+      let outputTransactions: Message[] = []
+
       if (
         outputOmniTransactionHashes &&
         outputOmniTransactionHashes.length > 0
       ) {
-        const arr = isMocked
-          ? [mockedRemoteTxHash]
-          : outputOmniTransactionHashes
-
         await Promise.all(
-          arr.map(async (tsHash: string) => {
-            const messages = await mainClient
+          outputOmniTransactionHashes.map(async (tsHash: string) => {
+            const messages = await client
               .getMessagesBySrcTxHash(tsHash)
               .then((result) => result.messages)
             outputTransactions = [...messages]
