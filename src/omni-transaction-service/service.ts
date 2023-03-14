@@ -62,14 +62,16 @@ export function createOmniTransactionService({
 
       //INFO: Retrieve the transactional status of each input transaction on the remote chain
       const remoteToHomeStatuses = await Promise.all(
-        outputMessages.flat().map(async (tx) => {
-          if (!tx.dstTxHash) return defaultStatus
+        outputMessages.length !== 0
+          ? outputMessages.flat().map(async (tx) => {
+              if (!tx.dstTxHash) return defaultStatus
 
-          return await updateTransactionalStatuses(
-            tx as RequiredDstMessage,
-            tx.dstChainId === MATIC_CHAIN_ID ? maticApiKey : ethApiKey,
-          )
-        }),
+              return await updateTransactionalStatuses(
+                tx as RequiredDstMessage,
+                tx.dstChainId === MATIC_CHAIN_ID ? maticApiKey : ethApiKey,
+              )
+            })
+          : [defaultStatus],
       )
 
       return {

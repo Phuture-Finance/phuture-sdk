@@ -29,7 +29,7 @@ const endpointByChainId: Record<AvailableChainId, string> = {
 }
 
 const getOmniRemoteUrl = (chainId: AvailableChainId) =>
-  endpointByChainId[chainId] || endpointByChainId[10121]
+  endpointByChainId[chainId]
 
 const getTxReceiptStatus = async (
   chainId: AvailableChainId,
