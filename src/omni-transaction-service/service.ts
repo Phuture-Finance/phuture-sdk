@@ -48,9 +48,9 @@ export function createOmniTransactionService({
         }),
       )
 
-      //INFO: Retrieve the transactional status of each input transaction on the remote chain
-      const remoteToHomeStatuses = await Promise.all(
-        outputMessages.flat().map(async (tx) => {
+      //INFO: Retrieve the transactional status of each input transaction on the home chain
+      const homeToRemoteStatuses = await Promise.all(
+        inputMessages.map(async (tx) => {
           if (!tx.dstTxHash) return defaultStatus
 
           return await updateTransactionalStatuses(
@@ -60,9 +60,9 @@ export function createOmniTransactionService({
         }),
       )
 
-      //INFO: Retrieve the transactional status of each input transaction on the home chain
-      const homeToRemoteStatuses = await Promise.all(
-        inputMessages.map(async (tx) => {
+      //INFO: Retrieve the transactional status of each input transaction on the remote chain
+      const remoteToHomeStatuses = await Promise.all(
+        outputMessages.flat().map(async (tx) => {
           if (!tx.dstTxHash) return defaultStatus
 
           return await updateTransactionalStatuses(
