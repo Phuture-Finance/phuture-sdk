@@ -3,7 +3,7 @@ import { Message } from '@layerzerolabs/scan-client'
 import { RequiredDstMessage, TxStatusProps } from './types'
 import {
   defaultStatus,
-  // mockedRemoteTxHash,
+  MessageStatus,
   updateTransactionalStatuses,
 } from './utils'
 
@@ -12,6 +12,7 @@ interface LzScanClient {
     messages: Message[]
   }>
 }
+const MATIC_CHAIN_ID = 109
 
 export function createOmniTransactionService({
   client,
@@ -26,53 +27,49 @@ export function createOmniTransactionService({
     getRemoteTransactionStatuses: async (
       hash: string,
     ): Promise<TxStatusProps> => {
-      const inputOmniTransactions: Message[] = await client
-        .getMessagesBySrcTxHash(hash)
-        .then((result) => result.messages)
+      //INFO: Fetch all messages with given hash as source on the home chain
+      const inputMessages: Message[] = (
+        await client.getMessagesBySrcTxHash(hash)
+      ).messages
 
-      const deliveredTransactions = inputOmniTransactions.filter(
-        (tx) => tx.dstTxHash && tx.status === 'DELIVERED',
+      //INFO: Filter delivered messages with a valid destination hash on the remote chain
+      const deliveredMessages = inputMessages.filter(
+        (tx) => tx.dstTxHash && tx.status === MessageStatus.DELIVERED,
       ) as RequiredDstMessage[]
 
-      const outputOmniTransactionHashes = deliveredTransactions.map(
-        (tx) => tx.dstTxHash,
+      //INFO: Get the destination transaction hashes of the delivered messages
+      const outputTxHashes = deliveredMessages.map((tx) => tx.dstTxHash)
+
+      //INFO: Retrieve the messages of each output transaction on the remote chain
+      const outputMessages = await Promise.all(
+        outputTxHashes.map(async (tsHash: string) => {
+          const result = await client.getMessagesBySrcTxHash(tsHash)
+          return result.messages
+        }),
       )
 
-      const homeToRemoteStatuses = await Promise.all(
-        inputOmniTransactions.map(async (tx) =>
-          tx.dstTxHash
-            ? await updateTransactionalStatuses(
-                tx as RequiredDstMessage,
-                tx.dstChainId === 109 ? maticApiKey : ethApiKey,
-              )
-            : defaultStatus,
-        ),
-      )
-
-      const outputTransactions: Message[] = []
-
-      if (outputOmniTransactionHashes.length !== 0) {
-        await Promise.all(
-          outputOmniTransactionHashes.map(async (tsHash: string) => {
-            const messages = await client
-              .getMessagesBySrcTxHash(tsHash)
-              .then((result) => result.messages)
-            outputTransactions.push(...messages)
-          }),
-        )
-      }
-
+      //INFO: Retrieve the transactional status of each input transaction on the remote chain
       const remoteToHomeStatuses = await Promise.all(
-        outputTransactions.length !== 0
-          ? outputTransactions.map(async (tx) =>
-              tx.dstTxHash
-                ? await updateTransactionalStatuses(
-                    tx as RequiredDstMessage,
-                    tx.dstChainId === 137 ? maticApiKey : ethApiKey,
-                  )
-                : defaultStatus,
-            )
-          : [defaultStatus],
+        outputMessages.flat().map(async (tx) => {
+          if (!tx.dstTxHash) return defaultStatus
+
+          return await updateTransactionalStatuses(
+            tx as RequiredDstMessage,
+            tx.dstChainId === MATIC_CHAIN_ID ? maticApiKey : ethApiKey,
+          )
+        }),
+      )
+
+      //INFO: Retrieve the transactional status of each input transaction on the home chain
+      const homeToRemoteStatuses = await Promise.all(
+        inputMessages.map(async (tx) => {
+          if (!tx.dstTxHash) return defaultStatus
+
+          return await updateTransactionalStatuses(
+            tx as RequiredDstMessage,
+            tx.dstChainId === MATIC_CHAIN_ID ? maticApiKey : ethApiKey,
+          )
+        }),
       )
 
       return {
@@ -82,5 +79,3 @@ export function createOmniTransactionService({
     },
   }
 }
-
-export default createOmniTransactionService
