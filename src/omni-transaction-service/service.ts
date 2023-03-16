@@ -12,16 +12,11 @@ interface LzScanClient {
     messages: Message[]
   }>
 }
-const MATIC_CHAIN_ID = 109
 
 export function createOmniTransactionService({
   client,
-  ethApiKey,
-  maticApiKey,
 }: {
   client: LzScanClient
-  ethApiKey: string
-  maticApiKey: string
 }) {
   return {
     getRemoteTransactionStatuses: async (
@@ -46,33 +41,35 @@ export function createOmniTransactionService({
           const result = await client.getMessagesBySrcTxHash(tsHash)
           return result.messages
         }),
-      )
+      ).then((res) => res.flat())
 
       //INFO: Retrieve the transactional status of each input transaction on the home chain
-      const homeToRemoteStatuses = await Promise.all(
-        inputMessages.map(async (tx) => {
-          if (!tx.dstTxHash) return defaultStatus
+      const homeToRemoteStatuses =
+        inputMessages.length !== 0
+          ? await Promise.all(
+              inputMessages.map(async (tx) => {
+                if (!tx.dstTxHash) return defaultStatus
 
-          return await updateTransactionalStatuses(
-            tx as RequiredDstMessage,
-            tx.dstChainId === MATIC_CHAIN_ID ? maticApiKey : ethApiKey,
-          )
-        }),
-      )
+                return await updateTransactionalStatuses(
+                  tx as RequiredDstMessage,
+                )
+              }),
+            )
+          : [defaultStatus]
 
       //INFO: Retrieve the transactional status of each input transaction on the remote chain
-      const remoteToHomeStatuses = await Promise.all(
+      const remoteToHomeStatuses =
         outputMessages.length !== 0
-          ? outputMessages.flat().map(async (tx) => {
-              if (!tx.dstTxHash) return defaultStatus
+          ? await Promise.all(
+              outputMessages.flat().map(async (tx) => {
+                if (!tx.dstTxHash) return defaultStatus
 
-              return await updateTransactionalStatuses(
-                tx as RequiredDstMessage,
-                tx.dstChainId === MATIC_CHAIN_ID ? maticApiKey : ethApiKey,
-              )
-            })
-          : [defaultStatus],
-      )
+                return await updateTransactionalStatuses(
+                  tx as RequiredDstMessage,
+                )
+              }),
+            )
+          : [defaultStatus]
 
       return {
         homeToRemote: homeToRemoteStatuses,
