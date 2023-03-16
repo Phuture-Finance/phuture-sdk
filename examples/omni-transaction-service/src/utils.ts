@@ -1,7 +1,5 @@
 interface ProcessEnv {
   TRANSACTION_HASH: string
-  MATIC_API_KEY: string
-  ETH_API_KEY: string
   IS_TEST: 'true' | 'false'
 }
 
