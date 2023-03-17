@@ -1,4 +1,5 @@
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+import { SubIndexLib } from 'typechain/OmniRouter'
 
 import { Account } from '../account'
 import { Contract } from '../contract'
@@ -9,15 +10,10 @@ import {
 import { PromiseOrValue } from '../typechain/common'
 import { Address, ChainId, ChainIds } from '../types'
 
-import {
-  defaultOmniMessageRouterAddress,
-  OmniMessageRouter,
-} from './omni-message-router'
-
 /** ### Default OmniRouter address for network */
 export const defaultOmniRouterAddress: Record<ChainId, Address> = {
   /** ### Default OmniRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xbce372299dab3c06287fee4b313a082181ebe96c',
+  [ChainIds.GoerliRollupTestnet]: '0xd8a054a1f2cb9e6bef07d69b570819d5968811e1',
 }
 
 export class OmniRouter extends Contract<OmniRouterInterface> {
@@ -51,22 +47,16 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
    * @param indexShares
    * @param receiver
    * @param owner
+   * @param subIndexes
    * @returns redeem transaction
    */
   async redeem(
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    subIndexes: SubIndexLib.SubIndexStruct[],
   ): Promise<ContractTransaction> {
-    const omniMessageRouter = new OmniMessageRouter(
-      this.account,
-      defaultOmniMessageRouterAddress[ChainIds.GoerliRollupTestnet],
-    )
-    const feeAmount = await omniMessageRouter.estimateFee()
-
-    return this.contract.redeem(indexShares, receiver, owner, {
-      value: feeAmount.nativeFee,
-    })
+    return this.contract.redeem(indexShares, receiver, owner, subIndexes)
   }
 
   /**
