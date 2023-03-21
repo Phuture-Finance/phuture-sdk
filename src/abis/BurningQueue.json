@@ -1,11 +1,7 @@
 [
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "receiver", "type": "address" },
       {
         "components": [
           {
@@ -13,11 +9,7 @@
             "name": "subIndexId",
             "type": "uint256"
           },
-          {
-            "internalType": "uint256",
-            "name": "balance",
-            "type": "uint256"
-          }
+          { "internalType": "uint256", "name": "balance", "type": "uint256" }
         ],
         "internalType": "struct BurningQueue.BurnInfo[]",
         "name": "burnInfos",
@@ -31,43 +23,23 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "receiver", "type": "address" }
     ],
     "name": "ids",
     "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "subIndexId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      }
+      { "internalType": "uint256", "name": "subIndexId", "type": "uint256" },
+      { "internalType": "address", "name": "receiver", "type": "address" }
     ],
     "name": "pick",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "balance",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "balance", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -96,11 +68,7 @@
             "name": "buyAssetMinAmount",
             "type": "uint256"
           },
-          {
-            "internalType": "bytes",
-            "name": "assetQuote",
-            "type": "bytes"
-          }
+          { "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
         ],
         "internalType": "struct BurningQueue.QuoteParams[][]",
         "name": "params",
@@ -114,11 +82,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "subIndexId",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "subIndexId", "type": "uint256" },
       {
         "components": [
           {
@@ -136,11 +100,7 @@
             "name": "buyAssetMinAmount",
             "type": "uint256"
           },
-          {
-            "internalType": "bytes",
-            "name": "assetQuote",
-            "type": "bytes"
-          }
+          { "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
         ],
         "internalType": "struct BurningQueue.QuoteParams[]",
         "name": "params",
