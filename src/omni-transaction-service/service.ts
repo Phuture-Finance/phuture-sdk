@@ -3,7 +3,7 @@ import { Message } from '@layerzerolabs/scan-client'
 import { RequiredDstMessage, TxStatusProps } from './types'
 import {
   defaultStatus,
-  mockedRemoteTxHash,
+  MessageStatus,
   updateTransactionalStatuses,
 } from './utils'
 
@@ -14,78 +14,62 @@ interface LzScanClient {
 }
 
 export function createOmniTransactionService({
-  mainClient,
-  testClient,
-  ethApiKey,
-  maticApiKey,
-  isMocked = true,
+  client,
 }: {
-  mainClient: LzScanClient
-  testClient: LzScanClient
-  ethApiKey: string
-  maticApiKey: string
-  isMocked: boolean
+  client: LzScanClient
 }) {
   return {
     getRemoteTransactionStatuses: async (
       hash: string,
     ): Promise<TxStatusProps> => {
-      const inputOmniTransactions: Message[] = await testClient
-        .getMessagesBySrcTxHash(hash)
-        .then((result) => result.messages)
+      //INFO: Fetch all messages with given hash as source on the home chain
+      const inputMessages: Message[] = (
+        await client.getMessagesBySrcTxHash(hash)
+      ).messages
 
-      let outputOmniTransactionHashes: string[] = []
-      let outputTransactions: Message[] = []
-
-      const deliveredTransactions = inputOmniTransactions.filter(
-        (tx) => tx.dstTxHash && tx.status === 'DELIVERED',
+      //INFO: Filter delivered messages with a valid destination hash on the remote chain
+      const deliveredMessages = inputMessages.filter(
+        (tx) => tx.dstTxHash && tx.status === MessageStatus.DELIVERED,
       ) as RequiredDstMessage[]
 
-      outputOmniTransactionHashes = [
-        ...deliveredTransactions.map((tx) => tx.dstTxHash),
-      ]
+      //INFO: Get the destination transaction hashes of the delivered messages
+      const outputTxHashes = deliveredMessages.map((tx) => tx.dstTxHash)
 
-      const homeToRemoteStatuses = await Promise.all(
-        inputOmniTransactions.map(async (tx) =>
-          tx.dstTxHash
-            ? await updateTransactionalStatuses(
-                tx as RequiredDstMessage,
-                tx.dstChainId === 137 ? maticApiKey : ethApiKey,
-              )
-            : defaultStatus,
-        ),
-      )
+      //INFO: Retrieve the messages of each output transaction on the remote chain
+      const outputMessages = await Promise.all(
+        outputTxHashes.map(async (tsHash: string) => {
+          const result = await client.getMessagesBySrcTxHash(tsHash)
+          return result.messages
+        }),
+      ).then((res) => res.flat())
 
-      if (
-        outputOmniTransactionHashes &&
-        outputOmniTransactionHashes.length > 0
-      ) {
-        const arr = isMocked
-          ? [mockedRemoteTxHash]
-          : outputOmniTransactionHashes
+      //INFO: Retrieve the transactional status of each input transaction on the home chain
+      const homeToRemoteStatuses =
+        inputMessages.length !== 0
+          ? await Promise.all(
+              inputMessages.map(async (tx) => {
+                if (!tx.dstTxHash) return defaultStatus
 
-        await Promise.all(
-          arr.map(async (tsHash: string) => {
-            const messages = await mainClient
-              .getMessagesBySrcTxHash(tsHash)
-              .then((result) => result.messages)
-            outputTransactions = [...messages]
-          }),
-        )
-      }
-
-      const remoteToHomeStatuses = await Promise.all(
-        outputTransactions !== null && outputTransactions.length > 0
-          ? outputTransactions.map(async (tx) =>
-              tx.dstTxHash
-                ? await updateTransactionalStatuses(
-                    tx as RequiredDstMessage,
-                    tx.dstChainId === 137 ? maticApiKey : ethApiKey,
-                  )
-                : defaultStatus,
+                return await updateTransactionalStatuses(
+                  tx as RequiredDstMessage,
+                )
+              }),
             )
-          : [defaultStatus],
-      )
+          : [defaultStatus]
+
+      //INFO: Retrieve the transactional status of each input transaction on the remote chain
+      const remoteToHomeStatuses =
+        outputMessages.length !== 0
+          ? await Promise.all(
+              outputMessages.flat().map(async (tx) => {
+                if (!tx.dstTxHash) return defaultStatus
+
+                return await updateTransactionalStatuses(
+                  tx as RequiredDstMessage,
+                )
+              }),
+            )
+          : [defaultStatus]
 
       return {
         homeToRemote: homeToRemoteStatuses,
@@ -94,5 +78,3 @@ export function createOmniTransactionService({
     },
   }
 }
-
-export default createOmniTransactionService

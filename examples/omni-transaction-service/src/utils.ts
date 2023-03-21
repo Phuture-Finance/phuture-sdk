@@ -1,8 +1,6 @@
 interface ProcessEnv {
   TRANSACTION_HASH: string
-  MATIC_API_KEY: string
-  ETH_API_KEY: string
-  IS_MOCKED: 'true' | 'false'
+  IS_TEST: 'true' | 'false'
 }
 
 export function getEnv<K extends keyof ProcessEnv>(

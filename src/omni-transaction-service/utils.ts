@@ -1,10 +1,13 @@
-import fetch from 'cross-fetch'
 import { ethers } from 'ethers'
 
-import { MessageProps, RemoteApiResponse, RequiredDstMessage } from './types'
+import { MessageProps, RequiredDstMessage } from './types'
 
 export const mockedRemoteTxHash =
   '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd'
+
+export const errorTopics = [
+  '0xe183f33de2837795525b4792ca4cd60535bd77c53b7e7030060bfcf5734d6b0c',
+] //TODO: update
 
 export enum MessageStatus {
   INFLIGHT = 'INFLIGHT',
@@ -18,46 +21,46 @@ export const defaultStatus: MessageProps = {
   status: MessageStatus.INFLIGHT,
 }
 
-const endpointByChainId: Record<number, string> = {
-  1: 'https://api.etherscan.io',
-  109: 'https://api.polygonscan.com',
-  110: 'https://api.arbiscan.io',
-  106: 'https://api.snowtrace.io',
-  10121: 'https://api-goerli.etherscan.io',
+type AvailableChainId = 1 | 109 | 110 | 106 | 10121
+
+const rpcByChainId: Record<AvailableChainId, string> = {
+  1: 'https://ethereum.publicnode.com',
+  109: 'https://polygon-rpc.com',
+  110: 'https://rpc.ankr.com/arbitrum',
+  106: 'https://avalanche.public-rpc.com',
+  //TESTNETS
+  10121: 'https://eth-goerli.public.blastapi.io',
+  // 10121: 'https://api-goerli.etherscan.io',
+  // 10121: 'https://api-goerli.etherscan.io',
 }
 
-const getOmniRemoteUrl = (chainId: number) =>
-  endpointByChainId[chainId] || endpointByChainId[10121]
+const getOmniRemoteUrl = (chainId: AvailableChainId) => rpcByChainId[chainId]
 
-const getTxReceiptStatus = async (
-  chainId: number,
-  txHash: string,
-  key: string,
-): Promise<RemoteApiResponse> => {
-  const endpoint = `${getOmniRemoteUrl(
-    chainId,
-  )}/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${key}`
-
-  return fetch(endpoint).then((response) => response.json())
-}
-
-export const updateTransactionalStatuses = async (
-  { dstTxHash, dstChainId }: RequiredDstMessage,
-  apiKey: string,
-): Promise<MessageProps> => {
-  const transactionResponse = await getTxReceiptStatus(
-    dstChainId,
-    dstTxHash,
-    apiKey,
+export const updateTransactionalStatuses = async ({
+  dstTxHash,
+  dstChainId,
+  status,
+}: RequiredDstMessage): Promise<MessageProps> => {
+  const provider = ethers.getDefaultProvider(
+    await getOmniRemoteUrl(dstChainId as AvailableChainId),
   )
+  const transactionLogs = await (
+    await provider.getTransactionReceipt(dstTxHash)
+  ).logs
+
+  const topicsArr = transactionLogs
+    .map(({ topics }) =>
+      topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
+    )
+    .flat()
 
   return {
     hash: dstTxHash,
     chainId: dstChainId,
     status:
-      transactionResponse.result.status === '0'
+      status === 'FAILED' || topicsArr.length !== 0
         ? MessageStatus.FAILED
-        : transactionResponse.result.status === '1'
+        : status === 'DELIVERED' && topicsArr.length === 0
         ? MessageStatus.DELIVERED
         : MessageStatus.INFLIGHT,
   }
