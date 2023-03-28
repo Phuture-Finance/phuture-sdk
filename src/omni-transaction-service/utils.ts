@@ -58,7 +58,9 @@ export const updateTransactionalStatuses = async ({
     hash: dstTxHash,
     chainId: dstChainId,
     status:
-      status === 'FAILED' || topicsArr.length !== 0
+      status === 'FAILED' ||
+      transactionLogs.length === 0 ||
+      topicsArr.length !== 0
         ? MessageStatus.FAILED
         : status === 'DELIVERED' && topicsArr.length === 0
         ? MessageStatus.DELIVERED
