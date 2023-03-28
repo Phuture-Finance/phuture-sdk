@@ -13,7 +13,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default OmniRouter address for network */
 export const defaultOmniRouterAddress: Record<ChainId, Address> = {
   /** ### Default OmniRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xd8a054a1f2cb9e6bef07d69b570819d5968811e1',
+  [ChainIds.GoerliRollupTestnet]: '0xc22740db19545a74b049d5b19e6ab7938197e3b0',
 }
 
 export class OmniRouter extends Contract<OmniRouterInterface> {
@@ -39,7 +39,8 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     reserveTokens: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    return this.contract.deposit(reserveTokens, receiver)
+    const anatomy: SubIndexLib.SubIndexStructOutput[] = await this.contract.anatomy()
+    return this.contract.deposit(reserveTokens, receiver, anatomy)
   }
 
   /**
@@ -54,9 +55,9 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
-    subIndexes: SubIndexLib.SubIndexStruct[],
   ): Promise<ContractTransaction> {
-    return this.contract.redeem(indexShares, receiver, owner, subIndexes)
+    const anatomy = await this.contract.anatomy()
+    return this.contract.redeem(indexShares, receiver, owner, anatomy)
   }
 
   /**

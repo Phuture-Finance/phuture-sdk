@@ -22,12 +22,7 @@
   },
   {
     "inputs": [],
-    "name": "OmniIndexZeroAssets",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "OmniIndexZeroShares",
+    "name": "PhutureIndexZeroShares",
     "type": "error"
   },
   {
@@ -205,6 +200,41 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "anatomy",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "chainId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "assets",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "balances",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct SubIndexLib.SubIndex[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -271,6 +301,33 @@
         "internalType": "address",
         "name": "receiver",
         "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "chainId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "assets",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "balances",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct SubIndexLib.SubIndex[]",
+        "name": "subIndexes",
+        "type": "tuple[]"
       }
     ],
     "name": "deposit",
@@ -299,12 +356,12 @@
   },
   {
     "inputs": [],
-    "name": "lastTransferTimestamp",
+    "name": "indexAnatomy",
     "outputs": [
       {
-        "internalType": "uint32",
+        "internalType": "address",
         "name": "",
-        "type": "uint32"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -312,12 +369,12 @@
   },
   {
     "inputs": [],
-    "name": "logic",
+    "name": "lastTransferTimestamp",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "uint32",
         "name": "",
-        "type": "address"
+        "type": "uint32"
       }
     ],
     "stateMutability": "view",
@@ -423,7 +480,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "shares",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -442,7 +499,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "assets",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -522,11 +579,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "logic_",
+        "name": "anatomy_",
         "type": "address"
       }
     ],
-    "name": "setLogic",
+    "name": "setIndexAnatomy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
