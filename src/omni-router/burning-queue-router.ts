@@ -1,4 +1,5 @@
-import { BigNumber, ContractTransaction } from 'ethers'
+import { BigNumber, BigNumberish, BytesLike, ContractTransaction } from 'ethers'
+import { PromiseOrValue } from 'typechain/common'
 
 import { Account } from '../account'
 import { Contract } from '../contract'
@@ -11,7 +12,13 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default BurningQueue address for network */
 export const defaultBurningQueueAddress: Record<ChainId, Address> = {
   /** ### Default BurningQueue address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0x99048d2715cc0d2602195432930df0ac3aafcb9f',
+  [ChainIds.GoerliRollupTestnet]: '0xa3e7e371779573214029c9597a323a740825ff0c',
+}
+
+export interface BatchStruct {
+  quotes: BurningQueueInterface.QuoteParamsStruct[]
+  chainId: PromiseOrValue<BigNumberish>
+  payload: PromiseOrValue<BytesLike>
 }
 
 export class BurningQueueRouter extends Contract<BurningQueueInterface> {
@@ -44,23 +51,12 @@ export class BurningQueueRouter extends Contract<BurningQueueInterface> {
    */
   async remoteMultipleRedeem(
     ids: BigNumber[],
-    quotes: BurningQueueInterface.QuoteParamsStruct[][] = [],
+    localQuotes: BurningQueueInterface.LocalQuotesStruct[] = [],
+    batches: BurningQueueInterface.BatchStruct[],
   ): Promise<ContractTransaction> {
-    return this.contract['remoteRedeem(uint256[],tuple[][])'](ids, quotes)
-  }
-
-  /**
-   * ### Remote single redeem
-   * @param id
-   * @param quotes
-   * @returns remoteRedeem transaction
-   */
-  async remoteSingleRedeem(
-    id: BigNumber,
-    quotes: BurningQueueInterface.QuoteParamsStruct[] = [],
-  ): Promise<ContractTransaction> {
-    return this.contract[
-      'remoteRedeem(uint256,(address,address,uint256,bytes)[])'
-    ](id, quotes)
+    const value = await this.contract.estimateFee(batches)
+    return this.contract.functions[
+      'remoteRedeem(uint256[],((address,address,uint256,uint256,uint256,bytes)[])[],((address,address,uint256,uint256,uint256,bytes)[],uint256,bytes)[])'
+    ](ids, localQuotes, batches, { value })
   }
 }

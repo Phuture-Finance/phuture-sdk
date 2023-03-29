@@ -8,7 +8,9 @@ import {
 } from './utils'
 
 interface LzScanClient {
-  getMessagesBySrcTxHash(srcTxHash: string): Promise<{
+  getMessagesBySrcTxHash(
+    srcTxHash: string,
+  ): Promise<{
     messages: Message[]
   }>
 }

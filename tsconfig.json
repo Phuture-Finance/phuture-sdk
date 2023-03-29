@@ -36,7 +36,8 @@
     // incremental builds
     "incremental": true,
     // base url for imports
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
   },
   "exclude": ["./**/dist"]
 }
