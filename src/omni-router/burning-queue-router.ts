@@ -44,6 +44,19 @@ export class BurningQueueRouter extends Contract<BurningQueueInterface> {
   }
 
   /**
+   * ### pickBalance
+   * @param subIndexId
+   * @param receiver
+   * @returns returns balance of sub-index
+   */
+  async pickBalance(
+    subIndexId: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+  ): Promise<BigNumber> {
+    return await this.contract['pick(uint256,address)'](subIndexId, receiver)
+  }
+
+  /**
    * ### Remote multiple redeem
    * @param ids
    * @param quotes
