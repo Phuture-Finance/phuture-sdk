@@ -22,6 +22,8 @@ const debug = newDebug('@phuture:0x-aggregator')
 export const zeroExBaseUrl: Record<ChainId, Url> = {
   [ChainIds.Mainnet]: 'https://api.0x.org/',
   [ChainIds.CChain]: 'https://avalanche.api.0x.org/',
+  [ChainIds.Mumbai]: 'https://mumbai.api.0x.org/',
+  [ChainIds.GoerliTestnet]: 'https://goerli.api.0x.org/',
 }
 
 /** ### Facilitates swaps for end user */

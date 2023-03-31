@@ -49,7 +49,6 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
    * @param indexShares
    * @param receiver
    * @param owner
-   * @param subIndexes
    * @returns redeem transaction
    */
   async redeem(
