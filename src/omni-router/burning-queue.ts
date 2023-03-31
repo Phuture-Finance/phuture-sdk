@@ -21,9 +21,9 @@ export interface BatchStruct {
   payload: PromiseOrValue<BytesLike>
 }
 
-export class BurningQueueRouter extends Contract<BurningQueueInterface> {
+export class BurningQueue extends Contract<BurningQueueInterface> {
   /**
-   * ### Creates a new BurningQueueRouter instance
+   * ### Creates a new BurningQueue instance
    *
    * @param account Account to use for signing
    * @param contract Contract instance or address of the OmniRouterInterface contract

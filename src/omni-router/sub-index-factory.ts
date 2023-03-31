@@ -1,5 +1,5 @@
 import { BigNumberish } from 'ethers'
-import { SubIndexLib } from 'typechain/OmniRouter'
+import { SubIndexLib } from 'typechain/OmniIndex'
 
 import { Account } from '../account'
 import { Contract } from '../contract'

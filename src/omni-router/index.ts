@@ -1,2 +1,2 @@
-export * from './omni-router'
-export * from './burning-queue-router'
+export * from './omni-index'
+export * from './burning-queue'

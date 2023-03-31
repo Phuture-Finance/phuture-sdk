@@ -1,85 +1,108 @@
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
-import { SubIndexLib } from 'typechain/OmniRouter'
+import { BigNumber, ContractTransaction } from 'ethers'
+import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
+import { Address } from 'types'
 
-import { Account } from '../account'
-import { Contract } from '../contract'
 import {
-  OmniRouter as OmniRouterInterface,
-  OmniRouter__factory,
-} from '../typechain'
-import { PromiseOrValue } from '../typechain/common'
-import { Address, ChainId, ChainIds } from '../types'
+  Zero0xQuoteOptions,
+  Zero0xQuoteResponse,
+  ZeroExAggregator,
+} from '../0x-aggregator'
 
-/** ### Default OmniRouter address for network */
-export const defaultOmniRouterAddress: Record<ChainId, Address> = {
-  /** ### Default OmniRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xc22740db19545a74b049d5b19e6ab7938197e3b0',
-}
+import { BurningQueue } from './burning-queue'
+import { OmniIndex } from './omni-index'
+import { OmniRouterInterface } from './omni-router-types'
+import { SubIndex } from './sub-index-factory'
 
-export class OmniRouter extends Contract<OmniRouterInterface> {
+const subIndexTotalSupply = BigNumber.from(2).pow(32)
+
+/** ### OmniRouter class */
+// implements OmniRouterInterface
+export class OmniRouter implements OmniRouterInterface {
   /**
    * ### Creates a new OmniRouter instance
    *
-   * @param account Account to use for signing
-   * @param contract Contract instance or address of the OmniRouterInterface contract
+   * @param omniIndex instance of OmniIndex
+   * @param subIndex instance of SubIndex
+   * @param burningQueue instance of BurningQueue
+   * @param zeroExAggregator ZeroEx client
    *
-   * @returns New OmniRouterInterface token instance
+   * @returns New OmniRouter instance
    */
-  constructor(account: Account, contract: OmniRouterInterface | Address) {
-    super(account, contract, OmniRouter__factory)
-  }
-
+  constructor(
+    public readonly omniIndex: OmniIndex,
+    public readonly subIndex: SubIndex,
+    public readonly burningQueue: BurningQueue,
+    public readonly zeroExAggregator: ZeroExAggregator,
+  ) {}
   /**
-   * ### Deposit tokens
-   * @param reserveTokens Amount of tokens used for minting
-   * @param receiver
-   * @returns deposit transaction
+   * ### Remote redeem
+   * @param ids
+   * @param address
+   * @returns remoteRedeem transaction
    */
-  async deposit(
-    reserveTokens: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
+  async remoteRedeem(
+    ids: BigNumber[],
+    address: Address,
+    options?: Partial<Zero0xQuoteOptions>,
   ): Promise<ContractTransaction> {
-    const anatomy: SubIndexLib.SubIndexStructOutput[] = await this.contract.anatomy()
-    return this.contract.deposit(reserveTokens, receiver, anatomy)
-  }
+    const subIndexes = await this.subIndex.indexesOf(ids)
+    const zeroExQuotes: Zero0xQuoteResponse[][] = new Array(subIndexes.length)
+    const quotes: BurningQueueInterface.QuoteParamsStruct[] = []
 
-  /**
-   * ### Redeem tokens
-   * @param indexShares
-   * @param receiver
-   * @param owner
-   * @param subIndexes
-   * @returns redeem transaction
-   */
-  async redeem(
-    indexShares: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
-  ): Promise<ContractTransaction> {
-    const anatomy = await this.contract.anatomy()
-    return this.contract.redeem(indexShares, receiver, owner, anatomy)
-  }
+    console.log('subIndexes: ', subIndexes)
 
-  /**
-   * ### Preview redeeming tokens
-   * @param indexShares
-   * @returns
-   */
+    const assetBalances = await Promise.all(
+      subIndexes.map(async (sub, index) => {
+        const balance = await this.burningQueue.pickBalance(ids[index], address)
+        return sub.balances.map((assetBalance) =>
+          balance.add(assetBalance.div(subIndexTotalSupply)),
+        )
+      }),
+    )
 
-  async previewRedeem(
-    indexShares: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.contract.previewRedeem(indexShares)
-  }
+    assetBalances.map((bal, index) =>
+      subIndexes[index].assets.map(async (asset, i) => {
+        const [res] = await Promise.all([
+          this.zeroExAggregator.quote(
+            asset,
+            await this.omniIndex.address,
+            bal[i],
+            options,
+          ),
+        ])
+        return zeroExQuotes[index].push(res)
+      }),
+    )
 
-  /**
-   * ### Preview depositing tokens
-   * @param reserveTokens
-   * @returns
-   */
-  async previewDeposit(
-    reserveTokens: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.contract.previewDeposit(reserveTokens)
+    await Promise.all(
+      zeroExQuotes.map(async (quoteArr, quoteInd) =>
+        subIndexes[quoteInd].assets.map(async (asset, index) =>
+          quotes.push({
+            swapTarget: quoteArr[index].to,
+            inputAsset: asset,
+            inputAmount: quoteArr[index].sellAmount,
+            buyAssetMinAmount: quoteArr[index].sellAmount, //buyAmount* 0.95
+            additionalGas: quoteArr[index].estimatedGas,
+            assetQuote: quoteArr[index].data,
+          }),
+        ),
+      ),
+    )
+
+    const batches: BurningQueueInterface.BatchStruct[] = subIndexes.map(
+      (el) => ({
+        quotes: quotes,
+        chainId: el.chainId,
+        payload: '0x',
+      }),
+    )
+
+    const localQuotes = new Array({
+      quotes,
+    })
+
+    console.log('localQuotes: ', localQuotes)
+
+    return this.burningQueue.remoteMultipleRedeem(ids, localQuotes, batches)
   }
 }
