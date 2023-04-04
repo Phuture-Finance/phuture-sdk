@@ -6,7 +6,6 @@ import { Address } from 'types'
 
 import {
   Zero0xQuoteOptions,
-  Zero0xQuoteResponse,
   ZeroExAggregator,
   zeroExBaseUrl,
 } from '../0x-aggregator'
@@ -47,6 +46,36 @@ export class OmniRouter implements OmniRouterInterface {
   ): Promise<ContractTransaction> {
     const account = await this.omniIndex.account.address()
     const ids = await this.burningQueue.getIDs(account)
+    console.log('ids: ', ids)
+    const data = await this.createBatches(ids, account, options)
+
+    console.log('data: ', await data)
+    const localQuotes = new Array({
+      quotes: await data.quotes,
+    })
+    console.log(
+      'ids:',
+      ids,
+      'localQuotes: ',
+      localQuotes,
+      'batches: ',
+      data.batches,
+    )
+    return this.burningQueue.remoteMultipleRedeem(
+      ids,
+      localQuotes,
+      data.batches,
+    )
+  }
+
+  async createBatches(
+    ids: BigNumber[],
+    account: Address,
+    options?: Partial<Zero0xQuoteOptions>,
+  ): Promise<{
+    batches: BurningQueueInterface.BatchStruct[]
+    quotes: BurningQueueInterface.QuoteParamsStruct[]
+  }> {
     const subIndexes = await this.subIndex.indexesOf(ids)
     const zeroExAggregators = subIndexes.map((ind) => ({
       chain: ind.chainId,
@@ -56,8 +85,8 @@ export class OmniRouter implements OmniRouterInterface {
     }))
     console.log('zeroExAggregators: ', zeroExAggregators)
 
-    const zeroExQuotes: Zero0xQuoteResponse[][] = new Array(subIndexes.length)
-    const quotes: BurningQueueInterface.QuoteParamsStruct[] = []
+    // const zeroExQuotes: Zero0xQuoteResponse[][] = []
+    // const quotes: BurningQueueInterface.QuoteParamsStruct[] = []
 
     console.log('subIndexes: ', subIndexes)
 
@@ -71,58 +100,85 @@ export class OmniRouter implements OmniRouterInterface {
     )
     console.log('assetBalances: ', assetBalances)
 
-    assetBalances.map((bal, index) =>
-      subIndexes[index].assets.map(async (asset, i) => {
-        const [res] = await Promise.all([
-          zeroExAggregators[index].aggregator.quote(
-            asset,
-            account,
+    const zeroExQuotes = await Promise.all(
+      assetBalances.map((bal, index) => {
+        const arr: BurningQueueInterface.QuoteParamsStruct[] = Array(bal.length)
+        subIndexes[index].assets.map(async (asset, i) => {
+          console.log('asset: ', asset)
+          const obj: [string, string] =
+            zeroExAggregators[index].chain.toString() === '5'
+              ? [
+                  '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6', //goerli weth
+                  '0x07865c6e87b9f70255377e024ace6630c1eaa37f', //goerli usdc
+                ]
+              : [
+                  '0x9c3c9283d3e44854697cd22d3faa240cfb032889', //mumbai wrapped MATIC
+                  'MATIC', //mumbai native token
+                  // '0xe6b8a5cf854791412c1f6efc7caf629f5df1c747', //mumbai USDC
+                ]
+          const swapInfo = await zeroExAggregators[index].aggregator.quote(
+            obj[0],
+            obj[1],
             bal[i],
             options,
-          ),
-        ])
-        return zeroExQuotes[index].push(res)
+          )
+          const quote = {
+            swapTarget: swapInfo.to,
+            inputAsset: asset,
+            inputAmount: swapInfo.sellAmount,
+            buyAssetMinAmount: swapInfo.sellAmount, //buyAmount* 0.95
+            additionalGas: swapInfo.estimatedGas,
+            assetQuote: swapInfo.data,
+          } as BurningQueueInterface.QuoteParamsStruct
+
+          // console.log('quote: ', quote)
+
+          arr[i] = quote
+        })
+        return arr
       }),
     )
 
     console.log('zeroExQuotes: ', zeroExQuotes)
 
-    await Promise.all(
-      zeroExQuotes.map(async (quoteArr, quoteInd) =>
-        subIndexes[quoteInd].assets.map(async (asset, index) =>
-          quotes.push({
-            swapTarget: quoteArr[index].to,
-            inputAsset: asset,
-            inputAmount: quoteArr[index].sellAmount,
-            buyAssetMinAmount: quoteArr[index].sellAmount, //buyAmount* 0.95
-            additionalGas: quoteArr[index].estimatedGas,
-            assetQuote: quoteArr[index].data,
-          }),
-        ),
-      ),
-    )
-    console.log('quotes: ', quotes)
+    // const quotes = await zeroExQuotes.map(
+    //   (quoteArr: Zero0xQuoteResponse[], quoteInd) => {
+    //     console.log(
+    //       'quoteArr: ',
+    //       quoteArr,
+    //       'length: ',
+    //       quoteArr.length,
+    //       'subIndexes[quoteInd]: ',
+    //       subIndexes[quoteInd],
+    //     )
+    //     return subIndexes[quoteInd].assets.map((asset, index) => {
+    //       console.log('quoteArr[index]: ', quoteArr, 'asset: ', asset)
+    //       return {
+    //         swapTarget: quoteArr[index].to,
+    //         inputAsset: asset,
+    //         inputAmount: quoteArr[index].sellAmount,
+    //         buyAssetMinAmount: quoteArr[index].sellAmount, //buyAmount* 0.95
+    //         additionalGas: quoteArr[index].estimatedGas,
+    //         assetQuote: quoteArr[index].data,
+    //       } as BurningQueueInterface.QuoteParamsStruct
+    //     })
+    //   },
+    // )
+
+    console.log('quotes: ', zeroExQuotes)
 
     const batches: BurningQueueInterface.BatchStruct[] = subIndexes.map(
-      (el) => ({
-        quotes: quotes,
+      (el, index) => ({
+        quotes: zeroExQuotes[index],
         chainId: el.chainId,
         payload: '0x',
       }),
     )
 
-    const localQuotes = new Array({
-      quotes,
-    })
-
-    console.log('localQuotes: ', localQuotes)
-    console.log('ids: ', ids, 'localQuotes', localQuotes, 'batches: ', batches)
-
-    return await this.burningQueue.remoteMultipleRedeem(
-      ids,
-      localQuotes,
+    return {
       batches,
-    )
+      quotes: [],
+    }
   }
 
   /**
