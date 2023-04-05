@@ -37,6 +37,6 @@ export class SubIndex extends Contract<SubIndexInterface> {
   async indexesOf(
     ids: PromiseOrValue<BigNumberish>[],
   ): Promise<SubIndexLib.SubIndexStructOutput[]> {
-    return await this.contract['subIndexesOf(uint256[])'](ids)
+    return this.contract['subIndexesOf(uint256[])'](ids)
   }
 }

@@ -40,7 +40,7 @@ export class BurningQueue extends Contract<BurningQueueInterface> {
    * @returns array of IDs
    */
   async getIDs(address: Address): Promise<BigNumber[]> {
-    return await this.contract.ids(address)
+    return this.contract.ids(address)
   }
 
   /**
@@ -53,7 +53,7 @@ export class BurningQueue extends Contract<BurningQueueInterface> {
     subIndexId: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
   ): Promise<BigNumber> {
-    return await this.contract['pick(uint256,address)'](subIndexId, receiver)
+    return this.contract['pick(uint256,address)'](subIndexId, receiver)
   }
 
   /**

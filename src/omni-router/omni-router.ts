@@ -37,6 +37,13 @@ const getScalingFactor = async (chainId: AvailableChainId) => {
   const currentBlockNumber = await provider.getBlockNumber()
   const deadline = currentBlockNumber + deadlineOffset[chainId]
 
+  console.log(
+    'currentBlockNumber: ',
+    currentBlockNumber,
+    'deadline: ',
+    deadline,
+  )
+
   const x1 = currentBlockNumber
   const y1 = 1
   const x2 = deadline
@@ -44,9 +51,13 @@ const getScalingFactor = async (chainId: AvailableChainId) => {
 
   const slope = (y2 - y1) / (x2 - x1)
   console.log('slope: ', slope)
-  // const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
-  const scalingFactor = 1
+  const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
+  console.log('scalingFactor: ', scalingFactor)
+  // const scalingFactor = 1
+  console.log('HERE: ', Math.max(0, Math.min(100, scalingFactor)))
   return Math.max(0, Math.min(100, scalingFactor))
+  //0.05 щк 0.02
+  //0.5 =50
 }
 
 const getProvider = (chainId: AvailableChainId): Provider =>
@@ -226,8 +237,9 @@ export class OmniRouter implements OmniRouterInterface {
    * @returns array of IDs
    */
   async getIDs(address: Address): Promise<BigNumber[]> {
-    return await this.burningQueue.getIDs(address)
+    return this.burningQueue.getIDs(address)
   }
+  //TODO burningQueue.contract....
 
   /**
    * ### indexesOf
@@ -237,6 +249,6 @@ export class OmniRouter implements OmniRouterInterface {
   async indexesOf(
     ids: PromiseOrValue<BigNumberish>[],
   ): Promise<SubIndexLib.SubIndexStructOutput[]> {
-    return await this.subIndex.indexesOf(ids)
+    return this.subIndex.indexesOf(ids)
   }
 }

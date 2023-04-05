@@ -43,23 +43,24 @@ export const updateTransactionalStatuses = async ({
   const provider = ethers.getDefaultProvider(
     await getOmniRemoteUrl(dstChainId as AvailableChainId),
   )
-  const transactionLogs = await (
-    await provider.getTransactionReceipt(dstTxHash)
-  ).logs
+  const { logs } = await await provider.getTransactionReceipt(dstTxHash)
 
-  const topicsArr = transactionLogs
-    .map(({ topics }) =>
-      topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
-    )
-    .flat()
+  const topicsArr = logs.flatMap(({ topics }) =>
+    topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
+  )
 
+  //TODO
+  //const isError = status === 'FAILED' || transactionLogs.length === 0 || topicsArr.length !== 0;
+  //isError
+  //  ? MessageStatus.FAILED
+  //  : status === MessageStatus.DELIVERED && topicsArr.length === 0
+  //  ? MessageStatus.DELIVERED
+  //  : MessageStatus.INFLIGHT,
   return {
     hash: dstTxHash,
     chainId: dstChainId,
     status:
-      status === 'FAILED' ||
-      transactionLogs.length === 0 ||
-      topicsArr.length !== 0
+      status === 'FAILED' || logs.length === 0 || topicsArr.length !== 0
         ? MessageStatus.FAILED
         : status === 'DELIVERED' && topicsArr.length === 0
         ? MessageStatus.DELIVERED
