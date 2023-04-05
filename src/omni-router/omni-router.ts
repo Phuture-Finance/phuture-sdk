@@ -1,4 +1,5 @@
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+import { Provider } from '@ethersproject/abstract-provider'
+import { BigNumber, BigNumberish, ContractTransaction, ethers } from 'ethers'
 import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
 import { PromiseOrValue } from 'typechain/common'
 import { SubIndexLib } from 'typechain/SubIndexFactory'
@@ -16,6 +17,40 @@ import { OmniRouterInterface } from './omni-router-types'
 import { SubIndex } from './sub-index-factory'
 
 const subIndexTotalSupply = BigNumber.from(2).pow(32)
+const deadlineOffset: Record<number, number> = {
+  [5]: 2,
+  [80001]: 5,
+}
+const hundred = BigNumber.from(100)
+type AvailableChainId = 5 | 80001
+
+const rpcByChainId: Record<AvailableChainId, string> = {
+  //TESTNETS
+  5: 'https://rpc.ankr.com/eth_goerli',
+  80001: 'https://polygon-testnet.public.blastapi.io',
+}
+
+const getScalingFactor = async (chainId: AvailableChainId) => {
+  //TODO
+  const provider = getProvider(chainId)
+
+  const currentBlockNumber = await provider.getBlockNumber()
+  const deadline = currentBlockNumber + deadlineOffset[chainId]
+
+  const x1 = currentBlockNumber
+  const y1 = 1
+  const x2 = deadline
+  const y2 = 0
+
+  const slope = (y2 - y1) / (x2 - x1)
+  console.log('slope: ', slope)
+  // const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
+  const scalingFactor = 1
+  return Math.max(0, Math.min(100, scalingFactor))
+}
+
+const getProvider = (chainId: AvailableChainId): Provider =>
+  ethers.getDefaultProvider(rpcByChainId[chainId])
 
 /** ### OmniRouter class */
 // implements OmniRouterInterface
@@ -46,21 +81,12 @@ export class OmniRouter implements OmniRouterInterface {
   ): Promise<ContractTransaction> {
     const account = await this.omniIndex.account.address()
     const ids = await this.burningQueue.getIDs(account)
-    console.log('ids: ', ids)
     const data = await this.createBatches(ids, account, options)
 
-    console.log('data: ', await data)
     const localQuotes = new Array({
       quotes: await data.quotes,
     })
-    console.log(
-      'ids:',
-      ids,
-      'localQuotes: ',
-      localQuotes,
-      'batches: ',
-      data.batches,
-    )
+
     return this.burningQueue.remoteMultipleRedeem(
       ids,
       localQuotes,
@@ -83,12 +109,6 @@ export class OmniRouter implements OmniRouterInterface {
         zeroExBaseUrl[ind.chainId.toNumber()],
       )[0],
     }))
-    console.log('zeroExAggregators: ', zeroExAggregators)
-
-    // const zeroExQuotes: Zero0xQuoteResponse[][] = []
-    // const quotes: BurningQueueInterface.QuoteParamsStruct[] = []
-
-    console.log('subIndexes: ', subIndexes)
 
     const assetBalances = await Promise.all(
       subIndexes.map(async (sub, index) => {
@@ -98,79 +118,47 @@ export class OmniRouter implements OmniRouterInterface {
         )
       }),
     )
-    console.log('assetBalances: ', assetBalances)
 
     const zeroExQuotes = await Promise.all(
-      assetBalances.map((bal, index) => {
+      assetBalances.map(async (bal, index) => {
         const arr: BurningQueueInterface.QuoteParamsStruct[] = Array(bal.length)
-        subIndexes[index].assets.map(async (asset, i) => {
-          console.log('asset: ', asset)
-          const obj: [string, string] =
-            zeroExAggregators[index].chain.toString() === '5'
-              ? [
-                  '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6', //goerli weth
-                  '0x07865c6e87b9f70255377e024ace6630c1eaa37f', //goerli usdc
-                ]
-              : [
-                  '0x9c3c9283d3e44854697cd22d3faa240cfb032889', //mumbai wrapped MATIC
-                  'MATIC', //mumbai native token
-                  // '0xe6b8a5cf854791412c1f6efc7caf629f5df1c747', //mumbai USDC
-                ]
-          const swapInfo = await zeroExAggregators[index].aggregator.quote(
-            obj[0],
-            obj[1],
-            bal[i],
-            options,
-          )
-          const quote = {
-            swapTarget: swapInfo.to,
-            inputAsset: asset,
-            inputAmount: swapInfo.sellAmount,
-            buyAssetMinAmount: swapInfo.sellAmount, //buyAmount* 0.95
-            additionalGas: swapInfo.estimatedGas,
-            assetQuote: swapInfo.data,
-          } as BurningQueueInterface.QuoteParamsStruct
+        const scalingFactor = await getScalingFactor(
+          subIndexes[index].chainId.toNumber() as AvailableChainId,
+        )
 
-          // console.log('quote: ', quote)
-
-          arr[i] = quote
-        })
+        await Promise.all(
+          subIndexes[index].assets.map(async (asset, i) => {
+            const usdcAddress: string =
+              zeroExAggregators[index].chain.toString() === '5'
+                ? '0xdf0360ad8c5ccf25095aa97ee5f2785c8d848620' //goerli USDC
+                : '0x742dfa5aa70a8212857966d491d67b09ce7d6ec7' //mumbai USDC
+            const swapInfo = await zeroExAggregators[index].aggregator.quote(
+              asset,
+              usdcAddress,
+              bal[i],
+              options,
+            )
+            arr[i] = {
+              swapTarget: swapInfo.to,
+              inputAsset: asset,
+              inputAmount: swapInfo.sellAmount,
+              buyAssetMinAmount: hundred
+                .sub(scalingFactor)
+                .mul(swapInfo.sellAmount)
+                .div(hundred),
+              additionalGas: swapInfo.estimatedGas,
+              assetQuote: swapInfo.data,
+            }
+          }),
+        )
         return arr
       }),
     )
 
-    console.log('zeroExQuotes: ', zeroExQuotes)
-
-    // const quotes = await zeroExQuotes.map(
-    //   (quoteArr: Zero0xQuoteResponse[], quoteInd) => {
-    //     console.log(
-    //       'quoteArr: ',
-    //       quoteArr,
-    //       'length: ',
-    //       quoteArr.length,
-    //       'subIndexes[quoteInd]: ',
-    //       subIndexes[quoteInd],
-    //     )
-    //     return subIndexes[quoteInd].assets.map((asset, index) => {
-    //       console.log('quoteArr[index]: ', quoteArr, 'asset: ', asset)
-    //       return {
-    //         swapTarget: quoteArr[index].to,
-    //         inputAsset: asset,
-    //         inputAmount: quoteArr[index].sellAmount,
-    //         buyAssetMinAmount: quoteArr[index].sellAmount, //buyAmount* 0.95
-    //         additionalGas: quoteArr[index].estimatedGas,
-    //         assetQuote: quoteArr[index].data,
-    //       } as BurningQueueInterface.QuoteParamsStruct
-    //     })
-    //   },
-    // )
-
-    console.log('quotes: ', zeroExQuotes)
-
     const batches: BurningQueueInterface.BatchStruct[] = subIndexes.map(
       (el, index) => ({
         quotes: zeroExQuotes[index],
-        chainId: el.chainId,
+        chainId: el.chainId.toNumber(),
         payload: '0x',
       }),
     )
