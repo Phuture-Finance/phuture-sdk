@@ -9,8 +9,6 @@ import { InsufficientAllowanceError } from '@phuture/errors';
 import { getDefaultPriceOracle } from '@phuture/price-oracle';
 import { Router } from '@phuture/router';
 
-const sleepDuration = 0.2;
-
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = (network: Networkish): number => {
 	const gas = {
@@ -54,7 +52,8 @@ export class AutoRouter implements Router {
 	 */
 	constructor(
 		public readonly indexRouter: IndexRouter,
-		public readonly zeroExAggregator: ZeroExAggregator
+		public readonly zeroExAggregator: ZeroExAggregator,
+		public readonly sleepDuration: number = 0.5
 	) {}
 
 	/**
@@ -106,7 +105,7 @@ export class AutoRouter implements Router {
 						estimatedGas: 0,
 					};
 
-				await this.sleep(sleepDuration * i);
+				await this.sleep(i);
 
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
@@ -241,7 +240,7 @@ export class AutoRouter implements Router {
 						estimatedGas: 0,
 					};
 
-				await this.sleep(sleepDuration * i);
+				await this.sleep(i);
 
 				const { to, buyAmount, data, estimatedGas } =
 					await this.zeroExAggregator.quote(
@@ -297,7 +296,7 @@ export class AutoRouter implements Router {
 						estimatedGas: 0,
 					};
 
-				await this.sleep(sleepDuration * i);
+				await this.sleep(i);
 
 				const {
 					buyAmount,
@@ -448,7 +447,7 @@ export class AutoRouter implements Router {
 					};
 				}
 
-				await this.sleep(sleepDuration * i);
+				await this.sleep(i);
 
 				return this.zeroExAggregator.price(
 					asset,
@@ -571,7 +570,7 @@ export class AutoRouter implements Router {
 					};
 				}
 
-				await this.sleep(sleepDuration * i);
+				await this.sleep(i);
 
 				const {
 					buyAmount,
@@ -636,6 +635,8 @@ export class AutoRouter implements Router {
 	}
 
 	async sleep(seconds: number) {
-		return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+		return new Promise((resolve) =>
+			setTimeout(resolve, this.sleepDuration * seconds * 1000)
+		);
 	}
 }
