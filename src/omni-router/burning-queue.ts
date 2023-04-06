@@ -69,7 +69,6 @@ export class BurningQueue extends Contract<BurningQueueInterface> {
   ): Promise<ContractTransaction> {
     console.dir({ ids, localQuotes, batches }, { depth: null })
     const value = await this.contract.estimateFee(batches)
-    console.log('estimateFee value: ', value)
 
     return this.contract.functions[
       'remoteRedeem(uint256[],((address,address,uint256,uint256,uint256,bytes)[])[],((address,address,uint256,uint256,uint256,bytes)[],uint256,bytes)[])'

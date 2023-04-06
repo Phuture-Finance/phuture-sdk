@@ -1,5 +1,4 @@
-import { Provider } from '@ethersproject/abstract-provider'
-import { BigNumber, BigNumberish, ContractTransaction, ethers } from 'ethers'
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
 import { PromiseOrValue } from 'typechain/common'
 import { SubIndexLib } from 'typechain/SubIndexFactory'
@@ -16,52 +15,53 @@ import { OmniIndex } from './omni-index'
 import { OmniRouterInterface } from './omni-router-types'
 import { SubIndex } from './sub-index-factory'
 
-const subIndexTotalSupply = BigNumber.from(2).pow(32)
-const deadlineOffset: Record<number, number> = {
-  [5]: 2,
-  [80001]: 5,
+//INFO temporary solution, will be deleted
+const mockedSwapInfo = {
+  swapTarget: '0x0000000000000000000000000000000000000000',
+  inputAsset: '0x0000000000000000000000000000000000000000',
+  inputAmount: 0,
+  buyAssetMinAmount: 0,
+  additionalGas: '0',
+  assetQuote: '0x',
 }
+
+const subIndexTotalSupply = BigNumber.from(2).pow(32)
 const hundred = BigNumber.from(100)
 type AvailableChainId = 5 | 80001
 
-const rpcByChainId: Record<AvailableChainId, string> = {
-  //TESTNETS
-  5: 'https://rpc.ankr.com/eth_goerli',
-  80001: 'https://polygon-testnet.public.blastapi.io',
-}
+//TODO
+// const deadlineOffset: Record<number, number> = {
+//   [5]: 2,
+//   [80001]: 5,
+// }
+// const rpcByChainId: Record<AvailableChainId, string> = {
+//   //TESTNETS
+//   5: 'https://rpc.ankr.com/eth_goerli',
+//   80001: 'https://polygon-testnet.public.blastapi.io',
+// }
 
-const getScalingFactor = async (chainId: AvailableChainId) => {
+const getScalingFactor = async (_chainId: AvailableChainId) => {
   //TODO
-  const provider = getProvider(chainId)
+  // const provider = getProvider(chainId)
 
-  const currentBlockNumber = await provider.getBlockNumber()
-  const deadline = currentBlockNumber + deadlineOffset[chainId]
+  // const currentBlockNumber = await provider.getBlockNumber()
+  // const deadline = currentBlockNumber + deadlineOffset[chainId]
 
-  console.log(
-    'currentBlockNumber: ',
-    currentBlockNumber,
-    'deadline: ',
-    deadline,
-  )
+  // const x1 = currentBlockNumber
+  // const y1 = 1
+  // const x2 = deadline
+  // const y2 = 0
 
-  const x1 = currentBlockNumber
-  const y1 = 1
-  const x2 = deadline
-  const y2 = 0
-
-  const slope = (y2 - y1) / (x2 - x1)
-  console.log('slope: ', slope)
-  const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
-  console.log('scalingFactor: ', scalingFactor)
-  // const scalingFactor = 1
-  console.log('HERE: ', Math.max(0, Math.min(100, scalingFactor)))
+  // const slope = (y2 - y1) / (x2 - x1)
+  // const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
+  const scalingFactor = 1
   return Math.max(0, Math.min(100, scalingFactor))
   //0.05 щк 0.02
   //0.5 =50
 }
-
-const getProvider = (chainId: AvailableChainId): Provider =>
-  ethers.getDefaultProvider(rpcByChainId[chainId])
+//TODO
+// const getProvider = (chainId: AvailableChainId): Provider =>
+//   ethers.getDefaultProvider(rpcByChainId[chainId])
 
 /** ### OmniRouter class */
 // implements OmniRouterInterface
@@ -149,17 +149,21 @@ export class OmniRouter implements OmniRouterInterface {
               bal[i],
               options,
             )
-            arr[i] = {
-              swapTarget: swapInfo.to,
-              inputAsset: asset,
-              inputAmount: swapInfo.sellAmount,
-              buyAssetMinAmount: hundred
-                .sub(scalingFactor)
-                .mul(swapInfo.sellAmount)
-                .div(hundred),
-              additionalGas: swapInfo.estimatedGas,
-              assetQuote: swapInfo.data,
-            }
+
+            arr[i] = swapInfo.sellAmount
+              ? {
+                  swapTarget: swapInfo.to,
+                  inputAsset: asset,
+                  inputAmount: swapInfo.sellAmount,
+                  buyAssetMinAmount: hundred
+                    .sub(scalingFactor)
+                    .mul(swapInfo.sellAmount)
+                    .div(hundred),
+                  additionalGas: swapInfo.estimatedGas,
+                  assetQuote: swapInfo.data,
+                }
+              : mockedSwapInfo
+            //INFO: temporary
           }),
         )
         return arr
