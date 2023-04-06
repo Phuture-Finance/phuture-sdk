@@ -56,8 +56,6 @@ const getScalingFactor = async (_chainId: AvailableChainId) => {
   // const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
   const scalingFactor = 1
   return Math.max(0, Math.min(100, scalingFactor))
-  //0.05 щк 0.02
-  //0.5 =50
 }
 //TODO
 // const getProvider = (chainId: AvailableChainId): Provider =>
