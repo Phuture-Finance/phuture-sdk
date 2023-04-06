@@ -89,7 +89,7 @@ export class OmniRouter implements OmniRouterInterface {
     options?: Partial<Zero0xQuoteOptions>,
   ): Promise<ContractTransaction> {
     const account = await this.omniIndex.account.address()
-    const ids = await this.burningQueue.getIDs(account)
+    const ids = await this.burningQueue.contract.ids(account)
     const data = await this.createBatches(ids, account, options)
 
     const localQuotes = new Array({
@@ -239,9 +239,8 @@ export class OmniRouter implements OmniRouterInterface {
    * @returns array of IDs
    */
   async getIDs(address: Address): Promise<BigNumber[]> {
-    return this.burningQueue.getIDs(address)
+    return this.burningQueue.contract.ids(address)
   }
-  //TODO burningQueue.contract....
 
   /**
    * ### indexesOf

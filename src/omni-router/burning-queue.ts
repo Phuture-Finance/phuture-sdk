@@ -35,15 +35,6 @@ export class BurningQueue extends Contract<BurningQueueInterface> {
   }
 
   /**
-   * ### Get IDs
-   * @param address
-   * @returns array of IDs
-   */
-  async getIDs(address: Address): Promise<BigNumber[]> {
-    return this.contract.ids(address)
-  }
-
-  /**
    * ### pickBalance
    * @param subIndexId
    * @param receiver
