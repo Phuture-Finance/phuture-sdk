@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 
 import { MessageProps, RequiredDstMessage } from './types'
+import { Message } from '@layerzerolabs/scan-client'
 
 export const mockedRemoteTxHash =
   '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd'
@@ -15,11 +16,11 @@ export enum MessageStatus {
   FAILED = 'FAILED',
 }
 
-export const defaultStatus: MessageProps = {
+export const getDefaultStatus = (chainId?: number): MessageProps => ({
   hash: ethers.constants.AddressZero,
-  chainId: 0,
+  chainId: chainId || 0,
   status: MessageStatus.INFLIGHT,
-}
+})
 
 type AvailableChainId = 1 | 109 | 110 | 106 | 10121 | 10109
 
@@ -48,6 +49,14 @@ export const updateTransactionalStatuses = async ({
   const topicsArr = logs.flatMap(({ topics }) =>
     topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
   )
+  console.log(
+    'status!!: ',
+    status,
+    'dstTxHash: ',
+    dstTxHash,
+    'dstChainId: ',
+    dstChainId,
+  )
 
   const isError =
     status === 'FAILED' || logs.length === 0 || topicsArr.length !== 0
@@ -62,3 +71,13 @@ export const updateTransactionalStatuses = async ({
       : MessageStatus.INFLIGHT,
   }
 }
+
+export const updateFailedTransaction = ({
+  status,
+  dstTxHash,
+  dstChainId,
+}: Message): MessageProps => ({
+  hash: dstTxHash || ethers.constants.AddressZero,
+  chainId: dstChainId,
+  status: status as MessageStatus,
+})

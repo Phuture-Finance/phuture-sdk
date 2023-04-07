@@ -2,15 +2,14 @@ import { Message } from '@layerzerolabs/scan-client'
 
 import { RequiredDstMessage, TxStatusProps } from './types'
 import {
-  defaultStatus,
+  getDefaultStatus,
   MessageStatus,
+  updateFailedTransaction,
   updateTransactionalStatuses,
 } from './utils'
 
 interface LzScanClient {
-  getMessagesBySrcTxHash(
-    srcTxHash: string,
-  ): Promise<{
+  getMessagesBySrcTxHash(srcTxHash: string): Promise<{
     messages: Message[]
   }>
 }
@@ -50,28 +49,32 @@ export function createOmniTransactionService({
         inputMessages.length !== 0
           ? await Promise.all(
               inputMessages.map(async (tx) => {
-                if (!tx.dstTxHash) return defaultStatus
+                if (tx.status === 'FAILED') return updateFailedTransaction(tx)
+
+                if (!tx.dstTxHash) return getDefaultStatus(tx.dstChainId)
 
                 return await updateTransactionalStatuses(
                   tx as RequiredDstMessage,
                 )
               }),
             )
-          : [defaultStatus]
+          : [getDefaultStatus()]
 
       //INFO: Retrieve the transactional status of each input transaction on the remote chain
       const remoteToHomeStatuses =
         outputMessages.length !== 0
           ? await Promise.all(
               outputMessages.flat().map(async (tx) => {
-                if (!tx.dstTxHash) return defaultStatus
+                if (tx.status === 'FAILED') return updateFailedTransaction(tx)
+
+                if (!tx.dstTxHash) return getDefaultStatus(tx.dstChainId)
 
                 return await updateTransactionalStatuses(
                   tx as RequiredDstMessage,
                 )
               }),
             )
-          : [defaultStatus]
+          : [getDefaultStatus()]
 
       return {
         homeToRemote: homeToRemoteStatuses,
