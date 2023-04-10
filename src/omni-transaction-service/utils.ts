@@ -7,7 +7,7 @@ export const mockedRemoteTxHash =
   '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd'
 
 export const errorTopics = [
-  '0xe183f33de2837795525b4792ca4cd60535bd77c53b7e7030060bfcf5734d6b0c',
+  '0xe183f33de2837795525b4792ca4cd60535bd77c53b7e7030060bfcf5734d6b0c', //execution reverted
 ] //TODO: update
 
 export enum MessageStatus {
@@ -45,6 +45,7 @@ export const updateTransactionalStatuses = async ({
     await getOmniRemoteUrl(dstChainId as AvailableChainId),
   )
   const { logs } = await provider.getTransactionReceipt(dstTxHash)
+  console.log('logs: ', logs)
 
   const topicsArr = logs.flatMap(({ topics }) =>
     topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),

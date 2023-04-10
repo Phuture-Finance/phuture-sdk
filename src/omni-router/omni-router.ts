@@ -21,7 +21,7 @@ const mockedSwapInfo = {
   inputAsset: '0x0000000000000000000000000000000000000000',
   inputAmount: 0,
   buyAssetMinAmount: 0,
-  additionalGas: '0',
+  additionalGas: '300000',
   assetQuote: '0x',
 }
 
@@ -157,7 +157,9 @@ export class OmniRouter implements OmniRouterInterface {
                     .sub(scalingFactor)
                     .mul(swapInfo.sellAmount)
                     .div(hundred),
-                  additionalGas: swapInfo.estimatedGas,
+                  additionalGas: BigNumber.from(swapInfo.estimatedGas).add(
+                    300000,
+                  ), //INFO: test
                   assetQuote: swapInfo.data,
                 }
               : mockedSwapInfo

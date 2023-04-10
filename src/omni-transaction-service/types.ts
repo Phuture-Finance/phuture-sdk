@@ -6,7 +6,7 @@ export interface MessageProps {
   status: 'INFLIGHT' | 'DELIVERED' | 'FAILED'
 }
 
-export interface TxStatusProps {
+export interface OmniTxStatusProps {
   homeToRemote: MessageProps[]
   remoteToHome: MessageProps[]
 }

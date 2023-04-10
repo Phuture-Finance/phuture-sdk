@@ -1,6 +1,6 @@
 import { Message } from '@layerzerolabs/scan-client'
 
-import { RequiredDstMessage, TxStatusProps } from './types'
+import { RequiredDstMessage, OmniTxStatusProps } from './types'
 import {
   getDefaultStatus,
   MessageStatus,
@@ -22,7 +22,7 @@ export function createOmniTransactionService({
   return {
     getRemoteTransactionStatuses: async (
       hash: string,
-    ): Promise<TxStatusProps> => {
+    ): Promise<OmniTxStatusProps> => {
       //INFO: Fetch all messages with given hash as source on the home chain
       const inputMessages: Message[] = (
         await client.getMessagesBySrcTxHash(hash)
