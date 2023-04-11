@@ -45,18 +45,9 @@ export const updateTransactionalStatuses = async ({
     await getOmniRemoteUrl(dstChainId as AvailableChainId),
   )
   const { logs } = await provider.getTransactionReceipt(dstTxHash)
-  console.log('logs: ', logs)
 
   const topicsArr = logs.flatMap(({ topics }) =>
     topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
-  )
-  console.log(
-    'status!!: ',
-    status,
-    'dstTxHash: ',
-    dstTxHash,
-    'dstChainId: ',
-    dstChainId,
   )
 
   const isError =
