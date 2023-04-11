@@ -21,9 +21,9 @@ export interface BatchStruct {
   payload: PromiseOrValue<BytesLike>
 }
 
-export class BurningQueueRouter extends Contract<BurningQueueInterface> {
+export class BurningQueue extends Contract<BurningQueueInterface> {
   /**
-   * ### Creates a new BurningQueueRouter instance
+   * ### Creates a new BurningQueue instance
    *
    * @param account Account to use for signing
    * @param contract Contract instance or address of the OmniRouterInterface contract
@@ -35,12 +35,16 @@ export class BurningQueueRouter extends Contract<BurningQueueInterface> {
   }
 
   /**
-   * ### Get IDs
-   * @param address
-   * @returns array of IDs
+   * ### pickBalance
+   * @param subIndexId
+   * @param receiver
+   * @returns returns balance of sub-index
    */
-  async getIDs(address: Address): Promise<BigNumber[]> {
-    return await this.contract.ids(address)
+  async pickBalance(
+    subIndexId: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+  ): Promise<BigNumber> {
+    return this.contract['pick(uint256,address)'](subIndexId, receiver)
   }
 
   /**
@@ -54,9 +58,11 @@ export class BurningQueueRouter extends Contract<BurningQueueInterface> {
     localQuotes: BurningQueueInterface.LocalQuotesStruct[] = [],
     batches: BurningQueueInterface.BatchStruct[],
   ): Promise<ContractTransaction> {
+    console.dir({ ids, localQuotes, batches }, { depth: null })
     const value = await this.contract.estimateFee(batches)
+
     return this.contract.functions[
       'remoteRedeem(uint256[],((address,address,uint256,uint256,uint256,bytes)[])[],((address,address,uint256,uint256,uint256,bytes)[],uint256,bytes)[])'
-    ](ids, localQuotes, batches, { value })
+    ](ids, [], batches, { value })
   }
 }

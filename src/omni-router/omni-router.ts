@@ -1,32 +1,187 @@
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
-import { SubIndexLib } from 'typechain/OmniRouter'
+import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
+import { PromiseOrValue } from 'typechain/common'
+import { SubIndexLib } from 'typechain/SubIndexFactory'
+import { Address } from 'types'
 
-import { Account } from '../account'
-import { Contract } from '../contract'
 import {
-  OmniRouter as OmniRouterInterface,
-  OmniRouter__factory,
-} from '../typechain'
-import { PromiseOrValue } from '../typechain/common'
-import { Address, ChainId, ChainIds } from '../types'
+  Zero0xQuoteOptions,
+  ZeroExAggregator,
+  zeroExBaseUrl,
+} from '../0x-aggregator'
 
-/** ### Default OmniRouter address for network */
-export const defaultOmniRouterAddress: Record<ChainId, Address> = {
-  /** ### Default OmniRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xc22740db19545a74b049d5b19e6ab7938197e3b0',
+import { BurningQueue } from './burning-queue'
+import { OmniIndex } from './omni-index'
+import { OmniRouterInterface } from './omni-router-types'
+import { SubIndex } from './sub-index-factory'
+
+//INFO temporary solution, will be deleted
+const mockedSwapInfo = {
+  swapTarget: '0x0000000000000000000000000000000000000000',
+  inputAsset: '0x0000000000000000000000000000000000000000',
+  inputAmount: 0,
+  buyAssetMinAmount: 0,
+  additionalGas: '300000',
+  assetQuote: '0x',
 }
 
-export class OmniRouter extends Contract<OmniRouterInterface> {
+const subIndexTotalSupply = BigNumber.from(2).pow(32)
+const hundred = BigNumber.from(100)
+type AvailableChainId = 5 | 80001
+
+//TODO
+// const deadlineOffset: Record<number, number> = {
+//   [5]: 2,
+//   [80001]: 5,
+// }
+// const rpcByChainId: Record<AvailableChainId, string> = {
+//   //TESTNETS
+//   5: 'https://rpc.ankr.com/eth_goerli',
+//   80001: 'https://polygon-testnet.public.blastapi.io',
+// }
+
+const getScalingFactor = async (_chainId: AvailableChainId) => {
+  //TODO
+  // const provider = getProvider(chainId)
+
+  // const currentBlockNumber = await provider.getBlockNumber()
+  // const deadline = currentBlockNumber + deadlineOffset[chainId]
+
+  // const x1 = currentBlockNumber
+  // const y1 = 1
+  // const x2 = deadline
+  // const y2 = 0
+
+  // const slope = (y2 - y1) / (x2 - x1)
+  // const scalingFactor = slope * currentBlockNumber + (y1 - slope * x1)
+  const scalingFactor = 1
+  return Math.max(0, Math.min(100, scalingFactor))
+}
+//TODO
+// const getProvider = (chainId: AvailableChainId): Provider =>
+//   ethers.getDefaultProvider(rpcByChainId[chainId])
+
+/** ### OmniRouter class */
+// implements OmniRouterInterface
+export class OmniRouter implements OmniRouterInterface {
   /**
    * ### Creates a new OmniRouter instance
    *
-   * @param account Account to use for signing
-   * @param contract Contract instance or address of the OmniRouterInterface contract
+   * @param omniIndex instance of OmniIndex
+   * @param subIndex instance of SubIndex
+   * @param burningQueue instance of BurningQueue
+   * @param zeroExAggregator ZeroEx client
    *
-   * @returns New OmniRouterInterface token instance
+   * @returns New OmniRouter instance
    */
-  constructor(account: Account, contract: OmniRouterInterface | Address) {
-    super(account, contract, OmniRouter__factory)
+  constructor(
+    public readonly omniIndex: OmniIndex,
+    public readonly subIndex: SubIndex,
+    public readonly burningQueue: BurningQueue,
+    public readonly zeroExAggregator: ZeroExAggregator,
+  ) {}
+  /**
+   * ### Remote redeem
+   * @param options
+   * @returns remoteRedeem transaction
+   */
+  async remoteRedeem(
+    options?: Partial<Zero0xQuoteOptions>,
+  ): Promise<ContractTransaction> {
+    const account = await this.omniIndex.account.address()
+    const ids = await this.burningQueue.contract.ids(account)
+    const data = await this.createBatches(ids, account, options)
+
+    const localQuotes = new Array({
+      quotes: await data.quotes,
+    })
+
+    return this.burningQueue.remoteMultipleRedeem(
+      ids,
+      localQuotes,
+      data.batches,
+    )
+  }
+
+  async createBatches(
+    ids: BigNumber[],
+    account: Address,
+    options?: Partial<Zero0xQuoteOptions>,
+  ): Promise<{
+    batches: BurningQueueInterface.BatchStruct[]
+    quotes: BurningQueueInterface.QuoteParamsStruct[]
+  }> {
+    const subIndexes = await this.subIndex.indexesOf(ids)
+    const zeroExAggregators = subIndexes.map((ind) => ({
+      chain: ind.chainId,
+      aggregator: ZeroExAggregator.fromUrl(
+        zeroExBaseUrl[ind.chainId.toNumber()],
+      )[0],
+    }))
+
+    const assetBalances = await Promise.all(
+      subIndexes.map(async (sub, index) => {
+        const balance = await this.burningQueue.pickBalance(ids[index], account)
+        return sub.balances.map((assetBalance) =>
+          balance.add(assetBalance.div(subIndexTotalSupply)),
+        )
+      }),
+    )
+
+    const zeroExQuotes = await Promise.all(
+      assetBalances.map(async (bal, index) => {
+        const arr: BurningQueueInterface.QuoteParamsStruct[] = Array(bal.length)
+        const scalingFactor = await getScalingFactor(
+          subIndexes[index].chainId.toNumber() as AvailableChainId,
+        )
+
+        await Promise.all(
+          subIndexes[index].assets.map(async (asset, i) => {
+            const usdcAddress: string =
+              zeroExAggregators[index].chain.toString() === '5'
+                ? '0xdf0360ad8c5ccf25095aa97ee5f2785c8d848620' //goerli USDC
+                : '0x742dfa5aa70a8212857966d491d67b09ce7d6ec7' //mumbai USDC
+            const swapInfo = await zeroExAggregators[index].aggregator.quote(
+              asset,
+              usdcAddress,
+              bal[i],
+              options,
+            )
+
+            arr[i] = swapInfo.sellAmount
+              ? {
+                  swapTarget: swapInfo.to,
+                  inputAsset: asset,
+                  inputAmount: swapInfo.sellAmount,
+                  buyAssetMinAmount: hundred
+                    .sub(scalingFactor)
+                    .mul(swapInfo.sellAmount)
+                    .div(hundred),
+                  additionalGas: BigNumber.from(swapInfo.estimatedGas).add(
+                    300000,
+                  ), //INFO: test
+                  assetQuote: swapInfo.data,
+                }
+              : mockedSwapInfo
+            //INFO: temporary
+          }),
+        )
+        return arr
+      }),
+    )
+
+    const batches: BurningQueueInterface.BatchStruct[] = subIndexes.map(
+      (el, index) => ({
+        quotes: zeroExQuotes[index],
+        chainId: el.chainId.toNumber(),
+        payload: '0x',
+      }),
+    )
+
+    return {
+      batches,
+      quotes: [],
+    }
   }
 
   /**
@@ -39,8 +194,7 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     reserveTokens: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    const anatomy: SubIndexLib.SubIndexStructOutput[] = await this.contract.anatomy()
-    return this.contract.deposit(reserveTokens, receiver, anatomy)
+    return this.omniIndex.deposit(reserveTokens, receiver)
   }
 
   /**
@@ -48,7 +202,6 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
    * @param indexShares
    * @param receiver
    * @param owner
-   * @param subIndexes
    * @returns redeem transaction
    */
   async redeem(
@@ -56,8 +209,7 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    const anatomy = await this.contract.anatomy()
-    return this.contract.redeem(indexShares, receiver, owner, anatomy)
+    return this.omniIndex.redeem(indexShares, receiver, owner)
   }
 
   /**
@@ -69,7 +221,7 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   async previewRedeem(
     indexShares: PromiseOrValue<BigNumberish>,
   ): Promise<BigNumber> {
-    return this.contract.previewRedeem(indexShares)
+    return this.omniIndex.previewRedeem(indexShares)
   }
 
   /**
@@ -80,6 +232,26 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   async previewDeposit(
     reserveTokens: PromiseOrValue<BigNumberish>,
   ): Promise<BigNumber> {
-    return this.contract.previewDeposit(reserveTokens)
+    return this.omniIndex.previewRedeem(reserveTokens)
+  }
+
+  /**
+   * ### Get IDs
+   * @param address
+   * @returns array of IDs
+   */
+  async getIDs(address: Address): Promise<BigNumber[]> {
+    return this.burningQueue.contract.ids(address)
+  }
+
+  /**
+   * ### indexesOf
+   * @param ids
+   * @returns sub-index struct
+   */
+  async indexesOf(
+    ids: PromiseOrValue<BigNumberish>[],
+  ): Promise<SubIndexLib.SubIndexStructOutput[]> {
+    return this.subIndex.indexesOf(ids)
   }
 }

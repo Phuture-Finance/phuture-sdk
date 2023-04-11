@@ -15,7 +15,12 @@ export type ChainId = number
 
 /** ### Collection of ChainIds mapped to their network name */
 export const ChainIds: Record<
-  'Mainnet' | 'CChain' | 'Arbitrum' | 'GoerliRollupTestnet',
+  | 'Mainnet'
+  | 'CChain'
+  | 'Arbitrum'
+  | 'GoerliRollupTestnet'
+  | 'GoerliTestnet'
+  | 'Mumbai',
   ChainId
 > = {
   /** ### Ethereum Mainnet */
@@ -29,6 +34,12 @@ export const ChainIds: Record<
 
   /** ### Arbitrum Goerli Rollup Testnet */
   GoerliRollupTestnet: 421613,
+
+  /** ### Ethereum Goerli Testnet */
+  GoerliTestnet: 5,
+
+  /** ### Polygon Mumbai Testnet */
+  Mumbai: 80001,
 } as const
 
 /**
