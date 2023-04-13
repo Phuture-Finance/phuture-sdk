@@ -12,6 +12,58 @@ import { OmniRouterInterface } from './omni-router-types'
 import { SubIndex } from './sub-index-factory'
 import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
 
+const mockedSingleBatches = {
+  batches: [
+    {
+      quotes: [
+        {
+          swapTarget: '0x0000000000000000000000000000000000000000',
+          inputAsset: '0x0000000000000000000000000000000000000000',
+          inputAmount: 0,
+          buyAssetMinAmount: 0,
+          additionalGas: '300000',
+          assetQuote: '0x',
+        },
+        {
+          swapTarget: '0x0000000000000000000000000000000000000000',
+          inputAsset: '0x0000000000000000000000000000000000000000',
+          inputAmount: 0,
+          buyAssetMinAmount: 0,
+          additionalGas: '300000',
+          assetQuote: '0x',
+        },
+      ],
+      chainId: 5,
+      payload:
+        '0x0000000000000000000000000000000000000000000000000000000000004e20',
+    },
+    {
+      quotes: [
+        {
+          swapTarget: '0x0000000000000000000000000000000000000000',
+          inputAsset: '0x0000000000000000000000000000000000000000',
+          inputAmount: 0,
+          buyAssetMinAmount: 0,
+          additionalGas: '300000',
+          assetQuote: '0x',
+        },
+        {
+          swapTarget: '0x0000000000000000000000000000000000000000',
+          inputAsset: '0x0000000000000000000000000000000000000000',
+          inputAmount: 0,
+          buyAssetMinAmount: 0,
+          additionalGas: '300000',
+          assetQuote: '0x',
+        },
+      ],
+      chainId: 80001,
+      payload:
+        '0x0000000000000000000000000000000000000000000000000000000000004e20',
+    },
+  ] as BurningQueueInterface.BatchStruct[],
+  quotes: [] as BurningQueueInterface.QuoteParamsStruct[],
+}
+
 /** ### OmniRouter class */
 export class OmniRouter implements OmniRouterInterface {
   /**
@@ -84,57 +136,7 @@ export class OmniRouter implements OmniRouterInterface {
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    const batchInfo = {
-      batches: [
-        {
-          quotes: [
-            {
-              swapTarget: '0x0000000000000000000000000000000000000000',
-              inputAsset: '0x0000000000000000000000000000000000000000',
-              inputAmount: 0,
-              buyAssetMinAmount: 0,
-              additionalGas: '300000',
-              assetQuote: '0x',
-            },
-            {
-              swapTarget: '0x0000000000000000000000000000000000000000',
-              inputAsset: '0x0000000000000000000000000000000000000000',
-              inputAmount: 0,
-              buyAssetMinAmount: 0,
-              additionalGas: '300000',
-              assetQuote: '0x',
-            },
-          ],
-          chainId: 5,
-          payload:
-            '0x0000000000000000000000000000000000000000000000000000000000004e20',
-        },
-        {
-          quotes: [
-            {
-              swapTarget: '0x0000000000000000000000000000000000000000',
-              inputAsset: '0x0000000000000000000000000000000000000000',
-              inputAmount: 0,
-              buyAssetMinAmount: 0,
-              additionalGas: '300000',
-              assetQuote: '0x',
-            },
-            {
-              swapTarget: '0x0000000000000000000000000000000000000000',
-              inputAsset: '0x0000000000000000000000000000000000000000',
-              inputAmount: 0,
-              buyAssetMinAmount: 0,
-              additionalGas: '300000',
-              assetQuote: '0x',
-            },
-          ],
-          chainId: 80001,
-          payload:
-            '0x0000000000000000000000000000000000000000000000000000000000004e20',
-        },
-      ] as BurningQueueInterface.BatchStruct[],
-      quotes: [] as BurningQueueInterface.QuoteParamsStruct[],
-    }
+    const batchInfo = mockedSingleBatches
     //TODO
     // const account = await this.omniIndex.account.address()
     // const ids = await this.burningQueue.contract.ids(account)

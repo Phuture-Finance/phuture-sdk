@@ -67,9 +67,7 @@ export const createBatches = async (
   batches: BurningQueueInterface.BatchStruct[]
   quotes: BurningQueueInterface.QuoteParamsStruct[]
 }> => {
-  console.log('ids: ', ids)
   const subIndexes = await subIndex.indexesOf(ids)
-  console.log('subIndexes: ', subIndexes)
   const zeroExAggregators = subIndexes.map((ind) => ({
     chain: ind.chainId,
     aggregator: ZeroExAggregator.fromUrl(
@@ -85,7 +83,6 @@ export const createBatches = async (
       )
     }),
   )
-  console.log('assetBalances: ', assetBalances)
 
   const zeroExQuotes = await Promise.all(
     assetBalances.map(async (bal, index) => {
@@ -128,7 +125,6 @@ export const createBatches = async (
       return arr
     }),
   )
-  console.log('zeroExQuotes: ', zeroExQuotes)
 
   const batches: BurningQueueInterface.BatchStruct[] = subIndexes.map(
     (el, index) => ({

@@ -61,12 +61,10 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
       quotes: BurningQueue.QuoteParamsStruct[]
     },
   ): Promise<ContractTransaction> {
-    console.log('batchInfo: ', batchInfo)
     const encodedLocalQuotes = ethers.utils.defaultAbiCoder.encode(
       ['tuple(address,address,uint256,uint256,uint256,bytes)[]'],
       [batchInfo.quotes],
     )
-    console.log('encodedLocalQuotes: ', encodedLocalQuotes)
 
     const encodedBatches = ethers.utils.defaultAbiCoder.encode(
       [
@@ -74,19 +72,17 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
       ],
       [batchInfo.batches],
     )
-    console.log('encodedBatches: ', encodedBatches)
 
     const redeemData = ethers.utils.defaultAbiCoder.encode(
       ['tuple(bytes localData, bytes remoteData)'],
       [{ localData: encodedLocalQuotes, remoteData: encodedBatches }],
     )
-    console.log('redeemData: ', redeemData)
 
     const reserveCached = await this.contract.reserve() //INFO: change to 0 for testing
     const estimatedRedeemFee = await this.contract['estimateRedeemFee(bytes)'](
       encodedBatches,
     )
-    console.log('estimatedRedeemFee: ', estimatedRedeemFee)
+
     const anatomy = await this.contract.anatomy()
 
     return this.contract.redeem(
