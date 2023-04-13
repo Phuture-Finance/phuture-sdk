@@ -1,4 +1,5 @@
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+import { BigNumber, BigNumberish, ContractTransaction, ethers } from 'ethers'
+import { BurningQueue } from 'typechain/BurningQueue'
 import { SubIndexLib } from 'typechain/OmniIndex'
 
 import { Account } from '../account'
@@ -13,7 +14,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default OmniIndex address for network */
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
   /** ### Default OmniIndex address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xc22740db19545a74b049d5b19e6ab7938197e3b0',
+  [ChainIds.GoerliRollupTestnet]: '0xf6b2ddfa4e0f55def8adf74a487d2d9e96c05c02',
 }
 
 export class OmniIndex extends Contract<OmniIndexInterface> {
@@ -55,9 +56,50 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    batchInfo: {
+      batches: BurningQueue.BatchStruct[]
+      quotes: BurningQueue.QuoteParamsStruct[]
+    },
   ): Promise<ContractTransaction> {
+    console.log('batchInfo: ', batchInfo)
+    const encodedLocalQuotes = ethers.utils.defaultAbiCoder.encode(
+      ['tuple(address,address,uint256,uint256,uint256,bytes)[]'],
+      [batchInfo.quotes],
+    )
+    console.log('encodedLocalQuotes: ', encodedLocalQuotes)
+
+    const encodedBatches = ethers.utils.defaultAbiCoder.encode(
+      [
+        'tuple(tuple(address swapTarget,address inputAsset,uint256 inputAmount,uint256 buyAssetMinAmount,uint256 additionalGas,bytes assetQuote)[] quotes,uint256 chainId,bytes payload)[]',
+      ],
+      [batchInfo.batches],
+    )
+    console.log('encodedBatches: ', encodedBatches)
+
+    const redeemData = ethers.utils.defaultAbiCoder.encode(
+      ['tuple(bytes localData, bytes remoteData)'],
+      [{ localData: encodedLocalQuotes, remoteData: encodedBatches }],
+    )
+    console.log('redeemData: ', redeemData)
+
+    const reserveCached = await this.contract.reserve() //INFO: change to 0 for testing
+    const estimatedRedeemFee = await this.contract['estimateRedeemFee(bytes)'](
+      encodedBatches,
+    )
+    console.log('estimatedRedeemFee: ', estimatedRedeemFee)
     const anatomy = await this.contract.anatomy()
-    return this.contract.redeem(indexShares, receiver, owner, anatomy)
+
+    return this.contract.redeem(
+      indexShares,
+      receiver,
+      owner,
+      reserveCached,
+      redeemData,
+      anatomy,
+      {
+        value: estimatedRedeemFee,
+      },
+    )
   }
 
   /**
