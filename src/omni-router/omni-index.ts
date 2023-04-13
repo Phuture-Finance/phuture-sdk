@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, ContractTransaction, ethers } from 'ethers'
 import { BurningQueue } from 'typechain/BurningQueue'
-import { SubIndexLib } from 'typechain/OmniIndex'
+import { IIndexViewer, SubIndexLib } from 'typechain/OmniIndex'
 
 import { Account } from '../account'
 import { Contract } from '../contract'
@@ -14,7 +14,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default OmniIndex address for network */
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
   /** ### Default OmniIndex address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xf6b2ddfa4e0f55def8adf74a487d2d9e96c05c02',
+  [ChainIds.GoerliRollupTestnet]: '0xae5fc9cec58946c2b90be5b3b29ab9c2d173a910',
 }
 
 export class OmniIndex extends Contract<OmniIndexInterface> {
@@ -60,6 +60,7 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
       batches: BurningQueue.BatchStruct[]
       quotes: BurningQueue.QuoteParamsStruct[]
     },
+    isDoubleStep: boolean,
   ): Promise<ContractTransaction> {
     const encodedLocalQuotes = ethers.utils.defaultAbiCoder.encode(
       ['tuple(address,address,uint256,uint256,uint256,bytes)[]'],
@@ -78,7 +79,7 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
       [{ localData: encodedLocalQuotes, remoteData: encodedBatches }],
     )
 
-    const reserveCached = await this.contract.reserve() //INFO: change to 0 for testing
+    const reserveCached = isDoubleStep ? 0 : await this.contract.reserve() //INFO: change to 0 for testing
     const estimatedRedeemFee = await this.contract['estimateRedeemFee(bytes)'](
       encodedBatches,
     )
@@ -106,8 +107,9 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
 
   async previewRedeem(
     indexShares: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.contract.previewRedeem(indexShares)
+    executionTimestamp: PromiseOrValue<BigNumberish>,
+  ): Promise<IIndexViewer.RedeemInfoStructOutput> {
+    return this.contract.previewRedeem(indexShares, executionTimestamp)
   }
 
   /**

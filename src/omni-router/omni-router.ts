@@ -1,16 +1,17 @@
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { PromiseOrValue } from 'typechain/common'
+import { IIndexViewer } from 'typechain/OmniIndex'
 import { SubIndexLib } from 'typechain/SubIndexFactory'
 import { Address } from 'types'
 
 import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
+import { BurningQueue as BurningQueueInterface } from '../typechain/BurningQueue'
 
 import { createBatches } from './batches-utils'
 import { BurningQueue } from './burning-queue'
 import { OmniIndex } from './omni-index'
 import { OmniRouterInterface } from './omni-router-types'
 import { SubIndex } from './sub-index-factory'
-import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
 
 const mockedSingleBatches = {
   batches: [
@@ -135,6 +136,7 @@ export class OmniRouter implements OmniRouterInterface {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    isDoubleStep: boolean,
   ): Promise<ContractTransaction> {
     const batchInfo = mockedSingleBatches
     //TODO
@@ -148,7 +150,13 @@ export class OmniRouter implements OmniRouterInterface {
     //   this.burningQueue,
     //   options,
     // )
-    return this.omniIndex.redeem(indexShares, receiver, owner, batchInfo)
+    return this.omniIndex.redeem(
+      indexShares,
+      receiver,
+      owner,
+      batchInfo,
+      isDoubleStep,
+    )
   }
 
   /**
@@ -159,8 +167,9 @@ export class OmniRouter implements OmniRouterInterface {
 
   async previewRedeem(
     indexShares: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.omniIndex.previewRedeem(indexShares)
+    executionTimestamp: PromiseOrValue<BigNumberish>,
+  ): Promise<IIndexViewer.RedeemInfoStructOutput> {
+    return this.omniIndex.previewRedeem(indexShares, executionTimestamp)
   }
 
   /**
@@ -171,7 +180,7 @@ export class OmniRouter implements OmniRouterInterface {
   async previewDeposit(
     reserveTokens: PromiseOrValue<BigNumberish>,
   ): Promise<BigNumber> {
-    return this.omniIndex.previewRedeem(reserveTokens)
+    return this.omniIndex.previewDeposit(reserveTokens)
   }
 
   /**

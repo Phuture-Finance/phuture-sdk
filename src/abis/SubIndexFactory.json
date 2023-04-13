@@ -59,7 +59,7 @@
           }
         ],
         "internalType": "struct SubIndexLib.SubIndex[]",
-        "name": "",
+        "name": "result",
         "type": "tuple[]"
       }
     ],
