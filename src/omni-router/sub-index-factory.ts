@@ -13,7 +13,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default SubIndex address for network */
 export const defaultSubIndexFactoryAddress: Record<ChainId, Address> = {
   /** ### Default SubIndex address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0x6f09fb6ea53226fb14c3b8639c4b101a4724d8eb',
+  [ChainIds.GoerliRollupTestnet]: '0x7438eddd3a6b354f6254cb4187e80a492747f3c1',
 }
 
 export class SubIndex extends Contract<SubIndexInterface> {

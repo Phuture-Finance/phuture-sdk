@@ -127,57 +127,6 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "subIndexId", "type": "uint256" },
-      {
-        "components": [
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "swapTarget",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "inputAsset",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "inputAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "buyAssetMinAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "additionalGas",
-                "type": "uint256"
-              },
-              { "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
-            ],
-            "internalType": "struct BurningQueue.QuoteParams[]",
-            "name": "quotes",
-            "type": "tuple[]"
-          },
-          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
-          { "internalType": "bytes", "name": "payload", "type": "bytes" }
-        ],
-        "internalType": "struct BurningQueue.Batch",
-        "name": "batch",
-        "type": "tuple"
-      }
-    ],
-    "name": "remoteRedeem",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
       {
         "internalType": "uint256[]",
         "name": "subIndexIds",

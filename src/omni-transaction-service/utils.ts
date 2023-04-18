@@ -1,7 +1,7 @@
+import { Message } from '@layerzerolabs/scan-client'
 import { ethers } from 'ethers'
 
 import { MessageProps, RequiredDstMessage } from './types'
-import { Message } from '@layerzerolabs/scan-client'
 
 export const mockedRemoteTxHash =
   '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd'
@@ -31,7 +31,7 @@ const rpcByChainId: Record<AvailableChainId, string> = {
   106: 'https://avalanche.public-rpc.com',
   //TESTNETS
   10121: 'https://rpc.ankr.com/eth_goerli',
-  10109: 'https://polygon-testnet.public.blastapi.io',
+  10109: 'https://polygon-mumbai.blockpi.network/v1/rpc/public',
 }
 
 const getOmniRemoteUrl = (chainId: AvailableChainId) => rpcByChainId[chainId]

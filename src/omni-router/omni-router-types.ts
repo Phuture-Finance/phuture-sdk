@@ -1,6 +1,7 @@
 import { Zero0xQuoteOptions } from '0x-aggregator'
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { PromiseOrValue } from 'typechain/common'
+import { IIndexViewer } from 'typechain/OmniIndex'
 import { SubIndexLib } from 'typechain/SubIndexFactory'
 import { Address } from 'types'
 
@@ -37,6 +38,7 @@ export interface OmniRouterInterface {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    isDoubleStep: boolean,
   ): Promise<ContractTransaction>
 
   /**
@@ -45,7 +47,10 @@ export interface OmniRouterInterface {
    * @returns
    */
 
-  previewRedeem(indexShares: PromiseOrValue<BigNumberish>): Promise<BigNumber>
+  previewRedeem(
+    indexShares: PromiseOrValue<BigNumberish>,
+    executionTimestamp: PromiseOrValue<BigNumberish>,
+  ): Promise<IIndexViewer.RedeemInfoStructOutput>
 
   /**
    * ### Preview depositing tokens

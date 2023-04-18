@@ -1,5 +1,6 @@
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
-import { SubIndexLib } from 'typechain/OmniIndex'
+import { BigNumber, BigNumberish, ContractTransaction, ethers } from 'ethers'
+import { BurningQueue } from 'typechain/BurningQueue'
+import { IIndexViewer, SubIndexLib } from 'typechain/OmniIndex'
 
 import { Account } from '../account'
 import { Contract } from '../contract'
@@ -13,7 +14,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default OmniIndex address for network */
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
   /** ### Default OmniIndex address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xc22740db19545a74b049d5b19e6ab7938197e3b0',
+  [ChainIds.GoerliRollupTestnet]: '0xae5fc9cec58946c2b90be5b3b29ab9c2d173a910',
 }
 
 export class OmniIndex extends Contract<OmniIndexInterface> {
@@ -55,9 +56,47 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    batchInfo: {
+      batches: BurningQueue.BatchStruct[]
+      quotes: BurningQueue.QuoteParamsStruct[]
+    },
+    isDoubleStep: boolean,
   ): Promise<ContractTransaction> {
+    const encodedLocalQuotes = ethers.utils.defaultAbiCoder.encode(
+      ['tuple(address,address,uint256,uint256,uint256,bytes)[]'],
+      [batchInfo.quotes],
+    )
+
+    const encodedBatches = ethers.utils.defaultAbiCoder.encode(
+      [
+        'tuple(tuple(address swapTarget,address inputAsset,uint256 inputAmount,uint256 buyAssetMinAmount,uint256 additionalGas,bytes assetQuote)[] quotes,uint256 chainId,bytes payload)[]',
+      ],
+      [batchInfo.batches],
+    )
+
+    const redeemData = ethers.utils.defaultAbiCoder.encode(
+      ['tuple(bytes localData, bytes remoteData)'],
+      [{ localData: encodedLocalQuotes, remoteData: encodedBatches }],
+    )
+
+    const reserveCached = isDoubleStep ? 0 : await this.contract.reserve() //INFO: change to 0 for testing
+    const estimatedRedeemFee = await this.contract['estimateRedeemFee(bytes)'](
+      encodedBatches,
+    )
+
     const anatomy = await this.contract.anatomy()
-    return this.contract.redeem(indexShares, receiver, owner, anatomy)
+
+    return this.contract.redeem(
+      indexShares,
+      receiver,
+      owner,
+      reserveCached,
+      redeemData,
+      anatomy,
+      {
+        value: estimatedRedeemFee,
+      },
+    )
   }
 
   /**
@@ -68,8 +107,9 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
 
   async previewRedeem(
     indexShares: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.contract.previewRedeem(indexShares)
+    executionTimestamp: PromiseOrValue<BigNumberish>,
+  ): Promise<IIndexViewer.RedeemInfoStructOutput> {
+    return this.contract.previewRedeem(indexShares, executionTimestamp)
   }
 
   /**

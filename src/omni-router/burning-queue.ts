@@ -12,7 +12,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default BurningQueue address for network */
 export const defaultBurningQueueAddress: Record<ChainId, Address> = {
   /** ### Default BurningQueue address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xa3e7e371779573214029c9597a323a740825ff0c',
+  [ChainIds.GoerliRollupTestnet]: '0x9ad10215bc3b5dd3a3528b472058b653820b85d0',
 }
 
 export interface BatchStruct {
