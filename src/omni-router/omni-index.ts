@@ -1,5 +1,4 @@
-import { BigNumber, BigNumberish, ContractTransaction, ethers } from 'ethers'
-import { BurningQueue } from 'typechain/BurningQueue'
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { IIndexViewer, SubIndexLib } from 'typechain/OmniIndex'
 
 import { Account } from '../account'
@@ -14,7 +13,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default OmniIndex address for network */
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
   /** ### Default OmniIndex address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xae5fc9cec58946c2b90be5b3b29ab9c2d173a910',
+  [ChainIds.GoerliRollupTestnet]: '0xdc09ad66a7d93905e129200ab5439e09fa998f5d',
 }
 
 export class OmniIndex extends Contract<OmniIndexInterface> {
@@ -43,60 +42,6 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
     const anatomy: SubIndexLib.SubIndexStructOutput[] =
       await this.contract.anatomy()
     return this.contract.deposit(reserveTokens, receiver, anatomy)
-  }
-
-  /**
-   * ### Redeem tokens
-   * @param indexShares
-   * @param receiver
-   * @param owner
-   * @returns redeem transaction
-   */
-  async redeem(
-    indexShares: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
-    batchInfo: {
-      batches: BurningQueue.BatchStruct[]
-      quotes: BurningQueue.QuoteParamsStruct[]
-    },
-    isDoubleStep: boolean,
-  ): Promise<ContractTransaction> {
-    const encodedLocalQuotes = ethers.utils.defaultAbiCoder.encode(
-      ['tuple(address,address,uint256,uint256,uint256,bytes)[]'],
-      [batchInfo.quotes],
-    )
-
-    const encodedBatches = ethers.utils.defaultAbiCoder.encode(
-      [
-        'tuple(tuple(address swapTarget,address inputAsset,uint256 inputAmount,uint256 buyAssetMinAmount,uint256 additionalGas,bytes assetQuote)[] quotes,uint256 chainId,bytes payload)[]',
-      ],
-      [batchInfo.batches],
-    )
-
-    const redeemData = ethers.utils.defaultAbiCoder.encode(
-      ['tuple(bytes localData, bytes remoteData)'],
-      [{ localData: encodedLocalQuotes, remoteData: encodedBatches }],
-    )
-
-    const reserveCached = isDoubleStep ? 0 : await this.contract.reserve() //INFO: change to 0 for testing
-    const estimatedRedeemFee = await this.contract['estimateRedeemFee(bytes)'](
-      encodedBatches,
-    )
-
-    const anatomy = await this.contract.anatomy()
-
-    return this.contract.redeem(
-      indexShares,
-      receiver,
-      owner,
-      reserveCached,
-      redeemData,
-      anatomy,
-      {
-        value: estimatedRedeemFee,
-      },
-    )
   }
 
   /**

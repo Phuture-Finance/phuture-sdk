@@ -5,16 +5,17 @@ import { SubIndexLib } from 'typechain/SubIndexFactory'
 import { Address } from 'types'
 
 import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
-import { BurningQueue as BurningQueueInterface } from '../typechain/BurningQueue'
+import { RedeemRouter as RedeemRouterInterface } from '../typechain/RedeemRouter'
 
 import { createBatches } from './batches-utils'
 import { BurningQueue } from './burning-queue'
 import { OmniIndex } from './omni-index'
 import { OmniRouterInterface } from './omni-router-types'
+import { RedeemRouter } from './redeem-router'
 import { SubIndex } from './sub-index-factory'
 
 const mockedSingleBatches = {
-  batches: [
+  remoteData: [
     {
       quotes: [
         {
@@ -61,8 +62,8 @@ const mockedSingleBatches = {
       payload:
         '0x0000000000000000000000000000000000000000000000000000000000004e20',
     },
-  ] as BurningQueueInterface.BatchStruct[],
-  quotes: [] as BurningQueueInterface.QuoteParamsStruct[],
+  ] as RedeemRouterInterface.BatchStruct[],
+  localData: [] as RedeemRouterInterface.LocalQuotesStruct[],
 }
 
 /** ### OmniRouter class */
@@ -71,6 +72,7 @@ export class OmniRouter implements OmniRouterInterface {
    * ### Creates a new OmniRouter instance
    *
    * @param omniIndex instance of OmniIndex
+   * @param redeemRouter instance of RedeemRouter
    * @param subIndex instance of SubIndex
    * @param burningQueue instance of BurningQueue
    * @param zeroExAggregator ZeroEx client
@@ -79,6 +81,7 @@ export class OmniRouter implements OmniRouterInterface {
    */
   constructor(
     public readonly omniIndex: OmniIndex,
+    public readonly redeemRouter: RedeemRouter,
     public readonly subIndex: SubIndex,
     public readonly burningQueue: BurningQueue,
     public readonly zeroExAggregator: ZeroExAggregator,
@@ -136,7 +139,6 @@ export class OmniRouter implements OmniRouterInterface {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
-    isDoubleStep: boolean,
   ): Promise<ContractTransaction> {
     const batchInfo = mockedSingleBatches
     //TODO
@@ -150,12 +152,12 @@ export class OmniRouter implements OmniRouterInterface {
     //   this.burningQueue,
     //   options,
     // )
-    return this.omniIndex.redeem(
+    return this.redeemRouter.redeem(
+      this.omniIndex,
       indexShares,
       receiver,
       owner,
       batchInfo,
-      isDoubleStep,
     )
   }
 

@@ -1,0 +1,199 @@
+[
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_messageRouter", "type": "address" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "swapTarget",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "inputAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "inputAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "buyAssetMinAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "additionalGas",
+                "type": "uint256"
+              },
+              { "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+            ],
+            "internalType": "struct RedeemRouter.QuoteParams[]",
+            "name": "quotes",
+            "type": "tuple[]"
+          },
+          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+          { "internalType": "bytes", "name": "payload", "type": "bytes" }
+        ],
+        "internalType": "struct RedeemRouter.Batch[]",
+        "name": "batches",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "estimateRedeemFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "messageRouter",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "index", "type": "address" },
+      { "internalType": "uint256", "name": "indexShares", "type": "uint256" },
+      { "internalType": "address", "name": "receiver", "type": "address" },
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint96", "name": "reserveCached", "type": "uint96" },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "swapTarget",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "inputAsset",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "inputAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "buyAssetMinAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "additionalGas",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "assetQuote",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct RedeemRouter.QuoteParams[]",
+                "name": "quotes",
+                "type": "tuple[]"
+              }
+            ],
+            "internalType": "struct RedeemRouter.LocalQuotes[]",
+            "name": "localData",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "swapTarget",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "inputAsset",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "inputAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "buyAssetMinAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "additionalGas",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "assetQuote",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct RedeemRouter.QuoteParams[]",
+                "name": "quotes",
+                "type": "tuple[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "chainId",
+                "type": "uint256"
+              },
+              { "internalType": "bytes", "name": "payload", "type": "bytes" }
+            ],
+            "internalType": "struct RedeemRouter.Batch[]",
+            "name": "remoteData",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct RedeemRouter.RedeemData",
+        "name": "redeemData",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          { "internalType": "uint256", "name": "id", "type": "uint256" },
+          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+          {
+            "internalType": "address[]",
+            "name": "assets",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "balances",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct SubIndexLib.SubIndex[]",
+        "name": "subIndexes",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "redeem",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
