@@ -20,7 +20,8 @@ export const ChainIds: Record<
   | 'Arbitrum'
   | 'GoerliRollupTestnet'
   | 'GoerliTestnet'
-  | 'Mumbai',
+  | 'Mumbai'
+  | 'AvalancheFuji',
   ChainId
 > = {
   /** ### Ethereum Mainnet */
@@ -40,6 +41,9 @@ export const ChainIds: Record<
 
   /** ### Polygon Mumbai Testnet */
   Mumbai: 80001,
+
+  /** ### Avalanche Fuji Testnet */
+  AvalancheFuji: 43113,
 } as const
 
 /**

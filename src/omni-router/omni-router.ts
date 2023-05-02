@@ -20,47 +20,16 @@ const mockedSingleBatches = {
       quotes: [
         {
           swapTarget: '0x0000000000000000000000000000000000000000',
-          inputAsset: '0x0000000000000000000000000000000000000000',
+          inputAsset: '0x742dfa5aa70a8212857966d491d67b09ce7d6ec7',
           inputAmount: 0,
           buyAssetMinAmount: 0,
-          additionalGas: '300000',
-          assetQuote: '0x',
-        },
-        {
-          swapTarget: '0x0000000000000000000000000000000000000000',
-          inputAsset: '0x0000000000000000000000000000000000000000',
-          inputAmount: 0,
-          buyAssetMinAmount: 0,
-          additionalGas: '300000',
+          additionalGas: '0',
           assetQuote: '0x',
         },
       ],
-      chainId: 5,
+      chainId: 43113,
       payload:
-        '0x0000000000000000000000000000000000000000000000000000000000004e20',
-    },
-    {
-      quotes: [
-        {
-          swapTarget: '0x0000000000000000000000000000000000000000',
-          inputAsset: '0x0000000000000000000000000000000000000000',
-          inputAmount: 0,
-          buyAssetMinAmount: 0,
-          additionalGas: '300000',
-          assetQuote: '0x',
-        },
-        {
-          swapTarget: '0x0000000000000000000000000000000000000000',
-          inputAsset: '0x0000000000000000000000000000000000000000',
-          inputAmount: 0,
-          buyAssetMinAmount: 0,
-          additionalGas: '300000',
-          assetQuote: '0x',
-        },
-      ],
-      chainId: 80001,
-      payload:
-        '0x0000000000000000000000000000000000000000000000000000000000004e20',
+        '0x00000000000000000000000000000000000000000000000000000000000f4240', //TODO change
     },
   ] as RedeemRouterInterface.BatchStruct[],
   localData: [] as RedeemRouterInterface.LocalQuotesStruct[],

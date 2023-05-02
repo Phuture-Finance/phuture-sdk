@@ -1,7 +1,16 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "_messageRouter", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_messageRouter",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_stargateReserveAsset",
+        "type": "address"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -37,14 +46,26 @@
                 "name": "additionalGas",
                 "type": "uint256"
               },
-              { "internalType": "bytes", "name": "assetQuote", "type": "bytes" }
+              {
+                "internalType": "bytes",
+                "name": "assetQuote",
+                "type": "bytes"
+              }
             ],
             "internalType": "struct RedeemRouter.QuoteParams[]",
             "name": "quotes",
             "type": "tuple[]"
           },
-          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
-          { "internalType": "bytes", "name": "payload", "type": "bytes" }
+          {
+            "internalType": "uint256",
+            "name": "chainId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "payload",
+            "type": "bytes"
+          }
         ],
         "internalType": "struct RedeemRouter.Batch[]",
         "name": "batches",
@@ -52,24 +73,56 @@
       }
     ],
     "name": "estimateRedeemFee",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "messageRouter",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "index", "type": "address" },
-      { "internalType": "uint256", "name": "indexShares", "type": "uint256" },
-      { "internalType": "address", "name": "receiver", "type": "address" },
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "uint96", "name": "reserveCached", "type": "uint96" },
+      {
+        "internalType": "address",
+        "name": "index",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "indexShares",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "reserveCached",
+        "type": "uint96"
+      },
       {
         "components": [
           {
@@ -160,7 +213,11 @@
                 "name": "chainId",
                 "type": "uint256"
               },
-              { "internalType": "bytes", "name": "payload", "type": "bytes" }
+              {
+                "internalType": "bytes",
+                "name": "payload",
+                "type": "bytes"
+              }
             ],
             "internalType": "struct RedeemRouter.Batch[]",
             "name": "remoteData",
@@ -173,8 +230,16 @@
       },
       {
         "components": [
-          { "internalType": "uint256", "name": "id", "type": "uint256" },
-          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "chainId",
+            "type": "uint256"
+          },
           {
             "internalType": "address[]",
             "name": "assets",
@@ -194,6 +259,19 @@
     "name": "redeem",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "stargateReserveAsset",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

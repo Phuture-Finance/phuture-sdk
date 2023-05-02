@@ -22,7 +22,7 @@ export const getDefaultStatus = (chainId?: number): MessageProps => ({
   status: MessageStatus.INFLIGHT,
 })
 
-type AvailableChainId = 1 | 109 | 110 | 106 | 10121 | 10109
+type AvailableChainId = 1 | 109 | 110 | 106 | 10121 | 10109 | 10106
 
 const rpcByChainId: Record<AvailableChainId, string> = {
   1: 'https://ethereum.publicnode.com',
@@ -32,6 +32,7 @@ const rpcByChainId: Record<AvailableChainId, string> = {
   //TESTNETS
   10121: 'https://rpc.ankr.com/eth_goerli',
   10109: 'https://polygon-mumbai.blockpi.network/v1/rpc/public',
+  10106: 'https://endpoints.omniatech.io/v1/avax/fuji/public',
 }
 
 const getOmniRemoteUrl = (chainId: AvailableChainId) => rpcByChainId[chainId]
