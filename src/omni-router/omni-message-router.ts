@@ -30,12 +30,4 @@ export class OmniMessageRouter extends Contract<OmniMessageRouterInterface> {
   ) {
     super(account, contract, OmniMessageRouter__factory)
   }
-
-  /**
-   * ### estimateFee
-   * @returns object with fees
-   */
-  async estimateFee(): Promise<{ nativeFee: BigNumber; zroFee: BigNumber }> {
-    return await this.contract.estimateFee()
-  }
 }

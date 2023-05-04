@@ -18,6 +18,8 @@ export const ChainIds: Record<
   | 'Mainnet'
   | 'CChain'
   | 'Arbitrum'
+  | 'Polygon'
+  | 'BSC'
   | 'GoerliRollupTestnet'
   | 'GoerliTestnet'
   | 'Mumbai'
@@ -32,6 +34,12 @@ export const ChainIds: Record<
 
   /** ### Arbitrum  */
   Arbitrum: 42161,
+
+  /** ### Polygon Mainnet */
+  Polygon: 137,
+
+  /** ### Binance Smart Chain Mainnet */
+  BSC: 56,
 
   /** ### Arbitrum Goerli Rollup Testnet */
   GoerliRollupTestnet: 421613,

@@ -38,7 +38,7 @@ export interface OmniRouterInterface {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
-    isDoubleStep: boolean,
+    { assets }: IIndexViewer.RedeemInfoStructOutput,
   ): Promise<ContractTransaction>
 
   /**

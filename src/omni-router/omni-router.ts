@@ -1,39 +1,18 @@
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+import { BurningQueue as BurningQueueInterface } from 'typechain/BurningQueue'
 import { PromiseOrValue } from 'typechain/common'
 import { IIndexViewer } from 'typechain/OmniIndex'
 import { SubIndexLib } from 'typechain/SubIndexFactory'
 import { Address } from 'types'
 
 import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
-import { RedeemRouter as RedeemRouterInterface } from '../typechain/RedeemRouter'
 
-import { createBatches } from './batches-utils'
+import { createQuotes, createRemoteBatches } from './batches-utils'
 import { BurningQueue } from './burning-queue'
 import { OmniIndex } from './omni-index'
 import { OmniRouterInterface } from './omni-router-types'
 import { RedeemRouter } from './redeem-router'
 import { SubIndex } from './sub-index-factory'
-
-const mockedSingleBatches = {
-  remoteData: [
-    {
-      quotes: [
-        {
-          swapTarget: '0x0000000000000000000000000000000000000000',
-          inputAsset: '0x742dfa5aa70a8212857966d491d67b09ce7d6ec7',
-          inputAmount: 0,
-          buyAssetMinAmount: 0,
-          additionalGas: '0',
-          assetQuote: '0x',
-        },
-      ],
-      chainId: 43113,
-      payload:
-        '0x00000000000000000000000000000000000000000000000000000000000f4240', //TODO change
-    },
-  ] as RedeemRouterInterface.BatchStruct[],
-  localData: [] as RedeemRouterInterface.LocalQuotesStruct[],
-}
 
 /** ### OmniRouter class */
 export class OmniRouter implements OmniRouterInterface {
@@ -60,18 +39,13 @@ export class OmniRouter implements OmniRouterInterface {
    * @param options
    * @returns remoteRedeem transaction
    */
-  async remoteRedeem(
-    options?: Partial<Zero0xQuoteOptions>,
-  ): Promise<ContractTransaction> {
+  async remoteRedeem(): Promise<ContractTransaction> {
     const account = await this.omniIndex.account.address()
     const ids = await this.burningQueue.contract.ids(account)
-    const data = await createBatches(
-      ids,
-      account,
-      this.subIndex,
-      this.burningQueue,
-      options,
-    )
+    const data = {} as {
+      batches: BurningQueueInterface.BatchStruct[]
+      quotes: BurningQueueInterface.QuoteParamsStruct[]
+    }
 
     const localQuotes = new Array({
       quotes: await data.quotes,
@@ -105,28 +79,35 @@ export class OmniRouter implements OmniRouterInterface {
    * @returns redeem transaction
    */
   async redeem(
-    indexShares: PromiseOrValue<BigNumberish>,
+    indexShares: BigNumberish,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    { assets }: IIndexViewer.RedeemInfoStructOutput,
+    options?: Partial<Zero0xQuoteOptions>,
   ): Promise<ContractTransaction> {
-    const batchInfo = mockedSingleBatches
-    //TODO
-    // const account = await this.omniIndex.account.address()
-    // const ids = await this.burningQueue.contract.ids(account)
+    const homeChainId = await this.omniIndex.account.chainId()
 
-    // await createBatches(
-    //   ids,
-    //   account,
-    //   this.subIndex,
-    //   this.burningQueue,
-    //   options,
-    // )
+    let homeChain: IIndexViewer.RedeemAssetInfoStructOutput | undefined
+
+    const batchInfo = await createRemoteBatches(
+      assets.filter((chain) => {
+        const isHomeChain = chain.chainId.toNumber() === homeChainId
+        if (isHomeChain) {
+          homeChain = chain
+        }
+        return !isHomeChain
+      }, options),
+    )
+    const quotes = homeChain
+      ? await createQuotes(homeChain, options)
+      : { quotes: [] }
+
     return this.redeemRouter.redeem(
       this.omniIndex,
       indexShares,
       receiver,
       owner,
-      batchInfo,
+      { remoteData: batchInfo, localData: [quotes] },
     )
   }
 
