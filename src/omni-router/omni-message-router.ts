@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers'
-
 import { Account } from '../account'
 import { Contract } from '../contract'
 import {

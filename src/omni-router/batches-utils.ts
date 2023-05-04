@@ -1,13 +1,12 @@
-import { BigNumber } from 'ethers'
 import { IIndexViewer } from 'typechain/OmniIndex'
 import { RedeemRouter } from 'typechain/RedeemRouter'
-import { Address, ChainId, ChainIds } from 'types'
 
 import {
   Zero0xQuoteOptions,
   ZeroExAggregator,
   zeroExBaseUrl,
 } from '../0x-aggregator'
+import { Address, ChainId, ChainIds } from '../types'
 
 //INFO temporary solution, will be deleted
 // const mockedSwapInfo = {
@@ -39,7 +38,8 @@ export const createRemoteBatches = async (
   ).map(({ quotes }, index) => ({
     quotes,
     chainId: assets[index].chainId,
-    payload: '0x',
+    payload:
+      '0x0000000000000000000000000000000000000000000000000000000000002ee00000000000000000000000000000000000000000000000000000000000989680',
   }))
 
 export const createQuotes = async (
@@ -66,7 +66,7 @@ export const createQuotes = async (
         inputAsset: asset,
         inputAmount: swapInfo.sellAmount,
         buyAssetMinAmount: swapInfo.buyAmount,
-        additionalGas: BigNumber.from(swapInfo.estimatedGas).add(300000), //INFO: test
+        additionalGas: swapInfo.estimatedGas, //INFO: test
         assetQuote: swapInfo.data,
       }
     }),
