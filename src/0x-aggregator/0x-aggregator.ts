@@ -59,6 +59,8 @@ export class ZeroExAggregator {
     baseUrl: Url,
     apiKey?: string,
   ): [ZeroExAggregator, AbortController] {
+    if (!baseUrl) throw URIError()
+
     const abortController = new AbortController()
 
     const client = axios.create({

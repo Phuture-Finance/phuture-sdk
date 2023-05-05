@@ -1,20 +1,9 @@
-import { Zero0xQuoteOptions } from '0x-aggregator'
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { PromiseOrValue } from 'typechain/common'
 import { IIndexViewer } from 'typechain/OmniIndex'
-import { Address } from 'types'
 
 /** ### OmniRouterInterface Interface */
 export interface OmniRouterInterface {
-  /**
-   * ### Remote redeem
-   * @param options
-   * @returns remoteRedeem transaction
-   */
-  remoteRedeem(
-    options?: Partial<Zero0xQuoteOptions>,
-  ): Promise<ContractTransaction>
-
   /**
    * ### Deposit tokens
    * @param reserveTokens Amount of tokens used for minting
@@ -37,7 +26,7 @@ export interface OmniRouterInterface {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
-    { assets }: IIndexViewer.RedeemInfoStructOutput,
+    assets: IIndexViewer.RedeemAssetInfoStructOutput[],
   ): Promise<ContractTransaction>
 
   /**
@@ -59,11 +48,4 @@ export interface OmniRouterInterface {
   previewDeposit(
     reserveTokens: PromiseOrValue<BigNumberish>,
   ): Promise<BigNumber>
-
-  /**
-   * ### Get IDs
-   * @param address
-   * @returns array of IDs
-   */
-  getIDs(address: Address): Promise<BigNumber[]>
 }

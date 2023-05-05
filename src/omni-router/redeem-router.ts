@@ -45,10 +45,7 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
-    batchInfo: {
-      remoteData: RedeemRouterInterface.BatchStruct[]
-      localData: RedeemRouterInterface.LocalQuotesStruct[]
-    },
+    batchInfo: RedeemRouterInterface.RedeemDataStruct,
   ): Promise<ContractTransaction> {
     const reserveCached = await omniIndex.contract.reserve() //INFO: change to 0 for testing
     const estimatedRedeemFee = await this.contract.estimateRedeemFee(

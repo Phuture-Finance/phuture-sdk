@@ -1,13 +1,9 @@
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
-import { IIndexViewer, SubIndexLib } from 'typechain/OmniIndex'
-
 import { Account } from '../account'
 import { Contract } from '../contract'
 import {
   OmniIndex as OmniIndexInterface,
   OmniIndex__factory,
 } from '../typechain'
-import { PromiseOrValue } from '../typechain/common'
 import { Address, ChainId, ChainIds } from '../types'
 
 /** ### Default OmniIndex address for network */
@@ -28,44 +24,5 @@ export class OmniIndex extends Contract<OmniIndexInterface> {
    */
   constructor(account: Account, contract: OmniIndexInterface | Address) {
     super(account, contract, OmniIndex__factory)
-  }
-
-  /**
-   * ### Deposit tokens
-   * @param reserveTokens Amount of tokens used for minting
-   * @param receiver
-   * @returns deposit transaction
-   */
-  async deposit(
-    reserveTokens: PromiseOrValue<BigNumberish>,
-    receiver: PromiseOrValue<string>,
-  ): Promise<ContractTransaction> {
-    const anatomy: SubIndexLib.SubIndexStructOutput[] =
-      await this.contract.anatomy()
-    return this.contract.deposit(reserveTokens, receiver, anatomy)
-  }
-
-  /**
-   * ### Preview redeeming tokens
-   * @param indexShares
-   * @returns
-   */
-
-  async previewRedeem(
-    indexShares: PromiseOrValue<BigNumberish>,
-    executionTimestamp: PromiseOrValue<BigNumberish>,
-  ): Promise<IIndexViewer.RedeemInfoStructOutput> {
-    return this.contract.previewRedeem(indexShares, executionTimestamp)
-  }
-
-  /**
-   * ### Preview depositing tokens
-   * @param reserveTokens
-   * @returns
-   */
-  async previewDeposit(
-    reserveTokens: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.contract.previewDeposit(reserveTokens)
   }
 }
