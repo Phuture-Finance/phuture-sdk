@@ -2,7 +2,6 @@ import { Zero0xQuoteOptions } from '0x-aggregator'
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
 import { PromiseOrValue } from 'typechain/common'
 import { IIndexViewer } from 'typechain/OmniIndex'
-import { SubIndexLib } from 'typechain/SubIndexFactory'
 import { Address } from 'types'
 
 /** ### OmniRouterInterface Interface */
@@ -67,13 +66,4 @@ export interface OmniRouterInterface {
    * @returns array of IDs
    */
   getIDs(address: Address): Promise<BigNumber[]>
-
-  /**
-   * ### indexesOf
-   * @param ids
-   * @returns sub-index struct
-   */
-  indexesOf(
-    ids: PromiseOrValue<BigNumberish>[],
-  ): Promise<SubIndexLib.SubIndexStructOutput[]>
 }
