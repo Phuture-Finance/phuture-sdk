@@ -15,7 +15,15 @@ export type ChainId = number
 
 /** ### Collection of ChainIds mapped to their network name */
 export const ChainIds: Record<
-  'Mainnet' | 'CChain' | 'Arbitrum' | 'GoerliRollupTestnet',
+  | 'Mainnet'
+  | 'CChain'
+  | 'Arbitrum'
+  | 'Polygon'
+  | 'BSC'
+  | 'GoerliRollupTestnet'
+  | 'GoerliTestnet'
+  | 'Mumbai'
+  | 'AvalancheFuji',
   ChainId
 > = {
   /** ### Ethereum Mainnet */
@@ -27,8 +35,23 @@ export const ChainIds: Record<
   /** ### Arbitrum  */
   Arbitrum: 42161,
 
+  /** ### Polygon Mainnet */
+  Polygon: 137,
+
+  /** ### Binance Smart Chain Mainnet */
+  BSC: 56,
+
   /** ### Arbitrum Goerli Rollup Testnet */
   GoerliRollupTestnet: 421613,
+
+  /** ### Ethereum Goerli Testnet */
+  GoerliTestnet: 5,
+
+  /** ### Polygon Mumbai Testnet */
+  Mumbai: 80001,
+
+  /** ### Avalanche Fuji Testnet */
+  AvalancheFuji: 43113,
 } as const
 
 /**

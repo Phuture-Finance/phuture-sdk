@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers'
-
 import { Account } from '../account'
 import { Contract } from '../contract'
 import {
@@ -12,6 +10,7 @@ import { Address, ChainId, ChainIds } from '../types'
 export const defaultOmniMessageRouterAddress: Record<ChainId, Address> = {
   /** ### Default OmniRouter address on goerli rollup testnet. */
   [ChainIds.GoerliRollupTestnet]: '0x76e1dbaee729a215509103c0c1dd6d349240642b',
+  [ChainIds.Mumbai]: '0x76e1dbaee729a215509103c0c1dd6d349240642b', //FAKE
 }
 
 export class OmniMessageRouter extends Contract<OmniMessageRouterInterface> {
@@ -28,13 +27,5 @@ export class OmniMessageRouter extends Contract<OmniMessageRouterInterface> {
     contract: OmniMessageRouterInterface | Address,
   ) {
     super(account, contract, OmniMessageRouter__factory)
-  }
-
-  /**
-   * ### estimateFee
-   * @returns object with fees
-   */
-  async estimateFee(): Promise<{ nativeFee: BigNumber; zroFee: BigNumber }> {
-    return await this.contract.estimateFee()
   }
 }

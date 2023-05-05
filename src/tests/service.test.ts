@@ -36,7 +36,7 @@ const mockTestStatus = (
           updated: 1677580247,
         },
       ]
-    : ([] as unknown as Message[])
+    : (([] as unknown) as Message[])
 
 test('Case with all "DELIVERED" statuses', async () => {
   const client = createOmniTransactionService({

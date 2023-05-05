@@ -1,37 +1,32 @@
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers'
+import { PromiseOrValue } from 'typechain/common'
+import { IIndexViewer, SubIndexLib } from 'typechain/OmniIndex'
+import { RedeemRouter as RedeemRouterInterface } from 'typechain/RedeemRouter'
 
-import { Account } from '../account'
-import { Contract } from '../contract'
-import {
-  OmniRouter as OmniRouterInterface,
-  OmniRouter__factory,
-} from '../typechain'
-import { PromiseOrValue } from '../typechain/common'
-import { Address, ChainId, ChainIds } from '../types'
+import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
 
-import {
-  defaultOmniMessageRouterAddress,
-  OmniMessageRouter,
-} from './omni-message-router'
+import { createQuotes, createRemoteBatches } from './batches-utils'
+import { OmniIndex } from './omni-index'
+import { OmniRouterInterface } from './omni-router-types'
+import { RedeemRouter } from './redeem-router'
 
-/** ### Default OmniRouter address for network */
-export const defaultOmniRouterAddress: Record<ChainId, Address> = {
-  /** ### Default OmniRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xbce372299dab3c06287fee4b313a082181ebe96c',
-}
-
-export class OmniRouter extends Contract<OmniRouterInterface> {
+/** ### OmniRouter class */
+export class OmniRouter implements OmniRouterInterface {
   /**
    * ### Creates a new OmniRouter instance
    *
-   * @param account Account to use for signing
-   * @param contract Contract instance or address of the OmniRouterInterface contract
+   * @param omniIndex instance of OmniIndex
+   * @param redeemRouter instance of RedeemRouter
+   * @param zeroExAggregator ZeroEx client
    *
-   * @returns New OmniRouterInterface token instance
+   * @returns New OmniRouter instance
    */
-  constructor(account: Account, contract: OmniRouterInterface | Address) {
-    super(account, contract, OmniRouter__factory)
-  }
+  //TODO: refactor OmniRouter constructor if we have a few indices on one chain
+  constructor(
+    public readonly omniIndex: OmniIndex,
+    public readonly redeemRouter: RedeemRouter,
+    public readonly zeroExAggregator: ZeroExAggregator,
+  ) {}
 
   /**
    * ### Deposit tokens
@@ -43,7 +38,9 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
     reserveTokens: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
   ): Promise<ContractTransaction> {
-    return this.contract.deposit(reserveTokens, receiver)
+    const anatomy: SubIndexLib.SubIndexStructOutput[] =
+      await this.omniIndex.contract.anatomy()
+    return this.omniIndex.contract.deposit(reserveTokens, receiver, anatomy)
   }
 
   /**
@@ -54,19 +51,32 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
    * @returns redeem transaction
    */
   async redeem(
-    indexShares: PromiseOrValue<BigNumberish>,
+    indexShares: BigNumberish,
     receiver: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
+    assets: IIndexViewer.RedeemAssetInfoStructOutput[],
+    options?: Partial<Zero0xQuoteOptions>,
   ): Promise<ContractTransaction> {
-    const omniMessageRouter = new OmniMessageRouter(
-      this.account,
-      defaultOmniMessageRouterAddress[ChainIds.GoerliRollupTestnet],
+    const homeChainId = await this.omniIndex.account.chainId()
+    const homeChainIndex = assets.findIndex(
+      ({ chainId }) => chainId.toNumber() === homeChainId,
     )
-    const feeAmount = await omniMessageRouter.estimateFee()
 
-    return this.contract.redeem(indexShares, receiver, owner, {
-      value: feeAmount.nativeFee,
-    })
+    let localQuotes: RedeemRouterInterface.LocalQuotesStruct = { quotes: [] }
+    if (homeChainIndex !== -1) {
+      const [homeChain] = assets.splice(homeChainIndex, 1)
+      localQuotes = await createQuotes(homeChain, options)
+    }
+
+    const remoteData = await createRemoteBatches(assets, options)
+
+    return this.redeemRouter.redeem(
+      this.omniIndex,
+      indexShares,
+      receiver,
+      owner,
+      { remoteData, localData: [localQuotes] },
+    )
   }
 
   /**
@@ -77,8 +87,12 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
 
   async previewRedeem(
     indexShares: PromiseOrValue<BigNumberish>,
-  ): Promise<BigNumber> {
-    return this.contract.previewRedeem(indexShares)
+    executionTimestamp: PromiseOrValue<BigNumberish>,
+  ): Promise<IIndexViewer.RedeemInfoStructOutput> {
+    return this.omniIndex.contract.previewRedeem(
+      indexShares,
+      executionTimestamp,
+    )
   }
 
   /**
@@ -89,6 +103,6 @@ export class OmniRouter extends Contract<OmniRouterInterface> {
   async previewDeposit(
     reserveTokens: PromiseOrValue<BigNumberish>,
   ): Promise<BigNumber> {
-    return this.contract.previewDeposit(reserveTokens)
+    return this.omniIndex.contract.previewDeposit(reserveTokens)
   }
 }
