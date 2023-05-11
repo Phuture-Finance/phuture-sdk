@@ -1,8 +1,12 @@
 import { Message } from '@layerzerolabs/scan-client'
 
+import { Account } from '../account'
+
 import { RequiredDstMessage, OmniTxStatusProps } from './types'
 import {
   getDefaultStatus,
+  getLayerZeroChain,
+  getOmniChains,
   MessageStatus,
   updateFailedTransaction,
   updateTransactionalStatuses,
@@ -22,6 +26,8 @@ export function createOmniTransactionService({
   return {
     getRemoteTransactionStatuses: async (
       hash: string,
+      account: Account,
+      homeChain: number,
     ): Promise<OmniTxStatusProps> => {
       //INFO: Fetch all messages with given hash as source on the home chain
       const inputMessages: Message[] = (
@@ -58,7 +64,9 @@ export function createOmniTransactionService({
                 )
               }),
             )
-          : [getDefaultStatus()]
+          : await (
+              await getOmniChains(account, homeChain)
+            ).map((chain) => getDefaultStatus(chain))
 
       //INFO: Retrieve the transactional status of each input transaction on the remote chain
       const remoteToHomeStatuses =
@@ -74,7 +82,9 @@ export function createOmniTransactionService({
                 )
               }),
             )
-          : [getDefaultStatus()]
+          : Array(await (await getOmniChains(account, homeChain)).length).fill(
+              getDefaultStatus(getLayerZeroChain(homeChain)),
+            )
 
       return {
         homeToRemote: homeToRemoteStatuses,

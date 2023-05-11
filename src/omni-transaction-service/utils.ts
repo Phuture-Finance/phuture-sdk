@@ -1,7 +1,38 @@
 import { Message } from '@layerzerolabs/scan-client'
 import { ethers } from 'ethers'
 
-import { MessageProps, RequiredDstMessage } from './types'
+import { Account } from '../account'
+import { OmniIndex, defaultOmniIndexAddress } from '../omni-router'
+
+import {
+  LZ_CHAIN_IDS,
+  MessageProps,
+  OFFICIAL_CHAIN_IDS,
+  RequiredDstMessage,
+} from './types'
+
+export const getLayerZeroChain = (chain: OFFICIAL_CHAIN_IDS): number => {
+  switch (chain) {
+    case OFFICIAL_CHAIN_IDS.ETHEREUM:
+      return LZ_CHAIN_IDS.ETHEREUM
+    case OFFICIAL_CHAIN_IDS.ARBITRUM:
+      return LZ_CHAIN_IDS.ARBITRUM
+    case OFFICIAL_CHAIN_IDS.AVALANCHE:
+      return LZ_CHAIN_IDS.AVALANCHE
+    case OFFICIAL_CHAIN_IDS.POLYGON:
+      return LZ_CHAIN_IDS.POLYGON
+    case OFFICIAL_CHAIN_IDS.TEST_ETHEREUM:
+      return LZ_CHAIN_IDS.TEST_ETHEREUM
+    case OFFICIAL_CHAIN_IDS.TEST_ARBITRUM:
+      return LZ_CHAIN_IDS.TEST_ARBITRUM
+    case OFFICIAL_CHAIN_IDS.TEST_MUMBAI:
+      return LZ_CHAIN_IDS.TEST_MUMBAI
+    case OFFICIAL_CHAIN_IDS.TEST_AVAX:
+      return LZ_CHAIN_IDS.TEST_AVAX
+    default:
+      throw new Error(`Unknown chain id: ${chain}`)
+  }
+}
 
 export const mockedRemoteTxHash =
   '0x16a7d3e04a3e65d92dfb87009746a28501ffa26ce7953b744c9bb0655f0bc3cd'
@@ -16,9 +47,18 @@ export enum MessageStatus {
   FAILED = 'FAILED',
 }
 
-export const getDefaultStatus = (chainId?: number): MessageProps => ({
+export const getOmniChains = async (
+  acc: Account,
+  chain: number,
+): Promise<number[]> => {
+  const omniIndex = new OmniIndex(acc, defaultOmniIndexAddress[chain])
+  const anatomy = await omniIndex.contract.anatomy()
+  return anatomy.map(({ chainId }) => getLayerZeroChain(chainId.toNumber()))
+}
+
+export const getDefaultStatus = (chainId: number): MessageProps => ({
   hash: ethers.constants.AddressZero,
-  chainId: chainId || 0,
+  chainId: chainId,
   status: MessageStatus.INFLIGHT,
 })
 
