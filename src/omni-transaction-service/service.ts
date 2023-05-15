@@ -1,12 +1,8 @@
 import { Message } from '@layerzerolabs/scan-client'
 
-import { Account } from '../account'
-
 import { MessageStatus, OmniTxStatusProps } from './types'
 import {
-  getDefaultStatus,
-  getLayerZeroChain,
-  getOmniChains,
+  defaultStatus,
   updateFailedTransaction,
   updateTransactionalStatuses,
 } from './utils'
@@ -22,11 +18,9 @@ export class OmniTransactionService {
 
   async getRemoteTransactionStatuses(
     hash: string,
-    account: Account,
-    homeChain: number,
+    remoteChains: number[],
   ): Promise<OmniTxStatusProps> {
     const { messages } = await this.client.getMessagesBySrcTxHash(hash)
-
     const deliveredMessages = messages.filter(
       (tx) => tx.dstTxHash && tx.status === MessageStatus.DELIVERED,
     ) as Required<Message>[]
@@ -38,39 +32,38 @@ export class OmniTransactionService {
       }),
     ).then((res) => res.flat())
 
-    const homeToRemote =
-      messages.length !== 0
-        ? await Promise.all(
-            messages.map(async (tx) => {
-              if (tx.status === MessageStatus.FAILED)
-                return updateFailedTransaction(tx)
+    const transactions = await Promise.all(
+      remoteChains.map(async (chain) => {
+        const homeToRemote = messages.filter((msg) => msg.dstChainId === chain)
+        const remoteToHome = outputMessages.find(
+          (msg) => msg.srcChainId === chain,
+        )
 
-              if (!tx.dstTxHash) return getDefaultStatus(tx.dstChainId)
+        const homeStatuses =
+          homeToRemote.length !== 0
+            ? await Promise.all(homeToRemote.map(this.createStatus))
+            : [defaultStatus]
+        const remoteStatuses =
+          remoteToHome !== undefined
+            ? await this.createStatus(remoteToHome)
+            : defaultStatus
 
-              return updateTransactionalStatuses(tx as Required<Message>)
-            }),
-          )
-        : (await getOmniChains(account, homeChain)).map(getDefaultStatus)
-
-    const remoteToHome =
-      outputMessages.length !== 0
-        ? await Promise.all(
-            outputMessages.flat().map(async (tx) => {
-              if (tx.status === MessageStatus.FAILED)
-                return updateFailedTransaction(tx)
-
-              if (!tx.dstTxHash) return getDefaultStatus(tx.dstChainId)
-
-              return updateTransactionalStatuses(tx as Required<Message>)
-            }),
-          )
-        : Array((await getOmniChains(account, homeChain)).length).fill(
-            getDefaultStatus(getLayerZeroChain(homeChain)),
-          )
+        return {
+          chain,
+          statuses: [...homeStatuses, remoteStatuses],
+        }
+      }),
+    )
 
     return {
-      homeToRemote,
-      remoteToHome,
+      transactions,
     }
+  }
+  private async createStatus(tx: Message) {
+    if (tx.status === MessageStatus.FAILED) return updateFailedTransaction(tx)
+
+    if (!tx.dstTxHash) return defaultStatus
+
+    return updateTransactionalStatuses(tx as Required<Message>)
   }
 }

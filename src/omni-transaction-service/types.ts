@@ -1,12 +1,5 @@
-export interface MessageProps {
-  hash: string
-  chainId: number
-  status: MessageStatus
-}
-
 export interface OmniTxStatusProps {
-  homeToRemote: MessageProps[]
-  remoteToHome: MessageProps[]
+  transactions: { chain: number; statuses: MessageStatus[] }[]
 }
 
 export interface RemoteApiResponse {

@@ -7,7 +7,6 @@ import { OmniIndex, defaultOmniIndexAddress } from '../omni-router'
 import { errorTopics } from './constants'
 import {
   AvailableChainId,
-  MessageProps,
   MessageStatus,
   OFFICIAL_CHAIN_IDS,
   chainMappings,
@@ -30,11 +29,7 @@ export const getOmniChains = async (
   return anatomy.map(({ chainId }) => getLayerZeroChain(chainId.toNumber()))
 }
 
-export const getDefaultStatus = (chainId: number): MessageProps => ({
-  hash: ethers.constants.AddressZero,
-  chainId: chainId,
-  status: MessageStatus.INFLIGHT,
-})
+export const defaultStatus = MessageStatus.INFLIGHT
 
 const rpcByChainId: Record<AvailableChainId, string> = {
   1: 'https://ethereum.publicnode.com',
@@ -53,7 +48,7 @@ export const updateTransactionalStatuses = async ({
   dstTxHash,
   dstChainId,
   status,
-}: Required<Message>): Promise<MessageProps> => {
+}: Required<Message>): Promise<MessageStatus> => {
   const provider = ethers.getDefaultProvider(
     await getOmniRemoteUrl(dstChainId as AvailableChainId),
   )
@@ -68,23 +63,14 @@ export const updateTransactionalStatuses = async ({
     logs.length === 0 ||
     topicsArr.length !== 0
 
-  return {
-    hash: dstTxHash,
-    chainId: dstChainId,
-    status: isError
-      ? MessageStatus.FAILED
-      : status === MessageStatus.DELIVERED && topicsArr.length === 0
-      ? MessageStatus.DELIVERED
-      : MessageStatus.INFLIGHT,
-  }
+  const returnedStatus = isError
+    ? MessageStatus.FAILED
+    : status === MessageStatus.DELIVERED && topicsArr.length === 0
+    ? MessageStatus.DELIVERED
+    : MessageStatus.INFLIGHT
+
+  return returnedStatus
 }
 
-export const updateFailedTransaction = ({
-  status,
-  dstTxHash,
-  dstChainId,
-}: Message): MessageProps => ({
-  hash: dstTxHash || ethers.constants.AddressZero,
-  chainId: dstChainId,
-  status: status as MessageStatus,
-})
+export const updateFailedTransaction = ({ status }: Message): MessageStatus =>
+  status as MessageStatus
