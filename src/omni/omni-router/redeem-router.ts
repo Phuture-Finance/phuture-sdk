@@ -1,13 +1,13 @@
 import { BigNumberish, ContractTransaction } from 'ethers'
 
-import { Account } from '../account'
-import { Contract } from '../contract'
+import { Account } from '../../account'
+import { Contract } from '../../contract'
 import {
   RedeemRouter as RedeemRouterInterface,
   RedeemRouter__factory,
-} from '../typechain'
-import { PromiseOrValue } from '../typechain/common'
-import { Address, ChainId, ChainIds } from '../types'
+} from '../../typechain'
+import { PromiseOrValue } from '../../typechain/common'
+import { Address, ChainId, ChainIds } from '../../types'
 
 import { OmniIndex } from './omni-index'
 

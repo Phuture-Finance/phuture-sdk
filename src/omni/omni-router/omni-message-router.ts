@@ -1,10 +1,10 @@
-import { Account } from '../account'
-import { Contract } from '../contract'
+import { Account } from '../../account'
+import { Contract } from '../../contract'
 import {
   OmniMessageRouter as OmniMessageRouterInterface,
   OmniMessageRouter__factory,
-} from '../typechain'
-import { Address, ChainId, ChainIds } from '../types'
+} from '../../typechain'
+import { Address, ChainId, ChainIds } from '../../types'
 
 /** ### Default OmniMessageRouter address for network */
 export const defaultOmniMessageRouterAddress: Record<ChainId, Address> = {
