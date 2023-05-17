@@ -1,8 +1,14 @@
 import { Message } from '@layerzerolabs/scan-client'
-
-import { LzChainId, LzScanClient, MessageStatus, OmniTxStatusProps } from './types'
 import { ethers } from 'ethers'
+
 import { getOmniRemoteUrl, errorTopics } from './constants'
+import {
+  LzChainId,
+  LzScanClient,
+  MessageStatus,
+  OmniTx,
+  OmniTxStatusProps,
+} from './types'
 
 export class OmniTransactionService {
   private defaultStatus = MessageStatus.INFLIGHT
@@ -18,34 +24,11 @@ export class OmniTransactionService {
       (tx) => tx.dstTxHash && tx.status === MessageStatus.DELIVERED,
     ) as Required<Message>[]
 
-    const outputMessages = await Promise.all(
-      deliveredMessages.map(async ({ dstTxHash }) => {
-        const result = await this.client.getMessagesBySrcTxHash(dstTxHash)
-        return result.messages
-      }),
-    ).then((res) => res.flat())
-
-    const transactions = await Promise.all(
-      remoteChains.map(async (chain) => {
-        const homeToRemote = messages.filter((msg) => msg.dstChainId === chain)
-        const remoteToHome = outputMessages.find(
-          (msg) => msg.srcChainId === chain,
-        )
-
-        const homeStatuses =
-          homeToRemote.length !== 0
-            ? await Promise.all(homeToRemote.map(this.createStatus))
-            : [this.defaultStatus]
-        const remoteStatuses =
-          remoteToHome !== undefined
-            ? await this.createStatus(remoteToHome)
-            : this.defaultStatus
-
-        return {
-          chain,
-          statuses: [...homeStatuses, remoteStatuses],
-        }
-      }),
+    const outputMessages = await this.getOutputMessages(deliveredMessages)
+    const transactions = await this.getTransactions(
+      remoteChains,
+      messages,
+      outputMessages,
     )
 
     return {
@@ -72,21 +55,67 @@ export class OmniTransactionService {
     )
     const { logs } = await provider.getTransactionReceipt(dstTxHash)
 
-    const topicsArr = logs.flatMap(({ topics }) =>
-      topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
-    )
-
     const isError =
-      status === MessageStatus.FAILED ||
       logs.length === 0 ||
-      topicsArr.length !== 0
+      logs.some(({ topics }) =>
+        topics.some((topic) => errorTopics.includes(topic.toLowerCase())),
+      )
 
     const returnedStatus = isError
       ? MessageStatus.FAILED
-      : status === MessageStatus.DELIVERED && topicsArr.length === 0
-      ? MessageStatus.DELIVERED
-      : MessageStatus.INFLIGHT
+      : (status as MessageStatus)
 
     return returnedStatus
+  }
+
+  private async getOutputMessages(
+    deliveredMessages: Required<Message>[],
+  ): Promise<Message[]> {
+    return Promise.all(
+      deliveredMessages.map(async ({ dstTxHash }) => {
+        const { messages } = await this.client.getMessagesBySrcTxHash(dstTxHash)
+        return messages
+      }),
+    ).then((res) => res.flat())
+  }
+
+  private async getTransactions(
+    remoteChains: number[],
+    messages: Message[],
+    outputMessages: Message[],
+  ): Promise<OmniTx[]> {
+    const transactions = await Promise.all(
+      remoteChains.map(async (chain) => {
+        const homeToRemote = messages.filter((msg) => msg.dstChainId === chain)
+        const remoteToHome = outputMessages.find(
+          (msg) => msg.srcChainId === chain,
+        )
+        const [homeStatuses, remoteStatuses] = await Promise.all([
+          this.getStatuses(homeToRemote),
+          this.getStatus(remoteToHome),
+        ])
+
+        return {
+          chain,
+          statuses: [...homeStatuses, remoteStatuses],
+        }
+      }),
+    )
+
+    return transactions
+  }
+
+  private async getStatuses(messages: Message[]): Promise<MessageStatus[]> {
+    return messages.length !== 0
+      ? await Promise.all(messages.map((tx) => this.createStatus(tx)))
+      : [this.defaultStatus]
+  }
+
+  private async getStatus(
+    message: Message | undefined,
+  ): Promise<MessageStatus> {
+    return message !== undefined
+      ? await this.createStatus(message)
+      : this.defaultStatus
   }
 }

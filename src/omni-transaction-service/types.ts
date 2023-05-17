@@ -26,8 +26,8 @@ export const enum LzChainId {
   Arbitrum = 110,
   Avalanche = 106,
   Polygon = 109,
-  EthereumGoerly = 10121,
-  ArbitrumGoerly = 10143,
+  EthereumGoerli = 10121,
+  ArbitrumGoerli = 10143,
   PolygonMumbai = 10109,
   AvalancheFuji = 10106,
 }

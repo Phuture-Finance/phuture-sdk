@@ -14,7 +14,7 @@ import { OmniIndex } from './omni-index'
 /** ### Default RedeemRouter address for network */
 export const defaultRedeemRouterAddress: Record<ChainId, Address> = {
   /** ### Default RedeemRouter address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0x22133c0b1448a484d22e00c33ed83ea3c5a50881',
+  [ChainIds.EthereumGoerli]: '0x22133c0b1448a484d22e00c33ed83ea3c5a50881',
   [ChainIds.AvalancheFuji]: '0x4cfe64f6a7a2a382323bae2be883c10964bdb737',
 }
 

@@ -7,8 +7,9 @@ export const chainMappings: Record<ChainId, LzChainId> = {
   [ChainIds.Arbitrum]: LzChainId.Arbitrum,
   [ChainIds.CChain]: LzChainId.Avalanche,
   [ChainIds.Polygon]: LzChainId.Polygon,
-  [ChainIds.EthereumGoerli]: LzChainId.EthereumGoerly,
-  [ChainIds.ArbitrumGoerli]: LzChainId.ArbitrumGoerly,
+  //TESTNETS
+  [ChainIds.EthereumGoerli]: LzChainId.EthereumGoerli,
+  [ChainIds.ArbitrumGoerli]: LzChainId.ArbitrumGoerli,
   [ChainIds.PolygonMumbai]: LzChainId.PolygonMumbai,
   [ChainIds.AvalancheFuji]: LzChainId.AvalancheFuji,
 }
@@ -27,11 +28,12 @@ const rpcByLzChainId: Record<LzChainId, string> = {
   [LzChainId.Polygon]: 'https://polygon-rpc.com',
   [LzChainId.Arbitrum]: 'https://rpc.ankr.com/arbitrum',
   //TESTNETS
-  [LzChainId.EthereumGoerly]: 'https://rpc.ankr.com/eth_goerli',
+  [LzChainId.EthereumGoerli]: 'https://rpc.ankr.com/eth_goerli',
   [LzChainId.AvalancheFuji]: 'https://rpc.ankr.com/avalanche_fuji',
   [LzChainId.PolygonMumbai]:
     'https://polygon-mumbai.blockpi.network/v1/rpc/public',
-  [LzChainId.ArbitrumGoerly]: '', // TODO
+  [LzChainId.ArbitrumGoerli]:
+    'https://endpoints.omniatech.io/v1/arbitrum/goerli/public',
 }
 
 export const getOmniRemoteUrl = (lzChainId: LzChainId) =>
