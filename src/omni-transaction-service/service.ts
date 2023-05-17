@@ -1,19 +1,12 @@
 import { Message } from '@layerzerolabs/scan-client'
 
-import { MessageStatus, OmniTxStatusProps } from './types'
-import {
-  defaultStatus,
-  updateFailedTransaction,
-  updateTransactionalStatuses,
-} from './utils'
-
-export interface LzScanClient {
-  getMessagesBySrcTxHash(srcTxHash: string): Promise<{
-    messages: Message[]
-  }>
-}
+import { LzChainId, LzScanClient, MessageStatus, OmniTxStatusProps } from './types'
+import { ethers } from 'ethers'
+import { getOmniRemoteUrl, errorTopics } from './constants'
 
 export class OmniTransactionService {
+  private defaultStatus = MessageStatus.INFLIGHT
+
   constructor(private client: LzScanClient) {}
 
   async getRemoteTransactionStatuses(
@@ -42,11 +35,11 @@ export class OmniTransactionService {
         const homeStatuses =
           homeToRemote.length !== 0
             ? await Promise.all(homeToRemote.map(this.createStatus))
-            : [defaultStatus]
+            : [this.defaultStatus]
         const remoteStatuses =
           remoteToHome !== undefined
             ? await this.createStatus(remoteToHome)
-            : defaultStatus
+            : this.defaultStatus
 
         return {
           chain,
@@ -59,11 +52,41 @@ export class OmniTransactionService {
       transactions,
     }
   }
+
   private async createStatus(tx: Message) {
-    if (tx.status === MessageStatus.FAILED) return updateFailedTransaction(tx)
+    if (!tx.dstTxHash) return this.defaultStatus
 
-    if (!tx.dstTxHash) return defaultStatus
+    if (tx.status === MessageStatus.FAILED)
+      return tx.status as MessageStatus.FAILED
 
-    return updateTransactionalStatuses(tx as Required<Message>)
+    return this.updateTransactionalStatuses(tx as Required<Message>)
+  }
+
+  private async updateTransactionalStatuses({
+    dstTxHash,
+    dstChainId,
+    status,
+  }: Required<Message>): Promise<MessageStatus> {
+    const provider = ethers.getDefaultProvider(
+      await getOmniRemoteUrl(dstChainId as LzChainId),
+    )
+    const { logs } = await provider.getTransactionReceipt(dstTxHash)
+
+    const topicsArr = logs.flatMap(({ topics }) =>
+      topics.filter((topic) => errorTopics.includes(topic.toLowerCase())),
+    )
+
+    const isError =
+      status === MessageStatus.FAILED ||
+      logs.length === 0 ||
+      topicsArr.length !== 0
+
+    const returnedStatus = isError
+      ? MessageStatus.FAILED
+      : status === MessageStatus.DELIVERED && topicsArr.length === 0
+      ? MessageStatus.DELIVERED
+      : MessageStatus.INFLIGHT
+
+    return returnedStatus
   }
 }

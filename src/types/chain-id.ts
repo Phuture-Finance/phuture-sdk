@@ -14,18 +14,7 @@
 export type ChainId = number
 
 /** ### Collection of ChainIds mapped to their network name */
-export const ChainIds: Record<
-  | 'Mainnet'
-  | 'CChain'
-  | 'Arbitrum'
-  | 'Polygon'
-  | 'BSC'
-  | 'GoerliRollupTestnet'
-  | 'GoerliTestnet'
-  | 'Mumbai'
-  | 'AvalancheFuji',
-  ChainId
-> = {
+export const ChainIds = {
   /** ### Ethereum Mainnet */
   Mainnet: 1,
 
@@ -39,20 +28,24 @@ export const ChainIds: Record<
   Polygon: 137,
 
   /** ### Binance Smart Chain Mainnet */
-  BSC: 56,
-
-  /** ### Arbitrum Goerli Rollup Testnet */
-  GoerliRollupTestnet: 421613,
+  // BSC: 56,
 
   /** ### Ethereum Goerli Testnet */
-  GoerliTestnet: 5,
+  EthereumGoerli: 5,
+
+  /** ### Arbitrum Goerli Rollup Testnet */
+  ArbitrumGoerli: 421613,
 
   /** ### Polygon Mumbai Testnet */
-  Mumbai: 80001,
+  PolygonMumbai: 80001,
 
   /** ### Avalanche Fuji Testnet */
   AvalancheFuji: 43113,
 } as const
+
+export type ChainName = keyof typeof ChainIds
+
+export type AvaliableChainId = typeof ChainIds[ChainName]
 
 /**
  * ### Is the given chain id valid
