@@ -19,33 +19,39 @@ const UQ112 = BigNumber.from(2).pow(112)
 const baseDepositGas = BigNumber.from(277_000)
 const gasPerConstituent = BigNumber.from(43_000)
 const additionalSwapDepositGas = (network: ChainId) => {
-  const gas = {
+  const gas: {
+    [key in ChainId]: BigNumber
+  } = {
     [ChainIds.Mainnet]: BigNumber.from(70_000),
     [ChainIds.CChain]: BigNumber.from(68_000),
-  }[network]
+  }
 
-  return gas || BigNumber.from(69_000)
+  return gas[network] || BigNumber.from(69_000)
 }
 
 const baseBurnGas = 100_000
 const additionalBurnGasPerAsset = (network: ChainId) => {
-  const gas = {
+  const gas: {
+    [key in ChainId]: number
+  } = {
     [ChainIds.Mainnet]: 234_000,
     [ChainIds.CChain]: 192_000,
-  }[network]
+  }
 
-  return gas || 300_000
+  return gas[network] || 300_000
 }
 
 export const nativeTokenSymbol = (network: ChainId): TokenSymbol => {
-  const symbol = {
+  const symbol: {
+    [key in ChainId]: string
+  } = {
     [ChainIds.Mainnet]: 'ETH',
     [ChainIds.CChain]: 'AVAX',
-  }[network]
+  }
 
-  if (!symbol) throw new Error(`Unsupported network: ${network}`)
+  if (!symbol[network]) throw new Error(`Unsupported network: ${network}`)
 
-  return symbol
+  return symbol[network]
 }
 
 /** ### AutoRouter class */
@@ -86,24 +92,20 @@ export class AutoRouter implements Router {
     outputAmount: BigNumber
     expectedAllowance?: BigNumber
   }> {
-    const [
-      zeroExSwap,
-      IndexHelper,
-      priceOracle,
-      wethAddress,
-      constituents,
-    ] = await Promise.all([
-      this.zeroExAggregator.quote(
-        inputToken?.address || nativeTokenSymbol(await index.account.chainId()),
-        index.address,
-        amountInInputToken,
-        options,
-      ),
-      getDefaultIndexHelper(index.account),
-      getDefaultPriceOracle(index.account),
-      this.indexWithdrawRouter.weth(),
-      index.constituents(),
-    ])
+    const [zeroExSwap, IndexHelper, priceOracle, wethAddress, constituents] =
+      await Promise.all([
+        this.zeroExAggregator.quote(
+          inputToken?.address ||
+            nativeTokenSymbol(await index.account.chainId()),
+          index.address,
+          amountInInputToken,
+          options,
+        ),
+        getDefaultIndexHelper(index.account),
+        getDefaultPriceOracle(index.account),
+        this.indexWithdrawRouter.weth(),
+        index.constituents(),
+      ])
 
     const inputTokenAddress = inputToken?.address || wethAddress
 
@@ -276,21 +278,17 @@ export class AutoRouter implements Router {
     inputTokenAddress?: Address,
     zeroExOptions?: Partial<Zero0xQuoteOptions>,
   ): Promise<TransactionResponse> {
-    const {
-      to,
-      sellAmount,
-      data,
-      estimatedGas,
-    } = await this.zeroExAggregator.quote(
-      inputTokenAddress ||
-        nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
-      indexAddress,
-      amountInInputToken,
-      {
-        ...zeroExOptions,
-        takerAddress: await this.indexWithdrawRouter.account.address(),
-      },
-    )
+    const { to, sellAmount, data, estimatedGas } =
+      await this.zeroExAggregator.quote(
+        inputTokenAddress ||
+          nativeTokenSymbol(await this.indexWithdrawRouter.account.chainId()),
+        indexAddress,
+        amountInInputToken,
+        {
+          ...zeroExOptions,
+          takerAddress: await this.indexWithdrawRouter.account.address(),
+        },
+      )
 
     // TODO: catch InsufficientAllowanceError from ZeroExAggregator instead
     // if (inputToken)
