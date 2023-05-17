@@ -9,7 +9,7 @@ import { Address, ChainId, ChainIds } from '../types'
 /** ### Default OmniIndex address for network */
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
   /** ### Default OmniIndex address on goerli rollup testnet. */
-  [ChainIds.GoerliRollupTestnet]: '0xdc09ad66a7d93905e129200ab5439e09fa998f5d',
+  [ChainIds.EthereumGoerli]: '0xdc09ad66a7d93905e129200ab5439e09fa998f5d',
   [ChainIds.AvalancheFuji]: '0x5888abe26e0b22fede3988f1b463625752245553',
 }
 
