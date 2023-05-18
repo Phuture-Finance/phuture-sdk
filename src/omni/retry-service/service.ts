@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { chainMappings, getOmniRemoteUrl } from 'omni/omni-transaction-service'
 
 import { Address, ChainId } from '../../types'
+import { chainMappings, getOmniRemoteUrl } from '../omni-transaction-service'
 
 import { _mockContract } from './constants'
 import { EscrowData } from './types'
