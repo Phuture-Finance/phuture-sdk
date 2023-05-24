@@ -67,4 +67,42 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
       },
     )
   }
+
+  /**
+   * ### Retry
+   * @param omniIndex
+   * @param indexShares
+   * @param receiver
+   * @param owner
+   * @param batchInfo
+   * @returns retry transaction
+   */
+  async retry(
+    omniIndex: OmniIndex,
+    indexShares: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+    batchInfo: RedeemRouterInterface.RedeemDataStruct,
+  ): Promise<ContractTransaction> {
+    const reserveCached = await omniIndex.contract.reserve()
+    const estimatedRedeemFee = await this.contract.estimateRedeemFee(
+      batchInfo.remoteData,
+    )
+
+    const anatomy = await omniIndex.contract.anatomy()
+
+    return this.contract.redeem(
+      //FIXME: retry
+      omniIndex.address,
+      indexShares,
+      receiver,
+      owner,
+      reserveCached,
+      batchInfo,
+      anatomy,
+      {
+        value: estimatedRedeemFee,
+      },
+    )
+  }
 }

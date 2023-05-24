@@ -48,6 +48,8 @@ export class OmniRouter implements OmniRouterInterface {
    * @param indexShares
    * @param receiver
    * @param owner
+   * @param assets
+   * @param options
    * @returns redeem transaction
    */
   async redeem(
@@ -76,6 +78,30 @@ export class OmniRouter implements OmniRouterInterface {
       receiver,
       owner,
       { remoteData, localData: [localQuotes] },
+    )
+  }
+
+  /**
+   * ### Retry
+   * @param indexShares
+   * @param receiver
+   * @param owner
+   * @returns retry transaction
+   */
+  async retry(
+    indexShares: BigNumberish,
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+  ): Promise<ContractTransaction> {
+    //TODO build correct batches
+    const batches = {} as RedeemRouterInterface.RedeemDataStruct
+
+    return this.redeemRouter.retry(
+      this.omniIndex,
+      indexShares,
+      receiver,
+      owner,
+      batches,
     )
   }
 
