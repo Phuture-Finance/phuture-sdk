@@ -6,8 +6,16 @@ import prepare from './prepare'
 import moment from 'moment'
 
 const main = async () => {
-  const { account, amount, omniRouter, omniIndex, isDeposit, index, token } =
-    await prepare()
+  const {
+    account,
+    amount,
+    omniRouter,
+    omniIndex,
+    isDeposit,
+    index,
+    token,
+    additionalTime,
+  } = await prepare()
 
   if (!token) {
     throw new Error('Token not found')
@@ -72,7 +80,9 @@ const main = async () => {
     console.dir(`${utils.formatEther(indexAmount)} ${indexSymbol}`)
 
     const now = moment().unix()
-    const previewInfo = await omniRouter.previewRedeem(indexAmount, now + 10000)
+
+    const timestamp = now + additionalTime
+    const previewInfo = await omniRouter.previewRedeem(indexAmount, timestamp)
 
     console.log('(Preview) Redeem Info:')
     console.dir(previewInfo)

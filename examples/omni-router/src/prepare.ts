@@ -18,6 +18,7 @@ interface PrepareProps {
   index: Index
   token?: Erc20
   isDeposit: boolean
+  additionalTime: number
 }
 
 const prepare = async (): Promise<PrepareProps> => {
@@ -43,7 +44,10 @@ const prepare = async (): Promise<PrepareProps> => {
 
   const amount = getEnv('AMOUNT')
 
+  const additionalTime = getEnv('ADDITIONAL_REDEEM_TIME')
+
   return {
+    additionalTime,
     account,
     omniRouter,
     omniIndex,
