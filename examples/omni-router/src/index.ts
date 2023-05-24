@@ -3,10 +3,19 @@ import { BigNumber, utils } from 'ethers'
 import yesno from 'yesno'
 
 import prepare from './prepare'
+import moment from 'moment'
 
 const main = async () => {
-  const { account, amount, omniRouter, isDeposit, index, token } =
-    await prepare()
+  const {
+    account,
+    amount,
+    omniRouter,
+    omniIndex,
+    isDeposit,
+    index,
+    token,
+    additionalTime,
+  } = await prepare()
 
   if (!token) {
     throw new Error('Token not found')
@@ -20,7 +29,7 @@ const main = async () => {
   const indexAddress = await index.account.address()
 
   const getBeforeData = async () => {
-    const preBalance = await omniRouter.contract.balanceOf(indexAddress)
+    const preBalance = await omniIndex.contract.balanceOf(indexAddress)
     const preTokens = await token?.contract.balanceOf(indexAddress)
 
     console.log('current balance:')
@@ -51,7 +60,7 @@ const main = async () => {
 
       await depositResult.wait()
 
-      const postBalance = await omniRouter.contract.balanceOf(indexAddress)
+      const postBalance = await omniIndex.contract.balanceOf(indexAddress)
       const postTokens =
         (await token?.contract.balanceOf(indexAddress)) || BigNumber.from(0)
 
@@ -70,11 +79,13 @@ const main = async () => {
     console.log('Redeem amount:')
     console.dir(`${utils.formatEther(indexAmount)} ${indexSymbol}`)
 
-    const previewInfo = await omniRouter.previewRedeem(indexAmount)
-    console.log('(Preview) Redeem Amount:')
-    console.dir(
-      `${utils.formatUnits(previewInfo || '0', tokenDecimals)} ${tokenSymbol}`,
-    )
+    const now = moment().unix()
+
+    const timestamp = now + additionalTime
+    const previewInfo = await omniRouter.previewRedeem(indexAmount, timestamp)
+
+    console.log('(Preview) Redeem Info:')
+    console.dir(previewInfo)
     if (
       await yesno({
         question: 'Do you want to redeem?',
@@ -84,14 +95,13 @@ const main = async () => {
         indexAmount,
         account.address(),
         account.address(),
+        previewInfo.assets,
       )
 
       console.dir(redeemResult, { depth: 0 }) //INFO: Deposit Result
 
       await redeemResult.wait()
-      const postRedeemBalance = await omniRouter.contract.balanceOf(
-        indexAddress,
-      )
+      const postRedeemBalance = await omniIndex.contract.balanceOf(indexAddress)
       const postTokens =
         (await token?.contract.balanceOf(indexAddress)) || BigNumber.from(0)
 

@@ -7,6 +7,7 @@ interface ProcessEnv {
   IS_DEPOSIT: 'true' | 'false'
   AMOUNT: string
   CHAIN_ID: number
+  ADDITIONAL_REDEEM_TIME: number
   TOKEN_ADDRESS: Address
   INDEX_ADDRESS: Address
 }

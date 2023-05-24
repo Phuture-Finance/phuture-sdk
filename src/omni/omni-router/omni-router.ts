@@ -3,7 +3,7 @@ import { PromiseOrValue } from 'typechain/common'
 import { IIndexViewer, SubIndexLib } from 'typechain/OmniIndex'
 import { RedeemRouter as RedeemRouterInterface } from 'typechain/RedeemRouter'
 
-import { Zero0xQuoteOptions, ZeroExAggregator } from '../../0x-aggregator'
+import { Zero0xQuoteOptions } from '../../0x-aggregator'
 
 import { createQuotes, createRemoteBatches } from './batches-utils'
 import { OmniIndex } from './omni-index'
@@ -17,7 +17,6 @@ export class OmniRouter implements OmniRouterInterface {
    *
    * @param omniIndex instance of OmniIndex
    * @param redeemRouter instance of RedeemRouter
-   * @param zeroExAggregator ZeroEx client
    *
    * @returns New OmniRouter instance
    */
@@ -25,7 +24,6 @@ export class OmniRouter implements OmniRouterInterface {
   constructor(
     public readonly omniIndex: OmniIndex,
     public readonly redeemRouter: RedeemRouter,
-    public readonly zeroExAggregator: ZeroExAggregator,
   ) {}
 
   /**
