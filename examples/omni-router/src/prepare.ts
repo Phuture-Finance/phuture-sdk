@@ -1,15 +1,19 @@
 import {
   Account,
-  defaultOmniRouterAddress,
-  OmniRouter,
   Erc20,
   Index,
+  OmniIndex,
+  OmniRouter,
+  RedeemRouter,
+  defaultOmniIndexAddress,
+  defaultRedeemRouterAddress,
 } from '@phuture/sdk'
 import { ethers } from 'ethers'
 import { getEnv } from './utils'
 interface PrepareProps {
   account: Account
   omniRouter: OmniRouter
+  omniIndex: OmniIndex
   amount: string
   index: Index
   token?: Erc20
@@ -23,12 +27,17 @@ const prepare = async (): Promise<PrepareProps> => {
     new ethers.Wallet(getEnv('PRIVATE_KEY'), provider),
   )
 
+  const chainId = await account.chainId()
+
   const tokenAddress = getEnv('TOKEN_ADDRESS', false)
 
-  const omniRouter = new OmniRouter(
+  const omniIndex = new OmniIndex(account, defaultOmniIndexAddress[chainId])
+  const redeemRouter = new RedeemRouter(
     account,
-    defaultOmniRouterAddress[await account.chainId()],
+    defaultRedeemRouterAddress[chainId],
   )
+
+  const omniRouter = new OmniRouter(omniIndex, redeemRouter)
 
   const token = tokenAddress ? new Erc20(account, tokenAddress) : undefined
 
@@ -37,6 +46,7 @@ const prepare = async (): Promise<PrepareProps> => {
   return {
     account,
     omniRouter,
+    omniIndex,
     amount,
     token,
     isDeposit: getEnv('IS_DEPOSIT') === 'true',
