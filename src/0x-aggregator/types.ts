@@ -1,6 +1,6 @@
-import type { BigNumberish, BytesLike } from 'ethers'
+import { BigNumberish, BytesLike } from 'ethers'
 
-import type { Address } from '../types'
+import { Address } from '../types'
 
 /** ### Options for 0x price endpoint */
 export interface Zero0xPriceOptions {

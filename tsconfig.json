@@ -32,8 +32,12 @@
     // allows javascript files to be used in the project
     "allowJs": true,
     // target ECMAScript 5 and higher.
-    "target": "es5"
+    "target": "es5",
+    // incremental builds
+    "incremental": true,
+    // base url for imports
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
   },
-  "exclude": ["node_modules", "**/dist/**"],
-  "include": ["src/**/*"]
+  "exclude": ["./**/dist"]
 }

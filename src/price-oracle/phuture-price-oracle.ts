@@ -11,12 +11,13 @@ export const defaultPhuturePriceOracleAddress: Record<ChainId, Address> = {
   /** ### Default PhuturePriceOracle address on mainnet. */
   [ChainIds.Mainnet]: '0x384ac33558821383ff4fc73d1dee3539a74bf540',
   /** ### Default PhuturePriceOracle address on c-chain. */
-  [ChainIds.CChain]: '0x69e848b2f41019340cec3e6696d5c937e74da96b',
+  //INFO: [ChainIds.CChain]: '0x69e848b2f41019340cec3e6696d5c937e74da96b', CChain main
+  [ChainIds.CChain]: '0xee53039d099fc73171ee94386d59f24b05ceb68a', //INFO: CChain staging
 }
 
 /** ### ERC20 Token Contract */
 export class PhuturePriceOracle<
-  C extends PhuturePriceOracleContractInterface = PhuturePriceOracleContractInterface,
+  C extends PhuturePriceOracleContractInterface = PhuturePriceOracleContractInterface
 > extends Contract<C> {
   /**
    * ### Creates a new PhuturePriceOracle instance

@@ -8,7 +8,7 @@ import { Address, ContractFactory } from '../../types'
 
 /** ### SavingsVaultViews Contract */
 export class SavingsVaultViews<
-  C extends SavingsVaultViewsContractInterface = SavingsVaultViewsContractInterface,
+  C extends SavingsVaultViewsContractInterface = SavingsVaultViewsContractInterface
 > extends Contract<C> {
   /**
    * ### Creates a new SavingsVaultViews instance

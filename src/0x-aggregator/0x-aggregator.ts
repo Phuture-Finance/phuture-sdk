@@ -4,7 +4,7 @@ import newDebug from 'debug'
 import { BigNumber, BigNumberish } from 'ethers'
 
 import { ChainIds } from '../types'
-import type { Address, ChainId, TokenSymbol, Url } from '../types'
+import { Address, ChainId, TokenSymbol, Url } from '../types'
 
 import {
   Zero0xPriceOptions,
@@ -22,6 +22,10 @@ const debug = newDebug('@phuture:0x-aggregator')
 export const zeroExBaseUrl: Record<ChainId, Url> = {
   [ChainIds.Mainnet]: 'https://api.0x.org/',
   [ChainIds.CChain]: 'https://avalanche.api.0x.org/',
+  [ChainIds.Polygon]: 'https://polygon.api.0x.org/',
+  [ChainIds.Arbitrum]: 'https://arbitrum.api.0x.org/',
+  [ChainIds.PolygonMumbai]: 'https://mumbai.api.0x.org/',
+  [ChainIds.EthereumGoerli]: 'https://goerli.api.0x.org/',
 }
 
 /** ### Facilitates swaps for end user */
@@ -54,6 +58,8 @@ export class ZeroExAggregator {
     baseUrl: Url,
     apiKey?: string,
   ): [ZeroExAggregator, AbortController] {
+    if (!baseUrl) throw URIError()
+
     const abortController = new AbortController()
 
     const client = axios.create({

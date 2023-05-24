@@ -1,9 +1,9 @@
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BigNumber, BigNumberish } from 'ethers'
 
-import type { Zero0xQuoteOptions } from '../0x-aggregator'
+import { Zero0xQuoteOptions } from '../0x-aggregator'
 import { Erc20, Erc20Permit, StandardPermitArguments } from '../erc-20'
-import type { Address } from '../types'
+import { Address } from '../types'
 
 /** ### Router Interface */
 export interface Router {

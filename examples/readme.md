@@ -1,0 +1,43 @@
+# Examples
+
+Guide below demonstrates the usage of the different packages available through the **@Phuture/SDK**.
+
+## Setup the local node(if needed)
+
+1. Download anvil cli app
+
+`curl -L https://foundry.paradigm.xyz | bash`
+
+2. Install anvil cli app
+
+`foundryup`
+
+3. Prepare variables and start anvil
+   Go to https://chainlist.org, search for needed chain, copy RPC Server Address of choice
+   If you wish to fork from block in past – find (on Etherscan of Snowtrace) and copy blocknumber
+
+## Start the local node
+
+`anvil -f <RPC Server Address>`
+
+Or if you want to fork from the special block number
+
+`anvil -f <RPC Server Address> --fork-block-number <blockNumber>`
+
+## Run the scripts
+
+`.env` file is your config. Please set up it to start running different cases.
+
+## AutoRouter example
+
+1. Install all global dependencies
+
+`pnpm i`
+
+2. Get to the folder
+
+`cd examples/auto-router`
+
+3. Run the script
+
+`pnpm start`

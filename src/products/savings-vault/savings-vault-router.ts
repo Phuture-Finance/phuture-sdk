@@ -115,15 +115,14 @@ export class SavingsVaultRouter implements Router {
   ): Promise<TransactionResponse> {
     const accountAddress = await savingsVault.account.address()
     if (options?.permitOptions !== undefined) {
-      const depositWithPermitEstimatedGas =
-        await savingsVault.contract.estimateGas.depositWithPermit(
-          amountInInputToken,
-          accountAddress,
-          options.permitOptions.deadline,
-          options.permitOptions.v,
-          options.permitOptions.r,
-          options.permitOptions.s,
-        )
+      const depositWithPermitEstimatedGas = await savingsVault.contract.estimateGas.depositWithPermit(
+        amountInInputToken,
+        accountAddress,
+        options.permitOptions.deadline,
+        options.permitOptions.v,
+        options.permitOptions.r,
+        options.permitOptions.s,
+      )
       return savingsVault.contract.depositWithPermit(
         amountInInputToken,
         await savingsVault.account.address(),

@@ -1,0 +1,16 @@
+{
+  "name": "omni-router",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@phuture/sdk": "workspace:*",
+    "dotenv": "16.0.3",
+    "moment": "^2.29.4",
+    "yesno": "0.4.0"
+  },
+  "scripts": {
+    "start": " pnpm build && node dist",
+    "dev": "tsdx watch",
+    "build": "tsdx build"
+  }
+}
