@@ -1,4 +1,4 @@
-import { ChainId, ChainIds } from '../types'
+import { ChainId, ChainIds } from '../../types'
 
 import { LzChainId } from './types'
 

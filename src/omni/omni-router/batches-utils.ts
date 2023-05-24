@@ -5,8 +5,8 @@ import {
   Zero0xQuoteOptions,
   ZeroExAggregator,
   zeroExBaseUrl,
-} from '../0x-aggregator'
-import { Address, ChainId, ChainIds } from '../types'
+} from '../../0x-aggregator'
+import { Address, ChainId, ChainIds } from '../../types'
 
 const payload =
   '0x0000000000000000000000000000000000000000000000000000000000002ee00000000000000000000000000000000000000000000000000000000000989680'

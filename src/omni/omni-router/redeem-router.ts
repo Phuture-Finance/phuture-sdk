@@ -1,13 +1,13 @@
 import { BigNumberish, ContractTransaction } from 'ethers'
 
-import { Account } from '../account'
-import { Contract } from '../contract'
+import { Account } from '../../account'
+import { Contract } from '../../contract'
 import {
   RedeemRouter as RedeemRouterInterface,
   RedeemRouter__factory,
-} from '../typechain'
-import { PromiseOrValue } from '../typechain/common'
-import { Address, ChainId, ChainIds } from '../types'
+} from '../../typechain'
+import { PromiseOrValue } from '../../typechain/common'
+import { Address, ChainId, ChainIds } from '../../types'
 
 import { OmniIndex } from './omni-index'
 
@@ -55,6 +55,44 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
     const anatomy = await omniIndex.contract.anatomy()
 
     return this.contract.redeem(
+      omniIndex.address,
+      indexShares,
+      receiver,
+      owner,
+      reserveCached,
+      batchInfo,
+      anatomy,
+      {
+        value: estimatedRedeemFee,
+      },
+    )
+  }
+
+  /**
+   * ### Retry
+   * @param omniIndex
+   * @param indexShares
+   * @param receiver
+   * @param owner
+   * @param batchInfo
+   * @returns retry transaction
+   */
+  async retry(
+    omniIndex: OmniIndex,
+    indexShares: PromiseOrValue<BigNumberish>,
+    receiver: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+    batchInfo: RedeemRouterInterface.RedeemDataStruct,
+  ): Promise<ContractTransaction> {
+    const reserveCached = await omniIndex.contract.reserve()
+    const estimatedRedeemFee = await this.contract.estimateRedeemFee(
+      batchInfo.remoteData,
+    )
+
+    const anatomy = await omniIndex.contract.anatomy()
+
+    return this.contract.redeem(
+      //FIXME: retry
       omniIndex.address,
       indexShares,
       receiver,

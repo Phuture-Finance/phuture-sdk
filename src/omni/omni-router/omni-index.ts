@@ -1,10 +1,10 @@
-import { Account } from '../account'
-import { Contract } from '../contract'
+import { Account } from '../../account'
+import { Contract } from '../../contract'
 import {
   OmniIndex as OmniIndexInterface,
   OmniIndex__factory,
-} from '../typechain'
-import { Address, ChainId, ChainIds } from '../types'
+} from '../../typechain'
+import { Address, ChainId, ChainIds } from '../../types'
 
 /** ### Default OmniIndex address for network */
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
