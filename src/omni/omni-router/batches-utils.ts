@@ -29,9 +29,12 @@ export const createRemoteBatches = async (
   Promise.all(
     subIndexes.map(async (chain) => {
       const { quotes } = await createQuotes(chain, options)
+      const numOfAssets = quotes.length
+
       return {
         quotes,
         chainId: chain.chainId,
+        numOfAssets,
         payload,
       }
     }),

@@ -1,11 +1,11 @@
 import 'dotenv/config'
 
-import { constants } from 'ethers'
 import prepare from './prepare'
 import yesno from 'yesno'
 
 const main = async () => {
-  const { account, approvalAddress, token } = await prepare()
+  const { account, approvalAddress, token, approvalAmount } = await prepare()
+
   console.dir('START')
   console.log('INFO')
   console.dir(
@@ -16,7 +16,7 @@ const main = async () => {
   )
   console.log('APPROVE')
   console.dir(
-    `Approval amount in ${await token.symbol()}: ${constants.MaxUint256}`,
+    `Approval amount in ${await token.symbol()}: ${approvalAmount.toString()}`,
   )
   console.dir(`Target address:  ${approvalAddress}`)
   if (
@@ -25,7 +25,7 @@ const main = async () => {
     })
   ) {
     console.log('START APPROVING')
-    await token.contract.approve(approvalAddress, constants.MaxUint256)
+    await (await token.contract.approve(approvalAddress, approvalAmount)).wait()
     console.dir(
       `Current allowance in ${await token.symbol()}: ${await token.contract.allowance(
         await account.address(),

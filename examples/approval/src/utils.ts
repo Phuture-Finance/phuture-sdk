@@ -4,6 +4,7 @@ interface ProcessEnv {
   NODE_ENV: 'development' | 'production'
   PRIVATE_KEY: Address
   NODE_URL: string
+  APPROVAL_AMOUNT: 'zero' | 'max'
   CONTRACT_APPROVAL_ADDRESS: Address
   ASSET_APPROVAL_ADDRESS: Address
   CHAIN_ID: number

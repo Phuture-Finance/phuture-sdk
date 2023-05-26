@@ -4,6 +4,7 @@ import yesno from 'yesno'
 
 import prepare from './prepare'
 import moment from 'moment'
+import { IIndexViewer } from '../../../dist/typechain/OmniIndex'
 
 const main = async () => {
   const {
@@ -82,10 +83,20 @@ const main = async () => {
     const now = moment().unix()
 
     const timestamp = now + additionalTime
-    const previewInfo = await omniRouter.previewRedeem(indexAmount, timestamp)
+    const previewInfo: IIndexViewer.RedeemInfoStructOutput =
+      await omniRouter.previewRedeem(indexAmount, timestamp)
 
     console.log('(Preview) Redeem Info:')
-    console.dir(previewInfo)
+    const { feeAUM, reserve, valueInBase, assets } = previewInfo
+    console.log('assets: ', assets)
+    const readInfo = {
+      feeAUM: feeAUM.toString(),
+      reserve: reserve.toString(),
+      valueInBase: valueInBase.toString(),
+      assets,
+    }
+    console.dir(readInfo)
+
     if (
       await yesno({
         question: 'Do you want to redeem?',
@@ -93,7 +104,6 @@ const main = async () => {
     ) {
       const redeemResult = await omniRouter.redeem(
         indexAmount,
-        account.address(),
         account.address(),
         previewInfo.assets,
       )

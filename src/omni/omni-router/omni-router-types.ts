@@ -19,13 +19,13 @@ export interface OmniRouterInterface {
    * ### Redeem tokens
    * @param indexShares
    * @param receiver
-   * @param owner
+   * @param assets
+   * @param options
    * @returns redeem transaction
    */
   redeem(
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
     assets: IIndexViewer.RedeemAssetInfoStructOutput[],
   ): Promise<ContractTransaction>
 

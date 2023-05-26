@@ -15,7 +15,7 @@ import { OmniIndex } from './omni-index'
 export const defaultRedeemRouterAddress: Record<ChainId, Address> = {
   /** ### Default RedeemRouter address on goerli rollup testnet. */
   [ChainIds.EthereumGoerli]: '0x22133c0b1448a484d22e00c33ed83ea3c5a50881',
-  [ChainIds.AvalancheFuji]: '0x4cfe64f6a7a2a382323bae2be883c10964bdb737',
+  [ChainIds.AvalancheFuji]: '0xe42b1889ae8802d6a23f61473607777523c63ea1',
 }
 
 export class RedeemRouter extends Contract<RedeemRouterInterface> {
@@ -44,7 +44,6 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
     omniIndex: OmniIndex,
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
     batchInfo: RedeemRouterInterface.RedeemDataStruct,
   ): Promise<ContractTransaction> {
     const reserveCached = await omniIndex.contract.reserve() //INFO: change to 0 for testing
@@ -58,7 +57,6 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
       omniIndex.address,
       indexShares,
       receiver,
-      owner,
       reserveCached,
       batchInfo,
       anatomy,
@@ -81,7 +79,6 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
     omniIndex: OmniIndex,
     indexShares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
     batchInfo: RedeemRouterInterface.RedeemDataStruct,
   ): Promise<ContractTransaction> {
     const reserveCached = await omniIndex.contract.reserve()
@@ -96,7 +93,6 @@ export class RedeemRouter extends Contract<RedeemRouterInterface> {
       omniIndex.address,
       indexShares,
       receiver,
-      owner,
       reserveCached,
       batchInfo,
       anatomy,

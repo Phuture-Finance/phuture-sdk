@@ -10,7 +10,7 @@ import { Address, ChainId, ChainIds } from '../../types'
 export const defaultOmniIndexAddress: Record<ChainId, Address> = {
   /** ### Default OmniIndex address on goerli rollup testnet. */
   [ChainIds.EthereumGoerli]: '0xdc09ad66a7d93905e129200ab5439e09fa998f5d',
-  [ChainIds.AvalancheFuji]: '0x5888abe26e0b22fede3988f1b463625752245553',
+  [ChainIds.AvalancheFuji]: '0xab25554ee733b3f2483b20df3ba1a916ce7d3909',
 }
 
 export class OmniIndex extends Contract<OmniIndexInterface> {

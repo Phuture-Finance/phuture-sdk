@@ -62,6 +62,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "numOfAssets",
+            "type": "uint256"
+          },
+          {
             "internalType": "bytes",
             "name": "payload",
             "type": "bytes"
@@ -78,6 +83,25 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "hasBurned",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -111,11 +135,6 @@
       {
         "internalType": "address",
         "name": "receiver",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
         "type": "address"
       },
       {
@@ -214,6 +233,11 @@
                 "type": "uint256"
               },
               {
+                "internalType": "uint256",
+                "name": "numOfAssets",
+                "type": "uint256"
+              },
+              {
                 "internalType": "bytes",
                 "name": "payload",
                 "type": "bytes"
@@ -254,6 +278,78 @@
     "name": "redeem",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "index",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "swapTarget",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "inputAsset",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "inputAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "buyAssetMinAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "additionalGas",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bytes",
+                "name": "assetQuote",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct RedeemRouter.QuoteParams[]",
+            "name": "quotes",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "chainId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "numOfAssets",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "payload",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct RedeemRouter.Batch[]",
+        "name": "batches",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "retryEscrowedAssets",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
