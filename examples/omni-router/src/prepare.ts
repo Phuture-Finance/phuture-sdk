@@ -5,8 +5,6 @@ import {
   OmniIndex,
   OmniRouter,
   RedeemRouter,
-  defaultOmniIndexAddress,
-  defaultRedeemRouterAddress,
 } from '@phuture/sdk'
 import { ethers } from 'ethers'
 import { getEnv } from './utils'
@@ -28,15 +26,12 @@ const prepare = async (): Promise<PrepareProps> => {
     new ethers.Wallet(getEnv('PRIVATE_KEY'), provider),
   )
 
-  const chainId = await account.chainId()
-
   const tokenAddress = getEnv('TOKEN_ADDRESS', false)
+  const indexAddress = getEnv('INDEX_ADDRESS', false)
+  const redeemRouterAddress = getEnv('REDEEM_ROUTER_ADDRESS', false)
 
-  const omniIndex = new OmniIndex(account, defaultOmniIndexAddress[chainId])
-  const redeemRouter = new RedeemRouter(
-    account,
-    defaultRedeemRouterAddress[chainId],
-  )
+  const omniIndex = new OmniIndex(account, indexAddress)
+  const redeemRouter = new RedeemRouter(account, redeemRouterAddress)
 
   const omniRouter = new OmniRouter(omniIndex, redeemRouter)
 

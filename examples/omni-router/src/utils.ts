@@ -10,6 +10,7 @@ interface ProcessEnv {
   ADDITIONAL_REDEEM_TIME: number
   TOKEN_ADDRESS: Address
   INDEX_ADDRESS: Address
+  REDEEM_ROUTER_ADDRESS: Address
 }
 
 export function getEnv<K extends keyof ProcessEnv>(
