@@ -11,16 +11,15 @@
   ],
   "scripts": {
     "start": "tsdx watch",
-    "build": "pnpm typechain && tsdx build",
+    "build": "npm run typechain && tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "husky install && tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "fix": "pnpm lint --fix",
+    "fix": "npm run lint --fix",
     "format": "prettier . -w",
-    "postinstall": "pnpm build",
-    "preinstall": "npx only-allow pnpm",
+    "postinstall": "npm run build",
     "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads",
     "types": "tsc --noEmit"
   },
@@ -75,10 +74,6 @@
     "tsdx": "0.14.1",
     "tslib": "2.4.1"
   },
-  "engines": {
-    "pnpm": ">=7"
-  },
-  "packageManager": "pnpm@7.14.0",
   "dependencies": {
     "@ethersproject/abstract-provider": "5.7.0",
     "axios": "1.2.1",
