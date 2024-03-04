@@ -90,6 +90,7 @@ async function calculateBuyAmountsInBase(buyAmounts, amounts) {
       const price = await priceOracle.callStatic.refreshedAssetPerBaseInUQ(
         asset,
       )
+
       const quotedBuyAmount = BigNumber.from(buyAssetMinAmount)
         .mul(BigNumber.from(2).pow(112))
         .mul(255)
@@ -120,11 +121,9 @@ async function getQuotes(amounts, inputToken, scaledSellAmounts) {
         scaledSellAmount,
       )
 
-      let buyAssetMinAmount = BigNumber.from(zeroExResult.buyAmount)
-
       return {
         asset,
-        buyAssetMinAmount,
+        buyAssetMinAmount: BigNumber.from(zeroExResult.buyAmount),
         swapTarget: zeroExResult.to,
         assetQuote: zeroExResult.data,
         estimatedGas: zeroExResult.estimatedGas,
@@ -139,10 +138,18 @@ async function prepareQuotes(inputToken, amountIn) {
   const amounts = _assets.map((asset, i) => ({
     asset,
     amount: BigNumber.from(amountIn).mul(_weights[i]).div(255),
+    weight: _weights[i],
   }))
 
+  console.dir({ amounts }, { depth: 2 })
+
   const buyAmounts = await getBuyAmounts(amounts, inputToken)
+
+  console.dir({ buyAmounts }, { depth: 2 })
+
   const buyAmountsInBase = await calculateBuyAmountsInBase(buyAmounts, amounts)
+
+  console.dir({ buyAmountsInBase }, { depth: 2 })
 
   const minBuyAmount = buyAmountsInBase.reduce((min, curr) =>
     min.quotedBuyAmount.lte(curr.quotedBuyAmount) ? min : curr,
@@ -155,6 +162,8 @@ async function prepareQuotes(inputToken, amountIn) {
   )
 
   const quotes = await getQuotes(amounts, inputToken, scaledSellAmounts)
+
+  console.dir({ quotes }, { depth: 2 })
 
   const sellAmount = scaledSellAmounts.reduce(
     (sum, curr) => sum.add(curr),
@@ -178,3 +187,5 @@ async function main() {
     quotes,
   })
 }
+
+main().then(console.info, console.error)

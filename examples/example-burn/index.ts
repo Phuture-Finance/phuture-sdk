@@ -1,4 +1,4 @@
-import { BigNumber, constants } from 'ethers'
+import { BigNumber, Wallet, constants } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator } from '../../src/0x-aggregator/0x-aggregator'
@@ -31,6 +31,7 @@ if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 
 /// PREPARE ENTITIES
 
+// const provider = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
 const provider = new JsonRpcProvider(RPC_URL)
 
 const [zeroExAggregator] = ZeroExAggregator.fromUrl(
@@ -44,22 +45,31 @@ const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
 /// HELPER FUNCTIONS
 
 async function prepareQuotes(shares, outputToken) {
-  const [anatomy, inactiveAnatomy, burnTokensAmounts] = await Promise.all([
-    this.anatomy(),
-    this.inactiveAnatomy(),
-    this.contract.callStatic.burnWithAmounts({
-      index: index.address,
-      recipient: this.account.address(),
-      shares,
-    }),
-  ])
+  const [{ _assets, _weights }, inactiveAnatomy, burnTokensAmounts] =
+    await Promise.all([
+      index.anatomy(),
+      index.inactiveAnatomy(),
+      indexRouter.callStatic.burnWithAmounts(
+        {
+          index: index.address,
+          recipient: RECIPIENT_ADDRESS,
+          amount: shares,
+        },
+        {
+          from: '0xF45d099193372800f2449d454d1c1a2e76d69e71',
+        },
+      ),
+    ])
 
-  const amounts = [...anatomy, ...inactiveAnatomy].map(
-    (constituent, constituentIndex) => ({
-      amount: burnTokensAmounts[constituentIndex] || BigNumber.from(0),
-      ...constituent,
-    }),
-  )
+  const constituents = [
+    ..._assets.map((asset, i) => ({ asset, weight: _weights[i] })),
+    ...inactiveAnatomy.map((asset) => ({ asset, weight: 0 })),
+  ]
+
+  const amounts = constituents.map((constituent, constituentIndex) => ({
+    amount: burnTokensAmounts[constituentIndex] || BigNumber.from(0),
+    ...constituent,
+  }))
 
   return await Promise.all(
     amounts.map(async ({ amount, asset }) => {
@@ -106,3 +116,5 @@ async function main() {
     quotes,
   })
 }
+
+main().then(console.info, console.error)
