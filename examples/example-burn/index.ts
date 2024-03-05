@@ -37,6 +37,11 @@ if (!SHARES) throw new Error('Missing SHARES')
 const OUTPUT_TOKEN = process.env.OUTPUT_TOKEN!
 if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 
+/// Address which has granted allowance to burn the Index shares
+/// Used for callstatic.burnWithAmounts
+const ALLOWANCE_ADDRESS = process.env.ALLOWANCE_ADDRESS!
+if (!ALLOWANCE_ADDRESS) throw new Error('Missing ALLOWANCE_ADDRESS')
+
 /// PREPARE ENTITIES
 
 /// For static calls only, you can just use the provider (VoidSigner)
@@ -77,7 +82,7 @@ async function prepareQuotes(shares, outputToken) {
           amount: shares,
         },
         {
-          from: '0xF45d099193372800f2449d454d1c1a2e76d69e71',
+          from: ALLOWANCE_ADDRESS,
         },
       ),
     ])

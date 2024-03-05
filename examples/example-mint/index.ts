@@ -174,6 +174,12 @@ async function getQuotes(amounts, inputToken, scaledSellAmounts) {
   return await Promise.all(quotes)
 }
 
+/**
+ * Prepares quotes for minting tokens.
+ * @param inputToken - The input token for the mint operation.
+ * @param amountIn - The amount of input token to mint.
+ * @returns A promise that resolves to an object containing quotes and the total sell amount.
+ */
 async function prepareQuotes(inputToken, amountIn) {
   /// Retrieve the current index anatomy and inactive anatomy from the index contract
   const { _assets, _weights } = await index.anatomy()
