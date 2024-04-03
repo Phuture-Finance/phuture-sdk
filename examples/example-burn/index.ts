@@ -37,11 +37,6 @@ if (!SHARES) throw new Error('Missing SHARES')
 const OUTPUT_TOKEN = process.env.OUTPUT_TOKEN!
 if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 
-/// Address which has granted allowance to burn the Index shares
-/// Used for callstatic.burnWithAmounts
-const ALLOWANCE_ADDRESS = process.env.ALLOWANCE_ADDRESS!
-if (!ALLOWANCE_ADDRESS) throw new Error('Missing ALLOWANCE_ADDRESS')
-
 /// PREPARE ENTITIES
 
 /// For static calls only, you can just use the provider (VoidSigner)
@@ -137,7 +132,10 @@ async function prepareQuotes(shares, outputToken) {
 
   console.log('Burn Tokens Amounts:')
   console.table(
-    burnTokensAmounts.map((amount, i) => ({ asset: _assets[i], amount: amount.toString() })),
+    burnTokensAmounts.map((amount, i) => ({
+      asset: _assets[i],
+      amount: amount.toString(),
+    })),
   )
 
   /// Merge the active and inactive anatomy into a single array
