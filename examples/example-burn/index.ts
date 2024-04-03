@@ -55,6 +55,9 @@ const [zeroExAggregator] = ZeroExAggregator.fromUrl(
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
 const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
 
+const BALANCE_OF_SLOT = 8
+const ALLOWANCE_SLOT = 9
+
 /// HELPER FUNCTIONS
 
 /**
@@ -65,20 +68,17 @@ const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
  * @returns A promise that resolves to an array of quotes for burning tokens.
  */
 async function prepareQuotes(shares, outputToken) {
-  const balanceOfSlot = 8
-  const allowanceSlot = 9
-
   const balanceOfOwnerSlot = utils.keccak256(
     utils.defaultAbiCoder.encode(
       ['address', 'uint256'],
-      [RECIPIENT_ADDRESS, balanceOfSlot],
+      [RECIPIENT_ADDRESS, BALANCE_OF_SLOT],
     ),
   )
 
   const allowanceOwnerSlot = utils.keccak256(
     utils.defaultAbiCoder.encode(
       ['address', 'uint256'],
-      [RECIPIENT_ADDRESS, allowanceSlot],
+      [RECIPIENT_ADDRESS, ALLOWANCE_SLOT],
     ),
   )
   const spenderSlot = utils.keccak256(
@@ -125,10 +125,10 @@ async function prepareQuotes(shares, outputToken) {
       ]),
     ])
 
-  const burnTokensAmounts = new utils.AbiCoder().decode(
+  const [burnTokensAmounts] = new utils.AbiCoder().decode(
     ['uint[]'],
     rawBurnTokensAmounts,
-  )[0]
+  )
 
   console.log('Burn Tokens Amounts:')
   console.table(
