@@ -135,9 +135,10 @@ async function prepareQuotes(shares, outputToken) {
     rawBurnTokensAmounts,
   )[0]
 
-  burnTokensAmounts.forEach((amount, i) => {
-    console.log(`Burn ${amount.toString()} of ${_assets[i]}`)
-  })
+  console.log('Burn Tokens Amounts:')
+  console.table(
+    burnTokensAmounts.map((amount, i) => ({ asset: _assets[i], amount: amount.toString() })),
+  )
 
   /// Merge the active and inactive anatomy into a single array
   const constituents = [
