@@ -1,4 +1,4 @@
-import { BigNumber, constants } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator } from '../../src/0x-aggregator/0x-aggregator'
@@ -70,22 +70,74 @@ const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
  * @returns A promise that resolves to an array of quotes for burning tokens.
  */
 async function prepareQuotes(shares, outputToken) {
+  const balanceOfSlot = 8
+  const allowanceSlot = 9
+
+  const balanceOfOwnerSlot = utils.keccak256(
+    utils.defaultAbiCoder.encode(
+      ['address', 'uint256'],
+      [RECIPIENT_ADDRESS, balanceOfSlot],
+    ),
+  )
+
+  const allowanceOwnerSlot = utils.keccak256(
+    utils.defaultAbiCoder.encode(
+      ['address', 'uint256'],
+      [RECIPIENT_ADDRESS, allowanceSlot],
+    ),
+  )
+  const spenderSlot = utils.keccak256(
+    utils.defaultAbiCoder.encode(
+      ['address', 'bytes32'],
+      [INDEX_ROUTER_ADDRESS, allowanceOwnerSlot],
+    ),
+  )
+
+  const stateDiff = {
+    [INDEX_ADDRESS]: {
+      stateDiff: {
+        [balanceOfOwnerSlot]: utils.hexZeroPad(
+          utils.hexValue(BigNumber.from(shares)),
+          32,
+        ),
+        [spenderSlot]: utils.hexZeroPad(
+          utils.hexValue(BigNumber.from(shares)),
+          32,
+        ),
+      },
+    },
+  }
+
   /// Retrieve the current index anatomy and inactive anatomy from the index contract
-  const [{ _assets, _weights }, inactiveAnatomy, burnTokensAmounts] =
+  const [{ _assets, _weights }, inactiveAnatomy, rawBurnTokensAmounts] =
     await Promise.all([
       index.anatomy(),
       index.inactiveAnatomy(),
-      indexRouter.callStatic.burnWithAmounts(
+      provider.send('eth_call', [
         {
-          index: index.address,
-          recipient: RECIPIENT_ADDRESS,
-          amount: shares,
+          from: RECIPIENT_ADDRESS,
+          to: indexRouter.address,
+          data: indexRouter.interface.encodeFunctionData('burnWithAmounts', [
+            {
+              index: index.address,
+              recipient: RECIPIENT_ADDRESS,
+              amount: shares,
+            },
+          ]),
         },
-        {
-          from: ALLOWANCE_ADDRESS,
-        },
-      ),
+        'latest',
+        stateDiff,
+      ]),
     ])
+
+  const burnTokensAmounts = new utils.AbiCoder().decode(
+    ['uint[]'],
+    rawBurnTokensAmounts,
+  )[0]
+
+  burnTokensAmounts.forEach((amount, i) => {
+    console.log(`Burn ${amount.toString()} of ${_assets[i]}`)
+  })
 
   /// Merge the active and inactive anatomy into a single array
   const constituents = [
