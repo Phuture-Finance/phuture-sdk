@@ -1,4 +1,4 @@
-import { BigNumber, constants } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator } from '../../src/0x-aggregator/0x-aggregator'
@@ -37,11 +37,6 @@ if (!SHARES) throw new Error('Missing SHARES')
 const OUTPUT_TOKEN = process.env.OUTPUT_TOKEN!
 if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 
-/// Address which has granted allowance to burn the Index shares
-/// Used for callstatic.burnWithAmounts
-const ALLOWANCE_ADDRESS = process.env.ALLOWANCE_ADDRESS!
-if (!ALLOWANCE_ADDRESS) throw new Error('Missing ALLOWANCE_ADDRESS')
-
 /// PREPARE ENTITIES
 
 /// For static calls only, you can just use the provider (VoidSigner)
@@ -60,6 +55,9 @@ const [zeroExAggregator] = ZeroExAggregator.fromUrl(
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
 const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
 
+const BALANCE_OF_SLOT = 8
+const ALLOWANCE_SLOT = 9
+
 /// HELPER FUNCTIONS
 
 /**
@@ -70,22 +68,75 @@ const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
  * @returns A promise that resolves to an array of quotes for burning tokens.
  */
 async function prepareQuotes(shares, outputToken) {
+  const balanceOfOwnerSlot = utils.keccak256(
+    utils.defaultAbiCoder.encode(
+      ['address', 'uint256'],
+      [RECIPIENT_ADDRESS, BALANCE_OF_SLOT],
+    ),
+  )
+
+  const allowanceOwnerSlot = utils.keccak256(
+    utils.defaultAbiCoder.encode(
+      ['address', 'uint256'],
+      [RECIPIENT_ADDRESS, ALLOWANCE_SLOT],
+    ),
+  )
+  const spenderSlot = utils.keccak256(
+    utils.defaultAbiCoder.encode(
+      ['address', 'bytes32'],
+      [INDEX_ROUTER_ADDRESS, allowanceOwnerSlot],
+    ),
+  )
+
+  const stateDiff = {
+    [INDEX_ADDRESS]: {
+      stateDiff: {
+        [balanceOfOwnerSlot]: utils.hexZeroPad(
+          utils.hexValue(BigNumber.from(shares)),
+          32,
+        ),
+        [spenderSlot]: utils.hexZeroPad(
+          utils.hexValue(BigNumber.from(shares)),
+          32,
+        ),
+      },
+    },
+  }
+
   /// Retrieve the current index anatomy and inactive anatomy from the index contract
-  const [{ _assets, _weights }, inactiveAnatomy, burnTokensAmounts] =
+  const [{ _assets, _weights }, inactiveAnatomy, rawBurnTokensAmounts] =
     await Promise.all([
       index.anatomy(),
       index.inactiveAnatomy(),
-      indexRouter.callStatic.burnWithAmounts(
+      provider.send('eth_call', [
         {
-          index: index.address,
-          recipient: RECIPIENT_ADDRESS,
-          amount: shares,
+          from: RECIPIENT_ADDRESS,
+          to: indexRouter.address,
+          data: indexRouter.interface.encodeFunctionData('burnWithAmounts', [
+            {
+              index: index.address,
+              recipient: RECIPIENT_ADDRESS,
+              amount: shares,
+            },
+          ]),
         },
-        {
-          from: ALLOWANCE_ADDRESS,
-        },
-      ),
+        'latest',
+        stateDiff,
+      ]),
     ])
+
+  const [burnTokensAmounts] = new utils.AbiCoder().decode(
+    ['uint[]'],
+    rawBurnTokensAmounts,
+  )
+
+  console.log('Burn Tokens Amounts:')
+  console.table(
+    burnTokensAmounts.map((amount, i) => ({
+      asset: _assets[i],
+      amount: amount.toString(),
+    })),
+  )
 
   /// Merge the active and inactive anatomy into a single array
   const constituents = [
