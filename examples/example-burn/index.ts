@@ -42,7 +42,7 @@ if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 /// For static calls only, you can just use the provider (VoidSigner)
 const provider = new JsonRpcProvider(RPC_URL)
 /// For transactions, you need to use a Wallet or Injected Signer (in browser)
-/// const provider = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
+/// const wallet = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
@@ -50,6 +50,8 @@ const [zeroExAggregator] = ZeroExAggregator.fromUrl(
   ZERO_EX_API_URL,
   ZERO_EX_API_KEY,
 )
+
+zeroExAggregator.slippageProtection = true
 
 /// Instantiate the Index and IndexRouter contracts
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
@@ -161,6 +163,9 @@ async function prepareQuotes(shares, outputToken) {
       asset,
       outputToken,
       amount,
+      {
+        slippagePercentage: 0.03,
+      },
     )
 
     return {
