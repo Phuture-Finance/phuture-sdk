@@ -1,4 +1,4 @@
-import { BigNumber, Wallet, constants, utils } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator } from '../../src/0x-aggregator/0x-aggregator'
