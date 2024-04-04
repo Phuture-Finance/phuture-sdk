@@ -51,6 +51,8 @@ const [zeroExAggregator] = ZeroExAggregator.fromUrl(
   ZERO_EX_API_KEY,
 )
 
+zeroExAggregator.slippageProtection = true
+
 /// Instantiate the Index and IndexRouter contracts
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
 const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, wallet)
