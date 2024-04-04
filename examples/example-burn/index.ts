@@ -42,7 +42,7 @@ if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 /// For static calls only, you can just use the provider (VoidSigner)
 const provider = new JsonRpcProvider(RPC_URL)
 /// For transactions, you need to use a Wallet or Injected Signer (in browser)
-// const wallet = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
+/// const wallet = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
@@ -186,7 +186,7 @@ async function main() {
   const quotes = await prepareQuotes(SHARES, OUTPUT_TOKEN)
 
   // Use `.burnSwapValue` if you want to use native currency as output
-  return await indexRouter.burnSwap({
+  return await indexRouter.populateTransaction.burnSwap({
     index: INDEX_ADDRESS,
     amount: SHARES,
     outputAsset: OUTPUT_TOKEN,
