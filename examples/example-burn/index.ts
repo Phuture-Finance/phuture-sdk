@@ -1,4 +1,4 @@
-import { BigNumber, constants, utils } from 'ethers'
+import { BigNumber, Wallet, constants, utils } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator } from '../../src/0x-aggregator/0x-aggregator'
@@ -42,7 +42,7 @@ if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 /// For static calls only, you can just use the provider (VoidSigner)
 const provider = new JsonRpcProvider(RPC_URL)
 /// For transactions, you need to use a Wallet or Injected Signer (in browser)
-/// const provider = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
+const wallet = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
@@ -53,7 +53,7 @@ const [zeroExAggregator] = ZeroExAggregator.fromUrl(
 
 /// Instantiate the Index and IndexRouter contracts
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
-const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
+const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, wallet)
 
 const BALANCE_OF_SLOT = 8
 const ALLOWANCE_SLOT = 9
@@ -161,6 +161,9 @@ async function prepareQuotes(shares, outputToken) {
       asset,
       outputToken,
       amount,
+      {
+        slippagePercentage: 0.03,
+      }
     )
 
     return {
@@ -181,7 +184,7 @@ async function main() {
   const quotes = await prepareQuotes(SHARES, OUTPUT_TOKEN)
 
   // Use `.burnSwapValue` if you want to use native currency as output
-  return await indexRouter.populateTransaction.burnSwap({
+  return await indexRouter.burnSwap({
     index: INDEX_ADDRESS,
     amount: SHARES,
     outputAsset: OUTPUT_TOKEN,
