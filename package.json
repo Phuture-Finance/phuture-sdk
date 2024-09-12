@@ -9,6 +9,7 @@
   "types": "./dist/types/index.d.ts",
   "typings": "./dist/types/index.d.ts",
   "scripts": {
+    "start": "npx tsx ./examples/example-$npm_config_name.ts",
     "build:js": "node esbuild.mjs",
     "build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json",
     "build": "npm run build:js && npm run build:types",
