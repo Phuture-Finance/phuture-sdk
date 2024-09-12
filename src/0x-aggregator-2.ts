@@ -164,9 +164,7 @@ export class ZeroExAggregator2 {
     return this.makeRequest<ZeroExPriceResponse>("permit2/price", params);
   }
 
-  public permit2Quote(
-    params: Partial<ZeroExRequest>
-  ): Promise<Permit2QuoteResponse> {
+  public permit2Quote(params: ZeroExRequest): Promise<Permit2QuoteResponse> {
     return this.makeRequest<Permit2QuoteResponse>("permit2/quote", params);
   }
 
@@ -180,7 +178,7 @@ export class ZeroExAggregator2 {
   }
 
   public allowanceHolderQuote(
-    params: Partial<ZeroExRequest>
+    params: ZeroExRequest
   ): Promise<AllowanceHolderQuoteResponse> {
     return this.makeRequest<AllowanceHolderQuoteResponse>(
       "allowance-holder/quote",
@@ -190,7 +188,7 @@ export class ZeroExAggregator2 {
 
   private async makeRequest<T>(
     endpoint: string,
-    params: Partial<ZeroExRequest>
+    params: ZeroExRequest
   ): Promise<T> {
     try {
       const response = await this.client.post<T>(endpoint, params);
