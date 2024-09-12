@@ -3,7 +3,7 @@ import axiosRetry from 'axios-retry'
 import newDebug from 'debug'
 import { BigNumber, BigNumberish } from 'ethers'
 
-import type { Address, ChainId, TokenSymbol } from '../types'
+import type { Address, ChainId, TokenSymbol } from '../../types'
 
 import {
   RawZero0xPriceResponse,

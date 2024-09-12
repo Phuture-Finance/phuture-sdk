@@ -1,7 +1,7 @@
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BigNumber, BigNumberish } from 'ethers'
 
-import type { Zero0xQuoteOptions } from '../0x-aggregator'
+import type { Zero0xQuoteOptions } from '../0x-aggregator/v2'
 import { Erc20, Erc20Permit, StandardPermitArguments } from '../erc-20'
 import type { Address } from '../types'
 

@@ -1,7 +1,7 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BigNumber, BigNumberish, constants } from 'ethers'
 
-import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator'
+import { Zero0xQuoteOptions, ZeroExAggregator } from '../0x-aggregator/v2'
 import { Erc20, StandardPermitArguments } from '../erc-20'
 import { InsufficientAllowanceError } from '../errors'
 import { IndexRouter } from '../index-router'

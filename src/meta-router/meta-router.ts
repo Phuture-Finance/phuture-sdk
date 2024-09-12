@@ -1,7 +1,7 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BigNumber, BigNumberish } from 'ethers'
 
-import { Zero0xQuoteOptions } from '../0x-aggregator'
+import { Zero0xQuoteOptions } from '../0x-aggregator/v2'
 import { AutoRouter } from '../auto-router'
 import { Erc20, Erc20Permit, StandardPermitArguments } from '../erc-20'
 import { PhutureError } from '../errors'
