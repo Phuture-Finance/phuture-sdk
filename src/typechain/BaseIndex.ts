@@ -391,24 +391,16 @@ export interface BaseIndexInterface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "AssetRemoved(address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "UpdateAnatomy(address,uint8)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "Approval(address,address,uint256)"
   ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AssetRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AssetRemoved(address)"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "Transfer(address,address,uint256)"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UpdateAnatomy"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "UpdateAnatomy(address,uint8)"
   ): EventFragment;
 }
 
@@ -424,13 +416,6 @@ export type ApprovalEvent = TypedEvent<
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
-export interface AssetRemovedEventObject {
-  asset: string;
-}
-export type AssetRemovedEvent = TypedEvent<[string], AssetRemovedEventObject>;
-
-export type AssetRemovedEventFilter = TypedEventFilter<AssetRemovedEvent>;
-
 export interface TransferEventObject {
   from: string;
   to: string;
@@ -442,17 +427,6 @@ export type TransferEvent = TypedEvent<
 >;
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
-
-export interface UpdateAnatomyEventObject {
-  asset: string;
-  weight: number;
-}
-export type UpdateAnatomyEvent = TypedEvent<
-  [string, number],
-  UpdateAnatomyEventObject
->;
-
-export type UpdateAnatomyEventFilter = TypedEventFilter<UpdateAnatomyEvent>;
 
 export interface BaseIndex extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1074,9 +1048,6 @@ export interface BaseIndex extends BaseContract {
       value?: null
     ): ApprovalEventFilter;
 
-    "AssetRemoved(address)"(asset?: null): AssetRemovedEventFilter;
-    AssetRemoved(asset?: null): AssetRemovedEventFilter;
-
     "Transfer(address,address,uint256)"(
       from?: PromiseOrValue<string> | null,
       to?: PromiseOrValue<string> | null,
@@ -1087,12 +1058,6 @@ export interface BaseIndex extends BaseContract {
       to?: PromiseOrValue<string> | null,
       value?: null
     ): TransferEventFilter;
-
-    "UpdateAnatomy(address,uint8)"(
-      asset?: null,
-      weight?: null
-    ): UpdateAnatomyEventFilter;
-    UpdateAnatomy(asset?: null, weight?: null): UpdateAnatomyEventFilter;
   };
 
   estimateGas: {

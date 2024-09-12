@@ -36,19 +36,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-    ],
-    name: "AssetRemoved",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
         name: "from",
@@ -68,25 +55,6 @@ const _abi = [
       },
     ],
     name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "weight",
-        type: "uint8",
-      },
-    ],
-    name: "UpdateAnatomy",
     type: "event",
   },
   {

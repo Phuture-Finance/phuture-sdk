@@ -14,11 +14,7 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -162,10 +158,7 @@ export interface IndexRouterInterface extends utils.Interface {
     "mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))": FunctionFragment;
     "mintSwapValue((address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
     "mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
     "registry()": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -200,14 +193,8 @@ export interface IndexRouterInterface extends utils.Interface {
       | "mintSwapValue((address,address,(address,address,uint256,bytes)[]))"
       | "mintSwapWithPermit"
       | "mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
-      | "proxiableUUID"
-      | "proxiableUUID()"
       | "registry"
       | "registry()"
-      | "upgradeTo"
-      | "upgradeTo(address)"
-      | "upgradeToAndCall"
-      | "upgradeToAndCall(address,bytes)"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "WETH", values?: undefined): string;
@@ -372,34 +359,10 @@ export interface IndexRouterInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "proxiableUUID",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proxiableUUID()",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "registry", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "registry()",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo(address)",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeToAndCall",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeToAndCall(address,bytes)",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
 
   decodeFunctionResult(functionFragment: "WETH", data: BytesLike): Result;
@@ -501,83 +464,11 @@ export interface IndexRouterInterface extends utils.Interface {
     functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "proxiableUUID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proxiableUUID()",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "registry()", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeTo(address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeToAndCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeToAndCall(address,bytes)",
-    data: BytesLike
-  ): Result;
 
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "Upgraded(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "AdminChanged(address,address)"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded(address)"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized(uint8)"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded(address)"): EventFragment;
+  events: {};
 }
-
-export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
-export interface BeaconUpgradedEventObject {
-  beacon: string;
-}
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
-
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
-
-export interface InitializedEventObject {
-  version: number;
-}
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface UpgradedEventObject {
-  implementation: string;
-}
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
-
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface IndexRouter extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -786,35 +677,9 @@ export interface IndexRouter extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
-
-    "proxiableUUID()"(overrides?: CallOverrides): Promise<[string]>;
-
     registry(overrides?: CallOverrides): Promise<[string]>;
 
     "registry()"(overrides?: CallOverrides): Promise<[string]>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "upgradeTo(address)"(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "upgradeToAndCall(address,bytes)"(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   WETH(overrides?: CallOverrides): Promise<string>;
@@ -997,35 +862,9 @@ export interface IndexRouter extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  "proxiableUUID()"(overrides?: CallOverrides): Promise<string>;
-
   registry(overrides?: CallOverrides): Promise<string>;
 
   "registry()"(overrides?: CallOverrides): Promise<string>;
-
-  upgradeTo(
-    newImplementation: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "upgradeTo(address)"(
-    newImplementation: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: PromiseOrValue<string>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "upgradeToAndCall(address,bytes)"(
-    newImplementation: PromiseOrValue<string>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   callStatic: {
     WETH(overrides?: CallOverrides): Promise<string>;
@@ -1208,64 +1047,12 @@ export interface IndexRouter extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-    "proxiableUUID()"(overrides?: CallOverrides): Promise<string>;
-
     registry(overrides?: CallOverrides): Promise<string>;
 
     "registry()"(overrides?: CallOverrides): Promise<string>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "upgradeTo(address)"(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "upgradeToAndCall(address,bytes)"(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
-  filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: PromiseOrValue<string> | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(
-      beacon?: PromiseOrValue<string> | null
-    ): BeaconUpgradedEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "Upgraded(address)"(
-      implementation?: PromiseOrValue<string> | null
-    ): UpgradedEventFilter;
-    Upgraded(
-      implementation?: PromiseOrValue<string> | null
-    ): UpgradedEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
     WETH(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1448,35 +1235,9 @@ export interface IndexRouter extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "proxiableUUID()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     registry(overrides?: CallOverrides): Promise<BigNumber>;
 
     "registry()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "upgradeTo(address)"(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "upgradeToAndCall(address,bytes)"(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1660,34 +1421,8 @@ export interface IndexRouter extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "proxiableUUID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     registry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "registry()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "upgradeTo(address)"(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "upgradeToAndCall(address,bytes)"(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
   };
 }

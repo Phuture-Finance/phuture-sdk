@@ -1,5 +1,4 @@
 import axios, { type AxiosInstance } from "axios";
-import axiosRetry from "axios-retry";
 import { BigNumber, type BigNumberish, type BytesLike } from "ethers";
 
 /** ### Options for 0x price endpoint */
@@ -38,8 +37,6 @@ export interface Zero0xQuoteResponse extends Zero0xPriceResponse {
 	/** ### Raw call data */
 	data: BytesLike;
 }
-
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
 
 /** ### Addresses of the ZeroX API endpoint */
 export const zeroExBaseUrl: Record<number, string> = {

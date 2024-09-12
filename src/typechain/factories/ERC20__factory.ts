@@ -8,32 +8,6 @@ import type { ERC20, ERC20Interface } from "../ERC20";
 
 const _abi = [
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_symbol",
-        type: "string",
-      },
-      {
-        internalType: "address",
-        name: "initialAccount",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "initialBalance",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
     anonymous: false,
     inputs: [
       {
