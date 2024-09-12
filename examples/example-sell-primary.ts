@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, constants, utils } from 'ethers'
+import { BigNumber, BigNumberish, constants, utils, Wallet } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator2 } from '../src/0x-aggregator-2'
@@ -42,7 +42,7 @@ if (!OUTPUT_TOKEN) throw new Error('Missing OUTPUT_TOKEN')
 /// For static calls only, you can just use the provider (VoidSigner)
 const provider = new JsonRpcProvider(RPC_URL)
 /// For transactions, you need to use a Wallet or Injected Signer (in browser)
-/// const wallet = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
+const wallet = new Wallet(process.env.PK!, provider);
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
@@ -52,8 +52,8 @@ const zeroExAggregator = new ZeroExAggregator2(
 )
 
 /// Instantiate the Index and IndexRouter contracts
-const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
-const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, provider)
+const index = BaseIndex__factory.connect(INDEX_ADDRESS, wallet);
+const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, wallet);
 
 const BALANCE_OF_SLOT = 8
 const ALLOWANCE_SLOT = 9
@@ -161,14 +161,14 @@ async function prepareQuotes(shares: string, buyToken: string) {
       chainId: provider.network.chainId,
       sellToken: asset,
       buyToken,
-      sellAmount: sellAmount.toString(),
+      sellAmount: sellAmount.mul(999).div(1000),
       taker: indexRouter.address
     });
 
     return {
-      swapTarget: zeroExResult.data.transaction.to,
-      buyAssetMinAmount: zeroExResult.data.minBuyAmount,
-      assetQuote: zeroExResult.data.transaction.data,
+      swapTarget: zeroExResult.transaction.to,
+      buyAssetMinAmount: zeroExResult.minBuyAmount,
+      assetQuote: zeroExResult.transaction.data,
     };
   });
 
@@ -183,7 +183,7 @@ async function main() {
   const quotes = await prepareQuotes(SHARES, OUTPUT_TOKEN)
 
   // Use `.burnSwapValue` if you want to use native currency as output
-  return await indexRouter.populateTransaction.burnSwap({
+  return await indexRouter.burnSwap({
     index: INDEX_ADDRESS,
     amount: SHARES,
     outputAsset: OUTPUT_TOKEN,

@@ -1,4 +1,4 @@
-import { BigNumber, constants } from "ethers";
+import { BigNumber, constants, Wallet } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 import { ZeroExAggregator2 } from "../src/0x-aggregator-2";
@@ -50,7 +50,7 @@ if (!AMOUNT_IN) throw new Error("Missing AMOUNT_IN");
 /// For static calls only, you can just use the provider (VoidSigner)
 const provider = new JsonRpcProvider(RPC_URL);
 /// For transactions, you need to use a Wallet or Injected Signer (in browser)
-/// const provider = new Wallet(process.env.PK!, new JsonRpcProvider(RPC_URL))
+const wallet = new Wallet(process.env.PK!, provider);
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
@@ -60,15 +60,12 @@ const zeroExAggregator = new ZeroExAggregator2(
 );
 
 /// Instantiate the Index, PriceOracle, and IndexRouter contracts
-const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider);
+const index = BaseIndex__factory.connect(INDEX_ADDRESS, wallet);
 const priceOracle = PhuturePriceOracle__factory.connect(
   PRICE_ORACLE_ADDRESS,
-  provider
+  wallet
 );
-const indexRouter = IndexRouter__factory.connect(
-  INDEX_ROUTER_ADDRESS,
-  provider
-);
+const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, wallet);
 
 /// HELPER FUNCTIONS
 
@@ -79,13 +76,13 @@ const indexRouter = IndexRouter__factory.connect(
  * @returns A promise that resolves to an array of objects containing buy amounts and other details.
  */
 async function getBuyAmounts(
-  amounts: { asset: any; amount: any }[],
+  amounts: { asset: any; amount: string }[],
   inputToken: string
 ) {
   /// Prepare buy amounts for each asset
   const buyAmounts = amounts.map(async ({ asset, amount }) => {
     /// If the asset is the input token or the amount is zero, return the asset and amount
-    if (asset === inputToken || amount.isZero()) {
+    if (asset === inputToken || BigNumber.from(amount).isZero()) {
       return {
         asset,
         swapTarget: constants.AddressZero,
@@ -100,13 +97,14 @@ async function getBuyAmounts(
       sellAmount: amount,
       sellToken: inputToken,
       buyToken: asset,
+      taker: indexRouter.address,
     });
 
     return {
       asset,
-      swapTarget: zeroExResult.data.transaction.to,
-      buyAssetMinAmount: zeroExResult.data.minBuyAmount,
-      assetQuote: zeroExResult.data.transaction.data,
+      swapTarget: zeroExResult.transaction.to,
+      buyAssetMinAmount: zeroExResult.minBuyAmount,
+      assetQuote: zeroExResult.transaction.data,
     };
   });
 
@@ -122,7 +120,7 @@ async function getBuyAmounts(
  */
 async function calculateBuyAmountsInBase(
   buyAmounts: any[],
-  amounts: { asset: string; amount: BigNumber; weight: number }[]
+  amounts: { asset: string; amount: string; weight: number }[]
 ) {
   /// Calculate the buy amounts in base currency
   const buyAmountsInBase = buyAmounts.map(
@@ -179,13 +177,14 @@ async function getQuotes(
       sellAmount: scaledSellAmount.toString(),
       sellToken: inputToken,
       buyToken: asset,
+      taker: indexRouter.address,
     });
 
     return {
       asset,
-      buyAssetMinAmount: zeroExResult.data.buyAmount,
-      swapTarget: zeroExResult.data.transaction.to,
-      assetQuote: zeroExResult.data.transaction.data,
+      buyAssetMinAmount: zeroExResult.buyAmount,
+      swapTarget: zeroExResult.transaction.to,
+      assetQuote: zeroExResult.transaction.data,
     };
   });
 
@@ -206,7 +205,7 @@ async function prepareQuotes(inputToken: string, amountIn: string) {
   /// Prepare amounts for each asset
   const amounts = _assets.map((asset, i) => ({
     asset,
-    amount: BigNumber.from(amountIn).mul(_weights[i]).div(255),
+    amount: BigNumber.from(amountIn).mul(_weights[i]).div(255).toString(),
     weight: _weights[i],
   }));
 
@@ -229,8 +228,8 @@ async function prepareQuotes(inputToken: string, amountIn: string) {
 
   /// Scale the sell amounts based on the minimum buy amount
   const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
-    amount
-      .mul(minBuyAmount.quotedBuyAmount)
+    minBuyAmount.quotedBuyAmount
+      .mul(amount)
       .div(buyAmountsInBase[i].quotedBuyAmount)
   );
 
@@ -255,7 +254,7 @@ async function main() {
   const { quotes, sellAmount } = await prepareQuotes(INPUT_TOKEN, AMOUNT_IN);
 
   // Use `.mintSwapValue` if you want to use native currency as input
-  return await indexRouter.populateTransaction.mintSwap({
+  return await indexRouter.mintSwap({
     index: INDEX_ADDRESS,
     inputToken: INPUT_TOKEN,
     recipient: RECIPIENT_ADDRESS,
