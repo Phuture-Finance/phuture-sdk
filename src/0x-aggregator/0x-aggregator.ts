@@ -52,36 +52,6 @@ export class ZeroExAggregator {
     })
   }
 
-  // /**
-  //  * ### Creates a new client instance for the 0x API for a url
-  //  *
-  //  * @param baseUrl The base endpoint to query
-  //  * @param apiKey The API key to use for the query
-  //  *
-  //  * @returns {ZeroExAggregator} The 0x Aggregator instance
-  //  */
-  // static fromUrl(
-  //   baseUrl: Url,
-  //   apiKey?: string,
-  // ): [ZeroExAggregator, AbortController] {
-  //   const abortController = new AbortController()
-
-  //   const client = axios.create({
-  //     signal: abortController?.signal,
-  //     // eslint-disable-next-line @typescript-eslint/naming-convention
-  //     baseURL: baseUrl,
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       ...(apiKey ? { '0x-api-key': apiKey } : {}),
-  //     },
-  //     validateStatus: (status) => status < 500,
-  //   })
-
-  //   debug('Created client with base URL: %s', baseUrl)
-
-  //   return [new ZeroExAggregator(client), abortController]
-  // }
-
   /**
    * ### Makes a call to the slippage endpoint and returns the slippage
    *
