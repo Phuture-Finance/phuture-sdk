@@ -18,7 +18,7 @@ export interface Zero0xPriceOptions {
   tradeSurplusRecipient: Address
   /** ### The target gas price (in wei) for the swap transaction. If not provided, the default value is based on the 0x gas price oracle */
   gasPrice: string
-  /** ### The maximum acceptable slippage of the buyToken in Bps. If this parameter is set to 0, no slippage will be tolerated. If not provided, the default slippage tolerance is 100Bps */
+  /** ### [ 0 .. 10000 ] The maximum acceptable slippage of the buyToken in Bps. If this parameter is set to 0, no slippage will be tolerated. If not provided, the default slippage tolerance is 100Bps */
   slippageBps: number
 
   /** ### Sources to exclude from the quote endpoint call */

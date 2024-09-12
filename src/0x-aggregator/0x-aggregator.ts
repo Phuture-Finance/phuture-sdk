@@ -28,7 +28,7 @@ export class ZeroExAggregator {
     affiliateAddress: '0x6575a93abdff85e5a6b97c2db2b83bcebc3574ec',
   }
   private client: AxiosInstance
-  private abortController = new AbortController()
+  abortController = new AbortController()
 
   baseUrl = 'https://api.0x.org/'
 

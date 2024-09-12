@@ -80,6 +80,8 @@ export class AutoRouter implements Router {
     const [zeroExSwap, amounts, IndexHelper, priceOracle, wethAddress] =
       await Promise.all([
         this.zeroExAggregator.quote(
+          await this.indexRouter.account.address(),
+          await this.indexRouter.account.chainId(),
           inputToken?.address ||
             nativeTokenSymbol(await index.account.chainId()),
           index.address,
@@ -107,6 +109,8 @@ export class AutoRouter implements Router {
 
         const { to, buyAmount, data, estimatedGas } =
           await this.zeroExAggregator.quote(
+            await this.indexRouter.account.address(),
+            await this.indexRouter.account.chainId(),
             inputTokenAddress,
             asset,
             amount,
@@ -240,6 +244,8 @@ export class AutoRouter implements Router {
 
         const { to, buyAmount, data, estimatedGas } =
           await this.zeroExAggregator.quote(
+            await this.indexRouter.account.address(),
+            await this.indexRouter.account.chainId(),
             routerInputTokenAddress,
             asset,
             amount,
@@ -297,6 +303,8 @@ export class AutoRouter implements Router {
           data: assetQuote,
           estimatedGas,
         } = await this.zeroExAggregator.quote(
+          await this.indexRouter.account.address(),
+          await this.indexRouter.account.chainId(),
           routerInputTokenAddress,
           asset,
           scaledSellAmount,
@@ -304,9 +312,9 @@ export class AutoRouter implements Router {
         )
 
         let buyAssetMinAmount = BigNumber.from(buyAmount)
-        if (options?.zeroExOptions?.slippagePercentage) {
+        if (options?.zeroExOptions?.slippageBps) {
           buyAssetMinAmount = buyAssetMinAmount
-            .mul(1000 - options?.zeroExOptions?.slippagePercentage * 1000)
+            .mul(1000 - options?.zeroExOptions?.slippageBps)
             .div(1000)
         }
 
@@ -349,13 +357,15 @@ export class AutoRouter implements Router {
   ): Promise<TransactionResponse> {
     const { to, sellAmount, data, estimatedGas } =
       await this.zeroExAggregator.quote(
+        await this.indexRouter.account.address(),
+        await this.indexRouter.account.chainId(),
         inputTokenAddress ||
           nativeTokenSymbol(await this.indexRouter.account.chainId()),
         indexAddress,
         amountInInputToken,
         {
           ...zeroExOptions,
-          takerAddress: await this.indexRouter.account.address(),
+          taker: await this.indexRouter.account.address(),
         },
       )
 
@@ -400,6 +410,7 @@ export class AutoRouter implements Router {
     if (outputToken) {
       outputTokenAddress = outputToken.address
       const { buyAmount } = await this.zeroExAggregator.price(
+        await this.indexRouter.account.chainId(),
         outputToken.address,
         await this.indexRouter.weth(),
         BigNumber.from(10).pow(await outputToken.decimals()),
@@ -417,6 +428,8 @@ export class AutoRouter implements Router {
 
     const [zeroExSwap, amounts] = await Promise.all([
       this.zeroExAggregator.quote(
+        await this.indexRouter.account.address(),
+        await this.indexRouter.account.chainId(),
         index.address,
         outputTokenAddress ||
           nativeTokenSymbol(await this.indexRouter.account.chainId()),
@@ -443,6 +456,7 @@ export class AutoRouter implements Router {
         }
 
         return this.zeroExAggregator.price(
+          await this.indexRouter.account.chainId(),
           asset,
           outputTokenAddress,
           amount.mul(999).div(1000),
@@ -569,15 +583,17 @@ export class AutoRouter implements Router {
           data: assetQuote,
           estimatedGas,
         } = await this.zeroExAggregator.quote(
+          await this.indexRouter.account.address(),
+          await this.indexRouter.account.chainId(),
           asset,
           routerOutputTokenAddress,
           amount.mul(999).div(1000),
           options?.zeroExOptions,
         )
 
-        const buyAssetMinAmount = options?.zeroExOptions?.slippagePercentage
+        const buyAssetMinAmount = options?.zeroExOptions?.slippageBps
           ? BigNumber.from(buyAmount)
-              .mul(1000 - options?.zeroExOptions?.slippagePercentage * 1000)
+              .mul(1000 - options?.zeroExOptions?.slippageBps)
               .div(1000)
           : buyAmount
         return {
@@ -608,11 +624,13 @@ export class AutoRouter implements Router {
     options?: Partial<Zero0xQuoteOptions>,
   ): Promise<TransactionResponse> {
     const { to, data, estimatedGas } = await this.zeroExAggregator.quote(
+      await this.indexRouter.account.address(),
+      await this.indexRouter.account.chainId(),
       indexAddress,
       outputTokenAddress ||
         nativeTokenSymbol(await this.indexRouter.account.chainId()),
       indexAmount,
-      { ...options, takerAddress: await this.indexRouter.account.address() },
+      { ...options, taker: await this.indexRouter.account.address() },
     )
 
     // TODO: catch InsufficientAllowanceError from ZeroExAggregator instead
