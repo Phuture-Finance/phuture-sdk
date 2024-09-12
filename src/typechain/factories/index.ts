@@ -3,12 +3,6 @@
 /* eslint-disable */
 export { BaseIndex__factory } from "./BaseIndex__factory";
 export { ERC20__factory } from "./ERC20__factory";
-export { ERC20Permit__factory } from "./ERC20Permit__factory";
-export { ERC4626Upgradeable__factory } from "./ERC4626Upgradeable__factory";
-export { ERC4626WithPermit__factory } from "./ERC4626WithPermit__factory";
-export { IHarvestingJob__factory } from "./IHarvestingJob__factory";
 export { IndexHelper__factory } from "./IndexHelper__factory";
 export { IndexRouter__factory } from "./IndexRouter__factory";
 export { PhuturePriceOracle__factory } from "./PhuturePriceOracle__factory";
-export { SavingsVault__factory } from "./SavingsVault__factory";
-export { SavingsVaultViews__factory } from "./SavingsVaultViews__factory";
