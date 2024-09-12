@@ -1,4 +1,4 @@
-import { BigNumber, constants, utils } from 'ethers'
+import { BigNumber, BigNumberish, constants, utils } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { ZeroExAggregator } from '../src/0x-aggregator'
@@ -69,7 +69,7 @@ const ALLOWANCE_SLOT = 9
  * @param outputToken - The output token for the burn operation.
  * @returns A promise that resolves to an array of quotes for burning tokens.
  */
-async function prepareQuotes(shares, outputToken) {
+async function prepareQuotes(shares: string, outputToken: string) {
   const balanceOfOwnerSlot = utils.keccak256(
     utils.defaultAbiCoder.encode(
       ['address', 'uint256'],
@@ -134,7 +134,7 @@ async function prepareQuotes(shares, outputToken) {
 
   console.log('Burn Tokens Amounts:')
   console.table(
-    burnTokensAmounts.map((amount, i) => ({
+    burnTokensAmounts.map((amount: BigNumberish, i: number) => ({
       asset: _assets[i],
       amount: amount.toString(),
     })),
