@@ -1,7 +1,7 @@
 import { BigNumber, constants } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import { ZeroExAggregator } from "../src/0x-aggregator";
+import { ZeroExAggregator2 } from "../src/0x-aggregator-2";
 import {
   BaseIndex__factory,
   IndexRouter__factory,
@@ -54,7 +54,7 @@ const provider = new JsonRpcProvider(RPC_URL);
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
-const [zeroExAggregator] = ZeroExAggregator.fromUrl(
+const zeroExAggregator = new ZeroExAggregator2(
   ZERO_EX_API_URL,
   ZERO_EX_API_KEY
 );
@@ -95,17 +95,18 @@ async function getBuyAmounts(
     }
 
     /// Otherwise, get the buy amount from the 0x Aggregator
-    const zeroExResult = await zeroExAggregator.quote(
-      inputToken,
-      asset,
-      amount
-    );
+    const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
+      chainId: provider.network.chainId,
+      sellAmount: amount,
+      sellToken: inputToken,
+      buyToken: asset,
+    });
 
     return {
       asset,
-      swapTarget: zeroExResult.to,
-      buyAssetMinAmount: zeroExResult.buyAmount,
-      assetQuote: zeroExResult.data,
+      swapTarget: zeroExResult.data.transaction.to,
+      buyAssetMinAmount: zeroExResult.data.minBuyAmount,
+      assetQuote: zeroExResult.data.transaction.data,
     };
   });
 
@@ -173,17 +174,18 @@ async function getQuotes(
     }
 
     /// Otherwise, get the quote from the 0x Aggregator
-    const zeroExResult = await zeroExAggregator.quote(
-      inputToken,
-      asset,
-      scaledSellAmount
-    );
+    const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
+      chainId: provider.network.chainId,
+      sellAmount: scaledSellAmount.toString(),
+      sellToken: inputToken,
+      buyToken: asset,
+    });
 
     return {
       asset,
-      buyAssetMinAmount: BigNumber.from(zeroExResult.buyAmount),
-      swapTarget: zeroExResult.to,
-      assetQuote: zeroExResult.data,
+      buyAssetMinAmount: zeroExResult.data.buyAmount,
+      swapTarget: zeroExResult.data.transaction.to,
+      assetQuote: zeroExResult.data.transaction.data,
     };
   });
 

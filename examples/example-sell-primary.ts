@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish, constants, utils } from 'ethers'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
-import { ZeroExAggregator } from '../src/0x-aggregator'
+import { ZeroExAggregator2 } from '../src/0x-aggregator-2'
 import { BaseIndex__factory, IndexRouter__factory } from '../src/typechain'
 
 /// ENVIRONMENT VARIABLES
@@ -46,12 +46,10 @@ const provider = new JsonRpcProvider(RPC_URL)
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
-const [zeroExAggregator] = ZeroExAggregator.fromUrl(
+const zeroExAggregator = new ZeroExAggregator2(
   ZERO_EX_API_URL,
   ZERO_EX_API_KEY,
 )
-
-zeroExAggregator.slippageProtection = true
 
 /// Instantiate the Index and IndexRouter contracts
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, provider)
@@ -66,55 +64,55 @@ const ALLOWANCE_SLOT = 9
  * Prepares quotes for burning tokens.
  *
  * @param shares - The number of shares to burn.
- * @param outputToken - The output token for the burn operation.
+ * @param buyToken - The output token for the burn operation.
  * @returns A promise that resolves to an array of quotes for burning tokens.
  */
-async function prepareQuotes(shares: string, outputToken: string) {
+async function prepareQuotes(shares: string, buyToken: string) {
   const balanceOfOwnerSlot = utils.keccak256(
     utils.defaultAbiCoder.encode(
-      ['address', 'uint256'],
-      [RECIPIENT_ADDRESS, BALANCE_OF_SLOT],
-    ),
-  )
+      ["address", "uint256"],
+      [RECIPIENT_ADDRESS, BALANCE_OF_SLOT]
+    )
+  );
 
   const allowanceOwnerSlot = utils.keccak256(
     utils.defaultAbiCoder.encode(
-      ['address', 'uint256'],
-      [RECIPIENT_ADDRESS, ALLOWANCE_SLOT],
-    ),
-  )
+      ["address", "uint256"],
+      [RECIPIENT_ADDRESS, ALLOWANCE_SLOT]
+    )
+  );
   const spenderSlot = utils.keccak256(
     utils.defaultAbiCoder.encode(
-      ['address', 'bytes32'],
-      [INDEX_ROUTER_ADDRESS, allowanceOwnerSlot],
-    ),
-  )
+      ["address", "bytes32"],
+      [INDEX_ROUTER_ADDRESS, allowanceOwnerSlot]
+    )
+  );
 
   const stateDiff = {
     [INDEX_ADDRESS]: {
       stateDiff: {
         [balanceOfOwnerSlot]: utils.hexZeroPad(
           utils.hexValue(BigNumber.from(shares)),
-          32,
+          32
         ),
         [spenderSlot]: utils.hexZeroPad(
           utils.hexValue(BigNumber.from(shares)),
-          32,
+          32
         ),
       },
     },
-  }
+  };
 
   /// Retrieve the current index anatomy and inactive anatomy from the index contract
   const [{ _assets, _weights }, inactiveAnatomy, rawBurnTokensAmounts] =
     await Promise.all([
       index.anatomy(),
       index.inactiveAnatomy(),
-      provider.send('eth_call', [
+      provider.send("eth_call", [
         {
           from: RECIPIENT_ADDRESS,
           to: indexRouter.address,
-          data: indexRouter.interface.encodeFunctionData('burnWithAmounts', [
+          data: indexRouter.interface.encodeFunctionData("burnWithAmounts", [
             {
               index: index.address,
               recipient: RECIPIENT_ADDRESS,
@@ -122,61 +120,60 @@ async function prepareQuotes(shares: string, outputToken: string) {
             },
           ]),
         },
-        'latest',
+        "latest",
         stateDiff,
       ]),
-    ])
+    ]);
 
   const [burnTokensAmounts] = new utils.AbiCoder().decode(
-    ['uint[]'],
-    rawBurnTokensAmounts,
-  )
+    ["uint[]"],
+    rawBurnTokensAmounts
+  );
 
-  console.log('Burn Tokens Amounts:')
+  console.log("Burn Tokens Amounts:");
   console.table(
     burnTokensAmounts.map((amount: BigNumberish, i: number) => ({
       asset: _assets[i],
       amount: amount.toString(),
-    })),
-  )
+    }))
+  );
 
   /// Merge the active and inactive anatomy into a single array
   const constituents = [
     ..._assets.map((asset, i) => ({ asset, weight: _weights[i] })),
     ...inactiveAnatomy.map((asset) => ({ asset, weight: 0 })),
-  ]
+  ];
 
   /// Prepare quotes for burning tokens
   const quotes = constituents.map(async ({ asset }, constituentIndex) => {
-    const amount = burnTokensAmounts[constituentIndex] || BigNumber.from(0)
+    const sellAmount = burnTokensAmounts[constituentIndex] || BigNumber.from(0);
     /// If the amount is zero or the asset is the output token, return an empty quote
-    if (!amount || amount.isZero() || asset === outputToken) {
+    if (!sellAmount || sellAmount.isZero() || asset.toLowerCase() === buyToken.toLowerCase()) {
       return {
         swapTarget: constants.AddressZero,
         assetQuote: [],
         buyAssetMinAmount: 0,
-      }
+      };
     }
 
     /// Use the 0x Aggregator to get a quote for burning the token
-    const zeroExResult = await zeroExAggregator.quote(
-      asset,
-      outputToken,
-      amount,
-      {
-        slippagePercentage: 0.03,
-      },
-    )
+    const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
+      chainId: provider.network.chainId,
+      sellToken: asset,
+      buyToken,
+      sellAmount: sellAmount.toString(),
+      taker: indexRouter.address
+    });
 
     return {
-      swapTarget: zeroExResult.to,
-      buyAssetMinAmount: zeroExResult.buyAmount,
-      assetQuote: zeroExResult.data,
-    }
-  })
+      swapTarget: zeroExResult.data.transaction.to,
+      buyAssetMinAmount: zeroExResult.data.minBuyAmount,
+      assetQuote: zeroExResult.data.transaction.data,
+    };
+  });
 
   /// Use `Promise.all` to resolve all the quotes concurrently
-  return await Promise.all(quotes)
+  return await Promise.all(quotes);
 }
 
 /// MAIN FUNCTION
