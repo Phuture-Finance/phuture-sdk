@@ -58,7 +58,6 @@ export class AutoRouter {
    * @returns output amount of Index
    */
   async selectBuy(
-    chainId: number,
     index: Index,
     sellAmount: string,
     sellToken: string,
@@ -71,6 +70,8 @@ export class AutoRouter {
   }> {
     const sellTokenInstance = new Erc20(index.signer, sellToken);
 
+    const chainId = await this.indexRouter.signer.getChainId();
+
     const [zeroExSwap, amounts, wethAddress] = await Promise.all([
       this.zeroExAggregator.allowanceHolderQuote({
         ...zeroExOptions,
@@ -78,6 +79,7 @@ export class AutoRouter {
         sellToken,
         sellAmount,
         buyToken: index.contract.address,
+        taker: await this.indexRouter.signer.getAddress(),
       }),
       index.getAnatomy(),
       this.indexRouter.contract.WETH(),
@@ -125,6 +127,7 @@ export class AutoRouter {
             sellToken,
             buyToken: asset,
             sellAmount: amount.toString(),
+            taker: this.indexRouter.contract.address,
           });
 
           return {
@@ -207,12 +210,12 @@ export class AutoRouter {
    */
   async buy(
     isMint: boolean,
-    chainId: number,
     index: Index,
     sellAmount: string,
     sellToken: string,
     zeroExOptions?: Partial<ZeroExRequest>
   ): Promise<TransactionResponse> {
+    const chainId = await this.indexRouter.signer.getChainId();
     if (isMint)
       return this.buyMint(chainId, index, sellAmount, sellToken, zeroExOptions);
 
@@ -257,6 +260,7 @@ export class AutoRouter {
             sellToken,
             buyToken: asset,
             sellAmount: amount.toString(),
+            taker: this.indexRouter.contract.address,
           });
 
           return {
@@ -325,6 +329,7 @@ export class AutoRouter {
           sellToken,
           sellAmount: scaledSellAmount.toString(),
           buyToken: asset,
+          taker: this.indexRouter.contract.address,
         });
 
         return {
@@ -365,15 +370,18 @@ export class AutoRouter {
       sellToken,
       sellAmount,
       buyToken: indexAddress,
+      taker: await this.indexRouter.signer.getAddress(),
     });
 
     // TODO: catch InsufficientAllowanceError from ZeroEx
 
-    return this.indexRouter.signer.sendTransaction({
+    return await this.indexRouter.signer.sendTransaction({
       to: data.transaction.to,
       data: data.transaction.data,
       gasLimit: BigNumber.from(data.transaction.gas).toHexString(),
-      // ...(sellToken ? {} : { value: BigNumber.from(sellAmount).toHexString() }), // TODO
+      ...(sellToken.toLowerCase() !== NATIVE.toLowerCase()
+        ? {}
+        : { value: data.transaction.value }), // TODO
     });
   }
 
@@ -420,6 +428,7 @@ export class AutoRouter {
         sellToken: index.contract.address,
         buyToken,
         sellAmount,
+        taker: await this.indexRouter.signer.getAddress(),
       }),
       this.indexRouter.burnTokensAmount(index, sellAmount),
     ]);
@@ -510,7 +519,6 @@ export class AutoRouter {
    */
   async sell(
     isBurn: boolean,
-    chainId: number,
     index: Index,
     indexAmount: string,
     outputTokenAddress: string,
@@ -518,7 +526,6 @@ export class AutoRouter {
   ): Promise<TransactionResponse> {
     if (isBurn)
       return this.sellBurn(
-        chainId,
         index,
         indexAmount,
         outputTokenAddress,
@@ -526,7 +533,6 @@ export class AutoRouter {
       );
 
     return this.sellSwap(
-      chainId,
       index.contract.address,
       indexAmount,
       outputTokenAddress,
@@ -535,12 +541,12 @@ export class AutoRouter {
   }
 
   public async sellBurn(
-    chainId: number,
     index: Index,
     indexAmount: string,
     outputTokenAddress: string,
     zeroExOptions?: Partial<ZeroExRequest>
   ): Promise<TransactionResponse> {
+    const chainId = await this.indexRouter.signer.getChainId();
     const amounts = await this.indexRouter.burnAmount(index, indexAmount);
 
     const routerOutputTokenAddress = outputTokenAddress;
@@ -565,6 +571,7 @@ export class AutoRouter {
           sellToken: asset,
           buyToken: routerOutputTokenAddress,
           sellAmount: amount.mul(999).div(1000).toString(),
+          taker: this.indexRouter.contract.address,
         });
 
         return {
@@ -586,18 +593,19 @@ export class AutoRouter {
   }
 
   public async sellSwap(
-    chainId: number,
     indexAddress: string,
     sellAmount: string,
     buyToken: string,
     zeroExOptions?: Partial<ZeroExRequest>
   ): Promise<TransactionResponse> {
+    const chainId = await this.indexRouter.signer.getChainId();
     const data = await this.zeroExAggregator.allowanceHolderQuote({
       ...zeroExOptions,
       chainId,
       sellToken: indexAddress,
       sellAmount,
       buyToken,
+      taker: await this.indexRouter.signer.getAddress(),
     });
 
     // TODO: catch InsufficientAllowanceError from ZeroExAggregator
