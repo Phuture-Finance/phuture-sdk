@@ -3,10 +3,11 @@ import axiosRetry from 'axios-retry'
 import newDebug from 'debug'
 import { BigNumber, BigNumberish } from 'ethers'
 
-import { ChainIds } from '../types'
-import type { Address, ChainId, TokenSymbol, Url } from '../types'
+import type { Address, ChainId, TokenSymbol } from '../types'
 
 import {
+  RawZero0xPriceResponse,
+  RawZero0xQuoteResponse,
   Zero0xPriceOptions,
   Zero0xPriceResponse,
   Zero0xQuoteOptions,
@@ -18,12 +19,6 @@ axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay })
 
 const debug = newDebug('@phuture:0x-aggregator')
 
-/** ### Addresses of the ZeroX API endpoint */
-export const zeroExBaseUrl: Record<ChainId, Url> = {
-  [ChainIds.Mainnet]: 'https://api.0x.org/',
-  [ChainIds.CChain]: 'https://avalanche.api.0x.org/',
-}
-
 /** ### Facilitates swaps for end user */
 export class ZeroExAggregator {
   /** ### Default options for the 0x endpoints */
@@ -32,6 +27,10 @@ export class ZeroExAggregator {
     enableSlippageProtection: true,
     affiliateAddress: '0x6575a93abdff85e5a6b97c2db2b83bcebc3574ec',
   }
+  private client: AxiosInstance
+  private abortController = new AbortController()
+
+  baseUrl = 'https://api.0x.org/'
 
   /**
    * ### Constructs an instance of the swap class
@@ -40,37 +39,48 @@ export class ZeroExAggregator {
    *
    * @returns {ZeroExAggregator} The 0x Aggregator instance
    */
-  constructor(private readonly client: AxiosInstance) {}
-
-  /**
-   * ### Creates a new client instance for the 0x API for a url
-   *
-   * @param baseUrl The base endpoint to query
-   * @param apiKey The API key to use for the query
-   *
-   * @returns {ZeroExAggregator} The 0x Aggregator instance
-   */
-  static fromUrl(
-    baseUrl: Url,
-    apiKey?: string,
-  ): [ZeroExAggregator, AbortController] {
-    const abortController = new AbortController()
-
-    const client = axios.create({
-      signal: abortController?.signal,
+  constructor(apiKey: string) {
+    this.client = axios.create({
+      signal: this.abortController?.signal,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      baseURL: baseUrl,
+      baseURL: this.baseUrl,
       headers: {
         'Content-Type': 'application/json',
-        ...(apiKey ? { '0x-api-key': apiKey } : {}),
+        ...{ '0x-api-key': apiKey, '0x-version': 'v2' },
       },
       validateStatus: (status) => status < 500,
     })
-
-    debug('Created client with base URL: %s', baseUrl)
-
-    return [new ZeroExAggregator(client), abortController]
   }
+
+  // /**
+  //  * ### Creates a new client instance for the 0x API for a url
+  //  *
+  //  * @param baseUrl The base endpoint to query
+  //  * @param apiKey The API key to use for the query
+  //  *
+  //  * @returns {ZeroExAggregator} The 0x Aggregator instance
+  //  */
+  // static fromUrl(
+  //   baseUrl: Url,
+  //   apiKey?: string,
+  // ): [ZeroExAggregator, AbortController] {
+  //   const abortController = new AbortController()
+
+  //   const client = axios.create({
+  //     signal: abortController?.signal,
+  //     // eslint-disable-next-line @typescript-eslint/naming-convention
+  //     baseURL: baseUrl,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       ...(apiKey ? { '0x-api-key': apiKey } : {}),
+  //     },
+  //     validateStatus: (status) => status < 500,
+  //   })
+
+  //   debug('Created client with base URL: %s', baseUrl)
+
+  //   return [new ZeroExAggregator(client), abortController]
+  // }
 
   /**
    * ### Makes a call to the slippage endpoint and returns the slippage
@@ -94,6 +104,8 @@ export class ZeroExAggregator {
    * ### Makes a call to the quote endpoint and returns
    * a transaction request for the best price
    *
+   * @param taker address that will make the trade
+   * @param chainId chain ID
    * @param sellToken Token to sell
    * @param buyToken Token to buy
    * @param sellAmount Amount of sellToken to sell
@@ -102,6 +114,8 @@ export class ZeroExAggregator {
    * @returns Promise transaction response
    */
   async quote(
+    taker: Address,
+    chainId: ChainId,
     sellToken: Address,
     buyToken: Address,
     sellAmount: BigNumberish,
@@ -113,13 +127,15 @@ export class ZeroExAggregator {
       buyToken,
       sellAmount,
     )
-    const { data } = await this.client.get<Zero0xQuoteResponse>(
-      '/swap/v1/quote',
+    const { data } = await this.client.get<RawZero0xQuoteResponse>(
+      'swap/allowance-holder/quote',
       {
         params: {
           ...this._defaultQueryParams,
+          chainId,
           sellToken,
           buyToken,
+          taker,
           sellAmount: BigNumber.from(sellAmount).toString(),
           ...options,
         },
@@ -134,13 +150,14 @@ export class ZeroExAggregator {
       buyToken,
     )
 
-    return data
+    return parseZeroExQuotes(data)
   }
 
   /**
    * ### Makes a call to the price endpoint and returns the pricing
    * that would be a available for an analogous call to /quote
    *
+   * @param chainId chain ID
    * @param sellToken Token to sell
    * @param buyToken Token to buy
    * @param sellAmount Amount of sellToken to sell
@@ -149,6 +166,7 @@ export class ZeroExAggregator {
    * @returns Promise transaction response
    */
   async price(
+    chainId: ChainId,
     sellToken: Address | TokenSymbol,
     buyToken: Address,
     sellAmount: BigNumberish,
@@ -160,11 +178,12 @@ export class ZeroExAggregator {
       buyToken,
       sellAmount,
     )
-    const { data } = await this.client.get<Zero0xPriceResponse>(
-      '/swap/v1/price',
+    const { data } = await this.client.get<RawZero0xPriceResponse>(
+      'swap/allowance-holder/price',
       {
         params: {
           ...this._defaultQueryParams,
+          chainId,
           sellToken,
           buyToken,
           sellAmount: BigNumber.from(sellAmount).toString(),
@@ -181,24 +200,48 @@ export class ZeroExAggregator {
       buyToken,
     )
 
-    return data
+    return parseZeroExPrices(data)
   }
 
   /**
    * Returns the liquidity sources enabled for the chain
    *
+   * @param chainId chain ID
+   *
    * @returns Promise transaction response
    */
-  async sources(): Promise<Zero0xSourcesResponse> {
+  async sources(chainId: ChainId): Promise<Zero0xSourcesResponse> {
     debug('Making sources call')
-    const { data } = await this.client.get<Zero0xSourcesResponse>(
-      '/swap/v1/sources',
-    )
+    const { data } = await this.client.get<Zero0xSourcesResponse>('/sources', {
+      params: {
+        chainId,
+      },
+    })
 
     // TODO: cover error codes and add retry logic
 
-    debug('Received %d sources', data.records.length)
+    debug('Received %d sources', data.sources.length)
 
     return data
   }
 }
+
+const parseZeroExQuotes = (
+  quotes: RawZero0xQuoteResponse,
+): Zero0xQuoteResponse => ({
+  buyAmount: quotes.buyAmount,
+  sellAmount: quotes.sellAmount,
+  estimatedGas: quotes.transaction.gas,
+  gasPrice: quotes.transaction.gasPrice,
+  to: quotes.transaction.to,
+  data: quotes.transaction.data,
+})
+
+const parseZeroExPrices = (
+  prices: RawZero0xPriceResponse,
+): Zero0xPriceResponse => ({
+  buyAmount: prices.buyAmount,
+  sellAmount: prices.sellAmount,
+  estimatedGas: prices.gas,
+  gasPrice: prices.gasPrice,
+})
