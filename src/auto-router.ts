@@ -395,28 +395,31 @@ export class AutoRouter {
     target: string;
     expectedAllowance?: string;
   }> {
+    const chainId = await this.indexRouter.signer.getChainId();
+    const taker = await this.indexRouter.signer.getAddress();
+
     const indexTokenInstance = new Erc20(this.indexRouter.signer, indexToken);
 
-    const chainId = await this.indexRouter.signer.getChainId();
     let buyTokenInstance: Erc20;
     let buyTokenPriceEth = BigNumber.from(10).pow(18).toString();
+    let buyTokenDecimals = 18;
+
     if (buyToken === NATIVE) {
       buyTokenInstance = new Erc20(this.indexRouter.signer, await this.indexRouter.contract.WETH());
     } else {
       buyTokenInstance = new Erc20(this.indexRouter.signer, buyToken);
+      buyTokenDecimals = await buyTokenInstance.contract.decimals();
+
       const data = await this.zeroExAggregator.allowanceHolderPrice({
         ...zeroExOptions,
         chainId,
-        sellToken: buyTokenInstance.contract.address,
+        sellToken: buyToken,
         buyToken: await this.indexRouter.contract.WETH(),
-        sellAmount: BigNumber.from(10)
-          .pow(await buyTokenInstance.contract.decimals())
-          .toString(),
+        sellAmount: BigNumber.from(10).pow(buyTokenDecimals).toString(),
       });
+
       buyTokenPriceEth = data.minBuyAmount;
     }
-
-    const taker = await this.indexRouter.signer.getAddress();
 
     const [zeroExSwap, amounts] = await Promise.all([
       this.zeroExAggregator.allowanceHolderQuote({
@@ -432,14 +435,7 @@ export class AutoRouter {
 
     const prices = await Promise.all(
       amounts.map(async ({ amount, asset }) => {
-        if (asset.toLowerCase() === buyToken.toLowerCase()) {
-          return {
-            minBuyAmount: 0,
-            gas: 0,
-          };
-        }
-
-        if (!amount || amount.isZero()) {
+        if (asset.toLowerCase() === buyToken.toLowerCase() || !amount || amount.isZero()) {
           return {
             minBuyAmount: 0,
             gas: 0,
@@ -467,14 +463,16 @@ export class AutoRouter {
         .add(baseBurnGas + prices.length * additionalBurnGasPerAsset),
     );
 
-    const burnNet = indexRouterBurnOutputAmount.sub(
-      totalBurnGas.mul(zeroExSwap.transaction.gasPrice),
-    );
-    const zeroExNet = BigNumber.from(buyTokenPriceEth).sub(
-      BigNumber.from(zeroExSwap.transaction.gas || 0).mul(zeroExSwap.transaction.gasPrice),
-    );
+    const gasDiffInEth = totalBurnGas
+      .sub(zeroExSwap.transaction.gas || 0)
+      .mul(zeroExSwap.transaction.gasPrice);
 
-    const isBurn = burnNet.gte(zeroExNet);
+    const buyAmountDiffInEth = indexRouterBurnOutputAmount
+      .sub(zeroExSwap.minBuyAmount)
+      .mul(buyTokenPriceEth)
+      .div(BigNumber.from(10).pow(buyTokenDecimals));
+
+    const isBurn = gasDiffInEth.lte(buyAmountDiffInEth);
 
     const target = isBurn ? this.indexRouter.contract.address : zeroExSwap.transaction.to;
     let expectedAllowance: string | undefined;
