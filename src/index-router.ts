@@ -1,7 +1,6 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
 import { BigNumber, type ContractTransaction, utils } from "ethers";
 
-import { Contract } from "./contract";
 import { Erc20 } from "./erc-20";
 import {
 	type BaseIndex,
@@ -28,17 +27,22 @@ export type Anatomy = {
 }[];
 
 /** ### IndexRouter Contract */
-export class IndexRouter extends Contract<IndexRouterContractInterface> {
+export class IndexRouter {
+	public contract: IndexRouterContractInterface;
+
 	/**
 	 * ### Creates a new IndexRouter instance
 	 *
-	 * @param account Account to use for signing
+	 * @param signer Account to use for signing
 	 * @param contract Contract instance or address of the IndexRouter contract
 	 *
 	 * @returns New IndexRouter token instance
 	 */
-	constructor(account: JsonRpcSigner, contract: IndexRouterContractInterface | string) {
-		super(account, contract, IndexRouter__factory);
+	constructor(
+		public signer: JsonRpcSigner,
+		contract: string,
+	) {
+		this.contract = IndexRouter__factory.connect(contract, signer);
 	}
 
 	/**
