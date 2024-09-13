@@ -1,6 +1,7 @@
 import { JsonRpcProvider, type JsonRpcSigner } from "@ethersproject/providers";
 import { Wallet } from "ethers";
 import { AutoRouter, IndexRouter, ZeroExAggregator2 } from "../src";
+import { yesNo } from "./utils";
 
 /// ENVIRONMENT VARIABLES
 
@@ -64,13 +65,14 @@ async function main() {
   if (select.expectedAllowance && select.expectedAllowance !== "0") {
     return "need allowance";
   }
-
-  return await autoRouter.buy(
-    select.isMint,
-    INDEX_ADDRESS,
-    SELL_AMOUNT,
-    INPUT_TOKEN
-  );
+  if (await yesNo()) {
+    return await autoRouter.buy(
+      select.isMint,
+      INDEX_ADDRESS,
+      SELL_AMOUNT,
+      INPUT_TOKEN
+    );
+  }
 }
 
 main().then(console.info, console.error);
