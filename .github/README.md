@@ -4,10 +4,8 @@ Phuture SDK is a JS library for using functionality related to defi indices made
 
 ## Installation
 
-Use the package manager [pnpm](https://pnpm.io/) to install SDK's dependencies.
-
 ```bash
-pnpm i @phuture/sdk
+npm i @phuture/sdk
 ```
 
 ## Usage
@@ -18,7 +16,6 @@ AutoRouter package has been created to find the best deal to buy or sell an inde
 
 ```typescript
 import {
-  Account,
   AutoRouter,
   Erc20,
   IndexRouter,
@@ -27,13 +24,10 @@ import {
 import { ethers } from 'ethers'
 
 const amount = '1000'
-const account = new Account(
-  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
-)
+const account = new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider())
 
 const indexRouter = new IndexRouter(account)
 const zeroAggregator = new ZeroExAggregator()
-const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS')
 
 const autoRouter = new AutoRouter(indexRouter, zeroAggregator)
 
@@ -41,80 +35,7 @@ const autoRouter = new AutoRouter(indexRouter, zeroAggregator)
 autoRouter.autoBuy(indexTokenInterface, amount, erc20)
 
 // handle sell
-autoRouter.autoBuy(indexTokenInterface, amount, erc20)
-```
-
-### Erc20
-
-Erc20 package has been created to wrap the usual erc20 interface to use it
-
-```typescript
-import { Erc20 } from '@phuture/sdk'
-import { ethers } from 'ethers'
-
-const account = new Account(
-  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
-)
-
-const erc20 = new Erc20(account, 'ERC20_TOKEN_ADDRESS')
-
-// get token's decimals
-erc20.decimals()
-
-// get token's symbol
-erc20.symbol()
-```
-
-### Index
-
-Index package has been created to wrap the Phuture's Index interface to use it
-
-```typescript
-import { Index } from '@phuture/sdk'
-import { ethers } from 'ethers'
-
-const account = new Account(
-  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
-)
-
-const indexPDI = new Index(account, 'INDEX_CONTRACT')
-
-// get amount of input tokens to set underlying tokens amount
-const { amounts, amountToSell } = indexPDI.scaleAmount(10000000000)
-```
-
-### Index Router
-
-Index Router package has been created to use methods from Phuture's IndexRouter contract such as mint, burn and others.
-
-```typescript
-import { IndexRouter } from '@phuture/sdk'
-import { ethers } from 'ethers'
-
-const account = new Account(
-  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
-)
-const mintOptions = {
-  index: 'INDEX_ADDRESS',
-  amountInBase: 100000,
-  recipient: 'RECIPIENT_ADDRESS',
-}
-const burnOptions = {
-  quotes: [], // can get it from 0x aggregator
-}
-
-const indexRouter = new IndexRouter(account)
-
-// run mint transaction
-const mintTx = await indexRouter.mintSwap(mintOptions, 'AMOUNT_IN_INPUT_TOKEN')
-
-// run burn transaction
-const burnTx = await indexRouter.burnSwap(
-  'INDEX_ADDRESS',
-  'AMOUNT_IN_INDEX',
-  'RECIPIENT_ADDRESS',
-  burnOptions,
-)
+autoRouter.autoSell(indexTokenInterface, amount, erc20)
 ```
 
 ### 0x Aggregator
@@ -125,10 +46,8 @@ ZeroEx Aggregator package has been created to use methods related for managing P
 import { Index, ZeroExAggregator } from '@phuture/sdk'
 import { ethers } from 'ethers'
 
-const account = new Account(
-  new ethers.Wallet('PRIVATE_KEY', ethers.getDefaultProvider()),
-)
-const indexPDI = new Index(account, 'INDEX_CONTRACT')
+const amount = '1000000000000000';
+const indexPDI = 'INDEX_CONTRACT';
 
 const zeroAggregator = new ZeroExAggregator()
 
@@ -142,26 +61,4 @@ const {
   indexPDI,
   amount,
 )
-```
-
-### Subgraph
-
-Subgraph package has been created to get data related to index and users that hold the index
-
-```typescript
-import { Subgraph } from '@phuture/sdk'
-
-const client = Subgraph.fromUrl()
-
-// get user data
-const { data } = await client.query({
-  query: gql`
-    query User($userId: ID!) {
-      user(id: $userId) {
-        id
-      }
-    }
-  `,
-  variables: { userId },
-})
 ```
