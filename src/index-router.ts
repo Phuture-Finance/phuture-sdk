@@ -1,4 +1,5 @@
-import { BigNumber, type ContractTransaction, type Signer } from "ethers";
+import type { JsonRpcSigner } from "@ethersproject/providers";
+import { BigNumber, type ContractTransaction, utils } from "ethers";
 
 import type { Index } from "./base-index";
 import { Contract } from "./contract";
@@ -7,7 +8,7 @@ import {
 	type IndexRouter as IndexRouterContractInterface,
 	IndexRouter__factory,
 } from "./typechain";
-import type { IIndexRouter } from "./typechain/IndexRouter";
+import type { IIndexRouterV2 } from "./typechain/IndexRouter";
 
 /** ### Default IndexRouter address for network */
 export const defaultIndexRouterAddress: Record<number, string> = {
@@ -16,6 +17,9 @@ export const defaultIndexRouterAddress: Record<number, string> = {
 	/** ### Default IndexRouter address on c-chain. */
 	43114: "0xd6dd95610fc3a3579a2c32fe06158d8bfb8f4ee9",
 };
+
+const BALANCE_OF_SLOT = 8;
+const ALLOWANCE_SLOT = 9;
 
 /** ### IndexRouter Contract */
 export class IndexRouter extends Contract<IndexRouterContractInterface> {
@@ -28,7 +32,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 * @returns New IndexRouter token instance
 	 */
 	constructor(
-		account: Signer,
+		account: JsonRpcSigner,
 		contract: IndexRouterContractInterface | string,
 	) {
 		super(account, contract, IndexRouter__factory);
@@ -44,39 +48,42 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 * @returns mint transaction
 	 */
 	async mintSwap(
-		options: IIndexRouter.MintSwapParamsStruct,
+		options: IIndexRouterV2.MintSwapParamsStruct,
 		sellAmount: string,
-		sellToken?: string,
+		sellToken: string,
 	): Promise<ContractTransaction> {
-		if (!sellToken) {
-			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
-				index: options.index,
-				quotes: options.quotes,
-				recipient: options.recipient,
-			};
-
-			const mintSwapValueEstimatedGas =
-				await this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
-					value: sellAmount,
-				});
-
-			return this.contract.mintSwapValue(mintSwapValueOptions, {
-				value: sellAmount,
-				gasLimit: mintSwapValueEstimatedGas.mul(100).div(95),
-			});
-		}
-
 		const sellTokenInstance = new Erc20(this.signer, sellToken);
 		await sellTokenInstance.checkAllowance(this.contract.address, sellAmount);
 
 		const estimatedGas = await this.contract.estimateGas.mintSwap(
-			options as IIndexRouter.MintSwapParamsStruct,
+			options as IIndexRouterV2.MintSwapParamsStruct,
 		);
 
 		return this.contract.mintSwap(
-			options as IIndexRouter.MintSwapParamsStruct,
-			{ gasLimit: estimatedGas.mul(100).div(95) },
+			options as IIndexRouterV2.MintSwapParamsStruct,
+			{ gasLimit: estimatedGas.mul(105).div(100) },
 		);
+	}
+
+	async mintSwapValue(
+		options: IIndexRouterV2.MintSwapParamsStruct,
+		sellAmount: string,
+	): Promise<ContractTransaction> {
+		const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
+			index: options.index,
+			quotes: options.quotes,
+			recipient: options.recipient,
+		};
+
+		const mintSwapValueEstimatedGas =
+			await this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
+				value: sellAmount,
+			});
+
+		return this.contract.mintSwapValue(mintSwapValueOptions, {
+			value: sellAmount,
+			gasLimit: mintSwapValueEstimatedGas.mul(105).div(100),
+		});
 	}
 
 	/**
@@ -89,12 +96,12 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	 * @returns mint amount
 	 */
 	async mintSwapStatic(
-		options: IIndexRouter.MintSwapParamsStruct,
+		options: IIndexRouterV2.MintSwapParamsStruct,
 		sellAmount: string,
 		sellToken?: Erc20,
 	): Promise<BigNumber> {
 		if (!sellToken) {
-			const mintSwapValueOptions: IIndexRouter.MintSwapValueParamsStruct = {
+			const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
 				index: options.index,
 				quotes: options.quotes,
 				recipient: options.recipient,
@@ -108,7 +115,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		await sellToken.checkAllowance(this.contract.address, sellAmount);
 
 		return this.contract.callStatic.mintSwap(
-			options as IIndexRouter.MintSwapParamsStruct,
+			options as IIndexRouterV2.MintSwapParamsStruct,
 		);
 	}
 
@@ -125,10 +132,10 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 	async mintIndexAmount(
 		index: string,
 		amountInInputToken: string,
-		quotes: IIndexRouter.MintQuoteParamsStruct[],
+		quotes: IIndexRouterV2.MintQuoteParamsStruct[],
 		inputToken: string,
 	): Promise<BigNumber> {
-		const option: IIndexRouter.MintSwapParamsStruct = {
+		const option: IIndexRouterV2.MintSwapParamsStruct = {
 			inputToken,
 			amountInInputToken,
 			quotes,
@@ -154,7 +161,7 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		recipient: string,
 	): Promise<ContractTransaction> {
 		const indexInstance = new Erc20(this.signer, index);
-		const burnParameters: IIndexRouter.BurnParamsStruct = {
+		const burnParameters: IIndexRouterV2.BurnParamsStruct = {
 			index,
 			amount,
 			recipient,
@@ -184,10 +191,10 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		amount: string,
 		recipient: string,
 		outputAsset: string,
-		quotes: IIndexRouter.BurnQuoteParamsStruct[],
+		quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
 	): Promise<ContractTransaction> {
 		const indexInstance = new Erc20(this.signer, index);
-		const burnParameters: IIndexRouter.BurnSwapParamsStruct = {
+		const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
 			index,
 			amount,
 			recipient,
@@ -202,6 +209,32 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 
 		return this.contract.burnSwap(burnParameters, {
 			gasLimit: estimatedGas.mul(100).div(95),
+		});
+	}
+
+	async burnSwapValue(
+		index: string,
+		amount: string,
+		recipient: string,
+		outputAsset: string,
+		quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
+	): Promise<ContractTransaction> {
+		const indexInstance = new Erc20(this.signer, index);
+		const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
+			index,
+			amount,
+			recipient,
+			quotes,
+			outputAsset,
+		};
+
+		await indexInstance.checkAllowance(this.contract.address, amount);
+
+		const estimatedGas =
+			await this.contract.estimateGas.burnSwapValue(burnParameters);
+
+		return this.contract.burnSwapValue(burnParameters, {
+			gasLimit: estimatedGas.mul(105).div(100),
 		});
 	}
 
@@ -220,10 +253,10 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		amount: string,
 		recipient: string,
 		outputAsset: string,
-		quotes: IIndexRouter.BurnQuoteParamsStruct[],
+		quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
 	): Promise<BigNumber> {
 		const indexInstance = new Erc20(this.signer, index);
-		const burnParameters: IIndexRouter.BurnSwapParamsStruct = {
+		const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
 			index,
 			amount,
 			recipient,
@@ -274,15 +307,71 @@ export class IndexRouter extends Contract<IndexRouterContractInterface> {
 		index: Index,
 		amount: string,
 	): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
-		const [anatomy, inactiveAnatomy, burnTokensAmounts] = await Promise.all([
+		const recipient = await index.signer.getAddress();
+		const balanceOfOwnerSlot = utils.keccak256(
+			utils.defaultAbiCoder.encode(
+				["address", "uint256"],
+				[recipient, BALANCE_OF_SLOT],
+			),
+		);
+
+		const allowanceOwnerSlot = utils.keccak256(
+			utils.defaultAbiCoder.encode(
+				["address", "uint256"],
+				[recipient, ALLOWANCE_SLOT],
+			),
+		);
+		const spenderSlot = utils.keccak256(
+			utils.defaultAbiCoder.encode(
+				["address", "bytes32"],
+				[this.contract.address, allowanceOwnerSlot],
+			),
+		);
+
+		const stateDiff = {
+			[index.contract.address]: {
+				stateDiff: {
+					[balanceOfOwnerSlot]: utils.hexZeroPad(
+						utils.hexValue(BigNumber.from(amount)),
+						32,
+					),
+					[spenderSlot]: utils.hexZeroPad(
+						utils.hexValue(BigNumber.from(amount)),
+						32,
+					),
+				},
+			},
+		};
+
+		const [anatomy, inactiveAnatomy, rawBurnTokensAmounts] = await Promise.all([
 			index.getAnatomy(),
 			index.getInactiveAnatomy(),
-			this.contract.callStatic.burnWithAmounts({
-				index: index.contract.address,
-				recipient: this.signer.getAddress(),
-				amount,
-			}),
+			this.signer.provider.send("eth_call", [
+				{
+					from: recipient,
+					to: this.contract.address,
+					data: this.contract.interface.encodeFunctionData("burnWithAmounts", [
+						{
+							index: index.contract.address,
+							recipient,
+							amount,
+						},
+					]),
+				},
+				"latest",
+				stateDiff,
+			]),
+			//   this.contract.callStatic.burnWithAmounts({
+			//     index: index.contract.address,
+			//     recipient: this.signer.getAddress(),
+			//     amount,
+			//   }),
 		]);
+
+		const [burnTokensAmounts] = new utils.AbiCoder().decode(
+			["uint[]"],
+			rawBurnTokensAmounts,
+		);
 
 		return [...anatomy, ...inactiveAnatomy].map(
 			(constituent, constituentIndex) => ({

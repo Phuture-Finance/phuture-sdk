@@ -32,7 +32,7 @@
 						"type": "address"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnParams",
+				"internalType": "struct IIndexRouterV2.BurnParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -74,6 +74,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -84,12 +89,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.BurnQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnSwapParams",
+				"internalType": "struct IIndexRouterV2.BurnSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -137,6 +142,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -147,12 +157,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.BurnQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnSwapParams",
+				"internalType": "struct IIndexRouterV2.BurnSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -200,6 +210,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -210,12 +225,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.BurnQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnSwapParams",
+				"internalType": "struct IIndexRouterV2.BurnSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			},
@@ -283,6 +298,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -293,12 +313,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.BurnQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.BurnQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnSwapParams",
+				"internalType": "struct IIndexRouterV2.BurnSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			},
@@ -378,7 +398,7 @@
 						"type": "address"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnParams",
+				"internalType": "struct IIndexRouterV2.BurnParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -414,7 +434,7 @@
 						"type": "address"
 					}
 				],
-				"internalType": "struct IIndexRouter.BurnParams",
+				"internalType": "struct IIndexRouterV2.BurnParams",
 				"name": "_params",
 				"type": "tuple"
 			},
@@ -482,7 +502,7 @@
 						"type": "address"
 					}
 				],
-				"internalType": "struct IIndexRouter.MintParams",
+				"internalType": "struct IIndexRouterV2.MintParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -535,6 +555,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -545,12 +570,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.MintQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.MintQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.MintSwapParams",
+				"internalType": "struct IIndexRouterV2.MintSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -603,6 +628,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -613,12 +643,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.MintQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.MintQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.MintSwapParams",
+				"internalType": "struct IIndexRouterV2.MintSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -661,6 +691,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -671,12 +706,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.MintQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.MintQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.MintSwapValueParams",
+				"internalType": "struct IIndexRouterV2.MintSwapValueParams",
 				"name": "_params",
 				"type": "tuple"
 			}
@@ -729,6 +764,11 @@
 								"type": "address"
 							},
 							{
+								"internalType": "address",
+								"name": "allowanceTarget",
+								"type": "address"
+							},
+							{
 								"internalType": "uint256",
 								"name": "buyAssetMinAmount",
 								"type": "uint256"
@@ -739,12 +779,12 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct IIndexRouter.MintQuoteParams[]",
+						"internalType": "struct IIndexRouterV2.MintQuoteParams[]",
 						"name": "quotes",
 						"type": "tuple[]"
 					}
 				],
-				"internalType": "struct IIndexRouter.MintSwapParams",
+				"internalType": "struct IIndexRouterV2.MintSwapParams",
 				"name": "_params",
 				"type": "tuple"
 			},

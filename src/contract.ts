@@ -1,7 +1,8 @@
+import type { JsonRpcSigner } from "@ethersproject/providers";
 import type { Contract as EthersContract, Signer } from "ethers";
 
 export interface ContractFactory {
-	connect(address: string, signer: Signer): EthersContract;
+	connect(address: string, signer: JsonRpcSigner): EthersContract;
 }
 
 /** ### Contract Instance */
@@ -19,7 +20,7 @@ export class Contract<C extends EthersContract> {
 	 * @returns {Contract} The contract instance
 	 */
 	constructor(
-		public signer: Signer,
+		public signer: JsonRpcSigner,
 		contract: C | string,
 		protected readonly contractFactory: ContractFactory,
 	) {

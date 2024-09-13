@@ -24,7 +24,7 @@ import type {
 	TypedListener,
 } from "./common";
 
-export declare namespace IIndexRouter {
+export declare namespace IIndexRouterV2 {
 	export type BurnParamsStruct = {
 		index: PromiseOrValue<string>;
 		amount: PromiseOrValue<BigNumberish>;
@@ -39,12 +39,19 @@ export declare namespace IIndexRouter {
 
 	export type BurnQuoteParamsStruct = {
 		swapTarget: PromiseOrValue<string>;
+		allowanceTarget: PromiseOrValue<string>;
 		buyAssetMinAmount: PromiseOrValue<BigNumberish>;
 		assetQuote: PromiseOrValue<BytesLike>;
 	};
 
-	export type BurnQuoteParamsStructOutput = [string, BigNumber, string] & {
+	export type BurnQuoteParamsStructOutput = [
+		string,
+		string,
+		BigNumber,
+		string,
+	] & {
 		swapTarget: string;
+		allowanceTarget: string;
 		buyAssetMinAmount: BigNumber;
 		assetQuote: string;
 	};
@@ -54,7 +61,7 @@ export declare namespace IIndexRouter {
 		amount: PromiseOrValue<BigNumberish>;
 		outputAsset: PromiseOrValue<string>;
 		recipient: PromiseOrValue<string>;
-		quotes: IIndexRouter.BurnQuoteParamsStruct[];
+		quotes: IIndexRouterV2.BurnQuoteParamsStruct[];
 	};
 
 	export type BurnSwapParamsStructOutput = [
@@ -62,13 +69,13 @@ export declare namespace IIndexRouter {
 		BigNumber,
 		string,
 		string,
-		IIndexRouter.BurnQuoteParamsStructOutput[],
+		IIndexRouterV2.BurnQuoteParamsStructOutput[],
 	] & {
 		index: string;
 		amount: BigNumber;
 		outputAsset: string;
 		recipient: string;
-		quotes: IIndexRouter.BurnQuoteParamsStructOutput[];
+		quotes: IIndexRouterV2.BurnQuoteParamsStructOutput[];
 	};
 
 	export type MintParamsStruct = {
@@ -86,6 +93,7 @@ export declare namespace IIndexRouter {
 	export type MintQuoteParamsStruct = {
 		asset: PromiseOrValue<string>;
 		swapTarget: PromiseOrValue<string>;
+		allowanceTarget: PromiseOrValue<string>;
 		buyAssetMinAmount: PromiseOrValue<BigNumberish>;
 		assetQuote: PromiseOrValue<BytesLike>;
 	};
@@ -93,11 +101,13 @@ export declare namespace IIndexRouter {
 	export type MintQuoteParamsStructOutput = [
 		string,
 		string,
+		string,
 		BigNumber,
 		string,
 	] & {
 		asset: string;
 		swapTarget: string;
+		allowanceTarget: string;
 		buyAssetMinAmount: BigNumber;
 		assetQuote: string;
 	};
@@ -107,7 +117,7 @@ export declare namespace IIndexRouter {
 		inputToken: PromiseOrValue<string>;
 		amountInInputToken: PromiseOrValue<BigNumberish>;
 		recipient: PromiseOrValue<string>;
-		quotes: IIndexRouter.MintQuoteParamsStruct[];
+		quotes: IIndexRouterV2.MintQuoteParamsStruct[];
 	};
 
 	export type MintSwapParamsStructOutput = [
@@ -115,29 +125,29 @@ export declare namespace IIndexRouter {
 		string,
 		BigNumber,
 		string,
-		IIndexRouter.MintQuoteParamsStructOutput[],
+		IIndexRouterV2.MintQuoteParamsStructOutput[],
 	] & {
 		index: string;
 		inputToken: string;
 		amountInInputToken: BigNumber;
 		recipient: string;
-		quotes: IIndexRouter.MintQuoteParamsStructOutput[];
+		quotes: IIndexRouterV2.MintQuoteParamsStructOutput[];
 	};
 
 	export type MintSwapValueParamsStruct = {
 		index: PromiseOrValue<string>;
 		recipient: PromiseOrValue<string>;
-		quotes: IIndexRouter.MintQuoteParamsStruct[];
+		quotes: IIndexRouterV2.MintQuoteParamsStruct[];
 	};
 
 	export type MintSwapValueParamsStructOutput = [
 		string,
 		string,
-		IIndexRouter.MintQuoteParamsStructOutput[],
+		IIndexRouterV2.MintQuoteParamsStructOutput[],
 	] & {
 		index: string;
 		recipient: string;
-		quotes: IIndexRouter.MintQuoteParamsStructOutput[];
+		quotes: IIndexRouterV2.MintQuoteParamsStructOutput[];
 	};
 }
 
@@ -145,19 +155,19 @@ export interface IndexRouterInterface extends utils.Interface {
 	functions: {
 		"WETH()": FunctionFragment;
 		"burn((address,uint256,address))": FunctionFragment;
-		"burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))": FunctionFragment;
-		"burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))": FunctionFragment;
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
-		"burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
+		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
+		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
 		"burnTokensAmount(address,uint256)": FunctionFragment;
 		"burnWithAmounts((address,uint256,address))": FunctionFragment;
 		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)": FunctionFragment;
 		"initialize(address,address)": FunctionFragment;
 		"mint((address,uint256,address))": FunctionFragment;
-		"mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))": FunctionFragment;
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))": FunctionFragment;
-		"mintSwapValue((address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
+		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
+		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
+		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
 		"registry()": FunctionFragment;
 	};
 
@@ -168,13 +178,13 @@ export interface IndexRouterInterface extends utils.Interface {
 			| "burn"
 			| "burn((address,uint256,address))"
 			| "burnSwap"
-			| "burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))"
+			| "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"
 			| "burnSwapValue"
-			| "burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))"
+			| "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"
 			| "burnSwapValueWithPermit"
-			| "burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
+			| "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
 			| "burnSwapWithPermit"
-			| "burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
+			| "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
 			| "burnTokensAmount"
 			| "burnTokensAmount(address,uint256)"
 			| "burnWithAmounts"
@@ -186,13 +196,13 @@ export interface IndexRouterInterface extends utils.Interface {
 			| "mint"
 			| "mint((address,uint256,address))"
 			| "mintSwap"
-			| "mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))"
+			| "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"
 			| "mintSwapIndexAmount"
-			| "mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))"
+			| "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"
 			| "mintSwapValue"
-			| "mintSwapValue((address,address,(address,address,uint256,bytes)[]))"
+			| "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"
 			| "mintSwapWithPermit"
-			| "mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
+			| "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
 			| "registry"
 			| "registry()",
 	): FunctionFragment;
@@ -201,32 +211,32 @@ export interface IndexRouterInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: "WETH()", values?: undefined): string;
 	encodeFunctionData(
 		functionFragment: "burn",
-		values: [IIndexRouter.BurnParamsStruct],
+		values: [IIndexRouterV2.BurnParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "burn((address,uint256,address))",
-		values: [IIndexRouter.BurnParamsStruct],
+		values: [IIndexRouterV2.BurnParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "burnSwap",
-		values: [IIndexRouter.BurnSwapParamsStruct],
+		values: [IIndexRouterV2.BurnSwapParamsStruct],
 	): string;
 	encodeFunctionData(
-		functionFragment: "burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))",
-		values: [IIndexRouter.BurnSwapParamsStruct],
+		functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
+		values: [IIndexRouterV2.BurnSwapParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "burnSwapValue",
-		values: [IIndexRouter.BurnSwapParamsStruct],
+		values: [IIndexRouterV2.BurnSwapParamsStruct],
 	): string;
 	encodeFunctionData(
-		functionFragment: "burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))",
-		values: [IIndexRouter.BurnSwapParamsStruct],
+		functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
+		values: [IIndexRouterV2.BurnSwapParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "burnSwapValueWithPermit",
 		values: [
-			IIndexRouter.BurnSwapParamsStruct,
+			IIndexRouterV2.BurnSwapParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -234,9 +244,9 @@ export interface IndexRouterInterface extends utils.Interface {
 		],
 	): string;
 	encodeFunctionData(
-		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		values: [
-			IIndexRouter.BurnSwapParamsStruct,
+			IIndexRouterV2.BurnSwapParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -246,7 +256,7 @@ export interface IndexRouterInterface extends utils.Interface {
 	encodeFunctionData(
 		functionFragment: "burnSwapWithPermit",
 		values: [
-			IIndexRouter.BurnSwapParamsStruct,
+			IIndexRouterV2.BurnSwapParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -254,9 +264,9 @@ export interface IndexRouterInterface extends utils.Interface {
 		],
 	): string;
 	encodeFunctionData(
-		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		values: [
-			IIndexRouter.BurnSwapParamsStruct,
+			IIndexRouterV2.BurnSwapParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -273,16 +283,16 @@ export interface IndexRouterInterface extends utils.Interface {
 	): string;
 	encodeFunctionData(
 		functionFragment: "burnWithAmounts",
-		values: [IIndexRouter.BurnParamsStruct],
+		values: [IIndexRouterV2.BurnParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "burnWithAmounts((address,uint256,address))",
-		values: [IIndexRouter.BurnParamsStruct],
+		values: [IIndexRouterV2.BurnParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "burnWithPermit",
 		values: [
-			IIndexRouter.BurnParamsStruct,
+			IIndexRouterV2.BurnParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -292,7 +302,7 @@ export interface IndexRouterInterface extends utils.Interface {
 	encodeFunctionData(
 		functionFragment: "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)",
 		values: [
-			IIndexRouter.BurnParamsStruct,
+			IIndexRouterV2.BurnParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -309,40 +319,40 @@ export interface IndexRouterInterface extends utils.Interface {
 	): string;
 	encodeFunctionData(
 		functionFragment: "mint",
-		values: [IIndexRouter.MintParamsStruct],
+		values: [IIndexRouterV2.MintParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "mint((address,uint256,address))",
-		values: [IIndexRouter.MintParamsStruct],
+		values: [IIndexRouterV2.MintParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "mintSwap",
-		values: [IIndexRouter.MintSwapParamsStruct],
+		values: [IIndexRouterV2.MintSwapParamsStruct],
 	): string;
 	encodeFunctionData(
-		functionFragment: "mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))",
-		values: [IIndexRouter.MintSwapParamsStruct],
+		functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
+		values: [IIndexRouterV2.MintSwapParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "mintSwapIndexAmount",
-		values: [IIndexRouter.MintSwapParamsStruct],
+		values: [IIndexRouterV2.MintSwapParamsStruct],
 	): string;
 	encodeFunctionData(
-		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))",
-		values: [IIndexRouter.MintSwapParamsStruct],
+		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
+		values: [IIndexRouterV2.MintSwapParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "mintSwapValue",
-		values: [IIndexRouter.MintSwapValueParamsStruct],
+		values: [IIndexRouterV2.MintSwapValueParamsStruct],
 	): string;
 	encodeFunctionData(
-		functionFragment: "mintSwapValue((address,address,(address,address,uint256,bytes)[]))",
-		values: [IIndexRouter.MintSwapValueParamsStruct],
+		functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
+		values: [IIndexRouterV2.MintSwapValueParamsStruct],
 	): string;
 	encodeFunctionData(
 		functionFragment: "mintSwapWithPermit",
 		values: [
-			IIndexRouter.MintSwapParamsStruct,
+			IIndexRouterV2.MintSwapParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -350,9 +360,9 @@ export interface IndexRouterInterface extends utils.Interface {
 		],
 	): string;
 	encodeFunctionData(
-		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		values: [
-			IIndexRouter.MintSwapParamsStruct,
+			IIndexRouterV2.MintSwapParamsStruct,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BigNumberish>,
 			PromiseOrValue<BytesLike>,
@@ -374,7 +384,7 @@ export interface IndexRouterInterface extends utils.Interface {
 	): Result;
 	decodeFunctionResult(functionFragment: "burnSwap", data: BytesLike): Result;
 	decodeFunctionResult(
-		functionFragment: "burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))",
+		functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -382,7 +392,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
-		functionFragment: "burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))",
+		functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -390,7 +400,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
-		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -398,7 +408,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
-		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -437,7 +447,7 @@ export interface IndexRouterInterface extends utils.Interface {
 	): Result;
 	decodeFunctionResult(functionFragment: "mintSwap", data: BytesLike): Result;
 	decodeFunctionResult(
-		functionFragment: "mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))",
+		functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -445,7 +455,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
-		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))",
+		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -453,7 +463,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
-		functionFragment: "mintSwapValue((address,address,(address,address,uint256,bytes)[]))",
+		functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
@@ -461,7 +471,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(
-		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
@@ -502,37 +512,37 @@ export interface IndexRouter extends BaseContract {
 		"WETH()"(overrides?: CallOverrides): Promise<[string]>;
 
 		burn(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		"burn((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		burnSwap(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		burnSwapValue(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		burnSwapValueWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -540,8 +550,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -550,7 +560,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<ContractTransaction>;
 
 		burnSwapWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -558,8 +568,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -580,17 +590,17 @@ export interface IndexRouter extends BaseContract {
 		): Promise<[BigNumber[]] & { _amounts: BigNumber[] }>;
 
 		burnWithAmounts(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		burnWithPermit(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -599,7 +609,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<ContractTransaction>;
 
 		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -620,47 +630,47 @@ export interface IndexRouter extends BaseContract {
 		): Promise<ContractTransaction>;
 
 		mint(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		"mint((address,uint256,address))"(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		mintSwap(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		mintSwapIndexAmount(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<[BigNumber] & { _amount: BigNumber }>;
 
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<[BigNumber] & { _amount: BigNumber }>;
 
 		mintSwapValue(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"mintSwapValue((address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
 		mintSwapWithPermit(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -668,8 +678,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<ContractTransaction>;
 
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -687,37 +697,37 @@ export interface IndexRouter extends BaseContract {
 	"WETH()"(overrides?: CallOverrides): Promise<string>;
 
 	burn(
-		_params: IIndexRouter.BurnParamsStruct,
+		_params: IIndexRouterV2.BurnParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	"burn((address,uint256,address))"(
-		_params: IIndexRouter.BurnParamsStruct,
+		_params: IIndexRouterV2.BurnParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	burnSwap(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))"(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+	"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	burnSwapValue(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))"(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+	"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	burnSwapValueWithPermit(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -725,8 +735,8 @@ export interface IndexRouter extends BaseContract {
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+	"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -735,7 +745,7 @@ export interface IndexRouter extends BaseContract {
 	): Promise<ContractTransaction>;
 
 	burnSwapWithPermit(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -743,8 +753,8 @@ export interface IndexRouter extends BaseContract {
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouter.BurnSwapParamsStruct,
+	"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+		_params: IIndexRouterV2.BurnSwapParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -765,17 +775,17 @@ export interface IndexRouter extends BaseContract {
 	): Promise<BigNumber[]>;
 
 	burnWithAmounts(
-		_params: IIndexRouter.BurnParamsStruct,
+		_params: IIndexRouterV2.BurnParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	"burnWithAmounts((address,uint256,address))"(
-		_params: IIndexRouter.BurnParamsStruct,
+		_params: IIndexRouterV2.BurnParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	burnWithPermit(
-		_params: IIndexRouter.BurnParamsStruct,
+		_params: IIndexRouterV2.BurnParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -784,7 +794,7 @@ export interface IndexRouter extends BaseContract {
 	): Promise<ContractTransaction>;
 
 	"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouter.BurnParamsStruct,
+		_params: IIndexRouterV2.BurnParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -805,47 +815,47 @@ export interface IndexRouter extends BaseContract {
 	): Promise<ContractTransaction>;
 
 	mint(
-		_params: IIndexRouter.MintParamsStruct,
+		_params: IIndexRouterV2.MintParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	"mint((address,uint256,address))"(
-		_params: IIndexRouter.MintParamsStruct,
+		_params: IIndexRouterV2.MintParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	mintSwap(
-		_params: IIndexRouter.MintSwapParamsStruct,
+		_params: IIndexRouterV2.MintSwapParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-		_params: IIndexRouter.MintSwapParamsStruct,
+	"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+		_params: IIndexRouterV2.MintSwapParamsStruct,
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	mintSwapIndexAmount(
-		_params: IIndexRouter.MintSwapParamsStruct,
+		_params: IIndexRouterV2.MintSwapParamsStruct,
 		overrides?: CallOverrides,
 	): Promise<BigNumber>;
 
-	"mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-		_params: IIndexRouter.MintSwapParamsStruct,
+	"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+		_params: IIndexRouterV2.MintSwapParamsStruct,
 		overrides?: CallOverrides,
 	): Promise<BigNumber>;
 
 	mintSwapValue(
-		_params: IIndexRouter.MintSwapValueParamsStruct,
+		_params: IIndexRouterV2.MintSwapValueParamsStruct,
 		overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"mintSwapValue((address,address,(address,address,uint256,bytes)[]))"(
-		_params: IIndexRouter.MintSwapValueParamsStruct,
+	"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+		_params: IIndexRouterV2.MintSwapValueParamsStruct,
 		overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
 	mintSwapWithPermit(
-		_params: IIndexRouter.MintSwapParamsStruct,
+		_params: IIndexRouterV2.MintSwapParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -853,8 +863,8 @@ export interface IndexRouter extends BaseContract {
 		overrides?: Overrides & { from?: PromiseOrValue<string> },
 	): Promise<ContractTransaction>;
 
-	"mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouter.MintSwapParamsStruct,
+	"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+		_params: IIndexRouterV2.MintSwapParamsStruct,
 		_deadline: PromiseOrValue<BigNumberish>,
 		_v: PromiseOrValue<BigNumberish>,
 		_r: PromiseOrValue<BytesLike>,
@@ -872,37 +882,37 @@ export interface IndexRouter extends BaseContract {
 		"WETH()"(overrides?: CallOverrides): Promise<string>;
 
 		burn(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<void>;
 
 		"burn((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<void>;
 
 		burnSwap(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		burnSwapValue(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		burnSwapValueWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -910,8 +920,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -920,7 +930,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<BigNumber>;
 
 		burnSwapWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -928,8 +938,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -950,17 +960,17 @@ export interface IndexRouter extends BaseContract {
 		): Promise<BigNumber[]>;
 
 		burnWithAmounts(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber[]>;
 
 		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber[]>;
 
 		burnWithPermit(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -969,7 +979,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<void>;
 
 		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -990,47 +1000,47 @@ export interface IndexRouter extends BaseContract {
 		): Promise<void>;
 
 		mint(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		"mint((address,uint256,address))"(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		mintSwap(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		mintSwapIndexAmount(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		mintSwapValue(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"mintSwapValue((address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		mintSwapWithPermit(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1038,8 +1048,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1060,37 +1070,37 @@ export interface IndexRouter extends BaseContract {
 		"WETH()"(overrides?: CallOverrides): Promise<BigNumber>;
 
 		burn(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		"burn((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		burnSwap(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		burnSwapValue(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		burnSwapValueWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1098,8 +1108,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1108,7 +1118,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<BigNumber>;
 
 		burnSwapWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1116,8 +1126,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1138,17 +1148,17 @@ export interface IndexRouter extends BaseContract {
 		): Promise<BigNumber>;
 
 		burnWithAmounts(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		burnWithPermit(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1157,7 +1167,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<BigNumber>;
 
 		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1178,47 +1188,47 @@ export interface IndexRouter extends BaseContract {
 		): Promise<BigNumber>;
 
 		mint(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		"mint((address,uint256,address))"(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		mintSwap(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		mintSwapIndexAmount(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<BigNumber>;
 
 		mintSwapValue(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"mintSwapValue((address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
 		mintSwapWithPermit(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1226,8 +1236,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<BigNumber>;
 
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1246,37 +1256,37 @@ export interface IndexRouter extends BaseContract {
 		"WETH()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
 		burn(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		"burn((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		burnSwap(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"burnSwap((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		burnSwapValue(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"burnSwapValue((address,uint256,address,address,(address,uint256,bytes)[]))"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		burnSwapValueWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1284,8 +1294,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1294,7 +1304,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<PopulatedTransaction>;
 
 		burnSwapWithPermit(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1302,8 +1312,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"burnSwapWithPermit((address,uint256,address,address,(address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnSwapParamsStruct,
+		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.BurnSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1324,17 +1334,17 @@ export interface IndexRouter extends BaseContract {
 		): Promise<PopulatedTransaction>;
 
 		burnWithAmounts(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		burnWithPermit(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1343,7 +1353,7 @@ export interface IndexRouter extends BaseContract {
 		): Promise<PopulatedTransaction>;
 
 		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.BurnParamsStruct,
+			_params: IIndexRouterV2.BurnParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1364,47 +1374,47 @@ export interface IndexRouter extends BaseContract {
 		): Promise<PopulatedTransaction>;
 
 		mint(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		"mint((address,uint256,address))"(
-			_params: IIndexRouter.MintParamsStruct,
+			_params: IIndexRouterV2.MintParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		mintSwap(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"mintSwap((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		mintSwapIndexAmount(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<PopulatedTransaction>;
 
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			overrides?: CallOverrides,
 		): Promise<PopulatedTransaction>;
 
 		mintSwapValue(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"mintSwapValue((address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouter.MintSwapValueParamsStruct,
+		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+			_params: IIndexRouterV2.MintSwapValueParamsStruct,
 			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
 		mintSwapWithPermit(
-			_params: IIndexRouter.MintSwapParamsStruct,
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,
@@ -1412,8 +1422,8 @@ export interface IndexRouter extends BaseContract {
 			overrides?: Overrides & { from?: PromiseOrValue<string> },
 		): Promise<PopulatedTransaction>;
 
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouter.MintSwapParamsStruct,
+		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+			_params: IIndexRouterV2.MintSwapParamsStruct,
 			_deadline: PromiseOrValue<BigNumberish>,
 			_v: PromiseOrValue<BigNumberish>,
 			_r: PromiseOrValue<BytesLike>,

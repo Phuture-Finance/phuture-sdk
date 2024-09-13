@@ -1,11 +1,11 @@
-import { BigNumber, constants, Wallet } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { constants, BigNumber, Wallet } from "ethers";
 
 import { ZeroExAggregator2 } from "../src/0x-aggregator-2";
 import {
-  BaseIndex__factory,
-  IndexRouter__factory,
-  PhuturePriceOracle__factory,
+	BaseIndex__factory,
+	IndexRouter__factory,
+	PhuturePriceOracle__factory,
 } from "../src/typechain";
 
 /// ENVIRONMENT VARIABLES
@@ -19,7 +19,7 @@ if (!RPC_URL) throw new Error("Missing RPC_URL");
 const ZERO_EX_API_URL = process.env.ZERO_EX_API_URL!;
 const ZERO_EX_API_KEY = process.env.ZERO_EX_API_KEY!;
 if (!ZERO_EX_API_URL || !ZERO_EX_API_KEY)
-  throw new Error("Missing ZERO_EX_API_URL or ZERO_EX_API_KEY");
+	throw new Error("Missing ZERO_EX_API_URL or ZERO_EX_API_KEY");
 
 /// 0x48f88A3fE843ccb0b5003e70B4192c1d7448bEf0 on Production
 const INDEX_ADDRESS = process.env.INDEX_ADDRESS!;
@@ -30,6 +30,7 @@ const PRICE_ORACLE_ADDRESS = process.env.PRICE_ORACLE_ADDRESS!;
 if (!PRICE_ORACLE_ADDRESS) throw new Error("Missing PRICE_ORACLE_ADDRESS");
 
 /// 0xD6dd95610fC3A3579a2C32fe06158d8bfB8F4eE9 on Production
+/// new 0x6A74b8C452f36ad3a9a162D2710BA012C3E5eB82
 const INDEX_ROUTER_ADDRESS = process.env.INDEX_ROUTER_ADDRESS!;
 if (!INDEX_ROUTER_ADDRESS) throw new Error("Missing INDEX_ROUTER_ADDRESS");
 
@@ -55,15 +56,15 @@ const wallet = new Wallet(process.env.PK!, provider);
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
 const zeroExAggregator = new ZeroExAggregator2(
-  ZERO_EX_API_URL,
-  ZERO_EX_API_KEY
+	ZERO_EX_API_URL,
+	ZERO_EX_API_KEY,
 );
 
 /// Instantiate the Index, PriceOracle, and IndexRouter contracts
 const index = BaseIndex__factory.connect(INDEX_ADDRESS, wallet);
 const priceOracle = PhuturePriceOracle__factory.connect(
-  PRICE_ORACLE_ADDRESS,
-  wallet
+	PRICE_ORACLE_ADDRESS,
+	wallet,
 );
 const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, wallet);
 
@@ -76,40 +77,40 @@ const indexRouter = IndexRouter__factory.connect(INDEX_ROUTER_ADDRESS, wallet);
  * @returns A promise that resolves to an array of objects containing buy amounts and other details.
  */
 async function getBuyAmounts(
-  amounts: { asset: any; amount: string }[],
-  inputToken: string
+	amounts: { asset: any; amount: string }[],
+	inputToken: string,
 ) {
-  /// Prepare buy amounts for each asset
-  const buyAmounts = amounts.map(async ({ asset, amount }) => {
-    /// If the asset is the input token or the amount is zero, return the asset and amount
-    if (asset === inputToken || BigNumber.from(amount).isZero()) {
-      return {
-        asset,
-        swapTarget: constants.AddressZero,
-        buyAssetMinAmount: amount,
-        assetQuote: [],
-      };
-    }
+	/// Prepare buy amounts for each asset
+	const buyAmounts = amounts.map(async ({ asset, amount }) => {
+		/// If the asset is the input token or the amount is zero, return the asset and amount
+		if (asset === inputToken || BigNumber.from(amount).isZero()) {
+			return {
+				asset,
+				swapTarget: constants.AddressZero,
+				buyAssetMinAmount: amount,
+				assetQuote: [],
+			};
+		}
 
-    /// Otherwise, get the buy amount from the 0x Aggregator
-    const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
-      chainId: provider.network.chainId,
-      sellAmount: amount,
-      sellToken: inputToken,
-      buyToken: asset,
-      taker: indexRouter.address,
-    });
+		/// Otherwise, get the buy amount from the 0x Aggregator
+		const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
+			chainId: provider.network.chainId,
+			sellAmount: amount,
+			sellToken: inputToken,
+			buyToken: asset,
+			taker: indexRouter.address,
+		});
 
-    return {
-      asset,
-      swapTarget: zeroExResult.transaction.to,
-      buyAssetMinAmount: zeroExResult.minBuyAmount,
-      assetQuote: zeroExResult.transaction.data,
-    };
-  });
+		return {
+			asset,
+			swapTarget: zeroExResult.transaction.to,
+			buyAssetMinAmount: zeroExResult.minBuyAmount,
+			assetQuote: zeroExResult.transaction.data,
+		};
+	});
 
-  /// Use `Promise.all` to resolve all buy amounts concurrently
-  return await Promise.all(buyAmounts);
+	/// Use `Promise.all` to resolve all buy amounts concurrently
+	return await Promise.all(buyAmounts);
 }
 
 /**
@@ -119,30 +120,29 @@ async function getBuyAmounts(
  * @returns A promise that resolves to an array of objects containing asset and quoted buy amount.
  */
 async function calculateBuyAmountsInBase(
-  buyAmounts: any[],
-  amounts: { asset: string; amount: string; weight: number }[]
+	buyAmounts: any[],
+	amounts: { asset: string; amount: string; weight: number }[],
 ) {
-  /// Calculate the buy amounts in base currency
-  const buyAmountsInBase = buyAmounts.map(
-    async ({ asset, buyAssetMinAmount }, amountIndex) => {
-      /// Get the price of the asset in base currency from the PriceOracle
-      /// Note: `callStatic` is used because this is not a view function
-      const price = await priceOracle.callStatic.refreshedAssetPerBaseInUQ(
-        asset
-      );
+	/// Calculate the buy amounts in base currency
+	const buyAmountsInBase = buyAmounts.map(
+		async ({ asset, buyAssetMinAmount }, amountIndex) => {
+			/// Get the price of the asset in base currency from the PriceOracle
+			/// Note: `callStatic` is used because this is not a view function
+			const price =
+				await priceOracle.callStatic.refreshedAssetPerBaseInUQ(asset);
 
-      /// Calculate the quoted buy amount in base currency
-      const quotedBuyAmount = BigNumber.from(buyAssetMinAmount)
-        .mul(BigNumber.from(2).pow(112))
-        .mul(255)
-        .div(price.mul(amounts[amountIndex]!.weight));
+			/// Calculate the quoted buy amount in base currency
+			const quotedBuyAmount = BigNumber.from(buyAssetMinAmount)
+				.mul(BigNumber.from(2).pow(112))
+				.mul(255)
+				.div(price.mul(amounts[amountIndex]!.weight));
 
-      return { asset, quotedBuyAmount };
-    }
-  );
+			return { asset, quotedBuyAmount };
+		},
+	);
 
-  /// Use `Promise.all` to resolve all buy amounts in base currency concurrently
-  return await Promise.all(buyAmountsInBase);
+	/// Use `Promise.all` to resolve all buy amounts in base currency concurrently
+	return await Promise.all(buyAmountsInBase);
 }
 
 /**
@@ -153,43 +153,43 @@ async function calculateBuyAmountsInBase(
  * @returns A promise that resolves to an array of quotes for the given amounts.
  */
 async function getQuotes(
-  amounts: { asset: any }[],
-  inputToken: string,
-  scaledSellAmounts: BigNumber[]
+	amounts: { asset: any }[],
+	inputToken: string,
+	scaledSellAmounts: BigNumber[],
 ) {
-  /// Prepare quotes for each asset
-  const quotes = amounts.map(async ({ asset }, i) => {
-    const scaledSellAmount = scaledSellAmounts[i] as BigNumber;
+	/// Prepare quotes for each asset
+	const quotes = amounts.map(async ({ asset }, i) => {
+		const scaledSellAmount = scaledSellAmounts[i] as BigNumber;
 
-    /// If the asset is the input token or the scaled sell amount is zero, return the asset and amount
-    if (asset === inputToken || scaledSellAmount.isZero()) {
-      return {
-        asset,
-        swapTarget: constants.AddressZero,
-        buyAssetMinAmount: scaledSellAmounts[i]!,
-        assetQuote: [],
-      };
-    }
+		/// If the asset is the input token or the scaled sell amount is zero, return the asset and amount
+		if (asset === inputToken || scaledSellAmount.isZero()) {
+			return {
+				asset,
+				swapTarget: constants.AddressZero,
+				buyAssetMinAmount: scaledSellAmounts[i]!,
+				assetQuote: [],
+			};
+		}
 
-    /// Otherwise, get the quote from the 0x Aggregator
-    const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
-      chainId: provider.network.chainId,
-      sellAmount: scaledSellAmount.toString(),
-      sellToken: inputToken,
-      buyToken: asset,
-      taker: indexRouter.address,
-    });
+		/// Otherwise, get the quote from the 0x Aggregator
+		const zeroExResult = await zeroExAggregator.allowanceHolderQuote({
+			chainId: provider.network.chainId,
+			sellAmount: scaledSellAmount.toString(),
+			sellToken: inputToken,
+			buyToken: asset,
+			taker: indexRouter.address,
+		});
 
-    return {
-      asset,
-      buyAssetMinAmount: zeroExResult.buyAmount,
-      swapTarget: zeroExResult.transaction.to,
-      assetQuote: zeroExResult.transaction.data,
-    };
-  });
+		return {
+			asset,
+			buyAssetMinAmount: zeroExResult.buyAmount,
+			swapTarget: zeroExResult.transaction.to,
+			assetQuote: zeroExResult.transaction.data,
+		};
+	});
 
-  /// Use `Promise.all` to resolve all quotes concurrently
-  return await Promise.all(quotes);
+	/// Use `Promise.all` to resolve all quotes concurrently
+	return await Promise.all(quotes);
 }
 
 /**
@@ -199,68 +199,68 @@ async function getQuotes(
  * @returns A promise that resolves to an object containing quotes and the total sell amount.
  */
 async function prepareQuotes(inputToken: string, amountIn: string) {
-  /// Retrieve the current index anatomy and inactive anatomy from the index contract
-  const { _assets, _weights } = await index.anatomy();
+	/// Retrieve the current index anatomy and inactive anatomy from the index contract
+	const { _assets, _weights } = await index.anatomy();
 
-  /// Prepare amounts for each asset
-  const amounts = _assets.map((asset, i) => ({
-    asset,
-    amount: BigNumber.from(amountIn).mul(_weights[i]).div(255).toString(),
-    weight: _weights[i],
-  }));
+	/// Prepare amounts for each asset
+	const amounts = _assets.map((asset, i) => ({
+		asset,
+		amount: BigNumber.from(amountIn).mul(_weights[i]).div(255).toString(),
+		weight: _weights[i],
+	}));
 
-  console.dir({ amounts }, { depth: 2 });
+	console.dir({ amounts }, { depth: 2 });
 
-  /// Get the buy amounts for the given amounts and input token
-  const buyAmounts = await getBuyAmounts(amounts, inputToken);
+	/// Get the buy amounts for the given amounts and input token
+	const buyAmounts = await getBuyAmounts(amounts, inputToken);
 
-  console.dir({ buyAmounts }, { depth: 2 });
+	console.dir({ buyAmounts }, { depth: 2 });
 
-  /// Calculate the buy amounts in base currency
-  const buyAmountsInBase = await calculateBuyAmountsInBase(buyAmounts, amounts);
+	/// Calculate the buy amounts in base currency
+	const buyAmountsInBase = await calculateBuyAmountsInBase(buyAmounts, amounts);
 
-  console.dir({ buyAmountsInBase }, { depth: 2 });
+	console.dir({ buyAmountsInBase }, { depth: 2 });
 
-  /// Find the minimum buy amount in base currency
-  const minBuyAmount = buyAmountsInBase.reduce((min, curr) =>
-    min.quotedBuyAmount.lte(curr.quotedBuyAmount) ? min : curr
-  );
+	/// Find the minimum buy amount in base currency
+	const minBuyAmount = buyAmountsInBase.reduce((min, curr) =>
+		min.quotedBuyAmount.lte(curr.quotedBuyAmount) ? min : curr,
+	);
 
-  /// Scale the sell amounts based on the minimum buy amount
-  const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
-    minBuyAmount.quotedBuyAmount
-      .mul(amount)
-      .div(buyAmountsInBase[i].quotedBuyAmount)
-  );
+	/// Scale the sell amounts based on the minimum buy amount
+	const scaledSellAmounts = Object.values(amounts).map(({ amount }, i) =>
+		minBuyAmount.quotedBuyAmount
+			.mul(amount)
+			.div(buyAmountsInBase[i].quotedBuyAmount),
+	);
 
-  /// Get quotes for the given amounts, input token, and scaled sell amounts
-  const quotes = await getQuotes(amounts, inputToken, scaledSellAmounts);
+	/// Get quotes for the given amounts, input token, and scaled sell amounts
+	const quotes = await getQuotes(amounts, inputToken, scaledSellAmounts);
 
-  console.dir({ quotes }, { depth: 2 });
+	console.dir({ quotes }, { depth: 2 });
 
-  /// Calculate the total sell amount
-  const sellAmount = scaledSellAmounts.reduce(
-    (sum, curr) => sum.add(curr),
-    BigNumber.from(0)
-  );
+	/// Calculate the total sell amount
+	const sellAmount = scaledSellAmounts.reduce(
+		(sum, curr) => sum.add(curr),
+		BigNumber.from(0),
+	);
 
-  return { quotes, sellAmount };
+	return { quotes, sellAmount };
 }
 
 /// MAIN FUNCTION
 
 async function main() {
-  /// Prepare quotes for minting tokens and get the scaled total sell amount
-  const { quotes, sellAmount } = await prepareQuotes(INPUT_TOKEN, AMOUNT_IN);
+	/// Prepare quotes for minting tokens and get the scaled total sell amount
+	const { quotes, sellAmount } = await prepareQuotes(INPUT_TOKEN, AMOUNT_IN);
 
-  // Use `.mintSwapValue` if you want to use native currency as input
-  return await indexRouter.mintSwap({
-    index: INDEX_ADDRESS,
-    inputToken: INPUT_TOKEN,
-    recipient: RECIPIENT_ADDRESS,
-    amountInInputToken: sellAmount,
-    quotes,
-  });
+	// Use `.mintSwapValue` if you want to use native currency as input
+	return await indexRouter.mintSwap({
+		index: INDEX_ADDRESS,
+		inputToken: INPUT_TOKEN,
+		recipient: RECIPIENT_ADDRESS,
+		amountInInputToken: sellAmount,
+		quotes,
+	});
 }
 
 main().then(console.info, console.error);

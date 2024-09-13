@@ -1,5 +1,4 @@
-import type { Signer } from "ethers";
-
+import type { JsonRpcSigner } from "@ethersproject/providers";
 import type { ContractFactory } from "./contract";
 import { Erc20 } from "./erc-20";
 import { type BaseIndex, BaseIndex__factory } from "./typechain";
@@ -23,7 +22,7 @@ export class Index extends Erc20<BaseIndex> {
 	 * @returns New Index token instance
 	 */
 	constructor(
-		account: Signer,
+		account: JsonRpcSigner,
 		contract: string | BaseIndex,
 		factory: ContractFactory = BaseIndex__factory,
 	) {

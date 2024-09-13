@@ -1,4 +1,4 @@
-import type { Signer } from "ethers";
+import type { JsonRpcSigner } from "@ethersproject/providers";
 
 import { Contract, type ContractFactory } from "./contract";
 import { InsufficientAllowanceError } from "./errors";
@@ -21,7 +21,7 @@ export class Erc20<
 	 * @returns New ERC20 token instance
 	 */
 	constructor(
-		account: Signer,
+		account: JsonRpcSigner,
 		contract: string | C,
 		factory: ContractFactory = ERC20__factory,
 	) {
