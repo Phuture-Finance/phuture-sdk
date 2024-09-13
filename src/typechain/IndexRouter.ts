@@ -4,1377 +4,1377 @@ import type { Listener, Provider } from "@ethersproject/providers";
 /* tslint:disable */
 /* eslint-disable */
 import type {
-	BaseContract,
-	BigNumber,
-	BigNumberish,
-	BytesLike,
-	CallOverrides,
-	ContractTransaction,
-	Overrides,
-	PayableOverrides,
-	PopulatedTransaction,
-	Signer,
-	utils,
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type {
-	OnEvent,
-	PromiseOrValue,
-	TypedEvent,
-	TypedEventFilter,
-	TypedListener,
+  OnEvent,
+  PromiseOrValue,
+  TypedEvent,
+  TypedEventFilter,
+  TypedListener,
 } from "./common";
 
 export declare namespace IIndexRouterV2 {
-	export type BurnParamsStruct = {
-		index: PromiseOrValue<string>;
-		amount: PromiseOrValue<BigNumberish>;
-		recipient: PromiseOrValue<string>;
-	};
+  export type BurnParamsStruct = {
+    index: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+    recipient: PromiseOrValue<string>;
+  };
 
-	export type BurnParamsStructOutput = [string, BigNumber, string] & {
-		index: string;
-		amount: BigNumber;
-		recipient: string;
-	};
+  export type BurnParamsStructOutput = [string, BigNumber, string] & {
+    index: string;
+    amount: BigNumber;
+    recipient: string;
+  };
 
-	export type BurnQuoteParamsStruct = {
-		swapTarget: PromiseOrValue<string>;
-		allowanceTarget: PromiseOrValue<string>;
-		buyAssetMinAmount: PromiseOrValue<BigNumberish>;
-		assetQuote: PromiseOrValue<BytesLike>;
-	};
+  export type BurnQuoteParamsStruct = {
+    swapTarget: PromiseOrValue<string>;
+    allowanceTarget: PromiseOrValue<string>;
+    buyAssetMinAmount: PromiseOrValue<BigNumberish>;
+    assetQuote: PromiseOrValue<BytesLike>;
+  };
 
-	export type BurnQuoteParamsStructOutput = [string, string, BigNumber, string] & {
-		swapTarget: string;
-		allowanceTarget: string;
-		buyAssetMinAmount: BigNumber;
-		assetQuote: string;
-	};
+  export type BurnQuoteParamsStructOutput = [string, string, BigNumber, string] & {
+    swapTarget: string;
+    allowanceTarget: string;
+    buyAssetMinAmount: BigNumber;
+    assetQuote: string;
+  };
 
-	export type BurnSwapParamsStruct = {
-		index: PromiseOrValue<string>;
-		amount: PromiseOrValue<BigNumberish>;
-		outputAsset: PromiseOrValue<string>;
-		recipient: PromiseOrValue<string>;
-		quotes: IIndexRouterV2.BurnQuoteParamsStruct[];
-	};
+  export type BurnSwapParamsStruct = {
+    index: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+    outputAsset: PromiseOrValue<string>;
+    recipient: PromiseOrValue<string>;
+    quotes: IIndexRouterV2.BurnQuoteParamsStruct[];
+  };
 
-	export type BurnSwapParamsStructOutput = [
-		string,
-		BigNumber,
-		string,
-		string,
-		IIndexRouterV2.BurnQuoteParamsStructOutput[],
-	] & {
-		index: string;
-		amount: BigNumber;
-		outputAsset: string;
-		recipient: string;
-		quotes: IIndexRouterV2.BurnQuoteParamsStructOutput[];
-	};
+  export type BurnSwapParamsStructOutput = [
+    string,
+    BigNumber,
+    string,
+    string,
+    IIndexRouterV2.BurnQuoteParamsStructOutput[],
+  ] & {
+    index: string;
+    amount: BigNumber;
+    outputAsset: string;
+    recipient: string;
+    quotes: IIndexRouterV2.BurnQuoteParamsStructOutput[];
+  };
 
-	export type MintParamsStruct = {
-		index: PromiseOrValue<string>;
-		amountInBase: PromiseOrValue<BigNumberish>;
-		recipient: PromiseOrValue<string>;
-	};
+  export type MintParamsStruct = {
+    index: PromiseOrValue<string>;
+    amountInBase: PromiseOrValue<BigNumberish>;
+    recipient: PromiseOrValue<string>;
+  };
 
-	export type MintParamsStructOutput = [string, BigNumber, string] & {
-		index: string;
-		amountInBase: BigNumber;
-		recipient: string;
-	};
+  export type MintParamsStructOutput = [string, BigNumber, string] & {
+    index: string;
+    amountInBase: BigNumber;
+    recipient: string;
+  };
 
-	export type MintQuoteParamsStruct = {
-		asset: PromiseOrValue<string>;
-		swapTarget: PromiseOrValue<string>;
-		allowanceTarget: PromiseOrValue<string>;
-		buyAssetMinAmount: PromiseOrValue<BigNumberish>;
-		assetQuote: PromiseOrValue<BytesLike>;
-	};
+  export type MintQuoteParamsStruct = {
+    asset: PromiseOrValue<string>;
+    swapTarget: PromiseOrValue<string>;
+    allowanceTarget: PromiseOrValue<string>;
+    buyAssetMinAmount: PromiseOrValue<BigNumberish>;
+    assetQuote: PromiseOrValue<BytesLike>;
+  };
 
-	export type MintQuoteParamsStructOutput = [string, string, string, BigNumber, string] & {
-		asset: string;
-		swapTarget: string;
-		allowanceTarget: string;
-		buyAssetMinAmount: BigNumber;
-		assetQuote: string;
-	};
+  export type MintQuoteParamsStructOutput = [string, string, string, BigNumber, string] & {
+    asset: string;
+    swapTarget: string;
+    allowanceTarget: string;
+    buyAssetMinAmount: BigNumber;
+    assetQuote: string;
+  };
 
-	export type MintSwapParamsStruct = {
-		index: PromiseOrValue<string>;
-		inputToken: PromiseOrValue<string>;
-		amountInInputToken: PromiseOrValue<BigNumberish>;
-		recipient: PromiseOrValue<string>;
-		quotes: IIndexRouterV2.MintQuoteParamsStruct[];
-	};
+  export type MintSwapParamsStruct = {
+    index: PromiseOrValue<string>;
+    inputToken: PromiseOrValue<string>;
+    amountInInputToken: PromiseOrValue<BigNumberish>;
+    recipient: PromiseOrValue<string>;
+    quotes: IIndexRouterV2.MintQuoteParamsStruct[];
+  };
 
-	export type MintSwapParamsStructOutput = [
-		string,
-		string,
-		BigNumber,
-		string,
-		IIndexRouterV2.MintQuoteParamsStructOutput[],
-	] & {
-		index: string;
-		inputToken: string;
-		amountInInputToken: BigNumber;
-		recipient: string;
-		quotes: IIndexRouterV2.MintQuoteParamsStructOutput[];
-	};
+  export type MintSwapParamsStructOutput = [
+    string,
+    string,
+    BigNumber,
+    string,
+    IIndexRouterV2.MintQuoteParamsStructOutput[],
+  ] & {
+    index: string;
+    inputToken: string;
+    amountInInputToken: BigNumber;
+    recipient: string;
+    quotes: IIndexRouterV2.MintQuoteParamsStructOutput[];
+  };
 
-	export type MintSwapValueParamsStruct = {
-		index: PromiseOrValue<string>;
-		recipient: PromiseOrValue<string>;
-		quotes: IIndexRouterV2.MintQuoteParamsStruct[];
-	};
+  export type MintSwapValueParamsStruct = {
+    index: PromiseOrValue<string>;
+    recipient: PromiseOrValue<string>;
+    quotes: IIndexRouterV2.MintQuoteParamsStruct[];
+  };
 
-	export type MintSwapValueParamsStructOutput = [
-		string,
-		string,
-		IIndexRouterV2.MintQuoteParamsStructOutput[],
-	] & {
-		index: string;
-		recipient: string;
-		quotes: IIndexRouterV2.MintQuoteParamsStructOutput[];
-	};
+  export type MintSwapValueParamsStructOutput = [
+    string,
+    string,
+    IIndexRouterV2.MintQuoteParamsStructOutput[],
+  ] & {
+    index: string;
+    recipient: string;
+    quotes: IIndexRouterV2.MintQuoteParamsStructOutput[];
+  };
 }
 
 export interface IndexRouterInterface extends utils.Interface {
-	functions: {
-		"WETH()": FunctionFragment;
-		"burn((address,uint256,address))": FunctionFragment;
-		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
-		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
-		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
-		"burnTokensAmount(address,uint256)": FunctionFragment;
-		"burnWithAmounts((address,uint256,address))": FunctionFragment;
-		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)": FunctionFragment;
-		"initialize(address,address)": FunctionFragment;
-		"mint((address,uint256,address))": FunctionFragment;
-		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
-		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
-		"registry()": FunctionFragment;
-	};
+  functions: {
+    "WETH()": FunctionFragment;
+    "burn((address,uint256,address))": FunctionFragment;
+    "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
+    "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))": FunctionFragment;
+    "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "burnTokensAmount(address,uint256)": FunctionFragment;
+    "burnWithAmounts((address,uint256,address))": FunctionFragment;
+    "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "initialize(address,address)": FunctionFragment;
+    "mint((address,uint256,address))": FunctionFragment;
+    "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
+    "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
+    "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))": FunctionFragment;
+    "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "registry()": FunctionFragment;
+  };
 
-	getFunction(
-		nameOrSignatureOrTopic:
-			| "WETH"
-			| "WETH()"
-			| "burn"
-			| "burn((address,uint256,address))"
-			| "burnSwap"
-			| "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"
-			| "burnSwapValue"
-			| "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"
-			| "burnSwapValueWithPermit"
-			| "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
-			| "burnSwapWithPermit"
-			| "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
-			| "burnTokensAmount"
-			| "burnTokensAmount(address,uint256)"
-			| "burnWithAmounts"
-			| "burnWithAmounts((address,uint256,address))"
-			| "burnWithPermit"
-			| "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"
-			| "initialize"
-			| "initialize(address,address)"
-			| "mint"
-			| "mint((address,uint256,address))"
-			| "mintSwap"
-			| "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"
-			| "mintSwapIndexAmount"
-			| "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"
-			| "mintSwapValue"
-			| "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"
-			| "mintSwapWithPermit"
-			| "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
-			| "registry"
-			| "registry()",
-	): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "WETH"
+      | "WETH()"
+      | "burn"
+      | "burn((address,uint256,address))"
+      | "burnSwap"
+      | "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"
+      | "burnSwapValue"
+      | "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"
+      | "burnSwapValueWithPermit"
+      | "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
+      | "burnSwapWithPermit"
+      | "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
+      | "burnTokensAmount"
+      | "burnTokensAmount(address,uint256)"
+      | "burnWithAmounts"
+      | "burnWithAmounts((address,uint256,address))"
+      | "burnWithPermit"
+      | "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"
+      | "initialize"
+      | "initialize(address,address)"
+      | "mint"
+      | "mint((address,uint256,address))"
+      | "mintSwap"
+      | "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"
+      | "mintSwapIndexAmount"
+      | "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"
+      | "mintSwapValue"
+      | "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"
+      | "mintSwapWithPermit"
+      | "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"
+      | "registry"
+      | "registry()",
+  ): FunctionFragment;
 
-	encodeFunctionData(functionFragment: "WETH", values?: undefined): string;
-	encodeFunctionData(functionFragment: "WETH()", values?: undefined): string;
-	encodeFunctionData(functionFragment: "burn", values: [IIndexRouterV2.BurnParamsStruct]): string;
-	encodeFunctionData(
-		functionFragment: "burn((address,uint256,address))",
-		values: [IIndexRouterV2.BurnParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwap",
-		values: [IIndexRouterV2.BurnSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
-		values: [IIndexRouterV2.BurnSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwapValue",
-		values: [IIndexRouterV2.BurnSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
-		values: [IIndexRouterV2.BurnSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwapValueWithPermit",
-		values: [
-			IIndexRouterV2.BurnSwapParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
-		values: [
-			IIndexRouterV2.BurnSwapParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwapWithPermit",
-		values: [
-			IIndexRouterV2.BurnSwapParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
-		values: [
-			IIndexRouterV2.BurnSwapParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnTokensAmount",
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnTokensAmount(address,uint256)",
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnWithAmounts",
-		values: [IIndexRouterV2.BurnParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnWithAmounts((address,uint256,address))",
-		values: [IIndexRouterV2.BurnParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnWithPermit",
-		values: [
-			IIndexRouterV2.BurnParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)",
-		values: [
-			IIndexRouterV2.BurnParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "initialize",
-		values: [PromiseOrValue<string>, PromiseOrValue<string>],
-	): string;
-	encodeFunctionData(
-		functionFragment: "initialize(address,address)",
-		values: [PromiseOrValue<string>, PromiseOrValue<string>],
-	): string;
-	encodeFunctionData(functionFragment: "mint", values: [IIndexRouterV2.MintParamsStruct]): string;
-	encodeFunctionData(
-		functionFragment: "mint((address,uint256,address))",
-		values: [IIndexRouterV2.MintParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwap",
-		values: [IIndexRouterV2.MintSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
-		values: [IIndexRouterV2.MintSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwapIndexAmount",
-		values: [IIndexRouterV2.MintSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
-		values: [IIndexRouterV2.MintSwapParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwapValue",
-		values: [IIndexRouterV2.MintSwapValueParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
-		values: [IIndexRouterV2.MintSwapValueParamsStruct],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwapWithPermit",
-		values: [
-			IIndexRouterV2.MintSwapParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(
-		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
-		values: [
-			IIndexRouterV2.MintSwapParamsStruct,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BytesLike>,
-			PromiseOrValue<BytesLike>,
-		],
-	): string;
-	encodeFunctionData(functionFragment: "registry", values?: undefined): string;
-	encodeFunctionData(functionFragment: "registry()", values?: undefined): string;
+  encodeFunctionData(functionFragment: "WETH", values?: undefined): string;
+  encodeFunctionData(functionFragment: "WETH()", values?: undefined): string;
+  encodeFunctionData(functionFragment: "burn", values: [IIndexRouterV2.BurnParamsStruct]): string;
+  encodeFunctionData(
+    functionFragment: "burn((address,uint256,address))",
+    values: [IIndexRouterV2.BurnParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwap",
+    values: [IIndexRouterV2.BurnSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
+    values: [IIndexRouterV2.BurnSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwapValue",
+    values: [IIndexRouterV2.BurnSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
+    values: [IIndexRouterV2.BurnSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwapValueWithPermit",
+    values: [
+      IIndexRouterV2.BurnSwapParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+    values: [
+      IIndexRouterV2.BurnSwapParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwapWithPermit",
+    values: [
+      IIndexRouterV2.BurnSwapParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+    values: [
+      IIndexRouterV2.BurnSwapParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnTokensAmount",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnTokensAmount(address,uint256)",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnWithAmounts",
+    values: [IIndexRouterV2.BurnParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnWithAmounts((address,uint256,address))",
+    values: [IIndexRouterV2.BurnParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnWithPermit",
+    values: [
+      IIndexRouterV2.BurnParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)",
+    values: [
+      IIndexRouterV2.BurnParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize(address,address)",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>],
+  ): string;
+  encodeFunctionData(functionFragment: "mint", values: [IIndexRouterV2.MintParamsStruct]): string;
+  encodeFunctionData(
+    functionFragment: "mint((address,uint256,address))",
+    values: [IIndexRouterV2.MintParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwap",
+    values: [IIndexRouterV2.MintSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
+    values: [IIndexRouterV2.MintSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwapIndexAmount",
+    values: [IIndexRouterV2.MintSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
+    values: [IIndexRouterV2.MintSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwapValue",
+    values: [IIndexRouterV2.MintSwapValueParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
+    values: [IIndexRouterV2.MintSwapValueParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwapWithPermit",
+    values: [
+      IIndexRouterV2.MintSwapParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+    values: [
+      IIndexRouterV2.MintSwapParamsStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+    ],
+  ): string;
+  encodeFunctionData(functionFragment: "registry", values?: undefined): string;
+  encodeFunctionData(functionFragment: "registry()", values?: undefined): string;
 
-	decodeFunctionResult(functionFragment: "WETH", data: BytesLike): Result;
-	decodeFunctionResult(functionFragment: "WETH()", data: BytesLike): Result;
-	decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burn((address,uint256,address))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnSwap", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnSwapValue", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnSwapValueWithPermit", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnSwapWithPermit", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnTokensAmount", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnTokensAmount(address,uint256)",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnWithAmounts", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnWithAmounts((address,uint256,address))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "burnWithPermit", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-	decodeFunctionResult(functionFragment: "initialize(address,address)", data: BytesLike): Result;
-	decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "mint((address,uint256,address))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "mintSwap", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "mintSwapIndexAmount", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "mintSwapValue", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "mintSwapWithPermit", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
-	decodeFunctionResult(functionFragment: "registry()", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "WETH", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "WETH()", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burn((address,uint256,address))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnSwap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnSwapValue", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnSwapValueWithPermit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnSwapWithPermit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnTokensAmount", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnTokensAmount(address,uint256)",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnWithAmounts", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnWithAmounts((address,uint256,address))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnWithPermit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize(address,address)", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mint((address,uint256,address))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintSwap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintSwapIndexAmount", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintSwapValue", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintSwapWithPermit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "registry()", data: BytesLike): Result;
 
-	events: {};
+  events: {};
 }
 
 export interface IndexRouter extends BaseContract {
-	connect(signerOrProvider: Signer | Provider | string): this;
-	attach(addressOrName: string): this;
-	deployed(): Promise<this>;
-
-	interface: IndexRouterInterface;
-
-	queryFilter<TEvent extends TypedEvent>(
-		event: TypedEventFilter<TEvent>,
-		fromBlockOrBlockhash?: string | number | undefined,
-		toBlock?: string | number | undefined,
-	): Promise<Array<TEvent>>;
-
-	listeners<TEvent extends TypedEvent>(
-		eventFilter?: TypedEventFilter<TEvent>,
-	): Array<TypedListener<TEvent>>;
-	listeners(eventName?: string): Array<Listener>;
-	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
-	removeAllListeners(eventName?: string): this;
-	off: OnEvent<this>;
-	on: OnEvent<this>;
-	once: OnEvent<this>;
-	removeListener: OnEvent<this>;
-
-	functions: {
-		WETH(overrides?: CallOverrides): Promise<[string]>;
-
-		"WETH()"(overrides?: CallOverrides): Promise<[string]>;
-
-		burn(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burn((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		burnSwap(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		burnSwapValue(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		burnSwapValueWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		burnSwapWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		burnTokensAmount(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<[BigNumber[]] & { _amounts: BigNumber[] }>;
-
-		"burnTokensAmount(address,uint256)"(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<[BigNumber[]] & { _amounts: BigNumber[] }>;
-
-		burnWithAmounts(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		burnWithPermit(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		initialize(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"initialize(address,address)"(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		mint(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"mint((address,uint256,address))"(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		mintSwap(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		mintSwapIndexAmount(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<[BigNumber] & { _amount: BigNumber }>;
-
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<[BigNumber] & { _amount: BigNumber }>;
-
-		mintSwapValue(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		mintSwapWithPermit(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<ContractTransaction>;
-
-		registry(overrides?: CallOverrides): Promise<[string]>;
-
-		"registry()"(overrides?: CallOverrides): Promise<[string]>;
-	};
-
-	WETH(overrides?: CallOverrides): Promise<string>;
-
-	"WETH()"(overrides?: CallOverrides): Promise<string>;
-
-	burn(
-		_params: IIndexRouterV2.BurnParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burn((address,uint256,address))"(
-		_params: IIndexRouterV2.BurnParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	burnSwap(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	burnSwapValue(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	burnSwapValueWithPermit(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	burnSwapWithPermit(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouterV2.BurnSwapParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	burnTokensAmount(
-		_index: PromiseOrValue<string>,
-		_amount: PromiseOrValue<BigNumberish>,
-		overrides?: CallOverrides,
-	): Promise<BigNumber[]>;
-
-	"burnTokensAmount(address,uint256)"(
-		_index: PromiseOrValue<string>,
-		_amount: PromiseOrValue<BigNumberish>,
-		overrides?: CallOverrides,
-	): Promise<BigNumber[]>;
-
-	burnWithAmounts(
-		_params: IIndexRouterV2.BurnParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burnWithAmounts((address,uint256,address))"(
-		_params: IIndexRouterV2.BurnParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	burnWithPermit(
-		_params: IIndexRouterV2.BurnParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouterV2.BurnParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	initialize(
-		_WETH: PromiseOrValue<string>,
-		_registry: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"initialize(address,address)"(
-		_WETH: PromiseOrValue<string>,
-		_registry: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	mint(
-		_params: IIndexRouterV2.MintParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"mint((address,uint256,address))"(
-		_params: IIndexRouterV2.MintParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	mintSwap(
-		_params: IIndexRouterV2.MintSwapParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-		_params: IIndexRouterV2.MintSwapParamsStruct,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	mintSwapIndexAmount(
-		_params: IIndexRouterV2.MintSwapParamsStruct,
-		overrides?: CallOverrides,
-	): Promise<BigNumber>;
-
-	"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-		_params: IIndexRouterV2.MintSwapParamsStruct,
-		overrides?: CallOverrides,
-	): Promise<BigNumber>;
-
-	mintSwapValue(
-		_params: IIndexRouterV2.MintSwapValueParamsStruct,
-		overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
-		_params: IIndexRouterV2.MintSwapValueParamsStruct,
-		overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	mintSwapWithPermit(
-		_params: IIndexRouterV2.MintSwapParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-		_params: IIndexRouterV2.MintSwapParamsStruct,
-		_deadline: PromiseOrValue<BigNumberish>,
-		_v: PromiseOrValue<BigNumberish>,
-		_r: PromiseOrValue<BytesLike>,
-		_s: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> },
-	): Promise<ContractTransaction>;
-
-	registry(overrides?: CallOverrides): Promise<string>;
-
-	"registry()"(overrides?: CallOverrides): Promise<string>;
-
-	callStatic: {
-		WETH(overrides?: CallOverrides): Promise<string>;
-
-		"WETH()"(overrides?: CallOverrides): Promise<string>;
-
-		burn(_params: IIndexRouterV2.BurnParamsStruct, overrides?: CallOverrides): Promise<void>;
-
-		"burn((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<void>;
-
-		burnSwap(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		burnSwapValue(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		burnSwapValueWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		burnSwapWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		burnTokensAmount(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber[]>;
-
-		"burnTokensAmount(address,uint256)"(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber[]>;
-
-		burnWithAmounts(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber[]>;
-
-		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber[]>;
-
-		burnWithPermit(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<void>;
-
-		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<void>;
-
-		initialize(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: CallOverrides,
-		): Promise<void>;
-
-		"initialize(address,address)"(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: CallOverrides,
-		): Promise<void>;
-
-		mint(_params: IIndexRouterV2.MintParamsStruct, overrides?: CallOverrides): Promise<BigNumber>;
-
-		"mint((address,uint256,address))"(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		mintSwap(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		mintSwapIndexAmount(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		mintSwapValue(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		mintSwapWithPermit(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		registry(overrides?: CallOverrides): Promise<string>;
-
-		"registry()"(overrides?: CallOverrides): Promise<string>;
-	};
-
-	filters: {};
-
-	estimateGas: {
-		WETH(overrides?: CallOverrides): Promise<BigNumber>;
-
-		"WETH()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-		burn(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burn((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		burnSwap(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		burnSwapValue(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		burnSwapValueWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		burnSwapWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		burnTokensAmount(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"burnTokensAmount(address,uint256)"(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		burnWithAmounts(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		burnWithPermit(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		initialize(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"initialize(address,address)"(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		mint(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"mint((address,uint256,address))"(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		mintSwap(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		mintSwapIndexAmount(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
-
-		mintSwapValue(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		mintSwapWithPermit(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<BigNumber>;
-
-		registry(overrides?: CallOverrides): Promise<BigNumber>;
-
-		"registry()"(overrides?: CallOverrides): Promise<BigNumber>;
-	};
-
-	populateTransaction: {
-		WETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-		"WETH()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-		burn(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burn((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		burnSwap(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		burnSwapValue(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		burnSwapValueWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		burnSwapWithPermit(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		burnTokensAmount(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<PopulatedTransaction>;
-
-		"burnTokensAmount(address,uint256)"(
-			_index: PromiseOrValue<string>,
-			_amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides,
-		): Promise<PopulatedTransaction>;
-
-		burnWithAmounts(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burnWithAmounts((address,uint256,address))"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		burnWithPermit(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		initialize(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"initialize(address,address)"(
-			_WETH: PromiseOrValue<string>,
-			_registry: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		mint(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"mint((address,uint256,address))"(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		mintSwap(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		mintSwapIndexAmount(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<PopulatedTransaction>;
-
-		"mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<PopulatedTransaction>;
-
-		mintSwapValue(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
-			_params: IIndexRouterV2.MintSwapValueParamsStruct,
-			overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		mintSwapWithPermit(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		"mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
-			_params: IIndexRouterV2.MintSwapParamsStruct,
-			_deadline: PromiseOrValue<BigNumberish>,
-			_v: PromiseOrValue<BigNumberish>,
-			_r: PromiseOrValue<BytesLike>,
-			_s: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> },
-		): Promise<PopulatedTransaction>;
-
-		registry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-		"registry()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-	};
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
+
+  interface: IndexRouterInterface;
+
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined,
+  ): Promise<Array<TEvent>>;
+
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>,
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
+
+  functions: {
+    WETH(overrides?: CallOverrides): Promise<[string]>;
+
+    "WETH()"(overrides?: CallOverrides): Promise<[string]>;
+
+    burn(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burn((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    burnSwap(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    burnSwapValue(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    burnSwapValueWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    burnSwapWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    burnTokensAmount(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber[]] & { _amounts: BigNumber[] }>;
+
+    "burnTokensAmount(address,uint256)"(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber[]] & { _amounts: BigNumber[] }>;
+
+    burnWithAmounts(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burnWithAmounts((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    burnWithPermit(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    initialize(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "initialize(address,address)"(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    mint(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "mint((address,uint256,address))"(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    mintSwap(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    mintSwapIndexAmount(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber] & { _amount: BigNumber }>;
+
+    "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber] & { _amount: BigNumber }>;
+
+    mintSwapValue(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    mintSwapWithPermit(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<ContractTransaction>;
+
+    registry(overrides?: CallOverrides): Promise<[string]>;
+
+    "registry()"(overrides?: CallOverrides): Promise<[string]>;
+  };
+
+  WETH(overrides?: CallOverrides): Promise<string>;
+
+  "WETH()"(overrides?: CallOverrides): Promise<string>;
+
+  burn(
+    _params: IIndexRouterV2.BurnParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burn((address,uint256,address))"(
+    _params: IIndexRouterV2.BurnParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  burnSwap(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  burnSwapValue(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  burnSwapValueWithPermit(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  burnSwapWithPermit(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+    _params: IIndexRouterV2.BurnSwapParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  burnTokensAmount(
+    _index: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber[]>;
+
+  "burnTokensAmount(address,uint256)"(
+    _index: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber[]>;
+
+  burnWithAmounts(
+    _params: IIndexRouterV2.BurnParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burnWithAmounts((address,uint256,address))"(
+    _params: IIndexRouterV2.BurnParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  burnWithPermit(
+    _params: IIndexRouterV2.BurnParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
+    _params: IIndexRouterV2.BurnParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  initialize(
+    _WETH: PromiseOrValue<string>,
+    _registry: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "initialize(address,address)"(
+    _WETH: PromiseOrValue<string>,
+    _registry: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  mint(
+    _params: IIndexRouterV2.MintParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "mint((address,uint256,address))"(
+    _params: IIndexRouterV2.MintParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  mintSwap(
+    _params: IIndexRouterV2.MintSwapParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+    _params: IIndexRouterV2.MintSwapParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  mintSwapIndexAmount(
+    _params: IIndexRouterV2.MintSwapParamsStruct,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
+
+  "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+    _params: IIndexRouterV2.MintSwapParamsStruct,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
+
+  mintSwapValue(
+    _params: IIndexRouterV2.MintSwapValueParamsStruct,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+    _params: IIndexRouterV2.MintSwapValueParamsStruct,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  mintSwapWithPermit(
+    _params: IIndexRouterV2.MintSwapParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+    _params: IIndexRouterV2.MintSwapParamsStruct,
+    _deadline: PromiseOrValue<BigNumberish>,
+    _v: PromiseOrValue<BigNumberish>,
+    _r: PromiseOrValue<BytesLike>,
+    _s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> },
+  ): Promise<ContractTransaction>;
+
+  registry(overrides?: CallOverrides): Promise<string>;
+
+  "registry()"(overrides?: CallOverrides): Promise<string>;
+
+  callStatic: {
+    WETH(overrides?: CallOverrides): Promise<string>;
+
+    "WETH()"(overrides?: CallOverrides): Promise<string>;
+
+    burn(_params: IIndexRouterV2.BurnParamsStruct, overrides?: CallOverrides): Promise<void>;
+
+    "burn((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    burnSwap(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    burnSwapValue(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    burnSwapValueWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    burnSwapWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    burnTokensAmount(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber[]>;
+
+    "burnTokensAmount(address,uint256)"(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber[]>;
+
+    burnWithAmounts(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber[]>;
+
+    "burnWithAmounts((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber[]>;
+
+    burnWithPermit(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    initialize(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    "initialize(address,address)"(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    mint(_params: IIndexRouterV2.MintParamsStruct, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "mint((address,uint256,address))"(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    mintSwap(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    mintSwapIndexAmount(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    mintSwapValue(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    mintSwapWithPermit(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    registry(overrides?: CallOverrides): Promise<string>;
+
+    "registry()"(overrides?: CallOverrides): Promise<string>;
+  };
+
+  filters: {};
+
+  estimateGas: {
+    WETH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "WETH()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    burn(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burn((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    burnSwap(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    burnSwapValue(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    burnSwapValueWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    burnSwapWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    burnTokensAmount(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "burnTokensAmount(address,uint256)"(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    burnWithAmounts(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burnWithAmounts((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    burnWithPermit(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    initialize(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "initialize(address,address)"(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    mint(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "mint((address,uint256,address))"(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    mintSwap(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    mintSwapIndexAmount(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    mintSwapValue(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    mintSwapWithPermit(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<BigNumber>;
+
+    registry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "registry()"(overrides?: CallOverrides): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    WETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "WETH()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    burn(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burn((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    burnSwap(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    burnSwapValue(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    burnSwapValueWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    burnSwapWithPermit(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    burnTokensAmount(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    "burnTokensAmount(address,uint256)"(
+      _index: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    burnWithAmounts(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burnWithAmounts((address,uint256,address))"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    burnWithPermit(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.BurnParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "initialize(address,address)"(
+      _WETH: PromiseOrValue<string>,
+      _registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    mint(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "mint((address,uint256,address))"(
+      _params: IIndexRouterV2.MintParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    mintSwap(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    mintSwapIndexAmount(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    mintSwapValue(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))"(
+      _params: IIndexRouterV2.MintSwapValueParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    mintSwapWithPermit(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)"(
+      _params: IIndexRouterV2.MintSwapParamsStruct,
+      _deadline: PromiseOrValue<BigNumberish>,
+      _v: PromiseOrValue<BigNumberish>,
+      _r: PromiseOrValue<BytesLike>,
+      _s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> },
+    ): Promise<PopulatedTransaction>;
+
+    registry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "registry()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+  };
 }

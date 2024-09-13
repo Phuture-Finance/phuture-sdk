@@ -4,7 +4,9 @@
     "enabled": true
   },
   "formatter": {
-    "lineWidth": 100
+    "lineWidth": 100,
+    "indentStyle": "space",
+    "indentSize": 2
   },
   "linter": {
     "enabled": true,

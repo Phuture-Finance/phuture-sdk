@@ -41,19 +41,11 @@ const provider = new Wallet(PRIVATE_KEY, new JsonRpcProvider(RPC_URL));
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
-const zeroExAggregator = new ZeroExAggregator2(
-  ZERO_EX_API_URL,
-  ZERO_EX_API_KEY
-);
+const zeroExAggregator = new ZeroExAggregator2(ZERO_EX_API_URL, ZERO_EX_API_KEY);
 
-const indexRouter = new IndexRouter(
-  provider as unknown as JsonRpcSigner,
-  INDEX_ROUTER_ADDRESS
-);
+const indexRouter = new IndexRouter(provider as unknown as JsonRpcSigner, INDEX_ROUTER_ADDRESS);
 const autoRouter = new AutoRouter(indexRouter, zeroExAggregator);
 
 /// MAIN FUNCTION
 
-autoRouter
-  .sellSwap(INDEX_ADDRESS, SELL_AMOUNT, OUTPUT_TOKEN)
-  .then(console.info, console.error);
+autoRouter.sellSwap(INDEX_ADDRESS, SELL_AMOUNT, OUTPUT_TOKEN).then(console.info, console.error);

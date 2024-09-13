@@ -1,21 +1,21 @@
 [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_asset",
-				"type": "address"
-			}
-		],
-		"name": "refreshedAssetPerBaseInUQ",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_asset",
+        "type": "address"
+      }
+    ],
+    "name": "refreshedAssetPerBaseInUQ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ]

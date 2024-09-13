@@ -1,26 +1,26 @@
 [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_index",
-				"type": "address"
-			}
-		],
-		"name": "totalEvaluation",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "_totalEvaluation",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_indexPriceInBase",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_index",
+        "type": "address"
+      }
+    ],
+    "name": "totalEvaluation",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_totalEvaluation",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_indexPriceInBase",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
 ]

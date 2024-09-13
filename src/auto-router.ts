@@ -5,11 +5,7 @@ import type { ZeroExAggregator2, ZeroExRequest } from "./0x-aggregator-2";
 import { Erc20 } from "./erc-20";
 import { InsufficientAllowanceError } from "./errors";
 import type { IndexRouter } from "./index-router";
-import {
-  BaseIndex__factory,
-  IndexHelper__factory,
-  PhuturePriceOracle__factory,
-} from "./typechain";
+import { BaseIndex__factory, IndexHelper__factory, PhuturePriceOracle__factory } from "./typechain";
 
 const NATIVE = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
@@ -47,7 +43,7 @@ export class AutoRouter {
    */
   constructor(
     public readonly indexRouter: IndexRouter,
-    public readonly zeroExAggregator: ZeroExAggregator2
+    public readonly zeroExAggregator: ZeroExAggregator2,
   ) {}
 
   /**
@@ -64,7 +60,7 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     sellToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<{
     isMint: boolean;
     target: string;
@@ -72,10 +68,7 @@ export class AutoRouter {
     expectedAllowance?: string;
   }> {
     const sellTokenInstance = new Erc20(this.indexRouter.signer, sellToken);
-    const indexTokenInstance = BaseIndex__factory.connect(
-      indexToken,
-      this.indexRouter.signer
-    );
+    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.indexRouter.signer);
 
     const chainId = await this.indexRouter.signer.getChainId();
 
@@ -93,21 +86,16 @@ export class AutoRouter {
     ]);
 
     const indexHelperAddress = defaultIndexHelperAddress[chainId];
-    if (!indexHelperAddress)
-      throw Error("No default IndexHelper found for chain");
+    if (!indexHelperAddress) throw Error("No default IndexHelper found for chain");
 
-    const indexHelper = IndexHelper__factory.connect(
-      indexHelperAddress,
-      this.indexRouter.signer
-    );
+    const indexHelper = IndexHelper__factory.connect(indexHelperAddress, this.indexRouter.signer);
 
     const priceOracleAddress = defaultPhuturePriceOracleAddress[chainId];
-    if (!priceOracleAddress)
-      throw Error("No default PhuturePriceOracle found for chain");
+    if (!priceOracleAddress) throw Error("No default PhuturePriceOracle found for chain");
 
     const priceOracle = PhuturePriceOracle__factory.connect(
       priceOracleAddress,
-      this.indexRouter.signer
+      this.indexRouter.signer,
     );
 
     const quotes = await Promise.all(
@@ -143,28 +131,21 @@ export class AutoRouter {
             buyAssetMinAmount: data.minBuyAmount,
             assetQuote: data.transaction.data,
             estimatedGas: data.gas || 0,
-            allowanceTarget:
-              data.issues?.allowance?.spender ?? data.transaction.to,
+            allowanceTarget: data.issues?.allowance?.spender ?? data.transaction.to,
           };
-        })
+        }),
     );
 
-    const [indexRouterMintOutputAmount, totalEvaluation, ethBasePrice] =
-      await Promise.all([
-        this.indexRouter.mintIndexAmount(
-          indexToken,
-          sellAmount,
-          quotes,
-          sellToken
-        ),
-        indexHelper.totalEvaluation(indexToken),
-        priceOracle.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
-      ]);
+    const [indexRouterMintOutputAmount, totalEvaluation, ethBasePrice] = await Promise.all([
+      this.indexRouter.mintIndexAmount(indexToken, sellAmount, quotes, sellToken),
+      indexHelper.totalEvaluation(indexToken),
+      priceOracle.callStatic.refreshedAssetPerBaseInUQ(wethAddress),
+    ]);
 
     const totalMintGas = BigNumber.from(
       quotes
         .reduce((curr, acc) => curr.add(acc.estimatedGas), BigNumber.from(0))
-        .add(baseMintGas + quotes.length * additionalMintGasPerAsset)
+        .add(baseMintGas + quotes.length * additionalMintGasPerAsset),
     );
 
     const gasDiffInEth = totalMintGas
@@ -180,9 +161,7 @@ export class AutoRouter {
 
     const isMint = gasDiffInEth.lte(buyAmountDiffInEth);
 
-    const target = isMint
-      ? this.indexRouter.contract.address
-      : zeroExSwap.transaction.to;
+    const target = isMint ? this.indexRouter.contract.address : zeroExSwap.transaction.to;
 
     let expectedAllowance: string | undefined;
     if (sellToken.toLowerCase() !== NATIVE.toLowerCase()) {
@@ -200,9 +179,7 @@ export class AutoRouter {
     return {
       isMint,
       target,
-      buyAmount: isMint
-        ? indexRouterMintOutputAmount
-        : BigNumber.from(zeroExSwap.buyAmount),
+      buyAmount: isMint ? indexRouterMintOutputAmount : BigNumber.from(zeroExSwap.buyAmount),
       expectedAllowance,
     };
   }
@@ -223,7 +200,7 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     sellToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<TransactionResponse> {
     return isMint
       ? this.buyMint(indexToken, sellAmount, sellToken, zeroExOptions)
@@ -234,15 +211,12 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     sellToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<TransactionResponse> {
     const chainId = await this.indexRouter.signer.getChainId();
     const recipient = await this.indexRouter.signer.getAddress();
 
-    const indexTokenInstance = BaseIndex__factory.connect(
-      indexToken,
-      this.indexRouter.signer
-    );
+    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.indexRouter.signer);
 
     const amounts = await this.indexRouter.getIndexAnatomy(indexTokenInstance);
     const isNativeSell = sellToken.toLowerCase() === NATIVE.toLowerCase();
@@ -284,23 +258,20 @@ export class AutoRouter {
             assetQuote: data,
             estimatedGas: data.gas || 0,
           };
-        })
+        }),
     );
 
     const priceOracleAddress = defaultPhuturePriceOracleAddress[chainId];
-    if (!priceOracleAddress)
-      throw Error("No default PhuturePriceOracle found for chain");
+    if (!priceOracleAddress) throw Error("No default PhuturePriceOracle found for chain");
 
     const priceOracle = PhuturePriceOracle__factory.connect(
       priceOracleAddress,
-      this.indexRouter.signer
+      this.indexRouter.signer,
     );
 
     const buyAmountsInBase = await Promise.all(
       buyAmounts.map(async ({ asset, buyAssetMinAmount }, amountIndex) => {
-        const price = await priceOracle.callStatic.refreshedAssetPerBaseInUQ(
-          asset
-        );
+        const price = await priceOracle.callStatic.refreshedAssetPerBaseInUQ(asset);
         return {
           asset,
           buyAmount: BigNumber.from(buyAssetMinAmount)
@@ -308,11 +279,11 @@ export class AutoRouter {
             .mul(255)
             .div(price.mul(amounts[amountIndex]!.weight)),
         };
-      })
+      }),
     );
 
     const minAmount = buyAmountsInBase.reduce((min, curr) =>
-      min.buyAmount.lte(curr.buyAmount) ? min : curr
+      min.buyAmount.lte(curr.buyAmount) ? min : curr,
     );
 
     const scaledSellAmounts = Object.values(
@@ -320,10 +291,8 @@ export class AutoRouter {
         asset,
         amount: BigNumber.from(sellAmount).mul(weight).div(255),
         weight,
-      }))
-    ).map(({ amount }, i) =>
-      amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount)
-    );
+      })),
+    ).map(({ amount }, i) => amount.mul(minAmount.buyAmount).div(buyAmountsInBase[i].buyAmount));
 
     const quotes = await Promise.all(
       amounts.map(async ({ asset }, i) => {
@@ -353,10 +322,9 @@ export class AutoRouter {
           buyAssetMinAmount: data.minBuyAmount,
           assetQuote: data.transaction.data,
           estimatedGas: data.gas || "0",
-          allowanceTarget:
-            data.issues?.allowance?.spender ?? data.transaction.to,
+          allowanceTarget: data.issues?.allowance?.spender ?? data.transaction.to,
         };
-      })
+      }),
     );
 
     sellAmount = scaledSellAmounts
@@ -380,7 +348,7 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     sellToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<TransactionResponse> {
     const chainId = await this.indexRouter.signer.getChainId();
     const taker = await this.indexRouter.signer.getAddress();
@@ -420,7 +388,7 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     buyToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<{
     isBurn: boolean;
     buyAmount: BigNumber;
@@ -433,10 +401,7 @@ export class AutoRouter {
     let buyTokenInstance: Erc20;
     let buyTokenPriceEth = BigNumber.from(10).pow(18).toString();
     if (buyToken === NATIVE) {
-      buyTokenInstance = new Erc20(
-        this.indexRouter.signer,
-        await this.indexRouter.contract.WETH()
-      );
+      buyTokenInstance = new Erc20(this.indexRouter.signer, await this.indexRouter.contract.WETH());
     } else {
       buyTokenInstance = new Erc20(this.indexRouter.signer, buyToken);
       const data = await this.zeroExAggregator.allowanceHolderPrice({
@@ -488,34 +453,30 @@ export class AutoRouter {
           buyToken,
           sellAmount: amount.mul(999).div(1000).toString(),
         });
-      })
+      }),
     );
 
     const indexRouterBurnOutputAmount = prices.reduce(
       (acc, { minBuyAmount }) => acc.add(minBuyAmount),
-      BigNumber.from(0)
+      BigNumber.from(0),
     );
 
     const totalBurnGas = BigNumber.from(
       prices
         .reduce((curr, { gas }) => curr.add(gas ?? 0), BigNumber.from(0))
-        .add(baseBurnGas + prices.length * additionalBurnGasPerAsset)
+        .add(baseBurnGas + prices.length * additionalBurnGasPerAsset),
     );
 
     const burnNet = indexRouterBurnOutputAmount.sub(
-      totalBurnGas.mul(zeroExSwap.transaction.gasPrice)
+      totalBurnGas.mul(zeroExSwap.transaction.gasPrice),
     );
     const zeroExNet = BigNumber.from(buyTokenPriceEth).sub(
-      BigNumber.from(zeroExSwap.transaction.gas || 0).mul(
-        zeroExSwap.transaction.gasPrice
-      )
+      BigNumber.from(zeroExSwap.transaction.gas || 0).mul(zeroExSwap.transaction.gasPrice),
     );
 
     const isBurn = burnNet.gte(zeroExNet);
 
-    const target = isBurn
-      ? this.indexRouter.contract.address
-      : zeroExSwap.transaction.to;
+    const target = isBurn ? this.indexRouter.contract.address : zeroExSwap.transaction.to;
     let expectedAllowance: string | undefined;
     try {
       await indexTokenInstance.checkAllowance(target, sellAmount);
@@ -530,9 +491,7 @@ export class AutoRouter {
     return {
       isBurn,
       target,
-      buyAmount: isBurn
-        ? indexRouterBurnOutputAmount
-        : BigNumber.from(zeroExSwap.buyAmount),
+      buyAmount: isBurn ? indexRouterBurnOutputAmount : BigNumber.from(zeroExSwap.buyAmount),
       expectedAllowance,
     };
   }
@@ -553,7 +512,7 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     buyToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<TransactionResponse> {
     return isBurn
       ? this.sellBurn(indexToken, sellAmount, buyToken, zeroExOptions)
@@ -564,25 +523,19 @@ export class AutoRouter {
     indexToken: string,
     sellAmount: string,
     buyToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<TransactionResponse> {
     const recipient = await this.indexRouter.signer.getAddress();
     const chainId = await this.indexRouter.signer.getChainId();
 
     const isBuyingNative = buyToken.toLowerCase() === NATIVE.toLowerCase();
-    const routerBuyToken = isBuyingNative
-      ? await this.indexRouter.contract.WETH()
-      : buyToken;
+    const routerBuyToken = isBuyingNative ? await this.indexRouter.contract.WETH() : buyToken;
 
     const amounts = await this.indexRouter.burnAmount(indexToken, sellAmount);
 
     const quotes = await Promise.all(
       amounts.map(async ({ amount, asset }) => {
-        if (
-          !amount ||
-          amount.isZero() ||
-          asset.toLowerCase() === routerBuyToken.toLowerCase()
-        ) {
+        if (!amount || amount.isZero() || asset.toLowerCase() === routerBuyToken.toLowerCase()) {
           return {
             swapTarget: constants.AddressZero,
             assetQuote: [],
@@ -606,34 +559,21 @@ export class AutoRouter {
           buyAssetMinAmount: data.minBuyAmount,
           assetQuote: data.transaction.data,
           estimatedGas: data.transaction.gas,
-          allowanceTarget:
-            data.issues?.allowance?.spender ?? data.transaction.to,
+          allowanceTarget: data.issues?.allowance?.spender ?? data.transaction.to,
         };
-      })
+      }),
     );
 
     return isBuyingNative
-      ? this.indexRouter.burnSwapValue(
-          indexToken,
-          sellAmount,
-          recipient,
-          routerBuyToken,
-          quotes
-        )
-      : this.indexRouter.burnSwap(
-          indexToken,
-          sellAmount,
-          recipient,
-          routerBuyToken,
-          quotes
-        );
+      ? this.indexRouter.burnSwapValue(indexToken, sellAmount, recipient, routerBuyToken, quotes)
+      : this.indexRouter.burnSwap(indexToken, sellAmount, recipient, routerBuyToken, quotes);
   }
 
   public async sellSwap(
     indexAddress: string,
     sellAmount: string,
     buyToken: string,
-    zeroExOptions?: Partial<ZeroExRequest>
+    zeroExOptions?: Partial<ZeroExRequest>,
   ): Promise<TransactionResponse> {
     const chainId = await this.indexRouter.signer.getChainId();
     const taker = await this.indexRouter.signer.getAddress();

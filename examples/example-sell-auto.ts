@@ -42,36 +42,21 @@ const provider = new Wallet(PRIVATE_KEY, new JsonRpcProvider(RPC_URL));
 
 /// Instantiate the 0x Aggregator
 /// For more customizations, you can use the constructor directly
-const zeroExAggregator = new ZeroExAggregator2(
-  ZERO_EX_API_URL,
-  ZERO_EX_API_KEY
-);
+const zeroExAggregator = new ZeroExAggregator2(ZERO_EX_API_URL, ZERO_EX_API_KEY);
 
-const indexRouter = new IndexRouter(
-  provider as unknown as JsonRpcSigner,
-  INDEX_ROUTER_ADDRESS
-);
+const indexRouter = new IndexRouter(provider as unknown as JsonRpcSigner, INDEX_ROUTER_ADDRESS);
 const autoRouter = new AutoRouter(indexRouter, zeroExAggregator);
 
 /// MAIN FUNCTION
 
 async function main() {
-  const select = await autoRouter.selectSell(
-    INDEX_ADDRESS,
-    SELL_AMOUNT,
-    OUTPUT_TOKEN
-  );
+  const select = await autoRouter.selectSell(INDEX_ADDRESS, SELL_AMOUNT, OUTPUT_TOKEN);
   console.dir({ select }, { depth: null });
   if (select.expectedAllowance && select.expectedAllowance !== "0") {
     return "need allowance";
   }
   if (await yesNo()) {
-    return await autoRouter.sell(
-      select.isBurn,
-      INDEX_ADDRESS,
-      SELL_AMOUNT,
-      OUTPUT_TOKEN
-    );
+    return await autoRouter.sell(select.isBurn, INDEX_ADDRESS, SELL_AMOUNT, OUTPUT_TOKEN);
   }
 }
 
