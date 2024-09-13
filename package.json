@@ -2,7 +2,7 @@
   "name": "@phuture/sdk",
   "repository": "Phuture-Finance/phuture-sdk",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "./dist/cjs.js",
   "module": "./dist/esm.js",
