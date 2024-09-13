@@ -1,91 +1,48 @@
 {
   "name": "@phuture/sdk",
-  "private": false,
   "repository": "Phuture-Finance/phuture-sdk",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "module": "dist/sdk.esm.js",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/cjs.js",
+  "module": "./dist/esm.js",
+  "types": "./dist/types/index.d.ts",
+  "typings": "./dist/types/index.d.ts",
   "scripts": {
-    "start": "tsdx watch",
-    "build": "pnpm typechain && tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "husky install && tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why",
-    "fix": "pnpm lint --fix",
-    "format": "prettier . -w",
-    "postinstall": "pnpm build",
-    "preinstall": "npx only-allow pnpm",
-    "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads",
-    "types": "tsc --noEmit"
+    "start": "npx tsx ./examples/example-$npm_config_name.ts",
+    "build:js": "node esbuild.mjs",
+    "build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json",
+    "build": "npm run build:js && npm run build:types",
+    "dev": "npm run build:js -- --watch",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "prepare": "husky install",
+    "fix": "npx @biomejs/biome check --write src",
+    "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads"
   },
-  "prettier": {
-    "arrowParens": "always",
-    "endOfLine": "lf",
-    "printWidth": 80,
-    "semi": false,
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "all"
+  "peerDependencies": {
+    "typescript": ">=5.0.4"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
     }
   },
-  "size-limit": [
-    {
-      "path": "dist/sdk.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/sdk.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "peerDependencies": {},
-  "devDependencies": {
-    "@ethersproject/abi": "5.7.0",
-    "@ethersproject/bytes": "5.7.0",
-    "@ethersproject/providers": "5.7.2",
-    "@typechain/ethers-v5": "10.1.1",
-    "@types/debug": "4.1.7",
-    "@types/fs-extra": "9.0.13",
-    "@types/node": "16.11.7",
-    "@typescript-eslint/eslint-plugin": "5.42.1",
-    "@typescript-eslint/parser": "5.42.1",
-    "@size-limit/preset-small-lib": "8.1.0",
-    "@zapper-fi/eslint-plugin": "1.4.0",
-    "eslint": "8.27.0",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-import": "2.26.0",
-    "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-unused-imports": "2.0.0",
-    "prettier": "2.7.1",
-    "ts-node": "10.8.2",
-    "typechain": "8.1.1",
-    "typescript": "4.9.4",
-    "husky": "8.0.3",
-    "size-limit": "8.1.0",
-    "tsdx": "0.14.1",
-    "tslib": "2.4.1"
-  },
-  "engines": {
-    "pnpm": ">=7"
-  },
-  "packageManager": "pnpm@7.14.0",
   "dependencies": {
     "@ethersproject/abstract-provider": "5.7.0",
-    "axios": "1.2.1",
-    "axios-retry": "3.3.1",
-    "cross-fetch": "3.1.5",
-    "debug": "4.3.4",
-    "ethers": "5.7.2",
-    "graphql": "16.6.0"
+    "axios": "1.7.7",
+    "ethers": "5.7.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@ethersproject/providers": "5.7.2",
+    "@typechain/ethers-v5": "10.1.1",
+    "@types/node": "16.11.7",
+    "esbuild": "^0.23.1",
+    "esbuild-node-externals": "^1.14.0",
+    "husky": "8.0.3",
+    "rimraf": "^6.0.1",
+    "tslib": "2.4.1",
+    "typechain": "8.1.1"
   }
 }

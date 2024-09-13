@@ -1,21 +1,17 @@
-import { BigNumber, BigNumberish } from 'ethers'
-
-import { Address } from '../types'
-
-import { canSetPrototype } from './can-set-prototype'
+import { canSetPrototype } from "./can-set-prototype";
 
 /**
  * ### Error thrown on insufficient allowance
  */
 export class InsufficientAllowanceError extends Error {
   /** ### Address of the allowance target */
-  public readonly target: Address
+  public readonly target: string;
 
   /** ### Excepted allowance */
-  public readonly expectedAllowance: BigNumber
+  public readonly expectedAllowance: string;
 
   /** ### Actual allowance */
-  public readonly actualAllowance: BigNumber
+  public readonly actualAllowance: string;
 
   /**
    * ### Creates an instance of InsufficientAllowanceError
@@ -26,21 +22,15 @@ export class InsufficientAllowanceError extends Error {
    *
    * @returns Instance of InsufficientAllowanceError
    */
-  constructor(
-    target: Address,
-    expectedAllowance: BigNumberish,
-    actualAllowance: BigNumberish = 0,
-  ) {
-    expectedAllowance = BigNumber.from(expectedAllowance)
-    actualAllowance = BigNumber.from(actualAllowance)
-    const message = `Insufficient allowance: expected ${expectedAllowance.toString()}, but got ${actualAllowance.toString()}`
-    super(message)
-    this.name = this.constructor.name
+  constructor(target: string, expectedAllowance: string, actualAllowance = "0") {
+    const message = `Insufficient allowance: expected ${expectedAllowance.toString()}, but got ${actualAllowance.toString()}`;
+    super(message);
+    this.name = this.constructor.name;
 
-    this.target = target
-    this.expectedAllowance = expectedAllowance
-    this.actualAllowance = actualAllowance
+    this.target = target;
+    this.expectedAllowance = expectedAllowance;
+    this.actualAllowance = actualAllowance;
 
-    if (canSetPrototype) Object.setPrototypeOf(this, new.target.prototype)
+    if (canSetPrototype) Object.setPrototypeOf(this, new.target.prototype);
   }
 }

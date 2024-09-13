@@ -1,1 +1,1 @@
-export const canSetPrototype = 'setPrototypeOf' in Object
+export const canSetPrototype = "setPrototypeOf" in Object;

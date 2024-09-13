@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
+import { Contract, type Signer, utils } from "ethers";
 import type { BaseIndex, BaseIndexInterface } from "../BaseIndex";
 
 const _abi = [
@@ -36,19 +36,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-    ],
-    name: "AssetRemoved",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
         name: "from",
@@ -68,25 +55,6 @@ const _abi = [
       },
     ],
     name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "weight",
-        type: "uint8",
-      },
-    ],
-    name: "UpdateAnatomy",
     type: "event",
   },
   {
@@ -506,10 +474,7 @@ export class BaseIndex__factory {
   static createInterface(): BaseIndexInterface {
     return new utils.Interface(_abi) as BaseIndexInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): BaseIndex {
+  static connect(address: string, signerOrProvider: Signer | Provider): BaseIndex {
     return new Contract(address, _abi, signerOrProvider) as BaseIndex;
   }
 }

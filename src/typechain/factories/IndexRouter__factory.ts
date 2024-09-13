@@ -2,74 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
+import { Contract, type Signer, utils } from "ethers";
 import type { IndexRouter, IndexRouterInterface } from "../IndexRouter";
 
 const _abi = [
-  {
-    inputs: [],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "previousAdmin",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newAdmin",
-        type: "address",
-      },
-    ],
-    name: "AdminChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "beacon",
-        type: "address",
-      },
-    ],
-    name: "BeaconUpgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "version",
-        type: "uint8",
-      },
-    ],
-    name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "Upgraded",
-    type: "event",
-  },
   {
     inputs: [],
     name: "WETH",
@@ -103,7 +40,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct IIndexRouter.BurnParams",
+        internalType: "struct IIndexRouterV2.BurnParams",
         name: "_params",
         type: "tuple",
       },
@@ -145,6 +82,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -155,12 +97,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.BurnQuoteParams[]",
+            internalType: "struct IIndexRouterV2.BurnQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.BurnSwapParams",
+        internalType: "struct IIndexRouterV2.BurnSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -208,6 +150,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -218,12 +165,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.BurnQuoteParams[]",
+            internalType: "struct IIndexRouterV2.BurnQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.BurnSwapParams",
+        internalType: "struct IIndexRouterV2.BurnSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -271,6 +218,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -281,12 +233,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.BurnQuoteParams[]",
+            internalType: "struct IIndexRouterV2.BurnQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.BurnSwapParams",
+        internalType: "struct IIndexRouterV2.BurnSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -354,6 +306,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -364,12 +321,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.BurnQuoteParams[]",
+            internalType: "struct IIndexRouterV2.BurnQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.BurnSwapParams",
+        internalType: "struct IIndexRouterV2.BurnSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -449,7 +406,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct IIndexRouter.BurnParams",
+        internalType: "struct IIndexRouterV2.BurnParams",
         name: "_params",
         type: "tuple",
       },
@@ -485,7 +442,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct IIndexRouter.BurnParams",
+        internalType: "struct IIndexRouterV2.BurnParams",
         name: "_params",
         type: "tuple",
       },
@@ -553,7 +510,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct IIndexRouter.MintParams",
+        internalType: "struct IIndexRouterV2.MintParams",
         name: "_params",
         type: "tuple",
       },
@@ -606,6 +563,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -616,12 +578,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.MintQuoteParams[]",
+            internalType: "struct IIndexRouterV2.MintQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.MintSwapParams",
+        internalType: "struct IIndexRouterV2.MintSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -674,6 +636,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -684,12 +651,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.MintQuoteParams[]",
+            internalType: "struct IIndexRouterV2.MintQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.MintSwapParams",
+        internalType: "struct IIndexRouterV2.MintSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -732,6 +699,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -742,12 +714,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.MintQuoteParams[]",
+            internalType: "struct IIndexRouterV2.MintQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.MintSwapValueParams",
+        internalType: "struct IIndexRouterV2.MintSwapValueParams",
         name: "_params",
         type: "tuple",
       },
@@ -800,6 +772,11 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "address",
+                name: "allowanceTarget",
+                type: "address",
+              },
+              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -810,12 +787,12 @@ const _abi = [
                 type: "bytes",
               },
             ],
-            internalType: "struct IIndexRouter.MintQuoteParams[]",
+            internalType: "struct IIndexRouterV2.MintQuoteParams[]",
             name: "quotes",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IIndexRouter.MintSwapParams",
+        internalType: "struct IIndexRouterV2.MintSwapParams",
         name: "_params",
         type: "tuple",
       },
@@ -853,19 +830,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "proxiableUUID",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "registry",
     outputs: [
       {
@@ -877,41 +841,6 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeTo",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-    ],
-    name: "upgradeToAndCall",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    stateMutability: "payable",
-    type: "receive",
-  },
 ];
 
 export class IndexRouter__factory {
@@ -919,10 +848,7 @@ export class IndexRouter__factory {
   static createInterface(): IndexRouterInterface {
     return new utils.Interface(_abi) as IndexRouterInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): IndexRouter {
+  static connect(address: string, signerOrProvider: Signer | Provider): IndexRouter {
     return new Contract(address, _abi, signerOrProvider) as IndexRouter;
   }
 }
