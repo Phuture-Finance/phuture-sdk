@@ -153,51 +153,30 @@ export class ZeroExAggregator2 {
 	}
 
 	public permit2Quote(params: ZeroExRequest): Promise<Permit2QuoteReponseData> {
-		return this.makeRequest<Permit2QuoteReponseData>(
-			"swap/permit2/quote",
-			params,
-		);
+		return this.makeRequest<Permit2QuoteReponseData>("swap/permit2/quote", params);
 	}
 
-	public allowanceHolderPrice(
-		params: ZeroExRequest,
-	): Promise<ZeroExReponseData> {
-		return this.makeRequest<ZeroExReponseData>(
-			"swap/allowance-holder/price",
-			params,
-		);
+	public allowanceHolderPrice(params: ZeroExRequest): Promise<ZeroExReponseData> {
+		return this.makeRequest<ZeroExReponseData>("swap/allowance-holder/price", params);
 	}
 
-	public allowanceHolderQuote(
-		params: ZeroExRequest,
-	): Promise<AllowanceHolderQuoteReponseData> {
-		return this.makeRequest<AllowanceHolderQuoteReponseData>(
-			"swap/allowance-holder/quote",
-			params,
-		);
+	public allowanceHolderQuote(params: ZeroExRequest): Promise<AllowanceHolderQuoteReponseData> {
+		return this.makeRequest<AllowanceHolderQuoteReponseData>("swap/allowance-holder/quote", params);
 	}
 
-	private async makeRequest<T>(
-		endpoint: string,
-		params: ZeroExRequest,
-	): Promise<T> {
+	private async makeRequest<T>(endpoint: string, params: ZeroExRequest): Promise<T> {
 		try {
 			const response = await this.client.get<T>(endpoint, { params });
-			console.log("response: ", response);
 
 			if (response.status >= 400) {
-				throw new Error(
-					`API request failed with status ${response.status}: ${response.data}`,
-				);
+				throw new Error(`API request failed with status ${response.status}: ${response.data}`);
 			}
 
 			return response.data;
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
 				if (error.response) {
-					throw new Error(
-						`API request failed: ${error.response.status} ${error.response.data}`,
-					);
+					throw new Error(`API request failed: ${error.response.status} ${error.response.data}`);
 				} else if (error.request) {
 					throw new Error("No response received from the API");
 				} else {

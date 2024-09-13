@@ -1,6 +1,6 @@
 import { JsonRpcProvider, type JsonRpcSigner } from "@ethersproject/providers";
 import { Wallet } from "ethers";
-import { AutoRouter, Index, IndexRouter, ZeroExAggregator2 } from "../src";
+import { AutoRouter, IndexRouter, ZeroExAggregator2 } from "../src";
 
 /// ENVIRONMENT VARIABLES
 
@@ -46,19 +46,15 @@ const zeroExAggregator = new ZeroExAggregator2(
 	ZERO_EX_API_KEY,
 );
 
-const index = new Index(provider as unknown as JsonRpcSigner, INDEX_ADDRESS);
 const indexRouter = new IndexRouter(
 	provider as unknown as JsonRpcSigner,
 	INDEX_ROUTER_ADDRESS,
 );
+
 const autoRouter = new AutoRouter(indexRouter, zeroExAggregator);
 
 /// MAIN FUNCTION
 
-async function main() {
-	const tx = await autoRouter.buy(false, index, SELL_AMOUNT, INPUT_TOKEN);
-	console.log("tx: ", tx);
-	return tx;
-}
-
-main().then(console.info, console.error);
+autoRouter
+  .buySwap(INDEX_ADDRESS, SELL_AMOUNT, INPUT_TOKEN)
+  .then(console.info, console.error);

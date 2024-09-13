@@ -38,10 +38,7 @@ export class IndexHelper__factory {
 	static createInterface(): IndexHelperInterface {
 		return new utils.Interface(_abi) as IndexHelperInterface;
 	}
-	static connect(
-		address: string,
-		signerOrProvider: Signer | Provider,
-	): IndexHelper {
+	static connect(address: string, signerOrProvider: Signer | Provider): IndexHelper {
 		return new Contract(address, _abi, signerOrProvider) as IndexHelper;
 	}
 }

@@ -28,9 +28,7 @@ export interface PhuturePriceOracleInterface extends utils.Interface {
 	};
 
 	getFunction(
-		nameOrSignatureOrTopic:
-			| "refreshedAssetPerBaseInUQ"
-			| "refreshedAssetPerBaseInUQ(address)",
+		nameOrSignatureOrTopic: "refreshedAssetPerBaseInUQ" | "refreshedAssetPerBaseInUQ(address)",
 	): FunctionFragment;
 
 	encodeFunctionData(
@@ -42,10 +40,7 @@ export interface PhuturePriceOracleInterface extends utils.Interface {
 		values: [PromiseOrValue<string>],
 	): string;
 
-	decodeFunctionResult(
-		functionFragment: "refreshedAssetPerBaseInUQ",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "refreshedAssetPerBaseInUQ", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "refreshedAssetPerBaseInUQ(address)",
 		data: BytesLike,
@@ -71,9 +66,7 @@ export interface PhuturePriceOracle extends BaseContract {
 		eventFilter?: TypedEventFilter<TEvent>,
 	): Array<TypedListener<TEvent>>;
 	listeners(eventName?: string): Array<Listener>;
-	removeAllListeners<TEvent extends TypedEvent>(
-		eventFilter: TypedEventFilter<TEvent>,
-	): this;
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
 	removeAllListeners(eventName?: string): this;
 	off: OnEvent<this>;
 	on: OnEvent<this>;

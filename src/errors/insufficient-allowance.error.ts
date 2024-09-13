@@ -22,11 +22,7 @@ export class InsufficientAllowanceError extends Error {
 	 *
 	 * @returns Instance of InsufficientAllowanceError
 	 */
-	constructor(
-		target: string,
-		expectedAllowance: string,
-		actualAllowance = "0",
-	) {
+	constructor(target: string, expectedAllowance: string, actualAllowance = "0") {
 		const message = `Insufficient allowance: expected ${expectedAllowance.toString()}, but got ${actualAllowance.toString()}`;
 		super(message);
 		this.name = this.constructor.name;

@@ -848,10 +848,7 @@ export class IndexRouter__factory {
 	static createInterface(): IndexRouterInterface {
 		return new utils.Interface(_abi) as IndexRouterInterface;
 	}
-	static connect(
-		address: string,
-		signerOrProvider: Signer | Provider,
-	): IndexRouter {
+	static connect(address: string, signerOrProvider: Signer | Provider): IndexRouter {
 		return new Contract(address, _abi, signerOrProvider) as IndexRouter;
 	}
 }

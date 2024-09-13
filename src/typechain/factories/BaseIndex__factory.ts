@@ -474,10 +474,7 @@ export class BaseIndex__factory {
 	static createInterface(): BaseIndexInterface {
 		return new utils.Interface(_abi) as BaseIndexInterface;
 	}
-	static connect(
-		address: string,
-		signerOrProvider: Signer | Provider,
-	): BaseIndex {
+	static connect(address: string, signerOrProvider: Signer | Provider): BaseIndex {
 		return new Contract(address, _abi, signerOrProvider) as BaseIndex;
 	}
 }

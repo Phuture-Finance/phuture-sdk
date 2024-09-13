@@ -70,10 +70,7 @@ export class ZeroExAggregator {
 	 *
 	 * @returns {ZeroExAggregator} The 0x Aggregator instance
 	 */
-	static fromUrl(
-		baseUrl: string,
-		apiKey?: string,
-	): [ZeroExAggregator, AbortController] {
+	static fromUrl(baseUrl: string, apiKey?: string): [ZeroExAggregator, AbortController] {
 		const abortController = new AbortController();
 
 		const client = axios.create({
@@ -125,18 +122,15 @@ export class ZeroExAggregator {
 		sellAmount: BigNumberish,
 		options?: Partial<Zero0xQuoteOptions>,
 	): Promise<Zero0xQuoteResponse> {
-		const { data } = await this.client.get<Zero0xQuoteResponse>(
-			"/swap/v1/quote",
-			{
-				params: {
-					...this._defaultQueryParams,
-					sellToken,
-					buyToken,
-					sellAmount: BigNumber.from(sellAmount).toString(),
-					...options,
-				},
+		const { data } = await this.client.get<Zero0xQuoteResponse>("/swap/v1/quote", {
+			params: {
+				...this._defaultQueryParams,
+				sellToken,
+				buyToken,
+				sellAmount: BigNumber.from(sellAmount).toString(),
+				...options,
 			},
-		);
+		});
 
 		// TODO: cover error codes and add retry logic
 
@@ -160,18 +154,15 @@ export class ZeroExAggregator {
 		sellAmount: BigNumberish,
 		options?: Partial<Zero0xPriceOptions>,
 	): Promise<Zero0xPriceResponse> {
-		const { data } = await this.client.get<Zero0xPriceResponse>(
-			"/swap/v1/price",
-			{
-				params: {
-					...this._defaultQueryParams,
-					sellToken,
-					buyToken,
-					sellAmount: BigNumber.from(sellAmount).toString(),
-					...options,
-				},
+		const { data } = await this.client.get<Zero0xPriceResponse>("/swap/v1/price", {
+			params: {
+				...this._defaultQueryParams,
+				sellToken,
+				buyToken,
+				sellAmount: BigNumber.from(sellAmount).toString(),
+				...options,
 			},
-		);
+		});
 
 		// TODO: cover error codes and add retry logic
 

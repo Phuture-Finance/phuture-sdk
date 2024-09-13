@@ -44,12 +44,7 @@ export declare namespace IIndexRouterV2 {
 		assetQuote: PromiseOrValue<BytesLike>;
 	};
 
-	export type BurnQuoteParamsStructOutput = [
-		string,
-		string,
-		BigNumber,
-		string,
-	] & {
+	export type BurnQuoteParamsStructOutput = [string, string, BigNumber, string] & {
 		swapTarget: string;
 		allowanceTarget: string;
 		buyAssetMinAmount: BigNumber;
@@ -98,13 +93,7 @@ export declare namespace IIndexRouterV2 {
 		assetQuote: PromiseOrValue<BytesLike>;
 	};
 
-	export type MintQuoteParamsStructOutput = [
-		string,
-		string,
-		string,
-		BigNumber,
-		string,
-	] & {
+	export type MintQuoteParamsStructOutput = [string, string, string, BigNumber, string] & {
 		asset: string;
 		swapTarget: string;
 		allowanceTarget: string;
@@ -209,10 +198,7 @@ export interface IndexRouterInterface extends utils.Interface {
 
 	encodeFunctionData(functionFragment: "WETH", values?: undefined): string;
 	encodeFunctionData(functionFragment: "WETH()", values?: undefined): string;
-	encodeFunctionData(
-		functionFragment: "burn",
-		values: [IIndexRouterV2.BurnParamsStruct],
-	): string;
+	encodeFunctionData(functionFragment: "burn", values: [IIndexRouterV2.BurnParamsStruct]): string;
 	encodeFunctionData(
 		functionFragment: "burn((address,uint256,address))",
 		values: [IIndexRouterV2.BurnParamsStruct],
@@ -317,10 +303,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		functionFragment: "initialize(address,address)",
 		values: [PromiseOrValue<string>, PromiseOrValue<string>],
 	): string;
-	encodeFunctionData(
-		functionFragment: "mint",
-		values: [IIndexRouterV2.MintParamsStruct],
-	): string;
+	encodeFunctionData(functionFragment: "mint", values: [IIndexRouterV2.MintParamsStruct]): string;
 	encodeFunctionData(
 		functionFragment: "mint((address,uint256,address))",
 		values: [IIndexRouterV2.MintParamsStruct],
@@ -370,10 +353,7 @@ export interface IndexRouterInterface extends utils.Interface {
 		],
 	): string;
 	encodeFunctionData(functionFragment: "registry", values?: undefined): string;
-	encodeFunctionData(
-		functionFragment: "registry()",
-		values?: undefined,
-	): string;
+	encodeFunctionData(functionFragment: "registry()", values?: undefined): string;
 
 	decodeFunctionResult(functionFragment: "WETH", data: BytesLike): Result;
 	decodeFunctionResult(functionFragment: "WETH()", data: BytesLike): Result;
@@ -387,59 +367,38 @@ export interface IndexRouterInterface extends utils.Interface {
 		functionFragment: "burnSwap((address,uint256,address,address,(address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwapValue",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "burnSwapValue", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "burnSwapValue((address,uint256,address,address,(address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwapValueWithPermit",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "burnSwapValueWithPermit", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "burnSwapValueWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "burnSwapWithPermit",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "burnSwapWithPermit", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "burnSwapWithPermit((address,uint256,address,address,(address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "burnTokensAmount",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "burnTokensAmount", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "burnTokensAmount(address,uint256)",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "burnWithAmounts",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "burnWithAmounts", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "burnWithAmounts((address,uint256,address))",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "burnWithPermit",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "burnWithPermit", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "burnWithPermit((address,uint256,address),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
 	): Result;
 	decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-	decodeFunctionResult(
-		functionFragment: "initialize(address,address)",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "initialize(address,address)", data: BytesLike): Result;
 	decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "mint((address,uint256,address))",
@@ -450,26 +409,17 @@ export interface IndexRouterInterface extends utils.Interface {
 		functionFragment: "mintSwap((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwapIndexAmount",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "mintSwapIndexAmount", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "mintSwapIndexAmount((address,address,uint256,address,(address,address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwapValue",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "mintSwapValue", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "mintSwapValue((address,address,(address,address,address,uint256,bytes)[]))",
 		data: BytesLike,
 	): Result;
-	decodeFunctionResult(
-		functionFragment: "mintSwapWithPermit",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "mintSwapWithPermit", data: BytesLike): Result;
 	decodeFunctionResult(
 		functionFragment: "mintSwapWithPermit((address,address,uint256,address,(address,address,address,uint256,bytes)[]),uint256,uint8,bytes32,bytes32)",
 		data: BytesLike,
@@ -497,9 +447,7 @@ export interface IndexRouter extends BaseContract {
 		eventFilter?: TypedEventFilter<TEvent>,
 	): Array<TypedListener<TEvent>>;
 	listeners(eventName?: string): Array<Listener>;
-	removeAllListeners<TEvent extends TypedEvent>(
-		eventFilter: TypedEventFilter<TEvent>,
-	): this;
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
 	removeAllListeners(eventName?: string): this;
 	off: OnEvent<this>;
 	on: OnEvent<this>;
@@ -881,10 +829,7 @@ export interface IndexRouter extends BaseContract {
 
 		"WETH()"(overrides?: CallOverrides): Promise<string>;
 
-		burn(
-			_params: IIndexRouterV2.BurnParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<void>;
+		burn(_params: IIndexRouterV2.BurnParamsStruct, overrides?: CallOverrides): Promise<void>;
 
 		"burn((address,uint256,address))"(
 			_params: IIndexRouterV2.BurnParamsStruct,
@@ -999,10 +944,7 @@ export interface IndexRouter extends BaseContract {
 			overrides?: CallOverrides,
 		): Promise<void>;
 
-		mint(
-			_params: IIndexRouterV2.MintParamsStruct,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
+		mint(_params: IIndexRouterV2.MintParamsStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
 		"mint((address,uint256,address))"(
 			_params: IIndexRouterV2.MintParamsStruct,

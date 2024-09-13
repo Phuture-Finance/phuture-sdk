@@ -1,5 +1,5 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
-import type { Contract as EthersContract, Signer } from "ethers";
+import type { Contract as EthersContract } from "ethers";
 
 export interface ContractFactory {
 	connect(address: string, signer: JsonRpcSigner): EthersContract;
@@ -25,8 +25,6 @@ export class Contract<C extends EthersContract> {
 		protected readonly contractFactory: ContractFactory,
 	) {
 		this.contract =
-			typeof contract === "string"
-				? (contractFactory.connect(contract, signer) as C)
-				: contract;
+			typeof contract === "string" ? (contractFactory.connect(contract, signer) as C) : contract;
 	}
 }

@@ -29,23 +29,14 @@ export interface IndexHelperInterface extends utils.Interface {
 		nameOrSignatureOrTopic: "totalEvaluation" | "totalEvaluation(address)",
 	): FunctionFragment;
 
-	encodeFunctionData(
-		functionFragment: "totalEvaluation",
-		values: [PromiseOrValue<string>],
-	): string;
+	encodeFunctionData(functionFragment: "totalEvaluation", values: [PromiseOrValue<string>]): string;
 	encodeFunctionData(
 		functionFragment: "totalEvaluation(address)",
 		values: [PromiseOrValue<string>],
 	): string;
 
-	decodeFunctionResult(
-		functionFragment: "totalEvaluation",
-		data: BytesLike,
-	): Result;
-	decodeFunctionResult(
-		functionFragment: "totalEvaluation(address)",
-		data: BytesLike,
-	): Result;
+	decodeFunctionResult(functionFragment: "totalEvaluation", data: BytesLike): Result;
+	decodeFunctionResult(functionFragment: "totalEvaluation(address)", data: BytesLike): Result;
 
 	events: {};
 }
@@ -67,9 +58,7 @@ export interface IndexHelper extends BaseContract {
 		eventFilter?: TypedEventFilter<TEvent>,
 	): Array<TypedListener<TEvent>>;
 	listeners(eventName?: string): Array<Listener>;
-	removeAllListeners<TEvent extends TypedEvent>(
-		eventFilter: TypedEventFilter<TEvent>,
-	): this;
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
 	removeAllListeners(eventName?: string): this;
 	off: OnEvent<this>;
 	on: OnEvent<this>;
@@ -143,10 +132,7 @@ export interface IndexHelper extends BaseContract {
 	filters: {};
 
 	estimateGas: {
-		totalEvaluation(
-			_index: PromiseOrValue<string>,
-			overrides?: CallOverrides,
-		): Promise<BigNumber>;
+		totalEvaluation(_index: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
 		"totalEvaluation(address)"(
 			_index: PromiseOrValue<string>,
