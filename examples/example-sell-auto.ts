@@ -61,9 +61,8 @@ async function main() {
     OUTPUT_TOKEN
   );
   console.dir({ select }, { depth: null });
-  if (!select.expectedAllowance || select.expectedAllowance !== "0") {
-    console.log("need allowance");
-    return;
+  if (select.expectedAllowance && select.expectedAllowance !== "0") {
+    return "need allowance";
   }
 
   return await autoRouter.sell(
