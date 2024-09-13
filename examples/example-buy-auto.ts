@@ -61,7 +61,7 @@ async function main() {
     INPUT_TOKEN
   );
   console.dir({ select }, { depth: null });
-  if (!select.expectedAllowance || select.expectedAllowance == "0") {
+  if (!select.expectedAllowance || select.expectedAllowance !== "0") {
     console.log("need allowance");
     return;
   }
