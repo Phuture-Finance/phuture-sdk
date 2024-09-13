@@ -178,13 +178,6 @@ export class AutoRouter {
       .mul(ethBasePrice)
       .div(BigNumber.from(2).pow(112));
 
-    console.log(
-      "gas diff : ",
-      gasDiffInEth.toString(),
-      "output diff in ETH: ",
-      buyAmountDiffInEth.toString()
-    );
-
     const isMint = gasDiffInEth.lte(buyAmountDiffInEth);
 
     const target = isMint
@@ -516,13 +509,6 @@ export class AutoRouter {
       BigNumber.from(zeroExSwap.transaction.gas || 0).mul(
         zeroExSwap.transaction.gasPrice
       )
-    );
-
-    console.log(
-      "burnNet: ",
-      burnNet.toString(),
-      "zeroExNet: ",
-      zeroExNet.toString()
     );
 
     const isBurn = burnNet.gte(zeroExNet);
