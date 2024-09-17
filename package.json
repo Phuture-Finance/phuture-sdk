@@ -1,14 +1,23 @@
 {
   "name": "@phuture/sdk",
-  "repository": "Phuture-Finance/phuture-sdk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Phuture-Finance/phuture-sdk.git"
+  },
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "./dist/cjs.js",
   "module": "./dist/esm.js",
   "types": "./dist/types/index.d.ts",
   "typings": "./dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "start": "npx tsx ./examples/example-$npm_config_name.ts",
     "build:js": "node esbuild.mjs",
     "build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json",
@@ -18,7 +27,8 @@
     "prebuild": "npm run clean",
     "prepare": "husky install",
     "fix": "npx @biomejs/biome check --write src",
-    "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads"
+    "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads",
+    "verify-pack": "npm pack && tar -xvzf *.tgz && rm -rf package && rm *.tgz"
   },
   "peerDependencies": {
     "typescript": ">=5.0.4"
