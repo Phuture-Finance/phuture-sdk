@@ -128,7 +128,7 @@ export class AutoRouter {
           return {
             asset,
             swapTarget: data.transaction.to,
-            buyAssetMinAmount: data.minBuyAmount,
+            buyAssetMinAmount: data.buyAmount,
             assetQuote: data.transaction.data,
             estimatedGas: data.gas || 0,
             allowanceTarget: data.issues?.allowance?.spender ?? data.transaction.to,
@@ -175,9 +175,6 @@ export class AutoRouter {
         }
       }
     }
-
-    console.log(indexRouterMintOutputAmount.toString());
-    console.log(zeroExSwap.buyAmount);
 
     return {
       isMint,
@@ -488,9 +485,6 @@ export class AutoRouter {
         throw error;
       }
     }
-
-    console.log(indexRouterBurnOutputAmount.toString())
-    console.log(zeroExSwap.buyAmount);
 
     return {
       isBurn,
