@@ -176,6 +176,9 @@ export class AutoRouter {
       }
     }
 
+    console.log(indexRouterMintOutputAmount.toString());
+    console.log(zeroExSwap.buyAmount);
+
     return {
       isMint,
       target,
@@ -418,7 +421,7 @@ export class AutoRouter {
         sellAmount: BigNumber.from(10).pow(buyTokenDecimals).toString(),
       });
 
-      buyTokenPriceEth = data.minBuyAmount;
+      buyTokenPriceEth = data.buyAmount;
     }
 
     const [zeroExSwap, amounts] = await Promise.all([
@@ -437,7 +440,7 @@ export class AutoRouter {
       amounts.map(async ({ amount, asset }) => {
         if (asset.toLowerCase() === buyToken.toLowerCase() || !amount || amount.isZero()) {
           return {
-            minBuyAmount: 0,
+            buyAmount: 0,
             gas: 0,
           };
         }
@@ -453,7 +456,7 @@ export class AutoRouter {
     );
 
     const indexRouterBurnOutputAmount = prices.reduce(
-      (acc, { minBuyAmount }) => acc.add(minBuyAmount),
+      (acc, { buyAmount }) => acc.add(buyAmount),
       BigNumber.from(0),
     );
 
@@ -468,7 +471,7 @@ export class AutoRouter {
       .mul(zeroExSwap.transaction.gasPrice);
 
     const buyAmountDiffInEth = indexRouterBurnOutputAmount
-      .sub(zeroExSwap.minBuyAmount)
+      .sub(zeroExSwap.buyAmount)
       .mul(buyTokenPriceEth)
       .div(BigNumber.from(10).pow(buyTokenDecimals));
 
@@ -485,6 +488,9 @@ export class AutoRouter {
         throw error;
       }
     }
+
+    console.log(indexRouterBurnOutputAmount.toString())
+    console.log(zeroExSwap.buyAmount);
 
     return {
       isBurn,
