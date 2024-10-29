@@ -1,9 +1,9 @@
-import axios, { type AxiosInstance } from "axios";
+import axios, { type AxiosInstance } from 'axios';
 
 interface Fee {
   amount: string;
   token: string;
-  type: "volume" | "gas";
+  type: 'volume' | 'gas';
 }
 
 interface Fees {
@@ -78,7 +78,7 @@ interface EIP712Data {
 }
 
 export interface Permit2 {
-  type: "Permit2";
+  type: 'Permit2';
   hash: string;
   eip712: EIP712Data;
 }
@@ -140,45 +140,65 @@ export class ZeroExAggregator2 {
     this.client = axios.create({
       baseURL: apiUrl,
       headers: {
-        "Content-Type": "application/json",
-        "0x-version": "v2",
-        ...{ "0x-api-key": apiKey },
+        'Content-Type': 'application/json',
+        '0x-version': 'v2',
+        ...{ '0x-api-key': apiKey },
       },
       validateStatus: (status) => status < 500,
     });
   }
 
   public permit2Price(params: ZeroExRequest): Promise<ZeroExReponseData> {
-    return this.makeRequest<ZeroExReponseData>("swap/permit2/price", params);
+    return this.makeRequest<ZeroExReponseData>('swap/permit2/price', params);
   }
 
   public permit2Quote(params: ZeroExRequest): Promise<Permit2QuoteReponseData> {
-    return this.makeRequest<Permit2QuoteReponseData>("swap/permit2/quote", params);
+    return this.makeRequest<Permit2QuoteReponseData>(
+      'swap/permit2/quote',
+      params,
+    );
   }
 
-  public allowanceHolderPrice(params: ZeroExRequest): Promise<ZeroExReponseData> {
-    return this.makeRequest<ZeroExReponseData>("swap/allowance-holder/price", params);
+  public allowanceHolderPrice(
+    params: ZeroExRequest,
+  ): Promise<ZeroExReponseData> {
+    return this.makeRequest<ZeroExReponseData>(
+      'swap/allowance-holder/price',
+      params,
+    );
   }
 
-  public allowanceHolderQuote(params: ZeroExRequest): Promise<AllowanceHolderQuoteReponseData> {
-    return this.makeRequest<AllowanceHolderQuoteReponseData>("swap/allowance-holder/quote", params);
+  public allowanceHolderQuote(
+    params: ZeroExRequest,
+  ): Promise<AllowanceHolderQuoteReponseData> {
+    return this.makeRequest<AllowanceHolderQuoteReponseData>(
+      'swap/allowance-holder/quote',
+      params,
+    );
   }
 
-  private async makeRequest<T>(endpoint: string, params: ZeroExRequest): Promise<T> {
+  private async makeRequest<T>(
+    endpoint: string,
+    params: ZeroExRequest,
+  ): Promise<T> {
     try {
       const response = await this.client.get<T>(endpoint, { params });
 
       if (response.status >= 400) {
-        throw new Error(`API request failed with status ${response.status}: ${response.data}`);
+        throw new Error(
+          `API request failed with status ${response.status}: ${response.data}`,
+        );
       }
 
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          throw new Error(`API request failed: ${error.response.status} ${error.response.data}`);
+          throw new Error(
+            `API request failed: ${error.response.status} ${error.response.data}`,
+          );
         } else if (error.request) {
-          throw new Error("No response received from the API");
+          throw new Error('No response received from the API');
         } else {
           throw new Error(`Error setting up the request: ${error.message}`);
         }

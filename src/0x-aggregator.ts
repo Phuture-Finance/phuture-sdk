@@ -1,10 +1,10 @@
-import axios, { type AxiosInstance } from "axios";
-import { BigNumber, type BigNumberish, type BytesLike } from "ethers";
+import axios, { type AxiosInstance } from 'axios';
+import type { Address, Hex } from 'viem';
 
 /** ### Options for 0x price endpoint */
 export interface Zero0xPriceOptions {
   /** ### Address of account to use for the quote */
-  takerAddress: string;
+  takerAddress: Address;
   /** ### Sources to exclude from the quote endpoint call */
   excludedSources: string[];
   /** ### Slippage percentage to use for the quote */
@@ -18,13 +18,13 @@ export interface Zero0xPriceOptions {
 /** ### Response from the 0x price endpoint */
 export interface Zero0xPriceResponse {
   /** ### Amount of tokens to buy */
-  buyAmount: BigNumberish;
+  buyAmount: string | number | bigint;
   /** ### Amount of tokens to sell */
-  sellAmount: BigNumberish;
+  sellAmount: string | number | bigint;
   /** ### Estimated Gas */
-  estimatedGas: BigNumberish;
+  estimatedGas: string | number | bigint;
   /** ### Gas price */
-  gasPrice: BigNumberish;
+  gasPrice: string | number | bigint;
 }
 
 /** ### Options for 0x quote endpoint */
@@ -33,15 +33,15 @@ export type Zero0xQuoteOptions = Zero0xPriceOptions;
 /** ### Response from the 0x quote endpoint */
 export interface Zero0xQuoteResponse extends Zero0xPriceResponse {
   /** ### Address of the contract to call with data */
-  to: string;
+  to: Address;
   /** ### Raw call data */
-  data: BytesLike;
+  data: Hex;
 }
 
 /** ### Addresses of the ZeroX API endpoint */
 export const zeroExBaseUrl: Record<number, string> = {
-  1: "https://api.0x.org/",
-  43114: "https://avalanche.api.0x.org/",
+  1: 'https://api.0x.org/',
+  43114: 'https://avalanche.api.0x.org/',
 };
 
 /** ### Facilitates swaps for end user */
@@ -50,7 +50,7 @@ export class ZeroExAggregator {
   private _defaultQueryParams = {
     /** ### Slippage protection for the aggregator */
     enableSlippageProtection: true,
-    affiliateAddress: "0x6575a93abdff85e5a6b97c2db2b83bcebc3574ec",
+    affiliateAddress: '0x6575a93abdff85e5a6b97c2db2b83bcebc3574ec',
   };
 
   /**
@@ -70,7 +70,10 @@ export class ZeroExAggregator {
    *
    * @returns {ZeroExAggregator} The 0x Aggregator instance
    */
-  static fromUrl(baseUrl: string, apiKey?: string): [ZeroExAggregator, AbortController] {
+  static fromUrl(
+    baseUrl: string,
+    apiKey?: string,
+  ): [ZeroExAggregator, AbortController] {
     const abortController = new AbortController();
 
     const client = axios.create({
@@ -78,8 +81,8 @@ export class ZeroExAggregator {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       baseURL: baseUrl,
       headers: {
-        "Content-Type": "application/json",
-        ...(apiKey ? { "0x-api-key": apiKey } : {}),
+        'Content-Type': 'application/json',
+        ...(apiKey ? { '0x-api-key': apiKey } : {}),
       },
       validateStatus: (status) => status < 500,
     });
@@ -119,18 +122,21 @@ export class ZeroExAggregator {
   async quote(
     sellToken: string,
     buyToken: string,
-    sellAmount: BigNumberish,
+    sellAmount: string | number | bigint,
     options?: Partial<Zero0xQuoteOptions>,
   ): Promise<Zero0xQuoteResponse> {
-    const { data } = await this.client.get<Zero0xQuoteResponse>("/swap/v1/quote", {
-      params: {
-        ...this._defaultQueryParams,
-        sellToken,
-        buyToken,
-        sellAmount: BigNumber.from(sellAmount).toString(),
-        ...options,
+    const { data } = await this.client.get<Zero0xQuoteResponse>(
+      '/swap/v1/quote',
+      {
+        params: {
+          ...this._defaultQueryParams,
+          sellToken,
+          buyToken,
+          sellAmount: sellAmount.toString(),
+          ...options,
+        },
       },
-    });
+    );
 
     // TODO: cover error codes and add retry logic
 
@@ -151,20 +157,21 @@ export class ZeroExAggregator {
   async price(
     sellToken: string,
     buyToken: string,
-    sellAmount: BigNumberish,
+    sellAmount: string | number | bigint,
     options?: Partial<Zero0xPriceOptions>,
   ): Promise<Zero0xPriceResponse> {
-    const { data } = await this.client.get<Zero0xPriceResponse>("/swap/v1/price", {
-      params: {
-        ...this._defaultQueryParams,
-        sellToken,
-        buyToken,
-        sellAmount: BigNumber.from(sellAmount).toString(),
-        ...options,
+    const { data } = await this.client.get<Zero0xPriceResponse>(
+      '/swap/v1/price',
+      {
+        params: {
+          ...this._defaultQueryParams,
+          sellToken,
+          buyToken,
+          sellAmount: sellAmount.toString(),
+          ...options,
+        },
       },
-    });
-
-    // TODO: cover error codes and add retry logic
+    );
 
     return data;
   }
