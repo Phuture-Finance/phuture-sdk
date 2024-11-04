@@ -5,7 +5,7 @@
     "url": "git+https://github.com/Phuture-Finance/phuture-sdk.git"
   },
   "private": false,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "main": "./dist/cjs.js",
   "module": "./dist/esm.js",
