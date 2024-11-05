@@ -212,7 +212,7 @@ export class IndexRouter {
       outputAsset,
     };
 
-    const owner = await this.signer.getAddress() as Address;
+    const owner = (await this.signer.getAddress()) as Address;
     const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
@@ -241,7 +241,7 @@ export class IndexRouter {
       outputAsset,
     };
 
-    const owner = await this.signer.getAddress() as Address;
+    const owner = (await this.signer.getAddress()) as Address;
     const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
@@ -280,7 +280,7 @@ export class IndexRouter {
       outputAsset,
     };
 
-    const owner = await this.signer.getAddress() as Address;
+    const owner = (await this.signer.getAddress()) as Address;
     const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
