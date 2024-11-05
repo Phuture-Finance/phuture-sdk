@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import { Contract, type Signer, utils } from "ethers";
 import type { ERC20, ERC20Interface } from "../ERC20";
 
 const _abi = [
