@@ -53,7 +53,7 @@ async function main() {
   if (!SELL_AMOUNT) throw new Error("Missing SELL_AMOUNT");
 
   const select = await autoRouter.selectSell(INDEX_ADDRESS, SELL_AMOUNT, OUTPUT_TOKEN);
-  console.dir({ ...select }, { depth: null });
+  console.dir({ ...select, buyAmount: select.buyAmount.toString() }, { depth: null });
   if (select.expectedAllowance && select.expectedAllowance !== "0") {
     return "need allowance";
   }
