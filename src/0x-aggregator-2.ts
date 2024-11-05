@@ -177,11 +177,13 @@ export class ZeroExAggregator2 {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           throw new Error(`API request failed: ${error.response.status} ${error.response.data}`);
-        } else if (error.request) {
-          throw new Error("No response received from the API");
-        } else {
-          throw new Error(`Error setting up the request: ${error.message}`);
         }
+
+        if (error.request) {
+          throw new Error("No response received from the API");
+        }
+
+        throw new Error(`Error setting up the request: ${error.message}`);
       }
       throw new Error(`Unexpected error: ${error}`);
     }

@@ -1,5 +1,3 @@
-import { canSetPrototype } from "./can-set-prototype";
-
 /**
  * ### Error thrown on insufficient allowance
  */
@@ -31,6 +29,6 @@ export class InsufficientAllowanceError extends Error {
     this.expectedAllowance = expectedAllowance;
     this.actualAllowance = actualAllowance;
 
-    if (canSetPrototype) Object.setPrototypeOf(this, new.target.prototype);
+    if ("setPrototypeOf" in Object) Object.setPrototypeOf(this, new.target.prototype);
   }
 }

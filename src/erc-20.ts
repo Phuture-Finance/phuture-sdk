@@ -1,6 +1,6 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
 
-import { InsufficientAllowanceError } from "./errors";
+import { InsufficientAllowanceError } from "./insufficient-allowance.error";
 import { type ERC20 as ERC20ContractInterface, ERC20__factory } from "./typechain";
 
 /** ### ERC20 Token Contract */
