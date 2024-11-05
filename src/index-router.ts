@@ -1,28 +1,29 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
-import { BigNumber, type ContractTransaction, utils } from "ethers";
+import type { BigNumber, ContractTransaction } from "ethers";
+import { type Address, decodeAbiParameters, encodeAbiParameters, keccak256, pad, toHex } from "viem";
 
-import { Erc20 } from "./erc-20";
+import { InsufficientAllowanceError } from "./insufficient-allowance.error";
 import {
-  type BaseIndex,
   BaseIndex__factory,
+  ERC20__factory,
   type IndexRouter as IndexRouterContractInterface,
   IndexRouter__factory,
 } from "./typechain";
 import type { IIndexRouterV2 } from "./typechain/IndexRouter";
 
 /** ### Default IndexRouter address for network */
-export const defaultIndexRouterAddress: Record<number, string> = {
+export const defaultIndexRouterAddress: Record<number, Address> = {
   /** ### Default IndexRouter address on mainnet. */
   1: "0x1985426d77c431fc95e5ca51547bcb9b793e8482",
   /** ### Default IndexRouter address on c-chain. */
-  43114: "0xd6dd95610fc3a3579a2c32fe06158d8bfb8f4ee9",
+  43114: "0x6A74b8C452f36ad3a9a162D2710BA012C3E5eB82",
 };
 
-const BALANCE_OF_SLOT = 8;
-const ALLOWANCE_SLOT = 9;
+const BALANCE_OF_SLOT = BigInt(8);
+const ALLOWANCE_SLOT = BigInt(9);
 
 export type Anatomy = {
-  asset: string;
+  asset: Address;
   weight: number;
 }[];
 
@@ -40,7 +41,7 @@ export class IndexRouter {
    */
   constructor(
     public signer: JsonRpcSigner,
-    contract: string,
+    contract: Address,
   ) {
     this.contract = IndexRouter__factory.connect(contract, signer);
   }
@@ -57,36 +58,33 @@ export class IndexRouter {
   async mintSwap(
     options: IIndexRouterV2.MintSwapParamsStruct,
     sellAmount: string,
-    sellToken: string,
+    sellToken: Address,
   ): Promise<ContractTransaction> {
-    const sellTokenInstance = new Erc20(this.signer, sellToken);
-    await sellTokenInstance.checkAllowance(this.contract.address, sellAmount);
+    const sellTokenInstance = ERC20__factory.connect(sellToken, this.signer);
 
-    const estimatedGas = await this.contract.estimateGas.mintSwap(
-      options as IIndexRouterV2.MintSwapParamsStruct,
-    );
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
+
+    const allowance = await sellTokenInstance.allowance(owner, spender);
+    if (allowance.lt(sellAmount)) throw new InsufficientAllowanceError(spender, sellAmount, allowance.toString());
+
+    const estimatedGas = await this.contract.estimateGas.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
 
     return this.contract.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct, {
       gasLimit: estimatedGas.mul(105).div(100),
     });
   }
 
-  async mintSwapValue(
-    options: IIndexRouterV2.MintSwapParamsStruct,
-    sellAmount: string,
-  ): Promise<ContractTransaction> {
+  async mintSwapValue(options: IIndexRouterV2.MintSwapParamsStruct, sellAmount: string): Promise<ContractTransaction> {
     const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
       index: options.index,
       quotes: options.quotes,
       recipient: options.recipient,
     };
 
-    const mintSwapValueEstimatedGas = await this.contract.estimateGas.mintSwapValue(
-      mintSwapValueOptions,
-      {
-        value: sellAmount,
-      },
-    );
+    const mintSwapValueEstimatedGas = await this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
+      value: sellAmount,
+    });
 
     return this.contract.mintSwapValue(mintSwapValueOptions, {
       value: sellAmount,
@@ -106,7 +104,7 @@ export class IndexRouter {
   async mintSwapStatic(
     options: IIndexRouterV2.MintSwapParamsStruct,
     sellAmount: string,
-    sellToken?: Erc20,
+    sellToken?: Address,
   ): Promise<BigNumber> {
     if (!sellToken) {
       const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
@@ -120,7 +118,13 @@ export class IndexRouter {
       });
     }
 
-    await sellToken.checkAllowance(this.contract.address, sellAmount);
+    const sellTokenInstance = ERC20__factory.connect(sellToken, this.signer);
+
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
+
+    const allowance = await sellTokenInstance.allowance(owner, spender);
+    if (allowance.lt(sellAmount)) throw new InsufficientAllowanceError(spender, sellAmount, allowance.toString());
 
     return this.contract.callStatic.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
   }
@@ -136,17 +140,17 @@ export class IndexRouter {
    * @returns mint amount in single token
    */
   async mintIndexAmount(
-    index: string,
+    index: Address,
     amountInInputToken: string,
     quotes: IIndexRouterV2.MintQuoteParamsStruct[],
-    inputToken: string,
+    inputToken: Address,
   ): Promise<BigNumber> {
     const option: IIndexRouterV2.MintSwapParamsStruct = {
       inputToken,
       amountInInputToken,
       quotes,
       index,
-      recipient: await this.signer.getAddress(),
+      recipient: (await this.signer.getAddress()) as Address,
     };
 
     return this.contract.mintSwapIndexAmount(option);
@@ -155,21 +159,25 @@ export class IndexRouter {
   /**
    * ### Burn
    *
-   * @param index index address or it's erc20 interface
+   * @param index index address
    * @param amount index amount
    * @param recipient address of account to receive tokens
    *
    * @returns burn transaction
    */
-  async burn(index: string, amount: string, recipient: string): Promise<ContractTransaction> {
-    const indexInstance = new Erc20(this.signer, index);
+  async burn(index: Address, amount: string, recipient: Address): Promise<ContractTransaction> {
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnParamsStruct = {
       index,
       amount,
       recipient,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.burn(burnParameters);
 
@@ -195,7 +203,7 @@ export class IndexRouter {
     outputAsset: string,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<ContractTransaction> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
       index,
       amount,
@@ -204,7 +212,11 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.burnSwap(burnParameters);
 
@@ -220,7 +232,7 @@ export class IndexRouter {
     outputAsset: string,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<ContractTransaction> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
       index,
       amount,
@@ -229,7 +241,11 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.burnSwapValue(burnParameters);
 
@@ -249,13 +265,13 @@ export class IndexRouter {
    * @returns burn swap amount
    */
   async burnSwapStatic(
-    index: string,
+    index: Address,
     amount: string,
-    recipient: string,
-    outputAsset: string,
+    recipient: Address,
+    outputAsset: Address,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<BigNumber> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
       index,
       amount,
@@ -264,7 +280,11 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     return this.contract.callStatic.burnSwap(burnParameters);
   }
@@ -272,25 +292,23 @@ export class IndexRouter {
   /**
    * ### Burn tokens amount view
    *
-   * @param index index interface
+   * @param index Index token address
    * @param amount index amount
    *
    * @returns burn amount in single token or total from array of tokens
    */
   async burnTokensAmount(
-    index: string,
+    index: Address,
     amount: string,
-  ): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
-    const indexInstance = BaseIndex__factory.connect(index, this.signer);
-
+  ): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
     const [anatomy, inactiveAnatomy, burnTokensAmounts] = await Promise.all([
-      this.getIndexAnatomy(indexInstance),
-      this.getIndexInactiveAnatomy(indexInstance),
+      this.getIndexAnatomy(index),
+      this.getIndexInactiveAnatomy(index),
       this.contract.burnTokensAmount(index, amount),
     ]);
 
     return [...anatomy, ...inactiveAnatomy].map((constituent, constituentIndex) => ({
-      amount: burnTokensAmounts[constituentIndex] || BigNumber.from(0),
+      amount: burnTokensAmounts[constituentIndex],
       ...constituent,
     }));
   }
@@ -298,44 +316,40 @@ export class IndexRouter {
   /**
    * ### Burn amounts static
    *
-   * @param index index interface
+   * @param index Index token address
    * @param amount index amount
    *
    * @returns burn amount in single token or total from array of tokens
    */
-  async burnAmount(
-    index: string,
-    amount: string,
-  ): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
-    const indexInstance = BaseIndex__factory.connect(index, this.signer);
+  async burnAmount(index: Address, amount: string): Promise<{ asset: Address; amount: string; weight: number }[]> {
+    const recipient = (await this.signer.getAddress()) as Address;
 
-    const recipient = await this.signer.getAddress();
-    const balanceOfOwnerSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(["address", "uint256"], [recipient, BALANCE_OF_SLOT]),
+    const balanceOfOwnerSlot = keccak256(
+      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient, BALANCE_OF_SLOT]),
     );
 
-    const allowanceOwnerSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(["address", "uint256"], [recipient, ALLOWANCE_SLOT]),
+    const allowanceOwnerSlot = keccak256(
+      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient, ALLOWANCE_SLOT]),
     );
-    const spenderSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(
-        ["address", "bytes32"],
-        [this.contract.address, allowanceOwnerSlot],
+    const spenderSlot = keccak256(
+      encodeAbiParameters(
+        [{ type: "address" }, { type: "bytes32" }],
+        [this.contract.address as Address, allowanceOwnerSlot],
       ),
     );
 
     const stateDiff = {
       [index]: {
         stateDiff: {
-          [balanceOfOwnerSlot]: utils.hexZeroPad(utils.hexValue(BigNumber.from(amount)), 32),
-          [spenderSlot]: utils.hexZeroPad(utils.hexValue(BigNumber.from(amount)), 32),
+          [balanceOfOwnerSlot]: pad(toHex(BigInt(amount)), { size: 32 }),
+          [spenderSlot]: pad(toHex(BigInt(amount)), { size: 32 }),
         },
       },
     };
 
     const [anatomy, inactiveAnatomy, rawBurnTokensAmounts] = await Promise.all([
-      this.getIndexAnatomy(indexInstance),
-      this.getIndexInactiveAnatomy(indexInstance),
+      this.getIndexAnatomy(index),
+      this.getIndexInactiveAnatomy(index),
       this.signer.provider.send("eth_call", [
         {
           from: recipient,
@@ -353,21 +367,23 @@ export class IndexRouter {
       ]),
     ]);
 
-    const [burnTokensAmounts] = new utils.AbiCoder().decode(["uint[]"], rawBurnTokensAmounts);
+    const [burnTokensAmounts] = decodeAbiParameters([{ type: "uint[]" }], rawBurnTokensAmounts);
 
     return [...anatomy, ...inactiveAnatomy].map((constituent, constituentIndex) => ({
-      amount: burnTokensAmounts[constituentIndex] || BigNumber.from(0),
+      amount: burnTokensAmounts[constituentIndex].toString(),
       ...constituent,
     }));
   }
 
-  async getIndexAnatomy(indexInstance: BaseIndex): Promise<Anatomy> {
-    const { _assets, _weights } = await indexInstance.anatomy();
-    return _assets.map((asset, i) => ({ asset, weight: Number(_weights[i]) }));
+  async getIndexAnatomy(indexToken: Address): Promise<Anatomy> {
+    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.signer);
+    const { _assets, _weights } = await indexTokenInstance.anatomy();
+    return _assets.map((asset, i) => ({ asset: asset as Address, weight: Number(_weights[i]) }));
   }
 
-  async getIndexInactiveAnatomy(indexInstance: BaseIndex): Promise<Anatomy> {
-    const _assets = await indexInstance.inactiveAnatomy();
-    return _assets.map((asset) => ({ asset, weight: 0 }));
+  async getIndexInactiveAnatomy(indexToken: Address): Promise<Anatomy> {
+    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.signer);
+    const _assets = await indexTokenInstance.inactiveAnatomy();
+    return _assets.map((asset) => ({ asset: asset as Address, weight: 0 }));
   }
 }

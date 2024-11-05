@@ -1,5 +1,7 @@
 import { JsonRpcProvider, type JsonRpcSigner } from "@ethersproject/providers";
 import { Wallet } from "ethers";
+import { isAddress } from "viem";
+
 import { AutoRouter, IndexRouter, ZeroExAggregator2 } from "../src";
 import { yesNo } from "./utils";
 
@@ -20,22 +22,10 @@ const ZERO_EX_API_KEY = process.env.ZERO_EX_API_KEY!;
 if (!ZERO_EX_API_URL || !ZERO_EX_API_KEY)
   throw new Error("Missing ZERO_EX_API_URL or ZERO_EX_API_KEY");
 
-/// 0x48f88A3fE843ccb0b5003e70B4192c1d7448bEf0 on Production
-/// new 0x6A74b8C452f36ad3a9a162D2710BA012C3E5eB82
-const INDEX_ADDRESS = process.env.INDEX_ADDRESS!;
-if (!INDEX_ADDRESS) throw new Error("Missing INDEX_ADDRESS");
-
 /// 0xD6dd95610fC3A3579a2C32fe06158d8bfB8F4eE9 on Production
+/// new 0x6A74b8C452f36ad3a9a162D2710BA012C3E5eB82
 const INDEX_ROUTER_ADDRESS = process.env.INDEX_ROUTER_ADDRESS!;
-if (!INDEX_ROUTER_ADDRESS) throw new Error("Missing INDEX_ROUTER_ADDRESS");
-
-/// Address of the input token, Use 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE for Native
-const OUTPUT_TOKEN = process.env.OUTPUT_TOKEN!;
-if (!OUTPUT_TOKEN) throw new Error("Missing OUTPUT_TOKEN");
-
-/// Amount of input token to sell
-const SELL_AMOUNT = process.env.SELL_AMOUNT!;
-if (!SELL_AMOUNT) throw new Error("Missing SELL_AMOUNT");
+if (!INDEX_ROUTER_ADDRESS || !isAddress(INDEX_ROUTER_ADDRESS)) throw new Error("Missing INDEX_ROUTER_ADDRESS");
 
 /// PREPARE ENTITIES
 const provider = new Wallet(PRIVATE_KEY, new JsonRpcProvider(RPC_URL));
@@ -50,8 +40,20 @@ const autoRouter = new AutoRouter(indexRouter, zeroExAggregator);
 /// MAIN FUNCTION
 
 async function main() {
+  /// 0x48f88A3fE843ccb0b5003e70B4192c1d7448bEf0 on Production
+  const INDEX_ADDRESS = process.env.INDEX_ADDRESS!;
+  if (!INDEX_ADDRESS || !isAddress(INDEX_ADDRESS)) throw new Error("Missing INDEX_ADDRESS");
+
+  /// Address of the input token, Use 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE for Native
+  const OUTPUT_TOKEN = process.env.OUTPUT_TOKEN!;
+  if (!OUTPUT_TOKEN || !isAddress(OUTPUT_TOKEN)) throw new Error("Missing OUTPUT_TOKEN");
+
+  /// Amount of input token to sell
+  const SELL_AMOUNT = process.env.SELL_AMOUNT!;
+  if (!SELL_AMOUNT) throw new Error("Missing SELL_AMOUNT");
+
   const select = await autoRouter.selectSell(INDEX_ADDRESS, SELL_AMOUNT, OUTPUT_TOKEN);
-  console.dir({ select }, { depth: null });
+  console.dir({ ...select, buyAmount: select.buyAmount.toString() }, { depth: null });
   if (select.expectedAllowance && select.expectedAllowance !== "0") {
     return "need allowance";
   }

@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import { Contract, type Signer, utils } from "ethers";
 import type { IndexRouter, IndexRouterInterface } from "../IndexRouter";
 
 const _abi = [
@@ -841,14 +841,17 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class IndexRouter__factory {
   static readonly abi = _abi;
   static createInterface(): IndexRouterInterface {
     return new utils.Interface(_abi) as IndexRouterInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): IndexRouter {
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): IndexRouter {
     return new Contract(address, _abi, signerOrProvider) as IndexRouter;
   }
 }

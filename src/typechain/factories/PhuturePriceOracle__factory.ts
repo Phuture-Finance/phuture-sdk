@@ -2,9 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import { Contract, type Signer, utils } from "ethers";
-import type { PhuturePriceOracle, PhuturePriceOracleInterface } from "../PhuturePriceOracle";
+import type {
+  PhuturePriceOracle,
+  PhuturePriceOracleInterface,
+} from "../PhuturePriceOracle";
 
 const _abi = [
   {
@@ -26,14 +29,17 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class PhuturePriceOracle__factory {
   static readonly abi = _abi;
   static createInterface(): PhuturePriceOracleInterface {
     return new utils.Interface(_abi) as PhuturePriceOracleInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): PhuturePriceOracle {
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): PhuturePriceOracle {
     return new Contract(address, _abi, signerOrProvider) as PhuturePriceOracle;
   }
 }

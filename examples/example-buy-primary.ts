@@ -1,5 +1,6 @@
 import { JsonRpcProvider, type JsonRpcSigner } from "@ethersproject/providers";
 import { Wallet } from "ethers";
+import { isAddress } from "viem";
 import { AutoRouter, IndexRouter, ZeroExAggregator2 } from "../src";
 
 /// ENVIRONMENT VARIABLES
@@ -21,16 +22,16 @@ if (!ZERO_EX_API_URL || !ZERO_EX_API_KEY)
 
 /// 0x48f88A3fE843ccb0b5003e70B4192c1d7448bEf0 on Production
 const INDEX_ADDRESS = process.env.INDEX_ADDRESS!;
-if (!INDEX_ADDRESS) throw new Error("Missing INDEX_ADDRESS");
+if (!INDEX_ADDRESS || !isAddress(INDEX_ADDRESS)) throw new Error("Missing INDEX_ADDRESS");
 
 /// 0xD6dd95610fC3A3579a2C32fe06158d8bfB8F4eE9 on Production
 /// new 0x6A74b8C452f36ad3a9a162D2710BA012C3E5eB82
 const INDEX_ROUTER_ADDRESS = process.env.INDEX_ROUTER_ADDRESS!;
-if (!INDEX_ROUTER_ADDRESS) throw new Error("Missing INDEX_ROUTER_ADDRESS");
+if (!INDEX_ROUTER_ADDRESS || !isAddress(INDEX_ROUTER_ADDRESS)) throw new Error("Missing INDEX_ROUTER_ADDRESS");
 
 /// Address of the input token, Use 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE for Native
 const INPUT_TOKEN = process.env.INPUT_TOKEN!;
-if (!INPUT_TOKEN) throw new Error("Missing INPUT_TOKEN");
+if (!INPUT_TOKEN || !isAddress(INPUT_TOKEN)) throw new Error("Missing INPUT_TOKEN");
 
 /// Amount of input token to sell
 const SELL_AMOUNT = process.env.SELL_AMOUNT!;
