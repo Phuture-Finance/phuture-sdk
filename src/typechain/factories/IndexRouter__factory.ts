@@ -82,11 +82,6 @@ const _abi = [
                 type: "address",
               },
               {
-                internalType: "address",
-                name: "allowanceTarget",
-                type: "address",
-              },
-              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -150,11 +145,6 @@ const _abi = [
                 type: "address",
               },
               {
-                internalType: "address",
-                name: "allowanceTarget",
-                type: "address",
-              },
-              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -215,11 +205,6 @@ const _abi = [
               {
                 internalType: "address",
                 name: "swapTarget",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "allowanceTarget",
                 type: "address",
               },
               {
@@ -303,11 +288,6 @@ const _abi = [
               {
                 internalType: "address",
                 name: "swapTarget",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "allowanceTarget",
                 type: "address",
               },
               {
@@ -563,11 +543,6 @@ const _abi = [
                 type: "address",
               },
               {
-                internalType: "address",
-                name: "allowanceTarget",
-                type: "address",
-              },
-              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -636,11 +611,6 @@ const _abi = [
                 type: "address",
               },
               {
-                internalType: "address",
-                name: "allowanceTarget",
-                type: "address",
-              },
-              {
                 internalType: "uint256",
                 name: "buyAssetMinAmount",
                 type: "uint256",
@@ -696,11 +666,6 @@ const _abi = [
               {
                 internalType: "address",
                 name: "swapTarget",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "allowanceTarget",
                 type: "address",
               },
               {
@@ -769,11 +734,6 @@ const _abi = [
               {
                 internalType: "address",
                 name: "swapTarget",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "allowanceTarget",
                 type: "address",
               },
               {

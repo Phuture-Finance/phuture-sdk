@@ -74,11 +74,6 @@
                 "type": "address"
               },
               {
-                "internalType": "address",
-                "name": "allowanceTarget",
-                "type": "address"
-              },
-              {
                 "internalType": "uint256",
                 "name": "buyAssetMinAmount",
                 "type": "uint256"
@@ -142,11 +137,6 @@
                 "type": "address"
               },
               {
-                "internalType": "address",
-                "name": "allowanceTarget",
-                "type": "address"
-              },
-              {
                 "internalType": "uint256",
                 "name": "buyAssetMinAmount",
                 "type": "uint256"
@@ -207,11 +197,6 @@
               {
                 "internalType": "address",
                 "name": "swapTarget",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "allowanceTarget",
                 "type": "address"
               },
               {
@@ -295,11 +280,6 @@
               {
                 "internalType": "address",
                 "name": "swapTarget",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "allowanceTarget",
                 "type": "address"
               },
               {
@@ -555,11 +535,6 @@
                 "type": "address"
               },
               {
-                "internalType": "address",
-                "name": "allowanceTarget",
-                "type": "address"
-              },
-              {
                 "internalType": "uint256",
                 "name": "buyAssetMinAmount",
                 "type": "uint256"
@@ -628,11 +603,6 @@
                 "type": "address"
               },
               {
-                "internalType": "address",
-                "name": "allowanceTarget",
-                "type": "address"
-              },
-              {
                 "internalType": "uint256",
                 "name": "buyAssetMinAmount",
                 "type": "uint256"
@@ -688,11 +658,6 @@
               {
                 "internalType": "address",
                 "name": "swapTarget",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "allowanceTarget",
                 "type": "address"
               },
               {
@@ -761,11 +726,6 @@
               {
                 "internalType": "address",
                 "name": "swapTarget",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "allowanceTarget",
                 "type": "address"
               },
               {
