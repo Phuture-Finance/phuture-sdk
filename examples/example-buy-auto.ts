@@ -51,7 +51,7 @@ const autoRouter = new AutoRouter(indexRouter, zeroExAggregator);
 
 async function main() {
   const select = await autoRouter.selectBuy(INDEX_ADDRESS, SELL_AMOUNT, INPUT_TOKEN);
-  console.dir({ select }, { depth: null });
+  console.dir({ ...select, sellAmount: select.sellAmount.toString(), buyAmount: select.buyAmount.toString() }, { depth: null });
   if (select.expectedAllowance && select.expectedAllowance !== "0") {
     return "need allowance";
   }
