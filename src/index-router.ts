@@ -264,7 +264,7 @@ export class IndexRouter {
   /**
    * ### Burn tokens amount view
    *
-   * @param index index interface
+   * @param index Index token address
    * @param amount index amount
    *
    * @returns burn amount in single token or total from array of tokens
@@ -273,11 +273,9 @@ export class IndexRouter {
     index: string,
     amount: string,
   ): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
-    const indexInstance = BaseIndex__factory.connect(index, this.signer);
-
     const [anatomy, inactiveAnatomy, burnTokensAmounts] = await Promise.all([
-      this.getIndexAnatomy(indexInstance),
-      this.getIndexInactiveAnatomy(indexInstance),
+      this.getIndexAnatomy(index),
+      this.getIndexInactiveAnatomy(index),
       this.contract.burnTokensAmount(index, amount),
     ]);
 
@@ -290,14 +288,12 @@ export class IndexRouter {
   /**
    * ### Burn amounts static
    *
-   * @param index index interface
+   * @param index Index token address
    * @param amount index amount
    *
    * @returns burn amount in single token or total from array of tokens
    */
   async burnAmount(index: string, amount: string): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
-    const indexInstance = BaseIndex__factory.connect(index, this.signer);
-
     const recipient = await this.signer.getAddress();
     const balanceOfOwnerSlot = utils.keccak256(
       utils.defaultAbiCoder.encode(["address", "uint256"], [recipient, BALANCE_OF_SLOT]),
@@ -320,8 +316,8 @@ export class IndexRouter {
     };
 
     const [anatomy, inactiveAnatomy, rawBurnTokensAmounts] = await Promise.all([
-      this.getIndexAnatomy(indexInstance),
-      this.getIndexInactiveAnatomy(indexInstance),
+      this.getIndexAnatomy(index),
+      this.getIndexInactiveAnatomy(index),
       this.signer.provider.send("eth_call", [
         {
           from: recipient,
@@ -347,13 +343,15 @@ export class IndexRouter {
     }));
   }
 
-  async getIndexAnatomy(indexInstance: BaseIndex): Promise<Anatomy> {
-    const { _assets, _weights } = await indexInstance.anatomy();
+  async getIndexAnatomy(indexToken: string): Promise<Anatomy> {
+    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.signer);
+    const { _assets, _weights } = await indexTokenInstance.anatomy();
     return _assets.map((asset, i) => ({ asset, weight: Number(_weights[i]) }));
   }
 
-  async getIndexInactiveAnatomy(indexInstance: BaseIndex): Promise<Anatomy> {
-    const _assets = await indexInstance.inactiveAnatomy();
+  async getIndexInactiveAnatomy(indexToken: string): Promise<Anatomy> {
+    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.signer);
+    const _assets = await indexTokenInstance.inactiveAnatomy();
     return _assets.map((asset) => ({ asset, weight: 0 }));
   }
 }

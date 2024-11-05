@@ -6,7 +6,7 @@ import type { ZeroExAggregator2, ZeroExRequest } from "./0x-aggregator-2";
 import { Erc20 } from "./erc-20";
 import type { IndexRouter } from "./index-router";
 import { InsufficientAllowanceError } from "./insufficient-allowance.error";
-import { BaseIndex__factory, IndexHelper__factory, PhuturePriceOracle__factory } from "./typechain";
+import { IndexHelper__factory, PhuturePriceOracle__factory } from "./typechain";
 
 const NATIVE = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 const WAD = BigNumber.from(10).pow(18);
@@ -75,9 +75,10 @@ export class AutoRouter {
     expectedAllowance?: string;
   }> {
     const chainId = await this.indexRouter.signer.getChainId();
+    const recipient = await this.indexRouter.signer.getAddress();
+
     const isNativeSell = isNative(sellToken as Address);
     const sellTokenInstance = new Erc20(this.indexRouter.signer, sellToken);
-    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.indexRouter.signer);
 
     const [zeroExSwap, indexAnatomy, wethAddress] = await Promise.all([
       this.zeroExAggregator.allowanceHolderQuote({
@@ -86,9 +87,9 @@ export class AutoRouter {
         sellToken,
         sellAmount,
         buyToken: indexToken,
-        taker: await this.indexRouter.signer.getAddress(),
+        taker: recipient,
       }),
-      this.indexRouter.getIndexAnatomy(indexTokenInstance),
+      this.indexRouter.getIndexAnatomy(indexToken),
       this.indexRouter.contract.WETH(),
     ]);
 
@@ -159,7 +160,8 @@ export class AutoRouter {
       .mul(ethBasePrice)
       .div(UQ112);
 
-    if (gasDiffInEth.lte(buyAmountDiffInEth)) {
+    const isMint = gasDiffInEth.lte(buyAmountDiffInEth);
+    if (isMint) {
       const buyAmountsInBase = await Promise.all(
         quotes.map(async ({ asset, buyAssetMinAmount }, amountIndex) => {
           const price = await priceOracle.callStatic.refreshedAssetPerBaseInUQ(asset);
@@ -255,11 +257,11 @@ export class AutoRouter {
   ): Promise<TransactionResponse> {
     const chainId = await this.indexRouter.signer.getChainId();
     const recipient = await this.indexRouter.signer.getAddress();
+
     const isNativeSell = isNative(sellToken as Address);
     const routerSellTokenAddress = isNativeSell ? await this.indexRouter.contract.WETH() : sellToken;
 
-    const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.indexRouter.signer);
-    const indexAnatomy = await this.indexRouter.getIndexAnatomy(indexTokenInstance);
+    const indexAnatomy = await this.indexRouter.getIndexAnatomy(indexToken);
 
     const initialBuyAmounts = indexAnatomy.map(({ asset, weight }) => ({
       asset,
