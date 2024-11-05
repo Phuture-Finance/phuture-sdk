@@ -328,7 +328,7 @@ export class AutoRouter {
           return {
             asset,
             swapTarget: zeroAddress,
-            buyAssetMinAmount: scaledSellAmounts[i],
+            buyAssetMinAmount: scaledAmount,
             assetQuote: [],
             estimatedGas: 0,
             allowanceTarget: zeroAddress,
@@ -457,7 +457,7 @@ export class AutoRouter {
 
     const prices = await Promise.all(
       amounts.map(async ({ amount, asset }) => {
-        if (isAddressEqual(asset as Address, buyToken as Address) || !amount || amount.isZero()) {
+        if (isAddressEqual(asset as Address, buyToken as Address) || amount.isZero()) {
           return {
             buyAmount: 0,
             gas: 0,
@@ -550,7 +550,7 @@ export class AutoRouter {
 
     const quotes = await Promise.all(
       amounts.map(async ({ amount, asset }) => {
-        if (isAddressEqual(asset as Address, routerBuyToken as Address) || !amount || amount.isZero()) {
+        if (isAddressEqual(asset as Address, routerBuyToken as Address) || amount.isZero()) {
           return {
             swapTarget: zeroAddress,
             assetQuote: [],
