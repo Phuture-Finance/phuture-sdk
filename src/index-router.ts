@@ -2,9 +2,10 @@ import type { JsonRpcSigner } from "@ethersproject/providers";
 import { BigNumber, type ContractTransaction } from "ethers";
 import { type Address, decodeAbiParameters, encodeAbiParameters, keccak256, pad, toHex } from "viem";
 
-import { Erc20 } from "./erc-20";
+import { InsufficientAllowanceError } from "./insufficient-allowance.error";
 import {
   BaseIndex__factory,
+  ERC20__factory,
   type IndexRouter as IndexRouterContractInterface,
   IndexRouter__factory,
 } from "./typechain";
@@ -59,8 +60,13 @@ export class IndexRouter {
     sellAmount: string,
     sellToken: string,
   ): Promise<ContractTransaction> {
-    const sellTokenInstance = new Erc20(this.signer, sellToken);
-    await sellTokenInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, sellAmount);
+    const sellTokenInstance = ERC20__factory.connect(sellToken, this.signer);
+
+    const owner = await this.signer.getAddress();
+    const spender = this.contract.address;
+
+    const allowance = await sellTokenInstance.allowance(owner, spender);
+    if (allowance.lt(sellAmount)) throw new InsufficientAllowanceError(spender, sellAmount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
 
@@ -98,7 +104,7 @@ export class IndexRouter {
   async mintSwapStatic(
     options: IIndexRouterV2.MintSwapParamsStruct,
     sellAmount: string,
-    sellToken?: Erc20,
+    sellToken?: string,
   ): Promise<BigNumber> {
     if (!sellToken) {
       const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
@@ -112,7 +118,13 @@ export class IndexRouter {
       });
     }
 
-    await sellToken.checkAllowance(await this.signer.getAddress(), this.contract.address, sellAmount);
+    const sellTokenInstance = ERC20__factory.connect(sellToken, this.signer);
+
+    const owner = await this.signer.getAddress();
+    const spender = this.contract.address;
+
+    const allowance = await sellTokenInstance.allowance(owner, spender);
+    if (allowance.lt(sellAmount)) throw new InsufficientAllowanceError(spender, sellAmount, allowance.toString());
 
     return this.contract.callStatic.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
   }
@@ -154,14 +166,18 @@ export class IndexRouter {
    * @returns burn transaction
    */
   async burn(index: string, amount: string, recipient: string): Promise<ContractTransaction> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnParamsStruct = {
       index,
       amount,
       recipient,
     };
 
-    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
+    const owner = await this.signer.getAddress();
+    const spender = this.contract.address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.burn(burnParameters);
 
@@ -187,7 +203,7 @@ export class IndexRouter {
     outputAsset: string,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<ContractTransaction> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
       index,
       amount,
@@ -196,7 +212,11 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
+    const owner = await this.signer.getAddress();
+    const spender = this.contract.address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.burnSwap(burnParameters);
 
@@ -212,7 +232,7 @@ export class IndexRouter {
     outputAsset: string,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<ContractTransaction> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
       index,
       amount,
@@ -221,7 +241,11 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
+    const owner = await this.signer.getAddress();
+    const spender = this.contract.address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     const estimatedGas = await this.contract.estimateGas.burnSwapValue(burnParameters);
 
@@ -247,7 +271,7 @@ export class IndexRouter {
     outputAsset: string,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<BigNumber> {
-    const indexInstance = new Erc20(this.signer, index);
+    const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnSwapParamsStruct = {
       index,
       amount,
@@ -256,7 +280,11 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
+    const owner = await this.signer.getAddress();
+    const spender = this.contract.address;
+
+    const allowance = await indexInstance.allowance(owner, spender);
+    if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
 
     return this.contract.callStatic.burnSwap(burnParameters);
   }

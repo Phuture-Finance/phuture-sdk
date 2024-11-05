@@ -3,10 +3,8 @@ import { BigNumber } from "ethers";
 import { type Address, isAddressEqual, zeroAddress } from "viem";
 
 import type { ZeroExAggregator2, ZeroExRequest } from "./0x-aggregator-2";
-import { Erc20 } from "./erc-20";
 import type { IndexRouter } from "./index-router";
-import { InsufficientAllowanceError } from "./insufficient-allowance.error";
-import { IndexHelper__factory, PhuturePriceOracle__factory } from "./typechain";
+import { type ERC20, ERC20__factory, IndexHelper__factory, PhuturePriceOracle__factory } from "./typechain";
 
 const NATIVE = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 const WAD = BigNumber.from(10).pow(18);
@@ -78,7 +76,7 @@ export class AutoRouter {
     const recipient = await this.indexRouter.signer.getAddress();
 
     const isNativeSell = isNative(sellToken as Address);
-    const sellTokenInstance = new Erc20(this.indexRouter.signer, sellToken);
+    const sellTokenInstance = ERC20__factory.connect(sellToken, this.indexRouter.signer);
 
     const [zeroExSwap, indexAnatomy, wethAddress] = await Promise.all([
       this.zeroExAggregator.allowanceHolderQuote({
@@ -184,14 +182,9 @@ export class AutoRouter {
 
       let expectedAllowance: string | undefined;
       if (!isNativeSell) {
-        try {
-          await sellTokenInstance.checkAllowance(recipient, this.indexRouter.contract.address, sellAmount);
-        } catch (error) {
-          if (error instanceof InsufficientAllowanceError) {
-            expectedAllowance = error.expectedAllowance;
-          } else {
-            throw error;
-          }
+        const allowance = await sellTokenInstance.allowance(recipient, this.indexRouter.contract.address);
+        if (allowance.lt(sellAmount)) {
+          expectedAllowance = sellAmount;
         }
       }
 
@@ -206,14 +199,9 @@ export class AutoRouter {
 
     let expectedAllowance: string | undefined;
     if (!isNativeSell) {
-      try {
-        await sellTokenInstance.checkAllowance(recipient, zeroExSwap.transaction.to, sellAmount);
-      } catch (error) {
-        if (error instanceof InsufficientAllowanceError) {
-          expectedAllowance = error.expectedAllowance;
-        } else {
-          throw error;
-        }
+      const allowance = await sellTokenInstance.allowance(recipient, zeroExSwap.transaction.to);
+      if (allowance.lt(sellAmount)) {
+        expectedAllowance = sellAmount;
       }
     }
 
@@ -420,17 +408,17 @@ export class AutoRouter {
     const chainId = await this.indexRouter.signer.getChainId();
     const recipient = await this.indexRouter.signer.getAddress();
     const isNativeBuy = isNative(buyToken as Address);
-    const indexTokenInstance = new Erc20(this.indexRouter.signer, indexToken);
+    const indexTokenInstance = ERC20__factory.connect(indexToken, this.indexRouter.signer);
 
-    let buyTokenInstance: Erc20;
+    let buyTokenInstance: ERC20;
     let buyTokenPriceEth = WAD.toString();
     let buyTokenDecimals = 18;
 
     if (isNativeBuy) {
-      buyTokenInstance = new Erc20(this.indexRouter.signer, await this.indexRouter.contract.WETH());
+      buyTokenInstance = ERC20__factory.connect(await this.indexRouter.contract.WETH(), this.indexRouter.signer);
     } else {
-      buyTokenInstance = new Erc20(this.indexRouter.signer, buyToken);
-      buyTokenDecimals = await buyTokenInstance.contract.decimals();
+      buyTokenInstance = ERC20__factory.connect(buyToken, this.indexRouter.signer);
+      buyTokenDecimals = await buyTokenInstance.decimals();
 
       const data = await this.zeroExAggregator.allowanceHolderPrice({
         ...zeroExOptions,
@@ -492,15 +480,11 @@ export class AutoRouter {
     const isBurn = gasDiffInEth.lte(buyAmountDiffInEth);
 
     const target = isBurn ? this.indexRouter.contract.address : zeroExSwap.transaction.to;
+
     let expectedAllowance: string | undefined;
-    try {
-      await indexTokenInstance.checkAllowance(recipient, target, sellAmount);
-    } catch (error) {
-      if (error instanceof InsufficientAllowanceError) {
-        expectedAllowance = error.expectedAllowance;
-      } else {
-        throw error;
-      }
+    const allowance = await indexTokenInstance.allowance(recipient, target);
+    if (allowance.lt(sellAmount)) {
+      expectedAllowance = sellAmount;
     }
 
     return {
