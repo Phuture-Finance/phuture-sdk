@@ -11,7 +11,7 @@ import { IndexHelper__factory, PhuturePriceOracle__factory } from "./typechain";
 const NATIVE = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 const WAD = BigNumber.from(10).pow(18);
 const UQ112 = BigNumber.from(2).pow(112);
-const MAX_WIDTH = 255;
+const MAX_WEIGHT = 255;
 
 const baseMintGas = 260_000;
 const additionalMintGasPerAsset = 125_000;
@@ -95,7 +95,7 @@ export class AutoRouter {
 
     const initialBuyAmounts = indexAnatomy.map(({ asset, weight }) => ({
       asset,
-      amount: BigNumber.from(sellAmount).mul(weight).div(MAX_WIDTH),
+      amount: BigNumber.from(sellAmount).mul(weight).div(MAX_WEIGHT),
       weight,
     }));
 
@@ -169,7 +169,7 @@ export class AutoRouter {
             asset,
             buyAmount: BigNumber.from(buyAssetMinAmount)
               .mul(UQ112)
-              .mul(MAX_WIDTH)
+              .mul(MAX_WEIGHT)
               .div(price.mul(indexAnatomy[amountIndex].weight)),
           };
         }),
@@ -265,7 +265,7 @@ export class AutoRouter {
 
     const initialBuyAmounts = indexAnatomy.map(({ asset, weight }) => ({
       asset,
-      amount: BigNumber.from(sellAmount).mul(weight).div(MAX_WIDTH),
+      amount: BigNumber.from(sellAmount).mul(weight).div(MAX_WEIGHT),
       weight,
     }));
 
@@ -305,7 +305,7 @@ export class AutoRouter {
           asset,
           buyAmount: BigNumber.from(minBuyAmount)
             .mul(UQ112)
-            .mul(MAX_WIDTH)
+            .mul(MAX_WEIGHT)
             .div(price.mul(indexAnatomy[amountIndex].weight)),
         };
       }),
