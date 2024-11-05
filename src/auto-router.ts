@@ -364,9 +364,9 @@ export class AutoRouter {
       inputToken: routerSellTokenAddress,
     };
 
-    return isNativeSell
+    return await (isNativeSell
       ? this.indexRouter.mintSwapValue(mintOptions, sellAmount)
-      : this.indexRouter.mintSwap(mintOptions, sellAmount, sellToken);
+      : this.indexRouter.mintSwap(mintOptions, sellAmount, sellToken));
   }
 
   public async buySwap(
@@ -579,9 +579,9 @@ export class AutoRouter {
       }),
     );
 
-    return isNativeBuy
+    return await (isNativeBuy
       ? this.indexRouter.burnSwapValue(indexToken, sellAmount, recipient, routerBuyToken, quotes)
-      : this.indexRouter.burnSwap(indexToken, sellAmount, recipient, routerBuyToken, quotes);
+      : this.indexRouter.burnSwap(indexToken, sellAmount, recipient, routerBuyToken, quotes));
   }
 
   public async sellSwap(
@@ -602,7 +602,7 @@ export class AutoRouter {
       taker,
     });
 
-    return this.indexRouter.signer.sendTransaction({
+    return await this.indexRouter.signer.sendTransaction({
       to: data.transaction.to,
       data: data.transaction.data,
       gasLimit: BigNumber.from(data.transaction.gas).toHexString(),
