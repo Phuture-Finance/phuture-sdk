@@ -14,13 +14,7 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type {
-  OnEvent,
-  PromiseOrValue,
-  TypedEvent,
-  TypedEventFilter,
-  TypedListener,
-} from "./common";
+import type { OnEvent, TypedEvent, TypedEventFilter, TypedListener } from "./common";
 
 export interface PhuturePriceOracleInterface extends utils.Interface {
   functions: {
@@ -31,20 +25,11 @@ export interface PhuturePriceOracleInterface extends utils.Interface {
     nameOrSignatureOrTopic: "refreshedAssetPerBaseInUQ" | "refreshedAssetPerBaseInUQ(address)",
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "refreshedAssetPerBaseInUQ",
-    values: [PromiseOrValue<string>],
-  ): string;
-  encodeFunctionData(
-    functionFragment: "refreshedAssetPerBaseInUQ(address)",
-    values: [PromiseOrValue<string>],
-  ): string;
+  encodeFunctionData(functionFragment: "refreshedAssetPerBaseInUQ", values: [string]): string;
+  encodeFunctionData(functionFragment: "refreshedAssetPerBaseInUQ(address)", values: [string]): string;
 
   decodeFunctionResult(functionFragment: "refreshedAssetPerBaseInUQ", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "refreshedAssetPerBaseInUQ(address)",
-    data: BytesLike,
-  ): Result;
+  decodeFunctionResult(functionFragment: "refreshedAssetPerBaseInUQ(address)", data: BytesLike): Result;
 
   events: {};
 }
@@ -62,9 +47,7 @@ export interface PhuturePriceOracle extends BaseContract {
     toBlock?: string | number | undefined,
   ): Promise<Array<TEvent>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>,
-  ): Array<TypedListener<TEvent>>;
+  listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
   listeners(eventName?: string): Array<Listener>;
   removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
   removeAllListeners(eventName?: string): this;
@@ -74,62 +57,41 @@ export interface PhuturePriceOracle extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    refreshedAssetPerBaseInUQ(
-      _asset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<ContractTransaction>;
+    refreshedAssetPerBaseInUQ(_asset: string, overrides?: Overrides & { from?: string }): Promise<ContractTransaction>;
 
     "refreshedAssetPerBaseInUQ(address)"(
-      _asset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      _asset: string,
+      overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
   };
 
-  refreshedAssetPerBaseInUQ(
-    _asset: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
-  ): Promise<ContractTransaction>;
+  refreshedAssetPerBaseInUQ(_asset: string, overrides?: Overrides & { from?: string }): Promise<ContractTransaction>;
 
   "refreshedAssetPerBaseInUQ(address)"(
-    _asset: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> },
+    _asset: string,
+    overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    refreshedAssetPerBaseInUQ(
-      _asset: PromiseOrValue<string>,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
+    refreshedAssetPerBaseInUQ(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "refreshedAssetPerBaseInUQ(address)"(
-      _asset: PromiseOrValue<string>,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
+    "refreshedAssetPerBaseInUQ(address)"(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    refreshedAssetPerBaseInUQ(
-      _asset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<BigNumber>;
+    refreshedAssetPerBaseInUQ(_asset: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
-    "refreshedAssetPerBaseInUQ(address)"(
-      _asset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<BigNumber>;
+    "refreshedAssetPerBaseInUQ(address)"(_asset: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    refreshedAssetPerBaseInUQ(
-      _asset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
-    ): Promise<PopulatedTransaction>;
+    refreshedAssetPerBaseInUQ(_asset: string, overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>;
 
     "refreshedAssetPerBaseInUQ(address)"(
-      _asset: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> },
+      _asset: string,
+      overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
   };
 }

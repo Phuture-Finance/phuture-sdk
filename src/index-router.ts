@@ -62,31 +62,23 @@ export class IndexRouter {
     const sellTokenInstance = new Erc20(this.signer, sellToken);
     await sellTokenInstance.checkAllowance(this.contract.address, sellAmount);
 
-    const estimatedGas = await this.contract.estimateGas.mintSwap(
-      options as IIndexRouterV2.MintSwapParamsStruct,
-    );
+    const estimatedGas = await this.contract.estimateGas.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
 
     return this.contract.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct, {
       gasLimit: estimatedGas.mul(105).div(100),
     });
   }
 
-  async mintSwapValue(
-    options: IIndexRouterV2.MintSwapParamsStruct,
-    sellAmount: string,
-  ): Promise<ContractTransaction> {
+  async mintSwapValue(options: IIndexRouterV2.MintSwapParamsStruct, sellAmount: string): Promise<ContractTransaction> {
     const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
       index: options.index,
       quotes: options.quotes,
       recipient: options.recipient,
     };
 
-    const mintSwapValueEstimatedGas = await this.contract.estimateGas.mintSwapValue(
-      mintSwapValueOptions,
-      {
-        value: sellAmount,
-      },
-    );
+    const mintSwapValueEstimatedGas = await this.contract.estimateGas.mintSwapValue(mintSwapValueOptions, {
+      value: sellAmount,
+    });
 
     return this.contract.mintSwapValue(mintSwapValueOptions, {
       value: sellAmount,
@@ -303,10 +295,7 @@ export class IndexRouter {
    *
    * @returns burn amount in single token or total from array of tokens
    */
-  async burnAmount(
-    index: string,
-    amount: string,
-  ): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
+  async burnAmount(index: string, amount: string): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
     const indexInstance = BaseIndex__factory.connect(index, this.signer);
 
     const recipient = await this.signer.getAddress();
@@ -318,10 +307,7 @@ export class IndexRouter {
       utils.defaultAbiCoder.encode(["address", "uint256"], [recipient, ALLOWANCE_SLOT]),
     );
     const spenderSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(
-        ["address", "bytes32"],
-        [this.contract.address, allowanceOwnerSlot],
-      ),
+      utils.defaultAbiCoder.encode(["address", "bytes32"], [this.contract.address, allowanceOwnerSlot]),
     );
 
     const stateDiff = {

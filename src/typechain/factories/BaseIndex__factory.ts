@@ -467,7 +467,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class BaseIndex__factory {
   static readonly abi = _abi;

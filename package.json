@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
-    "start": "npx tsx ./examples/example-$npm_config_name.ts",
+    "start": "bun ./examples/example-$npm_config_name.ts",
     "build:js": "node esbuild.mjs",
     "build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json",
     "build": "npm run build:js && npm run build:types",
@@ -41,18 +41,19 @@
   "dependencies": {
     "@ethersproject/abstract-provider": "5.7.0",
     "axios": "1.7.7",
-    "ethers": "5.7.2"
+    "ethers": "5.7.2",
+    "viem": "^2.21.40"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.3",
+    "@biomejs/biome": "1.9.4",
     "@ethersproject/providers": "5.7.2",
-    "@typechain/ethers-v5": "10.1.1",
-    "@types/node": "16.11.7",
-    "esbuild": "^0.23.1",
-    "esbuild-node-externals": "^1.14.0",
+    "@typechain/ethers-v5": "11.1.2",
+    "@types/node": "22.9.0",
+    "esbuild": "^0.24.0",
+    "esbuild-node-externals": "^1.15.0",
     "husky": "8.0.3",
     "rimraf": "^6.0.1",
-    "tslib": "2.4.1",
-    "typechain": "8.1.1"
+    "tslib": "2.8.1",
+    "typechain": "8.3.2"
   }
 }

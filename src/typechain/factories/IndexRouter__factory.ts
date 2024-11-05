@@ -841,7 +841,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class IndexRouter__factory {
   static readonly abi = _abi;
