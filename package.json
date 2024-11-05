@@ -5,7 +5,7 @@
     "url": "git+https://github.com/Phuture-Finance/phuture-sdk.git"
   },
   "private": false,
-  "version": "1.0.3",
+  "version": "1.1.0",
   "type": "module",
   "main": "./dist/cjs.js",
   "module": "./dist/esm.js",
@@ -25,7 +25,6 @@
     "dev": "npm run build:js -- --watch",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "prepare": "husky install",
     "fix": "npx @biomejs/biome check --write src",
     "typechain": "typechain --target=ethers-v5 --out-dir=src/typechain 'src/abis/**/*.json' --always-generate-overloads",
     "verify-pack": "npm pack && tar -xvzf *.tgz && rm -rf package && rm *.tgz"
@@ -51,7 +50,6 @@
     "@types/node": "22.9.0",
     "esbuild": "^0.24.0",
     "esbuild-node-externals": "^1.15.0",
-    "husky": "8.0.3",
     "rimraf": "^6.0.1",
     "tslib": "2.8.1",
     "typechain": "8.3.2"
