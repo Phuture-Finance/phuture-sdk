@@ -1,5 +1,5 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
-import { BigNumber, type ContractTransaction } from "ethers";
+import type { BigNumber, ContractTransaction } from "ethers";
 import { type Address, decodeAbiParameters, encodeAbiParameters, keccak256, pad, toHex } from "viem";
 
 import { InsufficientAllowanceError } from "./insufficient-allowance.error";
@@ -212,8 +212,8 @@ export class IndexRouter {
       outputAsset,
     };
 
-    const owner = await this.signer.getAddress();
-    const spender = this.contract.address;
+    const owner = await this.signer.getAddress() as Address;
+    const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
     if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
@@ -241,8 +241,8 @@ export class IndexRouter {
       outputAsset,
     };
 
-    const owner = await this.signer.getAddress();
-    const spender = this.contract.address;
+    const owner = await this.signer.getAddress() as Address;
+    const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
     if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
@@ -280,8 +280,8 @@ export class IndexRouter {
       outputAsset,
     };
 
-    const owner = await this.signer.getAddress();
-    const spender = this.contract.address;
+    const owner = await this.signer.getAddress() as Address;
+    const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
     if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
@@ -308,7 +308,7 @@ export class IndexRouter {
     ]);
 
     return [...anatomy, ...inactiveAnatomy].map((constituent, constituentIndex) => ({
-      amount: burnTokensAmounts[constituentIndex] || BigNumber.from(0),
+      amount: burnTokensAmounts[constituentIndex],
       ...constituent,
     }));
   }
@@ -321,7 +321,7 @@ export class IndexRouter {
    *
    * @returns burn amount in single token or total from array of tokens
    */
-  async burnAmount(index: Address, amount: string): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
+  async burnAmount(index: Address, amount: string): Promise<{ asset: Address; amount: string; weight: number }[]> {
     const recipient = (await this.signer.getAddress()) as Address;
 
     const balanceOfOwnerSlot = keccak256(
@@ -341,8 +341,8 @@ export class IndexRouter {
     const stateDiff = {
       [index]: {
         stateDiff: {
-          [balanceOfOwnerSlot]: pad(toHex(BigNumber.from(amount).toBigInt()), { size: 32 }),
-          [spenderSlot]: pad(toHex(BigNumber.from(amount).toBigInt()), { size: 32 }),
+          [balanceOfOwnerSlot]: pad(toHex(BigInt(amount)), { size: 32 }),
+          [spenderSlot]: pad(toHex(BigInt(amount)), { size: 32 }),
         },
       },
     };
@@ -370,7 +370,7 @@ export class IndexRouter {
     const [burnTokensAmounts] = decodeAbiParameters([{ type: "uint[]" }], rawBurnTokensAmounts);
 
     return [...anatomy, ...inactiveAnatomy].map((constituent, constituentIndex) => ({
-      amount: BigNumber.from(burnTokensAmounts[constituentIndex]),
+      amount: burnTokensAmounts[constituentIndex].toString(),
       ...constituent,
     }));
   }

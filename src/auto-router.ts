@@ -534,7 +534,7 @@ export class AutoRouter {
 
     const quotes = await Promise.all(
       amounts.map(async ({ amount, asset }) => {
-        if (isAddressEqual(asset, routerBuyToken) || amount.isZero()) {
+        if (isAddressEqual(asset, routerBuyToken) || BigNumber.from(amount).isZero()) {
           return {
             swapTarget: zeroAddress,
             assetQuote: [],
@@ -549,7 +549,7 @@ export class AutoRouter {
           chainId,
           sellToken: asset,
           buyToken: routerBuyToken,
-          sellAmount: amount.mul(999).div(1000).toString(),
+          sellAmount: BigNumber.from(amount).mul(999).div(1000).toString(),
           taker: this.indexRouter.contract.address as Address,
         });
 
