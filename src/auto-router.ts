@@ -185,7 +185,7 @@ export class AutoRouter {
       let expectedAllowance: string | undefined;
       if (!isNativeSell) {
         try {
-          await sellTokenInstance.checkAllowance(this.indexRouter.contract.address, sellAmount);
+          await sellTokenInstance.checkAllowance(recipient, this.indexRouter.contract.address, sellAmount);
         } catch (error) {
           if (error instanceof InsufficientAllowanceError) {
             expectedAllowance = error.expectedAllowance;
@@ -207,7 +207,7 @@ export class AutoRouter {
     let expectedAllowance: string | undefined;
     if (!isNativeSell) {
       try {
-        await sellTokenInstance.checkAllowance(zeroExSwap.transaction.to, sellAmount);
+        await sellTokenInstance.checkAllowance(recipient, zeroExSwap.transaction.to, sellAmount);
       } catch (error) {
         if (error instanceof InsufficientAllowanceError) {
           expectedAllowance = error.expectedAllowance;
@@ -418,7 +418,7 @@ export class AutoRouter {
     expectedAllowance?: string;
   }> {
     const chainId = await this.indexRouter.signer.getChainId();
-    const taker = await this.indexRouter.signer.getAddress();
+    const recipient = await this.indexRouter.signer.getAddress();
     const isNativeBuy = isNative(buyToken as Address);
     const indexTokenInstance = new Erc20(this.indexRouter.signer, indexToken);
 
@@ -450,7 +450,7 @@ export class AutoRouter {
         sellToken: indexToken,
         buyToken,
         sellAmount,
-        taker,
+        taker: recipient,
       }),
       this.indexRouter.burnTokensAmount(indexToken, sellAmount),
     ]);
@@ -494,7 +494,7 @@ export class AutoRouter {
     const target = isBurn ? this.indexRouter.contract.address : zeroExSwap.transaction.to;
     let expectedAllowance: string | undefined;
     try {
-      await indexTokenInstance.checkAllowance(target, sellAmount);
+      await indexTokenInstance.checkAllowance(recipient, target, sellAmount);
     } catch (error) {
       if (error instanceof InsufficientAllowanceError) {
         expectedAllowance = error.expectedAllowance;

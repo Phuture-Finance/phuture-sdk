@@ -30,11 +30,10 @@ export class Erc20 {
    *
    * @returns true if the account has enough tokens to transfer the amount
    */
-  public async checkAllowance(account: string, expectedAmount: string): Promise<true> {
-    const allowance = await this.contract.allowance(await this.signer.getAddress(), account);
-
+  public async checkAllowance(owner: string, spender: string, expectedAmount: string): Promise<true> {
+    const allowance = await this.contract.allowance(owner, spender);
     if (allowance.lt(expectedAmount))
-      throw new InsufficientAllowanceError(account, expectedAmount, allowance.toString());
+      throw new InsufficientAllowanceError(spender, expectedAmount, allowance.toString());
 
     return true;
   }

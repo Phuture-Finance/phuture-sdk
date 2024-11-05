@@ -1,9 +1,9 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
-import { BigNumber, type ContractTransaction, utils } from "ethers";
+import { BigNumber, type ContractTransaction } from "ethers";
+import { type Address, decodeAbiParameters, encodeAbiParameters, keccak256, pad, toHex } from "viem";
 
 import { Erc20 } from "./erc-20";
 import {
-  type BaseIndex,
   BaseIndex__factory,
   type IndexRouter as IndexRouterContractInterface,
   IndexRouter__factory,
@@ -18,8 +18,8 @@ export const defaultIndexRouterAddress: Record<number, string> = {
   43114: "0xd6dd95610fc3a3579a2c32fe06158d8bfb8f4ee9",
 };
 
-const BALANCE_OF_SLOT = 8;
-const ALLOWANCE_SLOT = 9;
+const BALANCE_OF_SLOT = BigInt(8);
+const ALLOWANCE_SLOT = BigInt(9);
 
 export type Anatomy = {
   asset: string;
@@ -60,7 +60,7 @@ export class IndexRouter {
     sellToken: string,
   ): Promise<ContractTransaction> {
     const sellTokenInstance = new Erc20(this.signer, sellToken);
-    await sellTokenInstance.checkAllowance(this.contract.address, sellAmount);
+    await sellTokenInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, sellAmount);
 
     const estimatedGas = await this.contract.estimateGas.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
 
@@ -112,7 +112,7 @@ export class IndexRouter {
       });
     }
 
-    await sellToken.checkAllowance(this.contract.address, sellAmount);
+    await sellToken.checkAllowance(await this.signer.getAddress(), this.contract.address, sellAmount);
 
     return this.contract.callStatic.mintSwap(options as IIndexRouterV2.MintSwapParamsStruct);
   }
@@ -161,7 +161,7 @@ export class IndexRouter {
       recipient,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
 
     const estimatedGas = await this.contract.estimateGas.burn(burnParameters);
 
@@ -196,7 +196,7 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
 
     const estimatedGas = await this.contract.estimateGas.burnSwap(burnParameters);
 
@@ -221,7 +221,7 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
 
     const estimatedGas = await this.contract.estimateGas.burnSwapValue(burnParameters);
 
@@ -256,7 +256,7 @@ export class IndexRouter {
       outputAsset,
     };
 
-    await indexInstance.checkAllowance(this.contract.address, amount);
+    await indexInstance.checkAllowance(await this.signer.getAddress(), this.contract.address, amount);
 
     return this.contract.callStatic.burnSwap(burnParameters);
   }
@@ -295,22 +295,25 @@ export class IndexRouter {
    */
   async burnAmount(index: string, amount: string): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
     const recipient = await this.signer.getAddress();
-    const balanceOfOwnerSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(["address", "uint256"], [recipient, BALANCE_OF_SLOT]),
+    const balanceOfOwnerSlot = keccak256(
+      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient as Address, BALANCE_OF_SLOT]),
     );
 
-    const allowanceOwnerSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(["address", "uint256"], [recipient, ALLOWANCE_SLOT]),
+    const allowanceOwnerSlot = keccak256(
+      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient as Address, ALLOWANCE_SLOT]),
     );
-    const spenderSlot = utils.keccak256(
-      utils.defaultAbiCoder.encode(["address", "bytes32"], [this.contract.address, allowanceOwnerSlot]),
+    const spenderSlot = keccak256(
+      encodeAbiParameters(
+        [{ type: "address" }, { type: "bytes32" }],
+        [this.contract.address as Address, allowanceOwnerSlot],
+      ),
     );
 
     const stateDiff = {
       [index]: {
         stateDiff: {
-          [balanceOfOwnerSlot]: utils.hexZeroPad(utils.hexValue(BigNumber.from(amount)), 32),
-          [spenderSlot]: utils.hexZeroPad(utils.hexValue(BigNumber.from(amount)), 32),
+          [balanceOfOwnerSlot]: pad(toHex(BigNumber.from(amount).toBigInt()), { size: 32 }),
+          [spenderSlot]: pad(toHex(BigNumber.from(amount).toBigInt()), { size: 32 }),
         },
       },
     };
@@ -335,10 +338,10 @@ export class IndexRouter {
       ]),
     ]);
 
-    const [burnTokensAmounts] = new utils.AbiCoder().decode(["uint[]"], rawBurnTokensAmounts);
+    const [burnTokensAmounts] = decodeAbiParameters([{ type: "uint[]" }], rawBurnTokensAmounts);
 
     return [...anatomy, ...inactiveAnatomy].map((constituent, constituentIndex) => ({
-      amount: burnTokensAmounts[constituentIndex] || BigNumber.from(0),
+      amount: BigNumber.from(burnTokensAmounts[constituentIndex]),
       ...constituent,
     }));
   }
