@@ -1,8 +1,9 @@
 import axios, { type AxiosInstance } from "axios";
+import type { Address, Hash, Hex } from "viem";
 
 interface Fee {
   amount: string;
-  token: string;
+  token: Address;
   type: "volume" | "gas";
 }
 
@@ -14,11 +15,11 @@ interface Fees {
 
 interface AllowanceIssue {
   actual: string;
-  spender: string;
+  spender: Address;
 }
 
 interface BalanceIssue {
-  token: string;
+  token: Address;
   actual: string;
   expected: string;
 }
@@ -31,14 +32,14 @@ interface Issues {
 }
 
 interface Fill {
-  from: string;
-  to: string;
+  from: Address;
+  to: Address;
   source: string;
   proportionBps: string;
 }
 
 interface Token {
-  address: string;
+  address: Address;
   symbol: string;
 }
 
@@ -66,7 +67,7 @@ interface EIP712Domain {
   name?: string;
   version?: string;
   chainId?: number;
-  verifyingContract?: string;
+  verifyingContract?: Address;
   salt?: string;
 }
 
@@ -79,13 +80,13 @@ interface EIP712Data {
 
 export interface Permit2 {
   type: "Permit2";
-  hash: string;
+  hash: Hash;
   eip712: EIP712Data;
 }
 
 export interface Transaction {
-  to: string;
-  data: string;
+  to: Address;
+  data: Hex;
   gas?: string | null;
   gasPrice: string;
   value: string;
@@ -94,7 +95,7 @@ export interface Transaction {
 interface ZeroExReponseData {
   blockNumber: string;
   buyAmount: string;
-  buyToken: string;
+  buyToken: Address;
   fees: Fees;
   gas?: string | null;
   gasPrice: string;
@@ -103,7 +104,7 @@ interface ZeroExReponseData {
   minBuyAmount: string;
   route: Route;
   sellAmount: string;
-  sellToken: string;
+  sellToken: Address;
   tokenMetadata: TokensMetadata;
   totalNetworkFee?: string | null;
   zid: string;
@@ -119,15 +120,15 @@ interface Permit2QuoteReponseData extends AllowanceHolderQuoteReponseData {
 
 export interface ZeroExRequest {
   chainId: number;
-  buyToken: string;
-  sellToken: string;
+  buyToken: Address;
+  sellToken: Address;
   sellAmount: string;
-  taker?: string;
-  txOrigin?: string;
-  swapFeeRecipient?: string;
+  taker?: Address;
+  txOrigin?: Address;
+  swapFeeRecipient?: Address;
   swapFeeBps?: number;
-  swapFeeToken?: string;
-  tradeSurplusRecipient?: string;
+  swapFeeToken?: Address;
+  tradeSurplusRecipient?: Address;
   gasPrice?: string;
   slippageBps?: number;
   excludedSources?: string;

@@ -12,18 +12,18 @@ import {
 import type { IIndexRouterV2 } from "./typechain/IndexRouter";
 
 /** ### Default IndexRouter address for network */
-export const defaultIndexRouterAddress: Record<number, string> = {
+export const defaultIndexRouterAddress: Record<number, Address> = {
   /** ### Default IndexRouter address on mainnet. */
   1: "0x1985426d77c431fc95e5ca51547bcb9b793e8482",
   /** ### Default IndexRouter address on c-chain. */
-  43114: "0xd6dd95610fc3a3579a2c32fe06158d8bfb8f4ee9",
+  43114: "0x6A74b8C452f36ad3a9a162D2710BA012C3E5eB82",
 };
 
 const BALANCE_OF_SLOT = BigInt(8);
 const ALLOWANCE_SLOT = BigInt(9);
 
 export type Anatomy = {
-  asset: string;
+  asset: Address;
   weight: number;
 }[];
 
@@ -41,7 +41,7 @@ export class IndexRouter {
    */
   constructor(
     public signer: JsonRpcSigner,
-    contract: string,
+    contract: Address,
   ) {
     this.contract = IndexRouter__factory.connect(contract, signer);
   }
@@ -58,12 +58,12 @@ export class IndexRouter {
   async mintSwap(
     options: IIndexRouterV2.MintSwapParamsStruct,
     sellAmount: string,
-    sellToken: string,
+    sellToken: Address,
   ): Promise<ContractTransaction> {
     const sellTokenInstance = ERC20__factory.connect(sellToken, this.signer);
 
-    const owner = await this.signer.getAddress();
-    const spender = this.contract.address;
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
 
     const allowance = await sellTokenInstance.allowance(owner, spender);
     if (allowance.lt(sellAmount)) throw new InsufficientAllowanceError(spender, sellAmount, allowance.toString());
@@ -104,7 +104,7 @@ export class IndexRouter {
   async mintSwapStatic(
     options: IIndexRouterV2.MintSwapParamsStruct,
     sellAmount: string,
-    sellToken?: string,
+    sellToken?: Address,
   ): Promise<BigNumber> {
     if (!sellToken) {
       const mintSwapValueOptions: IIndexRouterV2.MintSwapValueParamsStruct = {
@@ -120,8 +120,8 @@ export class IndexRouter {
 
     const sellTokenInstance = ERC20__factory.connect(sellToken, this.signer);
 
-    const owner = await this.signer.getAddress();
-    const spender = this.contract.address;
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
 
     const allowance = await sellTokenInstance.allowance(owner, spender);
     if (allowance.lt(sellAmount)) throw new InsufficientAllowanceError(spender, sellAmount, allowance.toString());
@@ -140,17 +140,17 @@ export class IndexRouter {
    * @returns mint amount in single token
    */
   async mintIndexAmount(
-    index: string,
+    index: Address,
     amountInInputToken: string,
     quotes: IIndexRouterV2.MintQuoteParamsStruct[],
-    inputToken: string,
+    inputToken: Address,
   ): Promise<BigNumber> {
     const option: IIndexRouterV2.MintSwapParamsStruct = {
       inputToken,
       amountInInputToken,
       quotes,
       index,
-      recipient: await this.signer.getAddress(),
+      recipient: (await this.signer.getAddress()) as Address,
     };
 
     return this.contract.mintSwapIndexAmount(option);
@@ -159,13 +159,13 @@ export class IndexRouter {
   /**
    * ### Burn
    *
-   * @param index index address or it's erc20 interface
+   * @param index index address
    * @param amount index amount
    * @param recipient address of account to receive tokens
    *
    * @returns burn transaction
    */
-  async burn(index: string, amount: string, recipient: string): Promise<ContractTransaction> {
+  async burn(index: Address, amount: string, recipient: Address): Promise<ContractTransaction> {
     const indexInstance = ERC20__factory.connect(index, this.signer);
     const burnParameters: IIndexRouterV2.BurnParamsStruct = {
       index,
@@ -173,8 +173,8 @@ export class IndexRouter {
       recipient,
     };
 
-    const owner = await this.signer.getAddress();
-    const spender = this.contract.address;
+    const owner = (await this.signer.getAddress()) as Address;
+    const spender = this.contract.address as Address;
 
     const allowance = await indexInstance.allowance(owner, spender);
     if (allowance.lt(amount)) throw new InsufficientAllowanceError(spender, amount, allowance.toString());
@@ -265,10 +265,10 @@ export class IndexRouter {
    * @returns burn swap amount
    */
   async burnSwapStatic(
-    index: string,
+    index: Address,
     amount: string,
-    recipient: string,
-    outputAsset: string,
+    recipient: Address,
+    outputAsset: Address,
     quotes: IIndexRouterV2.BurnQuoteParamsStruct[],
   ): Promise<BigNumber> {
     const indexInstance = ERC20__factory.connect(index, this.signer);
@@ -298,9 +298,9 @@ export class IndexRouter {
    * @returns burn amount in single token or total from array of tokens
    */
   async burnTokensAmount(
-    index: string,
+    index: Address,
     amount: string,
-  ): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
+  ): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
     const [anatomy, inactiveAnatomy, burnTokensAmounts] = await Promise.all([
       this.getIndexAnatomy(index),
       this.getIndexInactiveAnatomy(index),
@@ -321,14 +321,15 @@ export class IndexRouter {
    *
    * @returns burn amount in single token or total from array of tokens
    */
-  async burnAmount(index: string, amount: string): Promise<{ asset: string; amount: BigNumber; weight: number }[]> {
-    const recipient = await this.signer.getAddress();
+  async burnAmount(index: Address, amount: string): Promise<{ asset: Address; amount: BigNumber; weight: number }[]> {
+    const recipient = (await this.signer.getAddress()) as Address;
+
     const balanceOfOwnerSlot = keccak256(
-      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient as Address, BALANCE_OF_SLOT]),
+      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient, BALANCE_OF_SLOT]),
     );
 
     const allowanceOwnerSlot = keccak256(
-      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient as Address, ALLOWANCE_SLOT]),
+      encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [recipient, ALLOWANCE_SLOT]),
     );
     const spenderSlot = keccak256(
       encodeAbiParameters(
@@ -374,15 +375,15 @@ export class IndexRouter {
     }));
   }
 
-  async getIndexAnatomy(indexToken: string): Promise<Anatomy> {
+  async getIndexAnatomy(indexToken: Address): Promise<Anatomy> {
     const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.signer);
     const { _assets, _weights } = await indexTokenInstance.anatomy();
-    return _assets.map((asset, i) => ({ asset, weight: Number(_weights[i]) }));
+    return _assets.map((asset, i) => ({ asset: asset as Address, weight: Number(_weights[i]) }));
   }
 
-  async getIndexInactiveAnatomy(indexToken: string): Promise<Anatomy> {
+  async getIndexInactiveAnatomy(indexToken: Address): Promise<Anatomy> {
     const indexTokenInstance = BaseIndex__factory.connect(indexToken, this.signer);
     const _assets = await indexTokenInstance.inactiveAnatomy();
-    return _assets.map((asset) => ({ asset, weight: 0 }));
+    return _assets.map((asset) => ({ asset: asset as Address, weight: 0 }));
   }
 }

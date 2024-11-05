@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance } from "axios";
-import { BigNumber, type BigNumberish, type BytesLike } from "ethers";
+import type { Address, Hex } from "viem";
 
 /** ### Options for 0x price endpoint */
 export interface Zero0xPriceOptions {
@@ -18,13 +18,13 @@ export interface Zero0xPriceOptions {
 /** ### Response from the 0x price endpoint */
 export interface Zero0xPriceResponse {
   /** ### Amount of tokens to buy */
-  buyAmount: BigNumberish;
+  buyAmount: string;
   /** ### Amount of tokens to sell */
-  sellAmount: BigNumberish;
+  sellAmount: string;
   /** ### Estimated Gas */
-  estimatedGas: BigNumberish;
+  estimatedGas: string;
   /** ### Gas price */
-  gasPrice: BigNumberish;
+  gasPrice: string;
 }
 
 /** ### Options for 0x quote endpoint */
@@ -33,9 +33,9 @@ export type Zero0xQuoteOptions = Zero0xPriceOptions;
 /** ### Response from the 0x quote endpoint */
 export interface Zero0xQuoteResponse extends Zero0xPriceResponse {
   /** ### Address of the contract to call with data */
-  to: string;
+  to: Address;
   /** ### Raw call data */
-  data: BytesLike;
+  data: Hex;
 }
 
 /** ### Addresses of the ZeroX API endpoint */
@@ -119,7 +119,7 @@ export class ZeroExAggregator {
   async quote(
     sellToken: string,
     buyToken: string,
-    sellAmount: BigNumberish,
+    sellAmount: string,
     options?: Partial<Zero0xQuoteOptions>,
   ): Promise<Zero0xQuoteResponse> {
     const { data } = await this.client.get<Zero0xQuoteResponse>("/swap/v1/quote", {
@@ -127,7 +127,7 @@ export class ZeroExAggregator {
         ...this._defaultQueryParams,
         sellToken,
         buyToken,
-        sellAmount: BigNumber.from(sellAmount).toString(),
+        sellAmount,
         ...options,
       },
     });
@@ -151,7 +151,7 @@ export class ZeroExAggregator {
   async price(
     sellToken: string,
     buyToken: string,
-    sellAmount: BigNumberish,
+    sellAmount: string,
     options?: Partial<Zero0xPriceOptions>,
   ): Promise<Zero0xPriceResponse> {
     const { data } = await this.client.get<Zero0xPriceResponse>("/swap/v1/price", {
@@ -159,7 +159,7 @@ export class ZeroExAggregator {
         ...this._defaultQueryParams,
         sellToken,
         buyToken,
-        sellAmount: BigNumber.from(sellAmount).toString(),
+        sellAmount,
         ...options,
       },
     });
